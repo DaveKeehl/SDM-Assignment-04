@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
+class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 
 	@Override
 	protected Scenario<String, Flux<String>> defaultScenarioOptions(Scenario<String, Flux<String>> defaultOptions) {
@@ -77,42 +77,42 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	final Supplier<Queue<Sinks.Many<Integer>>> oqs = ConcurrentLinkedQueue::new;
 
 	@Test
-	public void source1Null() {
+    void source1Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWindow<>(null, 1, pqs);
 		});
 	}
 
 	@Test
-	public void source2Null() {
+    void source2Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWindow<>(null, 1, 2, pqs, oqs);
 		});
 	}
 
 	@Test
-	public void processorQueue1Null() {
+    void processorQueue1Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWindow<>(Flux.never(), 1, null);
 		});
 	}
 
 	@Test
-	public void processorQueue2Null() {
+    void processorQueue2Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWindow<>(Flux.never(), 1, 1, null, oqs);
 		});
 	}
 
 	@Test
-	public void overflowQueueNull() {
+    void overflowQueueNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWindow<>(Flux.never(), 1, 1, pqs, null);
 		});
 	}
 
 	@Test
-	public void size1Invalid() {
+    void size1Invalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.window(0);
@@ -120,7 +120,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void size2Invalid() {
+    void size2Invalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.window(0, 2);
@@ -128,7 +128,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void skipInvalid() {
+    void skipInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.window(1, 0);
@@ -142,7 +142,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void exact() {
+    void exact() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -175,7 +175,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void exactBackpressured() {
+    void exactBackpressured() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.range(1, 10)
@@ -232,7 +232,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void exactWindowCount() {
+    void exactWindowCount() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 9)
@@ -260,7 +260,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void skip() {
+    void skip() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -293,7 +293,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void skipBackpressured() {
+    void skipBackpressured() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.range(1, 10)
@@ -358,7 +358,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void overlap() {
+    void overlap() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -382,7 +382,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void overlapBackpressured() {
+    void overlapBackpressured() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.range(1, 10)
@@ -442,7 +442,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void exactError() {
+    void exactError() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.unsafe().many().multicast().directBestEffort();
@@ -471,7 +471,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void skipError() {
+    void skipError() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.unsafe().many().multicast().directBestEffort();
@@ -500,7 +500,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void skipInGapError() {
+    void skipInGapError() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.unsafe().many().multicast().directBestEffort();
@@ -526,7 +526,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void overlapError() {
+    void overlapError() {
 		AssertSubscriber<Publisher<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.unsafe().many().multicast().directBestEffort();
@@ -555,7 +555,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFlux() {
+    void windowWillSubdivideAnInputFlux() {
 		Flux<Integer> numbers = Flux.just(1, 2, 3, 4, 5, 6, 7, 8);
 
 		//"non overlapping windows"
@@ -568,7 +568,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFluxOverlap() {
+    void windowWillSubdivideAnInputFluxOverlap() {
 		Flux<Integer> numbers = Flux.just(1, 2, 3, 4, 5, 6, 7, 8);
 
 		//"non overlapping windows"
@@ -581,7 +581,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void windowWillRerouteAsManyElementAsSpecified() {
+    void windowWillRerouteAsManyElementAsSpecified() {
 		assertThat(Flux.just(1, 2, 3, 4, 5)
 					   .window(2)
 					   .concatMap(Flux::collectList)
@@ -590,7 +590,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxWindow<Integer> test = new FluxWindow<>(parent, 3, Queues.empty());
 
@@ -599,7 +599,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanExactSubscriber() {
+    void scanExactSubscriber() {
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxWindow.WindowExactSubscriber<Integer> test = new FluxWindow.WindowExactSubscriber<Integer>(actual, 123, Queues.unbounded());
@@ -625,7 +625,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanOverlapSubscriber() {
+    void scanOverlapSubscriber() {
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxWindow.WindowOverlapSubscriber<Integer> test = new FluxWindow.WindowOverlapSubscriber<Integer>(actual, 123, 3, Queues.unbounded(), Queues.<Sinks.Many<Integer>>unbounded().get());
@@ -659,7 +659,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanOverlapSubscriberSmallBuffered() {
+    void scanOverlapSubscriberSmallBuffered() {
 		@SuppressWarnings("unchecked") Queue<Sinks.Many<Integer>> mockQueue = Mockito.mock(Queue.class);
 
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {
@@ -675,7 +675,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanOverlapSubscriberLargeBuffered() {
+    void scanOverlapSubscriberLargeBuffered() {
 		@SuppressWarnings("unchecked") Queue<Sinks.Many<Integer>> mockQueue = Mockito.mock(Queue.class);
 
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {
@@ -695,7 +695,7 @@ public class FluxWindowTest extends FluxOperatorTest<String, Flux<String>> {
 	}
 
 	@Test
-	public void scanSkipSubscriber() {
+    void scanSkipSubscriber() {
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxWindow.WindowSkipSubscriber<Integer> test = new FluxWindow.WindowSkipSubscriber<Integer>(actual, 123, 3, Queues.unbounded());

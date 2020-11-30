@@ -28,9 +28,9 @@ import reactor.core.publisher.Flux;
  * @author Stephane Maldini
  */
 @Test
-public class FluxGenerateVerification extends PublisherVerification<Long> {
+    class FluxGenerateVerification extends PublisherVerification<Long> {
 
-	public FluxGenerateVerification() {
+	FluxGenerateVerification() {
 		super(new TestEnvironment(500), 1000);
 	}
 

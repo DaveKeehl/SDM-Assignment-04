@@ -28,10 +28,10 @@ import reactor.test.scheduler.VirtualTimeScheduler;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoTakeUntilOtherTest {
+class MonoTakeUntilOtherTest {
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		//noinspection ConstantConditions
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new MonoTakeUntilOther<>(null, Flux.never()))
@@ -39,7 +39,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void nullOther() {
+    void nullOther() {
 		//noinspection ConstantConditions
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new MonoTakeUntilOther<>(Mono.just("foo"), null))
@@ -47,7 +47,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void neverSourceIsCancelled() {
+    void neverSourceIsCancelled() {
 		AtomicReference<SignalType> signal = new AtomicReference<>();
 
 		StepVerifier.withVirtualTime(() ->
@@ -61,7 +61,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void disposeCancelsBoth() {
+    void disposeCancelsBoth() {
 		AtomicReference<SignalType> s1 = new AtomicReference<>();
 		AtomicReference<SignalType> s2 = new AtomicReference<>();
 
@@ -77,7 +77,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeShortcircuits() {
+    void apiTakeShortcircuits() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.delay(Duration.ofMillis(200))
 				    .take(Duration.ofMillis(100))
@@ -87,7 +87,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeSchedulerShortcircuits() {
+    void apiTakeSchedulerShortcircuits() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		StepVerifier.create(
 				Mono.delay(Duration.ofMillis(200))
@@ -98,7 +98,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeValuedBeforeDuration() {
+    void apiTakeValuedBeforeDuration() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.delay(Duration.ofMillis(100))
 				    .take(Duration.ofMillis(200))
@@ -109,7 +109,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeErrorBeforeDuration() {
+    void apiTakeErrorBeforeDuration() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.delay(Duration.ofMillis(100))
 				    .then(Mono.error(new IllegalStateException("boom")))
@@ -120,7 +120,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeCompleteBeforeDuration() {
+    void apiTakeCompleteBeforeDuration() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.delay(Duration.ofMillis(100))
 				    .ignoreElement()
@@ -131,7 +131,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeUntilOtherShortcircuits() {
+    void apiTakeUntilOtherShortcircuits() {
 		TestPublisher<String> other = TestPublisher.create();
 
 		StepVerifier.withVirtualTime(() ->
@@ -146,7 +146,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeUntilOtherValuedBeforeOther() {
+    void apiTakeUntilOtherValuedBeforeOther() {
 		TestPublisher<String> other = TestPublisher.create();
 
 		StepVerifier.withVirtualTime(() ->
@@ -162,7 +162,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeUntilOtherErrorBeforeOther() {
+    void apiTakeUntilOtherErrorBeforeOther() {
 		TestPublisher<String> other = TestPublisher.create();
 
 		StepVerifier.withVirtualTime(() ->
@@ -178,7 +178,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void apiTakeUntilOtherCompleteBeforeOther() {
+    void apiTakeUntilOtherCompleteBeforeOther() {
 		TestPublisher<String> other = TestPublisher.create();
 
 		StepVerifier.withVirtualTime(() ->
@@ -194,7 +194,7 @@ public class MonoTakeUntilOtherTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		TestPublisher<String> other = TestPublisher.create();
 	    MonoTakeUntilOther<Integer, String> test = new MonoTakeUntilOther<>(Mono.just(1), other);
 

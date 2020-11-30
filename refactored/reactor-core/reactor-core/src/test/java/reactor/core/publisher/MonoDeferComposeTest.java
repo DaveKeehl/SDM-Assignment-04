@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import reactor.test.subscriber.AssertSubscriber;
 
-public class MonoDeferComposeTest {
+class MonoDeferComposeTest {
 
     @Test
-    public void perTrackable() {
+    void perTrackable() {
 
         Mono<Integer> source = Mono.just(10).transformDeferred(f -> {
             AtomicInteger value = new AtomicInteger();
@@ -43,7 +43,7 @@ public class MonoDeferComposeTest {
     }
 
     @Test
-    public void composerThrows() {
+    void composerThrows() {
         Mono<Integer> source = Mono.just(10).transformDeferred(f -> {
             throw new RuntimeException("Forced failure");
         });
@@ -61,7 +61,7 @@ public class MonoDeferComposeTest {
     }
 
     @Test
-    public void composerReturnsNull() {
+    void composerReturnsNull() {
         Mono<Integer> source = Mono.just(10).transformDeferred(f -> {
             return null;
         });

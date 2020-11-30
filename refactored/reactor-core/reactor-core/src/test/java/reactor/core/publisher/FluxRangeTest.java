@@ -27,10 +27,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxRangeTest {
+class FluxRangeTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).subscribe(ts);
@@ -41,7 +41,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).subscribe(ts);
@@ -64,7 +64,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void normalBackpressuredExact() {
+    void normalBackpressuredExact() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(10);
 
 		Flux.range(1, 10).subscribe(ts);
@@ -81,21 +81,21 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void countIsNegative() {
+    void countIsNegative() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.range(1, -1);
 		});
 	}
 
 	@Test
-	public void rangeOverflow() {
+    void rangeOverflow() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.range(2, Integer.MAX_VALUE);
 		});
 	}
 
 	@Test
-	public void normalNearMaxValue1() {
+    void normalNearMaxValue1() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(Integer.MAX_VALUE, 1).subscribe(ts);
@@ -106,7 +106,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void normalNearMaxValue2() {
+    void normalNearMaxValue2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(Integer.MAX_VALUE - 1, 2).subscribe(ts);
@@ -117,7 +117,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void normalNegativeStart() {
+    void normalNegativeStart() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(-10, 2).subscribe(ts);
@@ -129,7 +129,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxRange test = new FluxRange(0, 10);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
@@ -137,7 +137,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void scanSubscription() {
+    void scanSubscription() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		FluxRange.RangeSubscription test = new FluxRange.RangeSubscription(actual, 1L, 10L);
 
@@ -156,7 +156,7 @@ public class FluxRangeTest {
 	}
 
 	@Test
-	public void scanConditionalSubscription() {
+    void scanConditionalSubscription() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Integer> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxRange.RangeSubscriptionConditional test = new FluxRange.RangeSubscriptionConditional(actual, 1L, 10L);

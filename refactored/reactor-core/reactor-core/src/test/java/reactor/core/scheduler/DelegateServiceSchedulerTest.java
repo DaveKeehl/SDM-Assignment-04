@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Stephane Maldini
  */
-public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
+class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -57,7 +57,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void startAndDecorationImplicit() {
+    void startAndDecorationImplicit() {
 		AtomicInteger decorationCount = new AtomicInteger();
 		Schedulers.setExecutorServiceDecorator("startAndDecorationImplicit", (s, srv) -> {
 			decorationCount.incrementAndGet();
@@ -76,7 +76,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void notScheduledRejects() {
+    void notScheduledRejects() {
 		Scheduler s = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newSingleThreadExecutor()));
 		assertThatExceptionOfType(RejectedExecutionException.class)
 				.isThrownBy(() -> s.schedule(() -> {}, 100, TimeUnit.MILLISECONDS))
@@ -99,7 +99,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scheduledDoesntReject() {
+    void scheduledDoesntReject() {
 		Scheduler s = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newSingleThreadScheduledExecutor()));
 		assertThat(s.schedule(() -> {}, 100, TimeUnit.MILLISECONDS))
 				.describedAs("direct delayed scheduling")
@@ -118,7 +118,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestDelay() {
+    void smokeTestDelay() {
 		for (int i = 0; i < 20; i++) {
 			Scheduler s = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newScheduledThreadPool(1)));
 			AtomicLong start = new AtomicLong();
@@ -146,7 +146,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestInterval() {
+    void smokeTestInterval() {
 		Scheduler s = afterTest.autoDispose(scheduler());
 
 		StepVerifier.create(Flux.interval(Duration.ofMillis(100), Duration.ofMillis(200), s))
@@ -161,7 +161,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanNameAnonymous() {
+    void scanNameAnonymous() {
 		final ExecutorService fixedExecutor = Executors.newFixedThreadPool(3);
 		final ExecutorService cachedExecutor = Executors.newCachedThreadPool();
 		final ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
@@ -186,7 +186,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanNameExplicit() {
+    void scanNameExplicit() {
 		Scheduler fixedThreadPool = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newFixedThreadPool(3), "fixedThreadPool(3)"));
 		Scheduler cachedThreadPool = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newCachedThreadPool(), "cachedThreadPool"));
 		Scheduler singleThread = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newSingleThreadExecutor(), "singleThreadExecutor"));
@@ -203,7 +203,7 @@ public class DelegateServiceSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanExecutorAttributes() {
+    void scanExecutorAttributes() {
 		Scheduler fixedThreadPool = afterTest.autoDispose(Schedulers.fromExecutorService(Executors.newFixedThreadPool(3)));
 
 		assertThat(Scannable.from(fixedThreadPool).scan(Scannable.Attr.CAPACITY)).isEqualTo(3);

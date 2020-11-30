@@ -7,10 +7,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoIgnoreElementsTest {
+class MonoIgnoreElementsTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> source = Flux.just(1);
 		MonoIgnoreElements<Integer> test = new MonoIgnoreElements<>(source);
 
@@ -20,7 +20,7 @@ public class MonoIgnoreElementsTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Boolean> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoIgnoreElements.IgnoreElementsSubscriber<Boolean> test = new MonoIgnoreElements.IgnoreElementsSubscriber<>(actual);
 		Subscription parent = Operators.emptySubscription();

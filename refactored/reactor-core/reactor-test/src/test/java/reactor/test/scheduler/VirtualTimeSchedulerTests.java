@@ -38,10 +38,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class VirtualTimeSchedulerTests {
+class VirtualTimeSchedulerTests {
 
 	@Test
-	public void cancelledAndEmptyConstantsAreNotSame() {
+	void cancelledAndEmptyConstantsAreNotSame() {
 		assertThat(VirtualTimeScheduler.CANCELLED).isNotSameAs(VirtualTimeScheduler.EMPTY);
 
 		assertThat(VirtualTimeScheduler.CANCELLED.isDisposed()).isTrue();
@@ -49,7 +49,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void allEnabled() {
+	void allEnabled() {
 		assertThat(Schedulers.newParallel("")).isNotInstanceOf(VirtualTimeScheduler.class);
 		@SuppressWarnings("deprecation") // To be removed in 3.5 alongside Schedulers.newElastic
 		Scheduler elastic1 = Schedulers.newElastic("");
@@ -77,7 +77,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void enableProvidedAllSchedulerIdempotent() {
+	void enableProvidedAllSchedulerIdempotent() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		VirtualTimeScheduler.getOrSet(vts);
@@ -93,7 +93,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void enableTwoSimilarSchedulersUsesFirst() {
+	void enableTwoSimilarSchedulersUsesFirst() {
 		VirtualTimeScheduler vts1 = VirtualTimeScheduler.create();
 		VirtualTimeScheduler vts2 = VirtualTimeScheduler.create();
 
@@ -107,7 +107,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void disposedSchedulerIsStillCleanedUp() {
+	void disposedSchedulerIsStillCleanedUp() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		vts.dispose();
 		assertThat(VirtualTimeScheduler.isFactoryEnabled()).isFalse();
@@ -132,7 +132,7 @@ public class VirtualTimeSchedulerTests {
 
 
 	@Test
-	public void captureNowInScheduledTask() {
+	void captureNowInScheduledTask() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create(true);
 		List<Long> singleExecutionsTimestamps = new ArrayList<>();
 		List<Long> periodicExecutionTimestamps = new ArrayList<>();
@@ -164,7 +164,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void nestedSchedule() {
+	void nestedSchedule() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		List<Long> singleExecutionsTimestamps = new ArrayList<>();
 
@@ -187,7 +187,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void racingAdvanceTimeOnEmptyQueue() {
+	void racingAdvanceTimeOnEmptyQueue() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		try {
 			for (int i = 1; i <= 100; i++) {
@@ -210,7 +210,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void racingAdvanceTimeOnFullQueue() {
+	void racingAdvanceTimeOnFullQueue() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		try {
 			vts.schedule(() -> {}, 10, TimeUnit.HOURS);
@@ -234,7 +234,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void racingAdvanceTimeOnVaryingQueue() {
+	void racingAdvanceTimeOnVaryingQueue() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create(true);
 		AtomicInteger count = new AtomicInteger();
 		try {
@@ -265,7 +265,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void scheduledTaskCount() {
+	void scheduledTaskCount() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		assertThat(vts.getScheduledTaskCount()).as("initial value").isEqualTo(0);
 
@@ -275,7 +275,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void scheduledTaskCountWithInitialDelay() {
+	void scheduledTaskCountWithInitialDelay() {
 		// schedule with delay
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		vts.schedule(() -> {
@@ -287,7 +287,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void scheduledTaskCountWithNoInitialDelay() {
+	void scheduledTaskCountWithNoInitialDelay() {
 		// schedulePeriodically with no initial delay
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		vts.schedulePeriodically(() -> {
@@ -304,7 +304,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void scheduledTaskCountBySchedulePeriodically() {
+	void scheduledTaskCountBySchedulePeriodically() {
 		// schedulePeriodically with initial delay
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		vts.schedulePeriodically(() -> {
@@ -330,7 +330,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void getOrSetWithDefer() {
+	void getOrSetWithDefer() {
 		AtomicReference<VirtualTimeScheduler> vts1 = new AtomicReference<>();
 		AtomicReference<VirtualTimeScheduler> vts2 = new AtomicReference<>();
 		RaceTestUtils.race(
@@ -344,7 +344,7 @@ public class VirtualTimeSchedulerTests {
 
 
 	@Test
-	public void resetRestoresSnapshotOfSchedulers() {
+	void resetRestoresSnapshotOfSchedulers() {
 		AtomicInteger singleCreated = new AtomicInteger();
 		Schedulers.Factory customFactory = new Schedulers.Factory() {
 			@Override
@@ -379,7 +379,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@Test
-	public void doubleCreationOfVtsCorrectlyResetsOriginalCustomFactory() {
+	void doubleCreationOfVtsCorrectlyResetsOriginalCustomFactory() {
 		AtomicInteger singleCreated = new AtomicInteger();
 		Schedulers.Factory customFactory = new Schedulers.Factory() {
 			@Override
@@ -433,7 +433,7 @@ public class VirtualTimeSchedulerTests {
 	}
 
 	@AfterEach
-	public void cleanup() {
+	void cleanup() {
 		VirtualTimeScheduler.reset();
 	}
 

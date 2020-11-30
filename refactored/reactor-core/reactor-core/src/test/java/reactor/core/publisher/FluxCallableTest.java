@@ -23,10 +23,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxCallableTest {
+class FluxCallableTest {
 
 	@Test
-	public void callableReturnsNull() {
+    void callableReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>fromCallable(() -> null).log().flux()
@@ -38,7 +38,7 @@ public class FluxCallableTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.fromCallable(() -> 1)
@@ -51,7 +51,7 @@ public class FluxCallableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.fromCallable(() -> 1)
@@ -70,7 +70,7 @@ public class FluxCallableTest {
 	}
 
 	@Test
-	public void callableThrows() {
+    void callableThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Mono.fromCallable(() -> {
@@ -86,7 +86,7 @@ public class FluxCallableTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxCallable<Integer> test = new FluxCallable<>(() -> 1	);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

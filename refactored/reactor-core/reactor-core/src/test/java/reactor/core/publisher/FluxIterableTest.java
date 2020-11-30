@@ -36,25 +36,25 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxIterableTest {
+class FluxIterableTest {
 
 	final Iterable<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 	@Test
-	public void emptyIterable() {
+    void emptyIterable() {
 		StepVerifier.create(Flux.never().zipWithIterable(new ArrayList<>()))
 	                .verifyComplete();
 	}
 
 	@Test
-	public void nullIterable() {
+    void nullIterable() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().zipWithIterable(null);
 		});
 	}
 
 	@Test
-	public void nullIterator() {
+    void nullIterator() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>fromIterable(() -> null).subscribe(ts);
@@ -65,7 +65,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.fromIterable(source)
@@ -77,7 +77,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.fromIterable(source)
@@ -101,7 +101,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void normalBackpressuredExact() {
+    void normalBackpressuredExact() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(10);
 
 		Flux.fromIterable(source)
@@ -113,7 +113,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void iteratorReturnsNull() {
+    void iteratorReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5, null, 7, 8, 9, 10))
@@ -125,7 +125,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void lambdaIterableWithIterator() {
+    void lambdaIterableWithIterator() {
 		final int max = 10;
 		Iterable<Integer> iterable = () -> new Iterator<Integer>() {
 			int i = 0;
@@ -152,7 +152,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void lambdaIterableWithList() {
+    void lambdaIterableWithList() {
 		List<Integer> iterable = new ArrayList<>(10);
 		iterable.add(0);
 		iterable.add(1);
@@ -176,7 +176,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void emptyMapped() {
+    void emptyMapped() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.fromIterable(Collections.<Integer>emptyList())
@@ -189,7 +189,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Iterable<String> collection = Arrays.asList("A", "B", "C");
 		Iterable<Object> tuple = Tuples.of("A", "B");
 		Iterable<String> other = () -> Arrays.asList("A", "B", "C", "D").iterator();
@@ -207,7 +207,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void scanSubscription() {
+    void scanSubscription() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		FluxIterable.IterableSubscription<String> test =
 				new FluxIterable.IterableSubscription<>(actual, Collections.singleton("test").iterator(), true);
@@ -227,7 +227,7 @@ public class FluxIterableTest {
 	}
 
 	@Test
-	public void scanConditionalSubscription() {
+    void scanConditionalSubscription() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<? super String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		Mockito.when(actual.currentContext()).thenReturn(Context.empty());

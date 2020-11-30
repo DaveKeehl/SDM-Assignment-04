@@ -23,7 +23,7 @@ import reactor.core.publisher.Flux;
 /**
  * @author Simon Baslé
  */
-public class FakeUtils1 {
+class FakeUtils1 {
 
 	public static final Function<? super Flux<String>, Flux<String>> applyFilters =
 			f -> f.filter(s -> s.startsWith("s"));

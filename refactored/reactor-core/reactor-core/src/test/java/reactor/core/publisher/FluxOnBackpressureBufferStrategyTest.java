@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.*;
 import static reactor.core.publisher.BufferOverflowStrategy.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
+class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
                                                              BiFunction<Throwable, Object, Throwable> {
 
 	private String droppedValue;
@@ -59,7 +59,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@BeforeEach
-	public void before() {
+	void before() {
 		this.droppedValue = null;
 		this.hookCapturedError = null;
 		this.hookCapturedValue = null;
@@ -67,12 +67,12 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@AfterEach
-	public void after() {
+	void after() {
 		Hooks.resetOnOperatorError();
 	}
 
 	@Test
-	public void bufferOverflowOverflowDelayedWithErrorStrategy() {
+    void bufferOverflowOverflowDelayedWithErrorStrategy() {
 		TestPublisher<String> tp1 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 		TestPublisher<String> tp2 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
@@ -103,7 +103,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void drop() {
+    void drop() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -131,7 +131,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void dropOldest() {
+    void dropOldest() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -159,7 +159,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -186,9 +186,9 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 		assertThat(hookCapturedError).as("unexpected hookCapturedError type").isInstanceOf(IllegalStateException.class);
 	}
 
-	//the 3 onBackpressureBufferMaxCallbackOverflow are similar to the tests above, except they use the public API
+	//the 3 onBackpressureBufferMaxCallbackOverflow are similar to the tests above, except they use the API
 	@Test
-	public void onBackpressureBufferMaxCallbackOverflowError() {
+    void onBackpressureBufferMaxCallbackOverflowError() {
 		AtomicInteger last = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 100)
@@ -204,7 +204,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void onBackpressureBufferMaxCallbackOverflowDropOldest() {
+    void onBackpressureBufferMaxCallbackOverflowDropOldest() {
 		AtomicInteger last = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 100)
@@ -221,7 +221,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void onBackpressureBufferMaxCallbackOverflowDropLatest() {
+    void onBackpressureBufferMaxCallbackOverflowDropLatest() {
 		AtomicInteger last = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 100)
@@ -239,7 +239,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 
 
 	@Test
-	public void onBackpressureBufferWithBadSourceEmitsAfterComplete() {
+    void onBackpressureBufferWithBadSourceEmitsAfterComplete() {
 		TestPublisher<Integer> testPublisher = TestPublisher.createNoncompliant(TestPublisher.Violation.DEFER_CANCELLATION);
 		CopyOnWriteArrayList<Integer> overflown = new CopyOnWriteArrayList<>();
 		AtomicInteger producedCounter = new AtomicInteger();
@@ -264,7 +264,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void dropCallbackError() {
+    void dropCallbackError() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -294,7 +294,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void dropOldestCallbackError() {
+    void dropOldestCallbackError() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -324,7 +324,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void errorCallbackError() {
+    void errorCallbackError() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -354,7 +354,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void noCallbackWithErrorStrategyOverflowsAfterDrain() {
+    void noCallbackWithErrorStrategyOverflowsAfterDrain() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -384,7 +384,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void noCallbackWithDropStrategyNoError() {
+    void noCallbackWithDropStrategyNoError() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -412,7 +412,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void noCallbackWithDropOldestStrategyNoError() {
+    void noCallbackWithDropOldestStrategyNoError() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
@@ -440,7 +440,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void fluxOnBackpressureBufferStrategyNoCallback() {
+    void fluxOnBackpressureBufferStrategyNoCallback() {
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		StepVerifier.create(processor.asFlux().onBackpressureBuffer(2, DROP_OLDEST), 0)
@@ -465,7 +465,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void fluxOnBackpressureBufferStrategyRequiresCallback() {
+    void fluxOnBackpressureBufferStrategyRequiresCallback() {
 		try {
 			Flux.just("foo").onBackpressureBuffer(1,
 					null,
@@ -478,7 +478,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void fluxOnBackpressureBufferStrategyRequiresStrategy() {
+    void fluxOnBackpressureBufferStrategyRequiresStrategy() {
 		try {
 			Flux.just("foo").onBackpressureBuffer(1,
 					v -> { },
@@ -491,7 +491,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxOnBackpressureBufferStrategy<Integer> test = new FluxOnBackpressureBufferStrategy<>(parent, 3, t -> {}, ERROR);
 
@@ -500,7 +500,7 @@ public class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxOnBackpressureBufferStrategy.BackpressureBufferDropOldestSubscriber<Integer> test =
         		new FluxOnBackpressureBufferStrategy.BackpressureBufferDropOldestSubscriber<>(actual,

@@ -22,19 +22,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class Tuple3Test {
+class Tuple3Test {
 
 	private Tuple3<Integer, Integer, Integer> full = new Tuple3<>(1, 2, 3);
 
 	@Test
-	public void nullT3Rejected() {
+    void nullT3Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple3<>(1, 2, null))
 				.withMessage("t3");
 	}
 
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple3<String, Integer, Integer> base = Tuples.of("Foo", 200, 300);
 
 		Tuple2<?,?> mapped = base.mapT1(String::length);
@@ -45,7 +45,7 @@ public class Tuple3Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple3<Integer, String, Integer> base = Tuples.of(100, "Foo", 300);
 
 		Tuple2<?,?> mapped = base.mapT2(String::length);
@@ -56,7 +56,7 @@ public class Tuple3Test {
 	}
 
 	@Test
-	public void mapT3() {
+    void mapT3() {
 		Tuple3<Integer, Integer, String> base = Tuples.of(100, 200, "Foo");
 
 		Tuple2<?,?> mapped = base.mapT3(String::length);
@@ -67,7 +67,7 @@ public class Tuple3Test {
 	}
 
 	@Test
-	public void mapT3Null() {
+    void mapT3Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2, 3)
 				      .mapT3(i -> null)
@@ -75,17 +75,17 @@ public class Tuple3Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -94,25 +94,25 @@ public class Tuple3Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 		                .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void t3Combinations() {
+    void t3Combinations() {
 		assertThat(new Tuple3<>(1, 2, 3))
 				.isNotEqualTo(new Tuple3<>(1, 2, 10))
 	            .isEqualTo(new Tuple3<>(1, 2, 3));
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple3<Integer, Integer, Integer> same = new Tuple3<>(1, 2, 3);
 		Tuple3<Integer, Integer, Integer> different = new Tuple3<>(1, 2, 1);
 

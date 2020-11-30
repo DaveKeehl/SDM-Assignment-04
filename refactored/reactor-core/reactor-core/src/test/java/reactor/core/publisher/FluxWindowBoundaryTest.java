@@ -34,7 +34,7 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxWindowBoundaryTest {
+class FluxWindowBoundaryTest {
 
 	static <T> AssertSubscriber<T> toList(Publisher<T> windows) {
 		AssertSubscriber<T> ts = AssertSubscriber.create();
@@ -51,7 +51,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -87,7 +87,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void normalOtherCompletes() {
+    void normalOtherCompletes() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -123,7 +123,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -165,7 +165,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void otherError() {
+    void otherError() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -215,7 +215,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFluxTime() {
+    void windowWillSubdivideAnInputFluxTime() {
 		StepVerifier.withVirtualTime(this::scenario_windowWillSubdivideAnInputFluxTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2))
@@ -226,7 +226,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void windowWillAccumulateMultipleListsOfValues() {
+    void windowWillAccumulateMultipleListsOfValues() {
 		//given: "a source and a collected flux"
 		Sinks.Many<Integer> numbers = Sinks.many().multicast().onBackpressureBuffer();
 
@@ -252,7 +252,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxWindowBoundary<Integer, Integer> test = new FluxWindowBoundary<>(parent, Flux.just(2), Queues.empty());
 
@@ -261,7 +261,7 @@ public class FluxWindowBoundaryTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWindowBoundary.WindowBoundaryMain<Integer, Integer> test = new FluxWindowBoundary.WindowBoundaryMain<>(actual,
         		Queues.unbounded(), Queues.<Integer>unbounded().get());
@@ -291,7 +291,7 @@ public class FluxWindowBoundaryTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWindowBoundary.WindowBoundaryMain<Integer, Integer> main = new FluxWindowBoundary.WindowBoundaryMain<>(actual,
         		Queues.unbounded(), Queues.<Integer>unbounded().get());

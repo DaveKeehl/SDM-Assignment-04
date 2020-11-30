@@ -27,7 +27,7 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxConcatMapNoPrefetchTest extends AbstractFluxConcatMapTest {
+class FluxConcatMapNoPrefetchTest extends AbstractFluxConcatMapTest {
 
 	@Override
 	int implicitPrefetchValue() {
@@ -35,7 +35,7 @@ public class FluxConcatMapNoPrefetchTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void noRequestBeforeOnCompleteWithZeroPrefetch() {
+    void noRequestBeforeOnCompleteWithZeroPrefetch() {
 		AtomicBoolean firstCompleted = new AtomicBoolean(false);
 		Flux
 				.<Integer, Integer>generate(() -> 0, (i, sink) -> {
@@ -76,7 +76,7 @@ public class FluxConcatMapNoPrefetchTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1, 2);
 		FluxConcatMapNoPrefetch<Integer, String> test = new FluxConcatMapNoPrefetch<>(parent, i -> Flux.just(i.toString()) , FluxConcatMap.ErrorMode.END);
 
@@ -86,7 +86,7 @@ public class FluxConcatMapNoPrefetchTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanConcatMapNoPrefetchDelayError() {
+    void scanConcatMapNoPrefetchDelayError() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxConcatMapNoPrefetch.FluxConcatMapNoPrefetchSubscriber<Integer, Integer> test =
 				new FluxConcatMapNoPrefetch.FluxConcatMapNoPrefetchSubscriber<>(actual, Flux::just, FluxConcatMap.ErrorMode.END);

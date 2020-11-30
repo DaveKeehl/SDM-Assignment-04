@@ -23,10 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class FluxThenManyTest {
+class FluxThenManyTest {
 
 	@Test
-	public void testThenManySameType() throws InterruptedException {
+    void testThenManySameType() throws InterruptedException {
 		Flux<String> test = Flux.just("A", "B")
 		                        .thenMany(Flux.just("C", "D"));
 
@@ -37,7 +37,7 @@ public class FluxThenManyTest {
 	}
 
 	@Test
-	public void testThenManyFusion() throws InterruptedException {
+    void testThenManyFusion() throws InterruptedException {
 		Flux<Integer> test = Flux.just("A", "B")
 		                        .thenMany(Flux.just("C", "D"))
 		                        .thenMany(Flux.just(1, 2));
@@ -54,7 +54,7 @@ public class FluxThenManyTest {
 	}
 
 	@Test
-	public void testThenManyDifferentType() throws InterruptedException {
+    void testThenManyDifferentType() throws InterruptedException {
 		Flux<String> test = Flux.just(1, 2).thenMany(Flux.just("C", "D"));
 
 		AssertSubscriber<String> ts = AssertSubscriber.create();

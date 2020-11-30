@@ -22,10 +22,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelFlatMapTest {
+class ParallelFlatMapTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelFlatMap<Integer, Integer> test = new ParallelFlatMap<>(source,
 				i -> Flux.range(1, i), false, 12,
@@ -37,7 +37,7 @@ public class ParallelFlatMapTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelFlatMap<Integer, Integer> test = new ParallelFlatMap<>(source,
 				i -> Flux.range(1, i), true, 12,

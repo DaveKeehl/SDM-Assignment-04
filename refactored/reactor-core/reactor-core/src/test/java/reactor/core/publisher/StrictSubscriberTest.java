@@ -28,10 +28,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StrictSubscriberTest {
+class StrictSubscriberTest {
 
 	@Test
-	public void requestDelayed() {
+    void requestDelayed() {
 		AtomicBoolean state = new AtomicBoolean();
 		AtomicReference<Throwable> e = new AtomicReference<>();
 
@@ -40,23 +40,23 @@ public class StrictSubscriberTest {
 			    boolean open;
 
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(1);
 				    open = true;
 			    }
 
 			    @Override
-			    public void onNext(Integer t) {
+				public void onNext(Integer t) {
 				    state.set(open);
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    e.set(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 
 			    }
 		    });
@@ -67,7 +67,7 @@ public class StrictSubscriberTest {
 	}
 
 	@Test
-	public void cancelDelayed() {
+    void cancelDelayed() {
 		AtomicBoolean state1 = new AtomicBoolean();
 		AtomicBoolean state2 = new AtomicBoolean();
 		AtomicReference<Throwable> e = new AtomicReference<>();
@@ -104,7 +104,7 @@ public class StrictSubscriberTest {
 	}
 
 	@Test
-	public void requestNotDelayed() {
+    void requestNotDelayed() {
 		AtomicBoolean state = new AtomicBoolean();
 		AtomicReference<Throwable> e = new AtomicReference<>();
 
@@ -113,23 +113,23 @@ public class StrictSubscriberTest {
 			    boolean open;
 
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(1);
 				    open = true;
 			    }
 
 			    @Override
-			    public void onNext(Integer t) {
+				public void onNext(Integer t) {
 				    state.set(open);
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    e.set(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 
 			    }
 		    });
@@ -140,7 +140,7 @@ public class StrictSubscriberTest {
 	}
 
 	@Test
-	public void cancelNotDelayed() {
+    void cancelNotDelayed() {
 		AtomicBoolean state1 = new AtomicBoolean();
 		AtomicBoolean state2 = new AtomicBoolean();
 		AtomicReference<Throwable> e = new AtomicReference<>();
@@ -149,22 +149,22 @@ public class StrictSubscriberTest {
 		    .doOnCancel(() -> state2.set(state1.get()))
 		    .subscribe(new CoreSubscriber<Integer>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.cancel();
 				    state1.set(true);
 			    }
 
 			    @Override
-			    public void onNext(Integer t) {
+				public void onNext(Integer t) {
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    e.set(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 
 			    }
 		    });
@@ -175,7 +175,7 @@ public class StrictSubscriberTest {
 	}
 
 	@Test
-	public void scanPostOnSubscribeSubscriber() {
+    void scanPostOnSubscribeSubscriber() {
 		CoreSubscriber<String> s = new LambdaSubscriber<>(null, null, null, null);
 		StrictSubscriber<String> test = new StrictSubscriber<>(s);
 

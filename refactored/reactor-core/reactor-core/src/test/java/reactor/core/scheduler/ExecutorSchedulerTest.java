@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Stephane Maldini
  */
-public class ExecutorSchedulerTest extends AbstractSchedulerTest {
+class ExecutorSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected boolean shouldCheckDisposeTask() {
@@ -65,7 +65,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void directAndWorkerTimeSchedulingRejected() {
+    void directAndWorkerTimeSchedulingRejected() {
 		Scheduler scheduler = scheduler();
 		Scheduler.Worker worker = scheduler.createWorker();
 		try {
@@ -89,7 +89,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void failingExecutorRejects() {
+    void failingExecutorRejects() {
 		final IllegalStateException boom = new IllegalStateException("boom");
 		ExecutorScheduler scheduler = new ExecutorScheduler(
 				task -> { throw boom;},
@@ -106,7 +106,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void failingPlainExecutorIsNotTerminated() {
+    void failingPlainExecutorIsNotTerminated() {
 		AtomicInteger count = new AtomicInteger();
 		final IllegalStateException boom = new IllegalStateException("boom");
 		ExecutorScheduler scheduler = new ExecutorScheduler(
@@ -133,7 +133,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void failingExecutorServiceIsNotTerminated() {
+    void failingExecutorServiceIsNotTerminated() {
 		AtomicInteger count = new AtomicInteger();
 		final IllegalStateException boom = new IllegalStateException("boom");
 		ExecutorService service = new AbstractExecutorService() {
@@ -192,7 +192,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void failingAndShutDownExecutorServiceIsTerminated() {
+    void failingAndShutDownExecutorServiceIsTerminated() {
 		final IllegalStateException boom = new IllegalStateException("boom");
 		ExecutorService service = new AbstractExecutorService() {
 
@@ -283,7 +283,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Executor executor = new PlainExecutor();
 
 		Scheduler noTrampoline = Schedulers.fromExecutor(executor, false);
@@ -318,7 +318,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanParent() {
+    void scanParent() {
 		Executor plainExecutor = new PlainExecutor();
 		Executor scannableExecutor = new ScannableExecutor();
 
@@ -344,7 +344,7 @@ public class ExecutorSchedulerTest extends AbstractSchedulerTest {
 
 
 	@Test
-	public void scanBuffered() throws InterruptedException {
+    void scanBuffered() throws InterruptedException {
 		ExecutorScheduler.ExecutorSchedulerWorker worker =
 				new ExecutorScheduler.ExecutorSchedulerWorker(task -> new Thread(task, "scanBuffered_NotTrampolining").start());
 

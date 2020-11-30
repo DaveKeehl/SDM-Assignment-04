@@ -31,7 +31,7 @@ import reactor.test.ValueFormatters.ToStringConverter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ValueFormattersTest {
+class ValueFormattersTest {
 
 	/**
 	 * Enum with obscure toString and more meaningful alternative {@link String} representation.
@@ -46,13 +46,13 @@ public class ValueFormattersTest {
 			this.alternative = alternative;
 		}
 
-		public String getAlternative() {
+		String getAlternative() {
 			return alternative;
 		}
 	}
 
 	@Test
-	public void classBasedNull() {
+	void classBasedNull() {
 		Function<Object, String> formatter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 
 		assertThat(formatter.apply(null))
@@ -61,7 +61,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classBasedMatching() {
+	void classBasedMatching() {
 		Function<Object, String> formatter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 
 		assertThat(formatter.apply(Obscure.OB1))
@@ -69,7 +69,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classBasedNotMatching() {
+	void classBasedNotMatching() {
 		Function<Object, String> formatter = ValueFormatters.forClass(Integer.class, i -> "int(" + i + ")");
 
 		assertThat(formatter.apply(Obscure.OB1))
@@ -77,7 +77,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classPredicateBasedNull() {
+	void classPredicateBasedNull() {
 		Function<Object, String> formatter = ValueFormatters.forClassMatching(Obscure.class, t -> true, Obscure::getAlternative);
 
 		assertThat(formatter.apply(null))
@@ -86,7 +86,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classPredicateBasedMatching() {
+	void classPredicateBasedMatching() {
 		Function<Object, String> formatter = ValueFormatters.forClassMatching(Obscure.class, t -> true, Obscure::getAlternative);
 
 		assertThat(formatter.apply(Obscure.OB1))
@@ -94,7 +94,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classPredicateBasedNotMatchingClass() {
+	void classPredicateBasedNotMatchingClass() {
 		Function<Object, String> formatter = ValueFormatters.forClassMatching(Integer.class, t -> true, i -> "int(" + i + ")");
 
 		assertThat(formatter.apply(Obscure.OB1))
@@ -102,7 +102,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void classPredicateBasedNotMatchingPredicate() {
+	void classPredicateBasedNotMatchingPredicate() {
 		Function<Object, String> formatter = ValueFormatters.forClassMatching(Obscure.class,
 				t -> t.ordinal() > Obscure.OB1.ordinal(),
 				Obscure::getAlternative);
@@ -117,7 +117,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void predicateBasedNull() {
+	void predicateBasedNull() {
 		Function<Object, String> formatter = ValueFormatters.filtering(o -> o instanceof Obscure, o -> ((Obscure) o).getAlternative());
 
 		assertThat(formatter.apply(null))
@@ -126,7 +126,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void predicateCanConvertNull() {
+	void predicateCanConvertNull() {
 		Function<Object, String> formatter = ValueFormatters.filtering(Objects::isNull, o -> "THE BILLION DOLLAR MISTAKE");
 
 		assertThat(formatter.apply(null))
@@ -135,7 +135,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void predicateBasedMatching() {
+	void predicateBasedMatching() {
 		Function<Object, String> formatter = ValueFormatters.filtering(o -> o instanceof Obscure, o -> ((Obscure) o).getAlternative());
 
 		assertThat(formatter.apply(Obscure.OB2))
@@ -143,7 +143,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void predicateBasedNotMatching() {
+	void predicateBasedNotMatching() {
 		Function<Object, String> formatter = ValueFormatters.filtering(o -> o instanceof Integer, o -> "int(" + o + ")");
 
 		assertThat(formatter.apply(Obscure.OB2))
@@ -151,7 +151,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void predicateBasedTestPredicate() {
+	void predicateBasedTestPredicate() {
 		Predicate<Object> formatter = ValueFormatters.filtering(o -> o instanceof Integer, o -> "int(" + o + ")");
 
 		assertThat(formatter)
@@ -162,7 +162,7 @@ public class ValueFormattersTest {
 
 	// == Extractor tests
 	@Test
-	public void signalDoesntConsiderNonSignal() {
+	void signalDoesntConsiderNonSignal() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Object target = Obscure.OB1;
@@ -171,7 +171,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void signalDoesntConsiderNonMatchingContent() {
+	void signalDoesntConsiderNonMatchingContent() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(String.class, String::toUpperCase);
 		Signal<Object> target = Signal.next(Obscure.OB1);
@@ -180,7 +180,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void signalDoesntConvertComplete() {
+	void signalDoesntConvertComplete() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Signal<Number> target = Signal.complete();
@@ -189,7 +189,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void signalDoesntConvertError() {
+	void signalDoesntConvertError() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Signal<Number> target = Signal.error(new IllegalStateException("foo"));
@@ -198,7 +198,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void signalDoesntConvertErrorEvenIfThrowableClass() {
+	void signalDoesntConvertErrorEvenIfThrowableClass() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Throwable.class, t -> t.getMessage().toUpperCase());
 		Signal<Number> target = Signal.error(new IllegalStateException("foo"));
@@ -207,7 +207,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void signalConvertsOnNextContentMatching() {
+	void signalConvertsOnNextContentMatching() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Signal<Obscure> target = Signal.next(Obscure.OB1);
@@ -218,7 +218,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void iterableDoesntConsiderNonIterable() {
+	void iterableDoesntConsiderNonIterable() {
 		Extractor<Iterable> extractor = ValueFormatters.iterableExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Object target = Obscure.OB1;
@@ -227,7 +227,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void iterableDoesntConsiderNonMatchingContent() {
+	void iterableDoesntConsiderNonMatchingContent() {
 		Extractor<Iterable> extractor = ValueFormatters.iterableExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(String.class, s -> "" + s.length());
 		List<Object> target = Collections.singletonList(Obscure.OB1);
@@ -236,7 +236,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void iterableConvertsContentMatching() {
+	void iterableConvertsContentMatching() {
 		Extractor<Iterable> extractor = ValueFormatters.iterableExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		List<Object> target = Arrays.asList(1L, 2d, "foo", Obscure.OB2);
@@ -248,7 +248,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void arrayDoesntConsiderNonArray() {
+	void arrayDoesntConsiderNonArray() {
 		Extractor<Object[]> extractor = ValueFormatters.arrayExtractor(Object[].class);
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Object target = Obscure.OB1;
@@ -258,7 +258,7 @@ public class ValueFormattersTest {
 
 	@SuppressWarnings("ImplicitArrayToString")
 	@Test
-	public void arrayDoesntConsiderArrayOfDifferentType() {
+	void arrayDoesntConsiderArrayOfDifferentType() {
 		Extractor<Number[]> extractor = ValueFormatters.arrayExtractor(Number[].class);
 		ToStringConverter converter = ValueFormatters.forClass(Number.class, o -> o.getClass().getSimpleName());
 		String[] target = new String[] { "foo", "bar" };
@@ -268,7 +268,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void arrayDoesntConsiderNonMatchingContent() {
+	void arrayDoesntConsiderNonMatchingContent() {
 		Extractor<Object[]> extractor = ValueFormatters.arrayExtractor(Object[].class);
 		ToStringConverter converter = ValueFormatters.forClass(String.class, s -> "" + s.length());
 		Object[] target = new Object[] { Obscure.OB1 };
@@ -279,7 +279,7 @@ public class ValueFormattersTest {
 
 	@SuppressWarnings("ImplicitArrayToString")
 	@Test
-	public void arrayConvertsContentMatching() {
+	void arrayConvertsContentMatching() {
 		Extractor<Object[]> extractor = ValueFormatters.arrayExtractor(Object[].class);
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, Obscure::getAlternative);
 		Object[] target = new Object[] { 1L, 2d, "foo", Obscure.OB2 };
@@ -292,7 +292,7 @@ public class ValueFormattersTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void arrayOnNonArrayTypeFails() {
+	void arrayOnNonArrayTypeFails() {
 		Class fakeArrayClass = String.class;
 		assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> ValueFormatters.arrayExtractor(fakeArrayClass))
@@ -302,7 +302,7 @@ public class ValueFormattersTest {
 	//== convertVarArgs tests
 
 	@Test
-	public void convertVarargsSignalNotExtractedIfConverterMatches() {
+	void convertVarargsSignalNotExtractedIfConverterMatches() {
 		Extractor<Signal> extractor = ValueFormatters.signalExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Object.class, o -> o.getClass().getSimpleName() + "=>" + o);
 		Signal<Obscure> target = Signal.next(Obscure.OB1);
@@ -320,7 +320,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void convertVarargsIterableNotExtractedIfConverterMatches() {
+	void convertVarargsIterableNotExtractedIfConverterMatches() {
 		Extractor<Iterable> extractor = ValueFormatters.iterableExtractor();
 		ToStringConverter converter = ValueFormatters.forClass(Object.class, o -> "<" + o + ">");
 		List<Object> target = Arrays.asList(1L, 2d, "foo", Obscure.OB2);
@@ -336,7 +336,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void convertVarargsArrayNotExtractedIfConverterMatchesAndPassedAsSingleArg() {
+	void convertVarargsArrayNotExtractedIfConverterMatchesAndPassedAsSingleArg() {
 		Extractor<Object[]> extractor = ValueFormatters.arrayExtractor(Object[].class);
 		ToStringConverter converter = ValueFormatters.forClass(Object.class, o -> "<" + o + ">");
 		Object target = new Object[] { 1L, 2d, "foo", Obscure.OB2 };
@@ -354,7 +354,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void convertVarargsNullArgument() {
+	void convertVarargsNullArgument() {
 		ToStringConverter converter = ValueFormatters.forClass(Object.class, o -> "<" + o + ">");
 
 		assertThat(ValueFormatters.convertVarArgs(converter, null, 1L, null))
@@ -362,13 +362,13 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void convertVarargsNullConverter() {
+	void convertVarargsNullConverter() {
 		assertThat(ValueFormatters.convertVarArgs(null, null, 1L, Obscure.OB1))
 				.containsExactly("1", "OB1");
 	}
 
 	@Test
-	public void convertVarargsNonMatchingConverterNullExtractors() {
+	void convertVarargsNonMatchingConverterNullExtractors() {
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, o -> "<" + o + ">");
 
 		assertThat(ValueFormatters.convertVarArgs(converter, null, 1L, Obscure.OB1, Collections.singleton(Obscure.OB2)))
@@ -376,7 +376,7 @@ public class ValueFormattersTest {
 	}
 
 	@Test
-	public void convertVarargsNonMatchingConverterNorExtractors() {
+	void convertVarargsNonMatchingConverterNorExtractors() {
 		ToStringConverter converter = ValueFormatters.forClass(Obscure.class, o -> "<" + o + ">");
 		Extractor<Iterable> extractor = ValueFormatters.iterableExtractor();
 

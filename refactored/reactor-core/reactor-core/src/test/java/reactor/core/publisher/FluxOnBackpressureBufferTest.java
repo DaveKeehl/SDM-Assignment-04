@@ -40,11 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
-public class FluxOnBackpressureBufferTest
+class FluxOnBackpressureBufferTest
 		extends FluxOperatorTest<String, String> {
 
 	@Test
-	public void bufferOverflowErrorDelayed() {
+    void bufferOverflowErrorDelayed() {
 		TestPublisher<String> tp1 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 		TestPublisher<String> tp2 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
@@ -75,7 +75,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void failNegativeHistory() {
+    void failNegativeHistory() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().onBackpressureBuffer(-1);
 		});
@@ -98,7 +98,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void onBackpressureBuffer() {
+    void onBackpressureBuffer() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .onBackpressureBuffer(), 0)
 		            .thenRequest(5)
@@ -113,7 +113,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void onBackpressureBufferMax() {
+    void onBackpressureBufferMax() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
 		                        .onBackpressureBuffer(8), 0)
@@ -124,7 +124,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void onBackpressureBufferMaxCallback() {
+    void onBackpressureBufferMaxCallback() {
 		AtomicInteger last = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 100)
@@ -139,7 +139,7 @@ public class FluxOnBackpressureBufferTest
 
 	//see https://github.com/reactor/reactor-core/issues/1666
 	@Test
-	public void onBackpressureBufferMaxCallbackUnder8() {
+    void onBackpressureBufferMaxCallbackUnder8() {
 		CopyOnWriteArrayList<Integer> overflown = new CopyOnWriteArrayList<>();
 		AtomicInteger producedCounter = new AtomicInteger();
 
@@ -163,7 +163,7 @@ public class FluxOnBackpressureBufferTest
 
 	//see https://github.com/reactor/reactor-core/issues/1666
 	@Test
-	public void onBackpressureBufferMaxCallbackSourceEmitsAfterComplete() {
+    void onBackpressureBufferMaxCallbackSourceEmitsAfterComplete() {
 		TestPublisher<Integer> testPublisher = TestPublisher.createNoncompliant(TestPublisher.Violation.DEFER_CANCELLATION);
 		CopyOnWriteArrayList<Integer> overflown = new CopyOnWriteArrayList<>();
 		AtomicInteger producedCounter = new AtomicInteger();
@@ -189,7 +189,7 @@ public class FluxOnBackpressureBufferTest
 
 	//see https://github.com/reactor/reactor-core/issues/1666
 	@Test
-	public void stepByStepRequesting() {
+    void stepByStepRequesting() {
 		List<Long> discardedItems = Collections.synchronizedList(new ArrayList<>());
 		AtomicInteger sourceProduced = new AtomicInteger();
 		AtomicInteger sourceCancelledAt = new AtomicInteger(-1);
@@ -229,7 +229,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void gh1666_bufferThree() {
+    void gh1666_bufferThree() {
 		AtomicInteger overflow = new AtomicInteger(-1);
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
@@ -246,7 +246,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void gh1666_bufferNine() {
+    void gh1666_bufferNine() {
 		AtomicInteger overflow = new AtomicInteger();
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
@@ -263,7 +263,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxOnBackpressureBuffer<Integer> test = new FluxOnBackpressureBuffer<>(parent, 123, false, v -> {});
 
@@ -273,7 +273,7 @@ public class FluxOnBackpressureBufferTest
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxOnBackpressureBuffer.BackpressureBufferSubscriber<Integer> test =
         		new FluxOnBackpressureBuffer.BackpressureBufferSubscriber<>(actual,
@@ -302,7 +302,7 @@ public class FluxOnBackpressureBufferTest
     }
 
     @Test
-	public void scanCapacityUnbounded() {
+    void scanCapacityUnbounded() {
 	    CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 	    FluxOnBackpressureBuffer.BackpressureBufferSubscriber<Integer> test =
 			    new FluxOnBackpressureBuffer.BackpressureBufferSubscriber<>(actual,
@@ -312,7 +312,7 @@ public class FluxOnBackpressureBufferTest
     }
 
     @Test
-	public void scanCapacityBoundedQueueWithExactCapacity() {
+    void scanCapacityBoundedQueueWithExactCapacity() {
 		int exactCapacity = 16;
 
 	    CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
@@ -326,7 +326,7 @@ public class FluxOnBackpressureBufferTest
     }
 
     @Test
-	public void scanCapacityBoundedQueueWithExtraCapacity() {
+    void scanCapacityBoundedQueueWithExtraCapacity() {
 		int desiredCapacity = 12;
 
 	    CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);

@@ -8,10 +8,10 @@ import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxLogTest {
+class FluxLogTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		SignalLogger<Integer> log = new SignalLogger<>(parent, "category", Level.INFO, true);
 		FluxLog<Integer> test = new FluxLog<>(parent, log);
@@ -21,7 +21,7 @@ public class FluxLogTest {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		SignalLogger<Integer> log = new SignalLogger<>(parent, "category", Level.INFO, true);
 		FluxLogFuseable<Integer> test = new FluxLogFuseable<>(parent, log);

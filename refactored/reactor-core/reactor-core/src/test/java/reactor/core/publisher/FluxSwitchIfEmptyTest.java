@@ -24,17 +24,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxSwitchIfEmptyTest {
+class FluxSwitchIfEmptyTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxSwitchIfEmpty<>(null, Flux.never());
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.switchIfEmpty(null);
@@ -42,7 +42,7 @@ public class FluxSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmpty() {
+    void nonEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1, 2, 3, 4, 5)
@@ -55,7 +55,7 @@ public class FluxSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyBackpressured() {
+    void nonEmptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.just(1, 2, 3, 4, 5)
@@ -80,7 +80,7 @@ public class FluxSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty()
@@ -93,7 +93,7 @@ public class FluxSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty()
@@ -112,7 +112,7 @@ public class FluxSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxSwitchIfEmpty<Integer> test = new FluxSwitchIfEmpty<>(parent, Flux.just(2));
 
@@ -120,7 +120,7 @@ public class FluxSwitchIfEmptyTest {
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
-	public void scanSubscriber(){
+	void scanSubscriber(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxSwitchIfEmpty.SwitchIfEmptySubscriber<Integer> test =
 				new FluxSwitchIfEmpty.SwitchIfEmptySubscriber<>(actual, Flux.just(2));

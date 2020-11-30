@@ -29,10 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class FluxRepeatPredicateTest {
+class FluxRepeatPredicateTest {
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.repeat(null);
@@ -40,7 +40,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void nMinusOne() {
+    void nMinusOne() {
 		Flux<Integer> source = Flux.just(1, 2, 3);
 
 		assertThatIllegalArgumentException()
@@ -49,7 +49,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void nZero() {
+    void nZero() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 				.repeat(0, () -> true))
 		            .expectNext(1, 2, 3)
@@ -57,7 +57,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void nOne() {
+    void nOne() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 				.repeat(1, () -> true))
 		            .expectNext(1, 2, 3)
@@ -66,7 +66,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void nTwo() {
+    void nTwo() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 				.repeat(2, () -> true))
 		            .expectNext(1, 2, 3)
@@ -76,7 +76,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		int[] times = {1};
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -91,7 +91,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		int[] times = {1};
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
@@ -124,7 +124,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void dontRepeat() {
+    void dontRepeat() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -137,7 +137,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -153,7 +153,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void alwaysTrueWithNSimilarToSimpleN() {
+    void alwaysTrueWithNSimilarToSimpleN() {
 		List<Integer> expected = Flux.just(1, 2, 3).repeat(3).collectList().block();
 		List<Integer> result = Flux.just(1, 2, 3).repeat(3, () -> true).collectList().block();
 
@@ -161,7 +161,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void alwaysFalseWithNSimilarToSimpleZero() {
+    void alwaysFalseWithNSimilarToSimpleZero() {
 		List<Integer> expected = Flux.just(1, 2, 3).repeat(0).collectList().block();
 		List<Integer> result = Flux.just(1, 2, 3).repeat(3, () -> false).collectList().block();
 
@@ -169,7 +169,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxRepeatPredicate<Integer> test = new FluxRepeatPredicate<>(parent, () -> true);
 
@@ -178,7 +178,7 @@ public class FluxRepeatPredicateTest {
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		Flux<Integer> source = Flux.just(1);
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxRepeatPredicate.RepeatPredicateSubscriber<Integer> test =

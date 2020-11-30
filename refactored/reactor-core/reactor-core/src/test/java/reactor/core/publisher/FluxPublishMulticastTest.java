@@ -44,7 +44,7 @@ import static reactor.core.publisher.Flux.range;
 import static reactor.core.publisher.Flux.zip;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
+class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -128,7 +128,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.publish(f -> f, -1);
@@ -136,7 +136,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void subsequentSum() {
+    void subsequentSum() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -149,7 +149,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void subsequentSumHidden() {
+    void subsequentSumHidden() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -164,7 +164,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void subsequentSumAsync() {
+    void subsequentSumAsync() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -188,7 +188,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cancelComposes() {
+    void cancelComposes() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.many().multicast().onBackpressureBuffer();
@@ -205,7 +205,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cancelComposes2() {
+    void cancelComposes2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp = Sinks.many().multicast().onBackpressureBuffer();
@@ -218,7 +218,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		AssertSubscriber<Tuple2<Integer, Integer>> ts = AssertSubscriber.create();
 
 		range(1, 9).transform(o -> zip(o, o.skip(1)))
@@ -236,7 +236,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void innerCanFuse() {
+    void innerCanFuse() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(Fuseable.ANY);
 
@@ -252,7 +252,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void suppressedSubscriber() {
+    void suppressedSubscriber() {
 		CoreSubscriber<Integer> s = new CoreSubscriber<Integer>() {
 			@Override
 			public void onSubscribe(
@@ -290,17 +290,17 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncCancelBeforeComplete() {
+    void syncCancelBeforeComplete() {
 	    assertThat(Flux.just(Flux.just(1).publish(v -> v)).flatMap(v -> v).blockLast()).isEqualTo(1);
 	}
 
     @Test
-    public void normalCancelBeforeComplete() {
+    void normalCancelBeforeComplete() {
         assertThat(Flux.just(Flux.just(1).hide().publish(v -> v)).flatMap(v -> v).blockLast()).isEqualTo(1);
     }
 
     @Test
-    public void scanOperator(){
+    void scanOperator(){
     	Flux<Integer> parent = Flux.just(1);
 		FluxPublishMulticast<Integer, Integer> test = new FluxPublishMulticast<>(parent, v -> v, 123, Queues.one());
 
@@ -309,7 +309,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanMulticaster() {
+    void scanMulticaster() {
         FluxPublishMulticast.FluxPublishMulticaster<Integer> test =
         		new FluxPublishMulticast.FluxPublishMulticaster<>(123, Queues.<Integer>unbounded(), Context.empty());
         Subscription parent = Operators.emptySubscription();
@@ -335,7 +335,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanMulticastInner() {
+    void scanMulticastInner() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxPublishMulticast.FluxPublishMulticaster<Integer> parent =
         		new FluxPublishMulticast.FluxPublishMulticaster<>(123, Queues.<Integer>unbounded(), Context.empty());
@@ -354,7 +354,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanCancelMulticaster() {
+    void scanCancelMulticaster() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxPublishMulticast.FluxPublishMulticaster<Integer> parent =
         		new FluxPublishMulticast.FluxPublishMulticaster<>(123, Queues.<Integer>unbounded(), Context.empty());
@@ -369,7 +369,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanCancelFuseableMulticaster() {
+    void scanCancelFuseableMulticaster() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxPublishMulticast.FluxPublishMulticaster<Integer> parent =
         		new FluxPublishMulticast.FluxPublishMulticaster<>(123, Queues.<Integer>unbounded(), Context.empty());
@@ -384,7 +384,7 @@ public class FluxPublishMulticastTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-	public void gh870() throws Exception {
+    void gh870() throws Exception {
 	    CountDownLatch cancelled = new CountDownLatch(1);
 	    StepVerifier.create(Flux.<Integer>create(sink -> {
 		    int i = 0;

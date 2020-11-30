@@ -29,10 +29,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxConcatIterableTest {
+class FluxConcatIterableTest {
 
 	@Test
-	public void arrayNull() {
+    void arrayNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.concat((Iterable<? extends Publisher<?>>) null);
 		});
@@ -41,7 +41,7 @@ public class FluxConcatIterableTest {
 	final Publisher<Integer> source = Flux.range(1, 3);
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat(Arrays.asList(source, source, source)).subscribe(ts);
@@ -52,7 +52,7 @@ public class FluxConcatIterableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.concat(Arrays.asList(source, source, source)).subscribe(ts);
@@ -81,7 +81,7 @@ public class FluxConcatIterableTest {
 	}
 
 	@Test
-	public void oneSourceIsNull() {
+    void oneSourceIsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat(Arrays.asList(source, null, source)).subscribe(ts);
@@ -92,7 +92,7 @@ public class FluxConcatIterableTest {
 	}
 
 	@Test
-	public void singleSourceIsNull() {
+    void singleSourceIsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat(Arrays.asList((Publisher<Integer>) null)).subscribe(ts);
@@ -103,14 +103,14 @@ public class FluxConcatIterableTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxConcatIterable<Integer> test = new FluxConcatIterable<>(Arrays.asList(source, source, source));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		List<Publisher<Integer>> publishers = Arrays.asList(source, source, source);
 		FluxConcatIterable.ConcatIterableSubscriber<Integer> test = new FluxConcatIterable.ConcatIterableSubscriber<>(actual, publishers.iterator());

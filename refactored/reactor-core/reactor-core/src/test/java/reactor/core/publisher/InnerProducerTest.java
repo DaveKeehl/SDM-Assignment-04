@@ -22,10 +22,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class InnerProducerTest {
+class InnerProducerTest {
 
 	@Test
-	public void scanDefaultMethod() {
+    void scanDefaultMethod() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, null, null, null);
 		InnerProducer<String> test = new InnerProducer<String>() {
 			@Override

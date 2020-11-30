@@ -59,7 +59,7 @@ public class FluxRetryWhenTest {
 			Flux.error(new RuntimeException("forced failure 0")));
 
 	@Test
-	public void dontRepeat() {
+    void dontRepeat() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		rangeError.retryWhen(Retry.indefinitely().filter(e -> false))
@@ -72,7 +72,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		rangeError
@@ -91,7 +91,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryNormal() {
+    void twoRetryNormal() {
 		AtomicInteger i = new AtomicInteger();
 
 		Mono<Long> source = Flux
@@ -112,7 +112,7 @@ public class FluxRetryWhenTest {
 
 
 	@Test
-	public void twoRetryNormalSupplier() {
+    void twoRetryNormalSupplier() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -136,7 +136,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryErrorSupplier() {
+    void twoRetryErrorSupplier() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -158,7 +158,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryNormalSupplier3() {
+    void twoRetryNormalSupplier3() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -180,7 +180,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryNormalSupplier2() {
+    void twoRetryNormalSupplier2() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -204,7 +204,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryErrorSupplier2() {
+    void twoRetryErrorSupplier2() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -226,7 +226,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxRetryWhen<>(null, Retry.from(v -> v));
 		});
@@ -234,14 +234,14 @@ public class FluxRetryWhenTest {
 
 	@SuppressWarnings("ConstantConditions")
 	@Test
-	public void whenRetrySignalFactoryNull() {
+    void whenRetrySignalFactoryNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().retryWhen((Retry) null);
 		});
 	}
 
 	@Test
-	public void cancelsOther() {
+    void cancelsOther() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		Flux<Integer> when = Flux.range(1, 10)
 		                         .doOnCancel(() -> cancelled.set(true));
@@ -254,7 +254,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void cancelTwiceCancelsOtherOnce() {
+    void cancelTwiceCancelsOtherOnce() {
 		AtomicInteger cancelled = new AtomicInteger();
 		Flux<Integer> when = Flux.range(1, 10)
 		                         .doOnCancel(cancelled::incrementAndGet);
@@ -273,7 +273,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void directOtherErrorPreventsSubscribe() {
+    void directOtherErrorPreventsSubscribe() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = justError
@@ -291,7 +291,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void lateOtherErrorCancelsSource() {
+    void lateOtherErrorCancelsSource() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		AtomicInteger count = new AtomicInteger();
@@ -314,7 +314,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void directOtherEmptyPreventsSubscribeAndCompletes() {
+    void directOtherEmptyPreventsSubscribeAndCompletes() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = justError
@@ -332,7 +332,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void lateOtherEmptyCancelsSourceAndCompletes() {
+    void lateOtherEmptyCancelsSourceAndCompletes() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = justError
@@ -352,7 +352,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void coldRepeater() {
+    void coldRepeater() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		justError.retryWhen(Retry.from(other -> Flux.range(1, 10)))
@@ -364,7 +364,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void coldRepeaterBackpressured() {
+    void coldRepeaterBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		rangeError.retryWhen(Retry.from(other -> Flux.range(1, 5)))
@@ -400,7 +400,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void coldEmpty() {
+    void coldEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		rangeError.retryWhen(Retry.from(other -> Flux.empty()))
@@ -412,7 +412,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void coldError() {
+    void coldError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		rangeError.retryWhen(Retry.from(other -> Flux.error(new RuntimeException("forced failure"))))
@@ -425,7 +425,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void whenFactoryThrows() {
+    void whenFactoryThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		rangeError.retryWhen(Retry.from(other -> {
@@ -440,7 +440,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void whenFactoryReturnsNull() {
+    void whenFactoryReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		rangeError.retryWhen(Retry.from(other -> null))
@@ -452,7 +452,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryErrorsInResponse() {
+    void retryErrorsInResponse() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		rangeError.retryWhen(Retry.from(v -> v.map(a -> {
@@ -468,7 +468,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryAlways() {
+    void retryAlways() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		rangeError.retryWhen(Retry.from(v -> v))
@@ -514,7 +514,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void linearRetry() {
+    void linearRetry() {
 		StepVerifier.withVirtualTime(this::linearRetryScenario)
 		            .thenAwait(Duration.ofSeconds(6))
 		            .expectNext("hey")
@@ -523,7 +523,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fixedDelaysRetry() {
+    void fixedDelaysRetry() {
 		StepVerifier.withVirtualTime(this::fixedDelaysRetryScenario)
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofSeconds(3 * 3))
@@ -533,7 +533,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxRetryWhen<Integer> test = new FluxRetryWhen<>(parent, Retry.from(other -> Flux.just(2)));
 
@@ -543,7 +543,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxRetryWhen.RetryWhenMainSubscriber<Integer> test =
         		new FluxRetryWhen.RetryWhenMainSubscriber<>(actual, null, Flux.empty(), Context.empty());
@@ -562,7 +562,7 @@ public class FluxRetryWhenTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxRetryWhen.RetryWhenMainSubscriber<Integer> main =
         		new FluxRetryWhen.RetryWhenMainSubscriber<>(actual, null, Flux.empty(), Context.empty());
@@ -576,7 +576,7 @@ public class FluxRetryWhenTest {
 
 
 	@Test
-	public void inners() {
+    void inners() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		Sinks.Many<Retry.RetrySignal> signaller = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Integer> when = Flux.empty();
@@ -589,7 +589,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryContextExposedOnRetrySignal() {
+    void retryContextExposedOnRetrySignal() {
 		AtomicInteger i = new AtomicInteger();
 
 		AtomicBoolean needsRollback = new AtomicBoolean();
@@ -619,7 +619,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryWhenContextTrigger_MergesOriginalContext() {
+    void retryWhenContextTrigger_MergesOriginalContext() {
 		final int RETRY_COUNT = 3;
 		List<Integer> retriesLeft = Collections.synchronizedList(new ArrayList<>(4));
 		List<ContextView> contextPerRetry = Collections.synchronizedList(new ArrayList<>(4));
@@ -656,7 +656,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoff() {
+    void fluxRetryRandomBackoff() {
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
 
@@ -693,7 +693,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoffDefaultJitter() {
+    void fluxRetryRandomBackoffDefaultJitter() {
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
 
@@ -729,7 +729,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoffDefaultMaxDuration() {
+    void fluxRetryRandomBackoffDefaultMaxDuration() {
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
 
@@ -762,7 +762,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoff_maxBackoffShaves() {
+    void fluxRetryRandomBackoff_maxBackoffShaves() {
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
 
@@ -809,7 +809,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoff_minBackoffFloor() {
+    void fluxRetryRandomBackoff_minBackoffFloor() {
 		for (int i = 0; i < 50; i++) {
 			Exception exception = new IOException("boom retry loop #" + i);
 			List<Long> elapsedList = new ArrayList<>();
@@ -845,7 +845,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoff_noRandomness() {
+    void fluxRetryRandomBackoff_noRandomness() {
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
 
@@ -872,7 +872,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryRandomBackoffNoArithmeticException() {
+    void fluxRetryRandomBackoffNoArithmeticException() {
 		final Duration EXPLICIT_MAX = Duration.ofSeconds(100_000);
 		final Duration INIT = Duration.ofSeconds(10);
 
@@ -896,7 +896,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryBackoffWithSpecificScheduler() {
+    void fluxRetryBackoffWithSpecificScheduler() {
 		VirtualTimeScheduler backoffScheduler = VirtualTimeScheduler.create();
 
 		Exception exception = new IOException("boom retry");
@@ -921,7 +921,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void fluxRetryBackoffRetriesOnGivenScheduler() {
+    void fluxRetryBackoffRetriesOnGivenScheduler() {
 		//the fluxRetryBackoffWithSpecificScheduler above is not suitable to verify the retry scheduler, as VTS is akin to immediate()
 		//and doesn't really change the Thread
 		Scheduler backoffScheduler = Schedulers.newSingle("backoffScheduler");
@@ -954,7 +954,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void backoffFunctionNotTransient() {
+    void backoffFunctionNotTransient() {
 		Flux<Integer> source = transientErrorSource();
 
 		Retry retryFunction =
@@ -971,7 +971,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void backoffFunctionTransient() {
+    void backoffFunctionTransient() {
 		Flux<Integer> source = transientErrorSource();
 
 		Retry retryFunction =
@@ -988,7 +988,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void simpleFunctionTransient() {
+    void simpleFunctionTransient() {
 		Flux<Integer> source = transientErrorSource();
 
 		Retry retryFunction =
@@ -1003,7 +1003,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void gh1978() {
+    void gh1978() {
 		final int elementPerCycle = 3;
 		final int stopAfterCycles = 10;
 		Flux<Long> source =
@@ -1072,7 +1072,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryWhenThrowableCompanionIsComparableToRetryWhenRetryFromFunction() {
+    void retryWhenThrowableCompanionIsComparableToRetryWhenRetryFromFunction() {
 		AtomicInteger sourceHelper = new AtomicInteger();
 		Flux<Integer> source = Flux.create(sink -> {
 			if (sourceHelper.getAndIncrement() == 3) {
@@ -1100,7 +1100,7 @@ public class FluxRetryWhenTest {
 	}
 
 	@Test
-	public void retryWhenWithThrowableFunction() {
+    void retryWhenWithThrowableFunction() {
 		AtomicInteger sourceHelper = new AtomicInteger();
 		Flux<Integer> source = Flux.create(sink -> {
 			if (sourceHelper.getAndIncrement() == 3) {

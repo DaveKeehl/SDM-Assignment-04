@@ -27,31 +27,31 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoAnyTest {
+class MonoAnyTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoAny<>(null, v -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoAny<>(null, null);
 		});
 	}
 
 	@Test
-	public void elementNull() {
+    void elementNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().hasElement(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).any(v -> true).subscribe(ts);
@@ -62,20 +62,20 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		StepVerifier.create(Flux.range(1, 10).hasElement(4))
 		            .expectNext(true)
 		            .verifyComplete();
 	}
 	@Test
-	public void error2() {
+    void error2() {
 		StepVerifier.create(Flux.range(1, 10).hasElement(-4))
 		            .expectNext(false)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).any(v -> true).subscribe(ts);
@@ -92,7 +92,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void none() {
+    void none() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).any(v -> false).subscribe(ts);
@@ -103,7 +103,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void noneBackpressured() {
+    void noneBackpressured() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).any(v -> false).subscribe(ts);
@@ -120,7 +120,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void someMatch() {
+    void someMatch() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).any(v -> v < 6).subscribe(ts);
@@ -131,7 +131,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void someMatchBackpressured() {
+    void someMatchBackpressured() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).any(v -> v < 6).subscribe(ts);
@@ -148,7 +148,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).any(v -> {
@@ -165,7 +165,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		TestPublisher<String> cancelTester = TestPublisher.create();
 
 		StepVerifier.create(cancelTester.flux()
@@ -177,7 +177,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Flux<Integer> parent = Flux.just(1);
 		MonoAny<Integer> test = new MonoAny<>(parent, v -> true);
 
@@ -187,7 +187,7 @@ public class MonoAnyTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Boolean> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoAny.AnySubscriber<String> test = new MonoAny.AnySubscriber<>(actual, String::isEmpty);
 		Subscription parent = Operators.emptySubscription();

@@ -23,10 +23,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelPeekTest {
+class ParallelPeekTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.just(500, 300).parallel(10);
 		ParallelPeek<Integer> test = new ParallelPeek<>(source, null, null, null, null, null, null, null, null);
 
@@ -36,7 +36,7 @@ public class ParallelPeekTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelSource<Integer> source = new ParallelSource<>(Flux.just(500, 300), 10, 123, Queues.one());
 		ParallelPeek<Integer> test = new ParallelPeek<>(source, null, null, null, null, null, null, null, null);
 
@@ -49,7 +49,7 @@ public class ParallelPeekTest {
 	}
 
 	@Test
-	public void conditional() {
+    void conditional() {
 		Flux<Integer> source = Flux.range(1, 1_000);
 		for (int i = 1; i < 33; i++) {
 			Flux<Integer> result = ParallelFlux.from(source, i)

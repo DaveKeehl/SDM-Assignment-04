@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Stephane Maldini
  */
-public class HooksTest {
+class HooksTest {
 
 	void simpleFlux(){
 		Flux.just(1)
@@ -63,14 +63,14 @@ public class HooksTest {
 
 	static final class TestException extends RuntimeException {
 
-		public TestException(String message) {
+		TestException(String message) {
 			super(message);
 		}
 	}
 
 
 	@Test
-	public void staticActivationOfOperatorDebug() {
+    void staticActivationOfOperatorDebug() {
 		String oldProp = System.setProperty("reactor.trace.operatorStacktrace", "true");
 		//this will be reset by the ReactorTestExecutionListener
 		Hooks.GLOBAL_TRACE = Hooks.initStaticGlobalTrace();
@@ -88,25 +88,25 @@ public class HooksTest {
 	}
 
 	@Test
-	public void getOnEachOperatorHooksIsUnmodifiable() {
+    void getOnEachOperatorHooksIsUnmodifiable() {
 		assertThatExceptionOfType(UnsupportedOperationException.class)
 				.isThrownBy(Hooks.getOnEachOperatorHooks()::clear);
 	}
 
 	@Test
-	public void getOnLastOperatorHooksIsUnmodifiable() {
+    void getOnLastOperatorHooksIsUnmodifiable() {
 		assertThatExceptionOfType(UnsupportedOperationException.class)
 				.isThrownBy(Hooks.getOnLastOperatorHooks()::clear);
 	}
 
 	@Test
-	public void getOnOperatorErrorHooksIsUnmodifiable() {
+    void getOnOperatorErrorHooksIsUnmodifiable() {
 		assertThatExceptionOfType(UnsupportedOperationException.class)
 				.isThrownBy(Hooks.getOnOperatorErrorHooks()::clear);
 	}
 
 	@Test
-	public void onEachOperatorSameLambdaSameNameAppliedOnce() {
+    void onEachOperatorSameLambdaSameNameAppliedOnce() {
 		AtomicInteger applied = new AtomicInteger();
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> {
 			applied.incrementAndGet();
@@ -121,7 +121,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorSameLambdaDifferentNamesAppliedTwice() {
+    void onEachOperatorSameLambdaDifferentNamesAppliedTwice() {
 		AtomicInteger applied = new AtomicInteger();
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> {
 			applied.incrementAndGet();
@@ -136,7 +136,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorOneHookNoComposite() {
+    void onEachOperatorOneHookNoComposite() {
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> p;
 		Hooks.onEachOperator(hook);
 
@@ -144,7 +144,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorNamedReplacesKeepsOrder() {
+    void onEachOperatorNamedReplacesKeepsOrder() {
 		List<String> applied = new ArrayList<>(3);
 
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook1 = p -> {
@@ -182,7 +182,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorResetSpecific() {
+    void onEachOperatorResetSpecific() {
 		List<String> applied = new ArrayList<>(3);
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook1 = p -> {
 			applied.add("h1");
@@ -209,7 +209,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorReset() {
+    void onEachOperatorReset() {
 		Hooks.onEachOperator("some", p -> p);
 
 		assertThat(Hooks.onEachOperatorHook).isNotNull();
@@ -222,7 +222,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onEachOperatorClearByName() {
+    void onEachOperatorClearByName() {
 		Hooks.onEachOperator("some", p -> p);
 		Hooks.onEachOperator("other", p -> p);
 
@@ -243,7 +243,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorSameLambdaSameNameAppliedOnce() {
+    void onLastOperatorSameLambdaSameNameAppliedOnce() {
 		AtomicInteger applied = new AtomicInteger();
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> {
 			applied.incrementAndGet();
@@ -258,7 +258,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorSameLambdaDifferentNamesAppliedTwice() {
+    void onLastOperatorSameLambdaDifferentNamesAppliedTwice() {
 		AtomicInteger applied = new AtomicInteger();
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> {
 			applied.incrementAndGet();
@@ -273,7 +273,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorOneHookNoComposite() {
+    void onLastOperatorOneHookNoComposite() {
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook = p -> p;
 		Hooks.onLastOperator(hook);
 
@@ -281,7 +281,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorNamedReplacesKeepsOrder() {
+    void onLastOperatorNamedReplacesKeepsOrder() {
 		List<String> applied = new ArrayList<>(3);
 
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook1 = p -> {
@@ -319,7 +319,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorResetSpecific() {
+    void onLastOperatorResetSpecific() {
 		List<String> applied = new ArrayList<>(3);
 		Function<? super Publisher<Object>, ? extends Publisher<Object>> hook1 = p -> {
 			applied.add("h1");
@@ -346,7 +346,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorReset() {
+    void onLastOperatorReset() {
 		Hooks.onLastOperator("some", p -> p);
 
 		assertThat(Hooks.onLastOperatorHook).isNotNull();
@@ -359,7 +359,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onLastOperatorClearByName() {
+    void onLastOperatorClearByName() {
 		Hooks.onLastOperator("some", p -> p);
 		Hooks.onLastOperator("other", p -> p);
 
@@ -380,7 +380,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorSameLambdaSameNameAppliedOnce() {
+    void onOperatorErrorSameLambdaSameNameAppliedOnce() {
 		AtomicInteger applied = new AtomicInteger();
 		BiFunction<Throwable, Object, Throwable> hook = (t, s) -> {
 			applied.incrementAndGet();
@@ -395,7 +395,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorSameLambdaDifferentNamesAppliedTwice() {
+    void onOperatorErrorSameLambdaDifferentNamesAppliedTwice() {
 		AtomicInteger applied = new AtomicInteger();
 		BiFunction<Throwable, Object, Throwable> hook = (t, s) -> {
 			applied.incrementAndGet();
@@ -410,7 +410,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorOneHookNoComposite() {
+    void onOperatorErrorOneHookNoComposite() {
 		BiFunction<Throwable, Object, Throwable> hook = (t, s) -> t;
 
 		Hooks.onOperatorError(hook);
@@ -419,7 +419,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorNamedReplacesKeepsOrder() {
+    void onOperatorErrorNamedReplacesKeepsOrder() {
 		List<String> applied = new ArrayList<>(3);
 		BiFunction<Throwable, Object, Throwable> hook1 = (t, s) -> {
 			applied.add("h1");
@@ -456,7 +456,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorResetSpecific() {
+    void onOperatorErrorResetSpecific() {
 		List<String> applied = new ArrayList<>(3);
 		BiFunction<Throwable, Object, Throwable> hook1 = (t, s) -> {
 			applied.add("h1");
@@ -483,7 +483,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorReset() {
+    void onOperatorErrorReset() {
 		Hooks.onOperatorError("some", (t, v) -> t);
 
 		assertThat(Hooks.onOperatorErrorHook).isNotNull();
@@ -496,7 +496,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onOperatorErrorClearByName() {
+    void onOperatorErrorClearByName() {
 		Hooks.onOperatorError("some", (t, v) -> t);
 		Hooks.onOperatorError("other", (t, v) -> t);
 
@@ -517,7 +517,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void errorHooks() throws Exception {
+    void errorHooks() throws Exception {
 		Hooks.onOperatorError((e, s) -> new TestException(s.toString()));
 		Hooks.onNextDropped(d -> {
 			throw new TestException(d.toString());
@@ -541,7 +541,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void accumulatingHooks() throws Exception {
+    void accumulatingHooks() throws Exception {
 		AtomicReference<String> ref = new AtomicReference<>();
 		Hooks.onNextDropped(d -> {
 			ref.set(d.toString());
@@ -623,7 +623,7 @@ public class HooksTest {
 
 
 	@Test
-	public void parallelModeFused() {
+    void parallelModeFused() {
 		Hooks.onOperatorDebug();
 
 		Hooks.onEachOperator(p -> {
@@ -667,7 +667,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void verboseExtension() {
+    void verboseExtension() {
 		Queue<String> q = new LinkedTransferQueue<>();
 		Hooks.onEachOperator(p -> {
 			q.offer(p.toString());
@@ -714,7 +714,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void testOnLastPublisher() throws Exception {
+    void testOnLastPublisher() throws Exception {
 		List<Publisher> l = new ArrayList<>();
 		Hooks.onLastOperator(p -> {
 			System.out.println(Scannable.from(p).parents().count());
@@ -735,7 +735,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void testMultiReceiver() throws Exception {
+    void testMultiReceiver() throws Exception {
 		Hooks.onOperatorDebug();
 		ConnectableFlux<?> t = Flux.empty()
 		    .then(Mono.defer(() -> {
@@ -752,7 +752,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void onNextDroppedFailReplaces() {
+    void onNextDroppedFailReplaces() {
 		AtomicReference<Object> dropHook = new AtomicReference<>();
 		Publisher<Integer> p = s -> {
 			s.onSubscribe(Operators.emptySubscription());
@@ -780,7 +780,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorLiftsFlux() {
+    void lastOperatorLiftsFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -794,7 +794,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorLiftsMono() {
+    void lastOperatorLiftsMono() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -806,7 +806,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorLiftsParallelFlux() {
+    void lastOperatorLiftsParallelFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -818,7 +818,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorFilteredLiftFlux() {
+    void lastOperatorFilteredLiftFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift(sc -> sc.tags()
 		                                            .anyMatch(t -> t.getT1().contains("metric")),
@@ -839,7 +839,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorFilteredLiftMono() {
+    void lastOperatorFilteredLiftMono() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift(sc -> sc.tags()
 		                                            .anyMatch(t -> t.getT1().contains("metric")),
@@ -860,7 +860,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void lastOperatorFilteredLiftParallelFlux() {
+    void lastOperatorFilteredLiftParallelFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onLastOperator(Operators.lift(sc -> sc.tags()
 		                                            .anyMatch(t -> t.getT1().contains("metric")),
@@ -881,7 +881,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void eachOperatorLiftsFlux() {
+    void eachOperatorLiftsFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onEachOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -893,7 +893,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void eachOperatorLiftsMono() {
+    void eachOperatorLiftsMono() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onEachOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -905,7 +905,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void eachOperatorLiftsParallelFlux() {
+    void eachOperatorLiftsParallelFlux() {
 		AtomicInteger liftCounter = new AtomicInteger();
 		Hooks.onEachOperator(Operators.lift((sc, sub) -> liftSubscriber(sc, sub, liftCounter)));
 
@@ -919,7 +919,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapFluxSourceDoesntCallAssemblyHook() {
+    void fluxWrapFluxSourceDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.range(1, 10);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -935,7 +935,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapScalarJustDoesntCallAssemblyHook() {
+    void fluxWrapScalarJustDoesntCallAssemblyHook() {
 		final Mono<String> source = Mono.just("scalarJust");
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -951,7 +951,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapScalarErrorDoesntCallAssemblyHook() {
+    void fluxWrapScalarErrorDoesntCallAssemblyHook() {
 		final Mono<Object> source = Mono.error(new IllegalStateException("scalarError"));
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -967,7 +967,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapScalarEmptyDoesntCallAssemblyHook() {
+    void fluxWrapScalarEmptyDoesntCallAssemblyHook() {
 		final Mono<Object> source = Mono.empty();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -983,7 +983,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapMonoFuseableDoesntCallAssemblyHook() {
+    void fluxWrapMonoFuseableDoesntCallAssemblyHook() {
 		Mono<String> source = Mono.just("monoFuseable").map(i -> i);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -999,7 +999,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapMonoNormalDoesntCallAssemblyHook() {
+    void fluxWrapMonoNormalDoesntCallAssemblyHook() {
 		final Mono<String> source = Mono.just("monoNormal")
 		                                .hide()
 		                                .map(i -> i);
@@ -1017,7 +1017,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapPublisherDoesntCallAssemblyHook() {
+    void fluxWrapPublisherDoesntCallAssemblyHook() {
 		Publisher<String> publisher = sub -> sub.onSubscribe(Operators.emptySubscription());
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1033,7 +1033,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void monoWrapMonoDoesntCallAssemblyHook() {
+    void monoWrapMonoDoesntCallAssemblyHook() {
 		final Mono<Integer> source = Mono.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1051,7 +1051,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void monoWrapFluxWrappingMonoDoesntCallAssemblyHook() {
+    void monoWrapFluxWrappingMonoDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.from(Mono.just(1).hide());
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1069,7 +1069,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void monoWrapCallableFluxDoesntCallAssemblyHook() {
+    void monoWrapCallableFluxDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1087,7 +1087,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void monoWrapFluxDoesntCallAssemblyHook() {
+    void monoWrapFluxDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1).hide();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1105,7 +1105,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void monoWrapPublisherDoesntCallAssemblyHook() {
+    void monoWrapPublisherDoesntCallAssemblyHook() {
 		final Publisher<Integer> source = TestPublisher.create();
 		Assertions.assertThat(source).isNotInstanceOf(Flux.class); //smoke test this is a Publisher
 
@@ -1124,7 +1124,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapToMonoScalarEmptyDoesntCallAssemblyHook() {
+    void fluxWrapToMonoScalarEmptyDoesntCallAssemblyHook() {
 		@SuppressWarnings("unchecked")
 		Callable<Integer> source = (Callable<Integer>) Flux.empty();
 
@@ -1140,7 +1140,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapToMonoScalarValuedDoesntCallAssemblyHook() {
+    void fluxWrapToMonoScalarValuedDoesntCallAssemblyHook() {
 		@SuppressWarnings("unchecked")
 		Callable<Integer> source = (Callable<Integer>) Flux.just(1);
 
@@ -1156,7 +1156,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapToMonoScalarErrorDoesntCallAssemblyHook() {
+    void fluxWrapToMonoScalarErrorDoesntCallAssemblyHook() {
 		@SuppressWarnings("unchecked")
 		Callable<Integer> source = (Callable<Integer>) Flux.error(new IllegalStateException("boom"));
 
@@ -1172,7 +1172,7 @@ public class HooksTest {
 	}
 
 	@Test
-	public void fluxWrapToMonoVanillaCallableDoesntCallAssemblyHook() {
+    void fluxWrapToMonoVanillaCallableDoesntCallAssemblyHook() {
 		Callable<Integer> source = () -> 1;
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)

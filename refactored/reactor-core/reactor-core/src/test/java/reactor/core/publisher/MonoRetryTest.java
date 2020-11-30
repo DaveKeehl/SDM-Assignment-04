@@ -26,24 +26,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoRetryTest {
+class MonoRetryTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoRetry<>(null, 1);
 		});
 	}
 
 	@Test
-	public void timesInvalid() {
+    void timesInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Mono.never().retry(-1);
 		});
 	}
 
 	@Test
-	public void zeroRetryNoError() {
+    void zeroRetryNoError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -56,7 +56,7 @@ public class MonoRetryTest {
 	}
 
 	@Test
-	public void zeroRetry() {
+    void zeroRetry() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).retry(0)
@@ -69,7 +69,7 @@ public class MonoRetryTest {
 	}
 
 	@Test
-	public void oneRetry() {
+    void oneRetry() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger i = new AtomicInteger();
@@ -89,7 +89,7 @@ public class MonoRetryTest {
 	}
 
 	@Test
-	public void retryInfinite() {
+    void retryInfinite() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		AtomicInteger i = new AtomicInteger();
 		Mono.fromCallable(() -> {
@@ -108,7 +108,7 @@ public class MonoRetryTest {
 	}
 
 	@Test
-	public void doOnNextFails() {
+    void doOnNextFails() {
 		Mono.just(1)
 		    .doOnNext(new Consumer<Integer>() {
 			    int i;
@@ -126,7 +126,7 @@ public class MonoRetryTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoRetry<Integer> test = new MonoRetry<>(Mono.just(1), 3L);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

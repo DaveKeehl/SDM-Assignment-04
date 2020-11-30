@@ -29,24 +29,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxDelaySubscriptionTest {
+class FluxDelaySubscriptionTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDelaySubscription<>(null, Flux.never());
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().delaySubscription((Publisher<?>) null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -59,7 +59,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -89,7 +89,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void manyTriggered() {
+    void manyTriggered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -102,7 +102,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void manyTriggeredBackpressured() {
+    void manyTriggeredBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -132,7 +132,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void emptyTrigger() {
+    void emptyTrigger() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -145,7 +145,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void emptyTriggerBackpressured() {
+    void emptyTriggerBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -175,7 +175,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void neverTriggered() {
+    void neverTriggered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -195,7 +195,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void delayedTrigger() {
+    void delayedTrigger() {
 		StepVerifier.withVirtualTime(this::scenario_delayedTrigger)
 		            .thenAwait(Duration.ofSeconds(3))
 		            .expectNext(1)
@@ -208,7 +208,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void delayedTrigger2() {
+    void delayedTrigger2() {
 		StepVerifier.withVirtualTime(this::scenario_delayedTrigger2)
 		            .thenAwait(Duration.ofMillis(50))
 		            .expectNext(1)
@@ -216,7 +216,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDelaySubscription<Integer, Integer> test = new FluxDelaySubscription<>(parent, Flux.just(2));
 
@@ -225,7 +225,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null,
 				sub -> sub.request(100));
 		FluxDelaySubscription.DelaySubscriptionOtherSubscriber<String, Integer> arbiter = new FluxDelaySubscription.DelaySubscriptionOtherSubscriber<String, Integer>(
@@ -238,7 +238,7 @@ public class FluxDelaySubscriptionTest {
 	}
 
 	@Test
-	public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null,
 				sub -> sub.request(100));
 		FluxDelaySubscription.DelaySubscriptionOtherSubscriber<String, Integer> test = new FluxDelaySubscription.DelaySubscriptionOtherSubscriber<String, Integer>(

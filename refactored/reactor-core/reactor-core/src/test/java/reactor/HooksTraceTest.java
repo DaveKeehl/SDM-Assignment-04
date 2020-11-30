@@ -38,34 +38,34 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author Stephane Maldini
  */
-public class HooksTraceTest {
+class HooksTraceTest {
 
 	@Test
-	public void testTrace() {
+	void testTrace() {
 		Hooks.onOperatorDebug();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
 				Mono.fromCallable(() -> {
 					throw new RuntimeException("test");
 				})
-				    .map(d -> d)
-				    .block()
+						.map(d -> d)
+						.block()
 		).satisfies(r -> assertThat(r.getSuppressed()[0]).hasMessageContaining("Assembly trace from producer [reactor.core.publisher.MonoCallable]"));
 	}
 
 	@Test
-	public void testTrace2() {
+	void testTrace2() {
 		Hooks.onOperatorDebug();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
-			Mono.just(1)
-			    .map(d -> {
-				    throw new RuntimeException();
-			    })
-			    .filter(d -> true)
-			    .doOnNext(d -> System.currentTimeMillis())
-			    .map(d -> d)
-			    .block()
+				Mono.just(1)
+						.map(d -> {
+							throw new RuntimeException();
+						})
+						.filter(d -> true)
+						.doOnNext(d -> System.currentTimeMillis())
+						.map(d -> d)
+						.block()
 		).satisfies(e -> assertThat(e.getSuppressed()[0])
 				.hasMessageContaining("HooksTraceTest.java:")
 				.hasMessageContaining("|_      Mono.map ⇢ at reactor.HooksTraceTest.lambda$testTrace2$8(HooksTraceTest.java:")
@@ -73,18 +73,18 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void testTrace3() {
+	void testTrace3() {
 		Hooks.onOperatorDebug();
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
 				Flux.just(1)
-				    .map(d -> {
-					    throw new RuntimeException();
-				    })
-				    .share()
-				    .filter(d -> true)
-				    .doOnNext(d -> System.currentTimeMillis())
-				    .map(d -> d)
-				    .blockLast()
+						.map(d -> {
+							throw new RuntimeException();
+						})
+						.share()
+						.filter(d -> true)
+						.doOnNext(d -> System.currentTimeMillis())
+						.map(d -> d)
+						.blockLast()
 		).satisfies(e -> assertThat(e.getSuppressed()[0])
 				.hasMessageContaining("HooksTraceTest.java:")
 				.hasMessageContaining("|_    Flux.share ⇢ at reactor.HooksTraceTest.lambda$testTrace3$14(HooksTraceTest.java:")
@@ -92,17 +92,17 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void testTraceDefer() {
+	void testTraceDefer() {
 		Hooks.onOperatorDebug();
 		try {
 			//avoid wrapping this in yet another lambda (eg. AssertJ assertThatExceptionOfType().isThrownBy)
 			//because in Java 8 at least it seems to cause the StackTraceElement to miss the method name: `lambda$null$xxx`
 			Mono.defer(() -> Mono.just(1)
-			                     .flatMap(d -> Mono.error(new IllegalStateException("boom")))
-			                     .filter(d -> true)
-			                     .doOnNext(d -> System.currentTimeMillis())
-			                     .map(d -> d))
-			    .block();
+					.flatMap(d -> Mono.error(new IllegalStateException("boom")))
+					.filter(d -> true)
+					.doOnNext(d -> System.currentTimeMillis())
+					.map(d -> d))
+					.block();
 			fail("Expected IllegalStateException here");
 		}
 		catch (IllegalStateException ise) {
@@ -113,15 +113,15 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void testTraceComposed() {
+	void testTraceComposed() {
 		Hooks.onOperatorDebug();
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
 				Mono.just(1)
-				    .flatMap(d -> Mono.error(new RuntimeException()))
-				    .filter(d -> true)
-				    .doOnNext(d -> System.currentTimeMillis())
-				    .map(d -> d)
-				    .block()
+						.flatMap(d -> Mono.error(new RuntimeException()))
+						.filter(d -> true)
+						.doOnNext(d -> System.currentTimeMillis())
+						.map(d -> d)
+						.block()
 		).satisfies(e -> assertThat(e.getSuppressed()[0])
 				.hasMessageContaining("HooksTraceTest.java:")
 				.hasMessageContaining("|_  Mono.flatMap ⇢ at reactor.HooksTraceTest.lambda$testTraceComposed$25(HooksTraceTest.java:")
@@ -129,17 +129,17 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void testTraceComposed2() {
+	void testTraceComposed2() {
 		Hooks.onOperatorDebug();
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
 				Flux.just(1)
-				    .flatMap(d -> {
-					    throw new RuntimeException();
-				    })
-				    .filter(d -> true)
-				    .doOnNext(d -> System.currentTimeMillis())
-				    .map(d -> d)
-				    .blockLast()
+						.flatMap(d -> {
+							throw new RuntimeException();
+						})
+						.filter(d -> true)
+						.doOnNext(d -> System.currentTimeMillis())
+						.map(d -> d)
+						.blockLast()
 		).satisfies(e -> assertThat(e.getSuppressed()[0])
 				.hasMessageContaining("HooksTraceTest.java:")
 				.hasMessageContaining("|_  Flux.flatMap ⇢ at reactor.HooksTraceTest.lambda$testTraceComposed2$31(HooksTraceTest.java:")
@@ -147,7 +147,7 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void testOnLastPublisher() {
+	void testOnLastPublisher() {
 		List<Publisher> l = new ArrayList<>();
 		Hooks.onLastOperator(p -> {
 			System.out.println(Scannable.from(p).parents().count());
@@ -156,22 +156,22 @@ public class HooksTraceTest {
 			return p;
 		});
 		StepVerifier.create(Flux.just(1, 2, 3)
-		                        .map(m -> m)
-		                        .takeUntilOther(Mono.never())
-		                        .flatMap(d -> Mono.just(d).hide()))
-		            .expectNext(1, 2, 3)
-		            .verifyComplete();
+				.map(m -> m)
+				.takeUntilOther(Mono.never())
+				.flatMap(d -> Mono.just(d).hide()))
+				.expectNext(1, 2, 3)
+				.verifyComplete();
 
 		assertThat(l).hasSize(5);
 	}
 
 	@Test
-	public void testMultiReceiver() {
+	void testMultiReceiver() {
 		Hooks.onOperatorDebug();
 		ConnectableFlux<?> t = Flux.empty()
-		    .then(Mono.defer(() -> {
-			    throw new RuntimeException();
-		    })).flux().publish();
+				.then(Mono.defer(() -> {
+					throw new RuntimeException();
+				})).flux().publish();
 
 		t.map(d -> d).subscribe(null,
 				e -> assertThat(e.getSuppressed()[0].getMessage()).contains("\t|_ Flux.publish"));
@@ -187,7 +187,7 @@ public class HooksTraceTest {
 	}
 
 	@Test
-	public void lastOperatorTest() {
+	void lastOperatorTest() {
 		Hooks.onLastOperator(Operators.lift((sc, sub) ->
 				new CoreSubscriber<Object>(){
 					@Override
@@ -212,31 +212,31 @@ public class HooksTraceTest {
 				}));
 
 		StepVerifier.create(Flux.just(1, 2, 3)
-		                        .log()
-		                        .log())
-		            .expectNext(2, 3, 4)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(2, 3, 4)
+				.verifyComplete();
 
 		StepVerifier.create(Mono.just(1)
-		                        .log()
-		                        .log())
-		            .expectNext(2)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(2)
+				.verifyComplete();
 
 		StepVerifier.create(ParallelFlux.from(Mono.just(1), Mono.just(1))
-		                        .log()
-		                        .log())
-		            .expectNext(2, 2)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(2, 2)
+				.verifyComplete();
 
 		Hooks.resetOnLastOperator();
 	}
 
 	@Test
-	public void lastOperatorFilterTest() {
+	void lastOperatorFilterTest() {
 		Hooks.onLastOperator(Operators.lift(sc -> sc.tags()
-		                                            .anyMatch(t -> t.getT1()
-		                                                            .contains("metric")),
+						.anyMatch(t -> t.getT1()
+								.contains("metric")),
 				(sc, sub) -> new CoreSubscriber<Object>() {
 					@Override
 					public void onSubscribe(Subscription s) {
@@ -260,47 +260,47 @@ public class HooksTraceTest {
 				}));
 
 		StepVerifier.create(Flux.just(1, 2, 3)
-		                        .tag("metric", "test")
-		                        .log()
-		                        .log())
-		            .expectNext(2, 3, 4)
-		            .verifyComplete();
+				.tag("metric", "test")
+				.log()
+				.log())
+				.expectNext(2, 3, 4)
+				.verifyComplete();
 
 		StepVerifier.create(Mono.just(1)
-		                        .tag("metric", "test")
-		                        .log()
-		                        .log())
-		            .expectNext(2)
-		            .verifyComplete();
+				.tag("metric", "test")
+				.log()
+				.log())
+				.expectNext(2)
+				.verifyComplete();
 
 		StepVerifier.create(ParallelFlux.from(Mono.just(1), Mono.just(1))
-		                                .tag("metric", "test")
-		                                .log()
-		                                .log())
-		            .expectNext(2, 2)
-		            .verifyComplete();
+				.tag("metric", "test")
+				.log()
+				.log())
+				.expectNext(2, 2)
+				.verifyComplete();
 
 		StepVerifier.create(Flux.just(1, 2, 3)
-		                        .log()
-		                        .log())
-		            .expectNext(1, 2, 3)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(1, 2, 3)
+				.verifyComplete();
 
 		StepVerifier.create(Mono.just(1)
-		                        .log()
-		                        .log())
-		            .expectNext(1)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(1)
+				.verifyComplete();
 
 		StepVerifier.create(ParallelFlux.from(Mono.just(1), Mono.just(1))
-		                                .log()
-		                                .log())
-		            .expectNext(1, 1)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(1, 1)
+				.verifyComplete();
 	}
 
 	@Test
-	public void eachOperatorTest() {
+	void eachOperatorTest() {
 		Hooks.onEachOperator(Operators.lift((sc, sub) ->
 				new CoreSubscriber<Object>(){
 					@Override
@@ -325,22 +325,22 @@ public class HooksTraceTest {
 				}));
 
 		StepVerifier.create(Flux.just(1, 2, 3)
-		                        .log()
-		                        .log())
-		            .expectNext(4, 5, 6)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(4, 5, 6)
+				.verifyComplete();
 
 		StepVerifier.create(Mono.just(1)
-		                        .log()
-		                        .log())
-		            .expectNext(4)
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(4)
+				.verifyComplete();
 
 		StepVerifier.create(ParallelFlux.from(Mono.just(1), Mono.just(1))
-		                                .log()
-		                                .log())
-		            .expectNext(7, 7) //from now counts as an additional one
-		            .verifyComplete();
+				.log()
+				.log())
+				.expectNext(7, 7) //from now counts as an additional one
+				.verifyComplete();
 	}
 
 }

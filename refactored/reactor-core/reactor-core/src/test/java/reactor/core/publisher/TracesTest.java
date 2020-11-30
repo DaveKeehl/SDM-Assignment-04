@@ -36,10 +36,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TracesTest {
+class TracesTest {
 
 	@Test
-	public void extractOperatorLine_reactor() {
+    void extractOperatorLine_reactor() {
 		String stack = "\treactor.core.publisher.Flux.filter(Flux.java:4209)\n" +
 				"\treactor.core.ScannableTest.operatorChainWithDebugMode(ScannableTest.java:542)\n";
 
@@ -48,7 +48,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_reactorApiOnly() {
+    void extractOperatorLine_reactorApiOnly() {
 		String stack = "\treactor.core.publisher.Flux.filter(Flux.java:4209)\n" +
 				"\treactor.core.publisher.Flux.map(Flux.java:4209)\n";
 
@@ -57,7 +57,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_reactorAliases() {
+    void extractOperatorLine_reactorAliases() {
 		String stack = "\treactor.core.publisher.Flux.concatMap(Flux.java:3071)\n"
 				+ "\treactor.core.publisher.Flux.concatMap(Flux.java:3036)\n"
 				+ "\treactor.core.publisher.Flux.delayUntil(Flux.java:3388)\n"
@@ -70,7 +70,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_userCodeOnly() {
+    void extractOperatorLine_userCodeOnly() {
 		String stack = "\treactor.core.notPublisher.Flux.filter(Flux.java:4209)\n" +
 				"\treactor.core.ScannableTest.operatorChainWithDebugMode(ScannableTest.java:542)\n";
 
@@ -79,7 +79,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_reactorTest() {
+    void extractOperatorLine_reactorTest() {
 		String stack = "\treactor.core.publisher.Flux.concatMap(Flux.java:3071)\n"
 				+ "\treactor.core.publisher.Flux.concatMap(Flux.java:3036)\n"
 				+ "\treactor.core.publisher.Flux.delayUntil(Flux.java:3388)\n"
@@ -91,7 +91,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_empty() {
+    void extractOperatorLine_empty() {
 		String stack = "\t\n";
 
 		assertThat(Traces.extractOperatorAssemblyInformation(stack))
@@ -99,7 +99,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_singleIsApi() {
+    void extractOperatorLine_singleIsApi() {
 		String stack = "\treactor.core.publisher.Flux.concatMap(Flux.java:3071)\n";
 
 		assertThat(Traces.extractOperatorAssemblyInformation(stack))
@@ -107,7 +107,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_singleIsUserCode() {
+    void extractOperatorLine_singleIsUserCode() {
 		String stack = "\treactor.notcore.publisher.Flux.concatMap(Flux.java:3071)\n";
 
 		assertThat(Traces.extractOperatorAssemblyInformation(stack))
@@ -115,7 +115,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_severalEmptyThenValued() {
+    void extractOperatorLine_severalEmptyThenValued() {
 		String stack = "    "
 				+ "\n"
 				+ "\n   "
@@ -130,7 +130,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void extractOperatorLine_severalEmptyThenSeveralValues() {
+    void extractOperatorLine_severalEmptyThenSeveralValues() {
 		String stack = "    "
 				+ "\n"
 				+ "\n   "
@@ -151,7 +151,7 @@ public class TracesTest {
 	}
 
 	@Test
-	public void shouldSanitizeTrue() {
+    void shouldSanitizeTrue() {
 		assertThat(Traces.shouldSanitize("java.util.function")).isTrue();
 		assertThat(Traces.shouldSanitize("reactor.core.publisher.Mono.onAssembly")).isTrue();
 		assertThat(Traces.shouldSanitize("reactor.core.publisher.Flux.onAssembly")).isTrue();

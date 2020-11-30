@@ -24,10 +24,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelRunOnTest {
+class ParallelRunOnTest {
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ParallelFlux<String> source = Flux.<String>empty().parallel(2);
 		ParallelRunOn<String> test = new ParallelRunOn<>(source, Schedulers.single(), 123, Queues.small());
 
@@ -37,7 +37,7 @@ public class ParallelRunOnTest {
 	}
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<String> source = Flux.<String>empty().parallel(2);
 		ParallelRunOn<String> test = new ParallelRunOn<>(source, Schedulers.single(), 123, Queues.small());
 
@@ -45,7 +45,7 @@ public class ParallelRunOnTest {
 	}
 
 	@Test
-	public void conditional() {
+    void conditional() {
 		Flux<Integer> source = Flux.range(1, 1_000);
 		for (int i = 1; i < 33; i++) {
 			Flux<Integer> result = ParallelFlux.from(source, i)

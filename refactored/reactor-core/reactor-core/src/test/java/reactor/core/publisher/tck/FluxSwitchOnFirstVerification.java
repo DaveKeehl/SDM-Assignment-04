@@ -7,9 +7,9 @@ import org.testng.annotations.Test;
 import reactor.core.publisher.Flux;
 
 @Test
-public class FluxSwitchOnFirstVerification extends PublisherVerification<Integer> {
+    class FluxSwitchOnFirstVerification extends PublisherVerification<Integer> {
 
-    public FluxSwitchOnFirstVerification() {
+    FluxSwitchOnFirstVerification() {
         super(new TestEnvironment());
     }
 

@@ -20,20 +20,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class Tuple6Test {
+class Tuple6Test {
 
 	private Tuple6<Integer, Integer, Integer, Integer, Integer, Integer> full =
 			new Tuple6<>(1, 2, 3, 4, 5, 6);
 
 	@Test
-	public void nullT6Rejected() {
+    void nullT6Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple6<>(1, 2, 3, 4, 5, null))
 				.withMessage("t6");
 	}
 
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple6<String, Integer, Integer, Integer, Integer, Integer> base =
 				Tuples.of("Foo", 200, 300, 400, 500, 600);
 
@@ -46,7 +46,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple6<Integer, String, Integer, Integer, Integer, Integer> base =
 				Tuples.of(100, "Foo", 300, 400, 500, 600);
 
@@ -59,7 +59,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT3() {
+    void mapT3() {
 		Tuple6<Integer, Integer, String, Integer, Integer, Integer> base =
 				Tuples.of(100, 200, "Foo", 400, 500, 600);
 
@@ -72,7 +72,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT4() {
+    void mapT4() {
 		Tuple6<Integer, Integer, Integer, String, Integer, Integer> base =
 				Tuples.of(100, 200, 300, "Foo", 500, 600);
 
@@ -85,7 +85,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT5() {
+    void mapT5() {
 		Tuple6<Integer, Integer, Integer, Integer, String, Integer> base =
 				Tuples.of(100, 200, 300, 400, "Foo", 600);
 
@@ -98,7 +98,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT6() {
+    void mapT6() {
 		Tuple6<Integer, Integer, Integer, Integer, Integer, String> base =
 				Tuples.of(100, 200, 300, 400, 500, "Foo");
 
@@ -111,7 +111,7 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void mapT6Null() {
+    void mapT6Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2, 3, 4, 5, 6)
 				      .mapT6(i -> null)
@@ -119,17 +119,17 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -138,25 +138,25 @@ public class Tuple6Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 		                .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void t6Combinations() {
+    void t6Combinations() {
 		assertThat(new Tuple6<>(1, 2, 3, 4, 5, 6))
 				.isNotEqualTo(new Tuple6<>(1, 2, 3, 4, 5, 10))
 				.isEqualTo(new Tuple6<>(1, 2, 3, 4, 5, 6));
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple6<Integer, Integer, Integer, Integer, Integer, Integer> same = new Tuple6<>(1, 2, 3, 4, 5, 6);
 		Tuple6<Integer, Integer, Integer, Integer, Integer, Integer> different = new Tuple6<>(1, 2, 3, 4, 5, 1);
 

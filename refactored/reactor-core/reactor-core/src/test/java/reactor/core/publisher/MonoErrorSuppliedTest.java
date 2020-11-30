@@ -27,16 +27,16 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoErrorSuppliedTest {
+class MonoErrorSuppliedTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.error(() -> new Exception("test")))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void throwOnBlock() {
+    void throwOnBlock() {
 		assertThatExceptionOfType(IllegalStateException.class)
 				.isThrownBy(() -> new MonoErrorSupplied<>(() -> new IllegalStateException("boom"))
 						.block()
@@ -45,7 +45,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void throwOnTimeoutBlock() {
+    void throwOnTimeoutBlock() {
 		assertThatExceptionOfType(IllegalStateException.class)
 				.isThrownBy(() -> new MonoErrorSupplied<>(() -> new IllegalStateException("boom"))
 						.block(Duration.ofMillis(100))
@@ -54,7 +54,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void throwOnCall() {
+    void throwOnCall() {
 		assertThatExceptionOfType(IllegalStateException.class)
 				.isThrownBy(() -> new MonoErrorSupplied<>(() -> new IllegalStateException("boom"))
 						.call()
@@ -63,7 +63,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedSubscribe() {
+    void lazilyEvaluatedSubscribe() {
 		AtomicInteger count = new AtomicInteger();
 		Mono<Object> error = Mono.error(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -74,7 +74,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedBlock() {
+    void lazilyEvaluatedBlock() {
 		AtomicInteger count = new AtomicInteger();
 		Mono<Object> error = Mono.error(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -88,7 +88,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedBlockTimeout() {
+    void lazilyEvaluatedBlockTimeout() {
 		AtomicInteger count = new AtomicInteger();
 		Mono<Object> error = Mono.error(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -102,7 +102,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedCall() {
+    void lazilyEvaluatedCall() {
 		AtomicInteger count = new AtomicInteger();
 		MonoErrorSupplied<Object> error = new MonoErrorSupplied<>(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -116,7 +116,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void supplierMethod() {
+    void supplierMethod() {
 		StepVerifier.create(Mono.error(illegalStateExceptionSupplier()))
 				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
 						.hasMessage("boom"));
@@ -127,7 +127,7 @@ public class MonoErrorSuppliedTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoErrorSupplied<?> test = new MonoErrorSupplied<>(() -> new NullPointerException());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

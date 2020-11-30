@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author David Karnok
  */
-public class SwapDisposableTest {
+class SwapDisposableTest {
 
 	private Disposables.SwapDisposable sequentialDisposable;
 
@@ -41,12 +41,12 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void unsubscribingWithoutUnderlyingDoesNothing() {
+    void unsubscribingWithoutUnderlyingDoesNothing() {
 		sequentialDisposable.dispose();
 	}
 
 	@Test
-	public void getDisposableShouldReturnset() {
+    void getDisposableShouldReturnset() {
 		final Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
 		assertThat(sequentialDisposable.get()).isSameAs(underlying);
@@ -57,7 +57,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void notDisposedWhenReplaced() {
+    void notDisposedWhenReplaced() {
 		final Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
 
@@ -68,7 +68,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void unsubscribingTwiceDoesUnsubscribeOnce() {
+    void unsubscribingTwiceDoesUnsubscribeOnce() {
 		Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
 
@@ -80,7 +80,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void settingSameDisposableTwiceDoesUnsubscribeIt() {
+    void settingSameDisposableTwiceDoesUnsubscribeIt() {
 		Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
 		verifyZeroInteractions(underlying);
@@ -89,7 +89,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void unsubscribingWithSingleUnderlyingUnsubscribes() {
+    void unsubscribingWithSingleUnderlyingUnsubscribes() {
 		Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
 		underlying.dispose();
@@ -97,7 +97,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void replacingFirstUnderlyingCausesUnsubscription() {
+    void replacingFirstUnderlyingCausesUnsubscription() {
 		Disposable first = mock(Disposable.class);
 		sequentialDisposable.update(first);
 		Disposable second = mock(Disposable.class);
@@ -106,7 +106,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void whenUnsubscribingSecondUnderlyingUnsubscribed() {
+    void whenUnsubscribingSecondUnderlyingUnsubscribed() {
 		Disposable first = mock(Disposable.class);
 		sequentialDisposable.update(first);
 		Disposable second = mock(Disposable.class);
@@ -116,7 +116,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void settingUnderlyingWhenUnsubscribedCausesImmediateUnsubscription() {
+    void settingUnderlyingWhenUnsubscribedCausesImmediateUnsubscription() {
 		sequentialDisposable.dispose();
 		Disposable underlying = mock(Disposable.class);
 		sequentialDisposable.update(underlying);
@@ -125,7 +125,7 @@ public class SwapDisposableTest {
 
 	@Test
 	@Timeout(1)
-	public void settingUnderlyingWhenUnsubscribedCausesImmediateUnsubscriptionConcurrently()
+	void settingUnderlyingWhenUnsubscribedCausesImmediateUnsubscriptionConcurrently()
 			throws InterruptedException {
 		final Disposable firstSet = mock(Disposable.class);
 		sequentialDisposable.update(firstSet);
@@ -164,7 +164,7 @@ public class SwapDisposableTest {
 	}
 
 	@Test
-	public void concurrentSetDisposableShouldNotInterleave()
+    void concurrentSetDisposableShouldNotInterleave()
 			throws InterruptedException {
 		final int count = 10;
 		final List<Disposable> subscriptions = new ArrayList<>();

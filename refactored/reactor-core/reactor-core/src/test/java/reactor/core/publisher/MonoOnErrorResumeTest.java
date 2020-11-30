@@ -23,10 +23,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoOnErrorResumeTest {
+class MonoOnErrorResumeTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -39,7 +39,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -58,7 +58,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> Mono.just(
@@ -71,7 +71,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void error2() {
+    void error2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).onErrorReturn(2)
@@ -83,7 +83,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorFiltered() {
+    void errorFiltered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure"))
@@ -96,7 +96,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorFiltered2() {
+    void errorFiltered2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure"))
@@ -109,7 +109,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorFiltered3() {
+    void errorFiltered3() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new RuntimeException("forced failure"))
@@ -122,7 +122,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorMap() {
+    void errorMap() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>error(new Exception()).onErrorMap(d -> new RuntimeException("forced" +
@@ -137,7 +137,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorBackpressured() {
+    void errorBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> Mono.just(
@@ -155,7 +155,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void nextFactoryThrows() {
+    void nextFactoryThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> {
@@ -170,7 +170,7 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void nextFactoryReturnsNull() {
+    void nextFactoryReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> null)
@@ -184,14 +184,14 @@ public class MonoOnErrorResumeTest {
 	static final class TestException extends Exception {}
 
 	@Test
-	public void mapError() {
+    void mapError() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorMap(TestException.class, e -> new Exception("test")))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void otherwiseErrorFilter() {
+    void otherwiseErrorFilter() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorResume(TestException.class, e -> Mono.just(1)))
 		            .expectNext(1)
@@ -199,14 +199,14 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void otherwiseErrorUnfilter() {
+    void otherwiseErrorUnfilter() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorResume(RuntimeException.class, e -> Mono.just(1)))
 		            .verifyError(TestException.class);
 	}
 
 	@Test
-	public void otherwiseReturnErrorFilter() {
+    void otherwiseReturnErrorFilter() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorReturn(TestException.class, 1))
 		            .expectNext(1)
@@ -215,7 +215,7 @@ public class MonoOnErrorResumeTest {
 
 
 	@Test
-	public void otherwiseReturnErrorFilter2() {
+    void otherwiseReturnErrorFilter2() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorReturn(TestException.class::isInstance, 1))
 		            .expectNext(1)
@@ -223,21 +223,21 @@ public class MonoOnErrorResumeTest {
 	}
 
 	@Test
-	public void otherwiseReturnErrorUnfilter() {
+    void otherwiseReturnErrorUnfilter() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorReturn(RuntimeException.class, 1))
 		            .verifyError(TestException.class);
 	}
 
 	@Test
-	public void otherwiseReturnErrorUnfilter2() {
+    void otherwiseReturnErrorUnfilter2() {
 		StepVerifier.create(Mono.<Integer>error(new TestException())
 				.onErrorReturn(RuntimeException.class::isInstance, 1))
 		            .verifyError(TestException.class);
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoOnErrorResume<String> test = new MonoOnErrorResume<>(Mono.just("foo"), e -> Mono.just("bar"));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

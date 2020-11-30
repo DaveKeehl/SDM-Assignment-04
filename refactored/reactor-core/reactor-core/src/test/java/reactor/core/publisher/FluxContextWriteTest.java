@@ -8,10 +8,10 @@ import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class FluxContextWriteTest {
+class FluxContextWriteTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxContextWrite<Integer> test = new FluxContextWrite<>(parent, c -> c);
 
@@ -20,7 +20,7 @@ public class FluxContextWriteTest {
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxContextWrite.ContextWriteSubscriber<Integer>
 				test = new FluxContextWrite.ContextWriteSubscriber<>(actual, Context.empty());

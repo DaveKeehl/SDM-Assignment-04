@@ -27,24 +27,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxFirstWithSignalTest {
+class FluxFirstWithSignalTest {
 
 	@Test
-	public void arrayNull() {
+    void arrayNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.firstWithSignal((Publisher<Integer>[]) null);
 		});
 	}
 
 	@Test
-	public void iterableNull() {
+    void iterableNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxFirstWithSignal<>((Iterable<Publisher<Integer>>) null);
 		});
 	}
 
 	@Test
-	public void firstWinner() {
+    void firstWinner() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal(Flux.range(1, 10), Flux.range(11, 10))
@@ -56,7 +56,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void firstWinnerBackpressured() {
+    void firstWinnerBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(5);
 
 		Flux.firstWithSignal(Flux.range(1, 10), Flux.range(11, 10))
@@ -68,7 +68,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void secondWinner() {
+    void secondWinner() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal(Flux.never(),
@@ -82,7 +82,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void secondEmitsError() {
+    void secondEmitsError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		RuntimeException ex = new RuntimeException("forced failure");
@@ -96,7 +96,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void singleArrayNullSource() {
+    void singleArrayNullSource() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal((Publisher<Object>) null)
@@ -108,7 +108,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void arrayOneIsNullSource() {
+    void arrayOneIsNullSource() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal(Flux.never(), null, Flux.never())
@@ -121,7 +121,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void singleIterableNullSource() {
+    void singleIterableNullSource() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal(Arrays.asList((Publisher<Object>) null))
@@ -133,7 +133,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void iterableOneIsNullSource() {
+    void iterableOneIsNullSource() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.firstWithSignal(Arrays.asList(Flux.never(),
@@ -147,7 +147,7 @@ public class FluxFirstWithSignalTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		@SuppressWarnings("unchecked") FluxFirstWithSignal<Integer>
 				test = new FluxFirstWithSignal<>(Flux.range(1, 10), Flux.range(11, 10));
 
@@ -155,7 +155,7 @@ public class FluxFirstWithSignalTest {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFirstWithSignal.RaceCoordinator<String> parent = new FluxFirstWithSignal.RaceCoordinator<>(1);
         FluxFirstWithSignal.FirstEmittingSubscriber<String> test = new FluxFirstWithSignal.FirstEmittingSubscriber<>(actual, parent, 1);
@@ -171,7 +171,7 @@ public class FluxFirstWithSignalTest {
     }
 
     @Test
-    public void scanRaceCoordinator() {
+    void scanRaceCoordinator() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFirstWithSignal.RaceCoordinator<String> parent = new FluxFirstWithSignal.RaceCoordinator<>(1);
         FluxFirstWithSignal.FirstEmittingSubscriber<String> test = new FluxFirstWithSignal.FirstEmittingSubscriber<>(actual, parent, 1);

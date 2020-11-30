@@ -38,10 +38,10 @@ import reactor.core.publisher.FluxOnAssembly.AssemblySnapshot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoOnAssemblyTest {
+class MonoOnAssemblyTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		MonoOnAssembly<?> test = new MonoOnAssembly<>(Mono.empty(), stacktrace);
 
@@ -50,7 +50,7 @@ public class MonoOnAssemblyTest {
 	}
 
 	@Test
-	public void stepNameAndToString() {
+    void stepNameAndToString() {
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		MonoOnAssembly<?> test = new MonoOnAssembly<>(Mono.empty(), stacktrace);
 

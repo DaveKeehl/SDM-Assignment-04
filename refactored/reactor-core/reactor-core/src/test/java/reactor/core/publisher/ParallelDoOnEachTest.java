@@ -6,10 +6,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ParallelDoOnEachTest {
+class ParallelDoOnEachTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		ParallelFlux<Integer> parent = Flux.just(1).parallel(2);
 		ParallelDoOnEach<Integer> test = new ParallelDoOnEach<>(parent, (k, v) -> {}, (k, v) -> {}, v -> {});
 

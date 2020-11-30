@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Stephane Maldini
  */
-public class ParallelSchedulerTest extends AbstractSchedulerTest {
+class ParallelSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -50,7 +50,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void startAndDecorationImplicit() {
+    void startAndDecorationImplicit() {
 		AtomicInteger decorationCount = new AtomicInteger();
 		Schedulers.setExecutorServiceDecorator("startAndDecorationImplicit", (s, srv) -> {
 			decorationCount.incrementAndGet();
@@ -72,14 +72,14 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void negativeParallelism() throws Exception {
+    void negativeParallelism() throws Exception {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Schedulers.newParallel("test", -1);
 		});
 	}
 
 	@Test
-	public void scheduledDoesntReject() {
+    void scheduledDoesntReject() {
 		Scheduler s = scheduler();
 
 		assertThat(s.schedule(() -> {}, 100, TimeUnit.MILLISECONDS))
@@ -99,7 +99,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestDelay() {
+    void smokeTestDelay() {
 		for (int i = 0; i < 20; i++) {
 			Scheduler s = Schedulers.newParallel("test");
 			AtomicLong start = new AtomicLong();
@@ -131,7 +131,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestInterval() {
+    void smokeTestInterval() {
 		Scheduler s = scheduler();
 
 		try {
@@ -151,7 +151,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void shouldPickEvenly() throws Exception {
+    void shouldPickEvenly() throws Exception {
 		int n = 4;
 		int m = 25;
 
@@ -172,7 +172,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Scheduler withNamedFactory = Schedulers.newParallel("scanName", 12);
 		Scheduler withBasicFactory = Schedulers.newParallel(12, Thread::new);
 		Scheduler cached = Schedulers.parallel();
@@ -213,7 +213,7 @@ public class ParallelSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanCapacity() {
+    void scanCapacity() {
 		Scheduler scheduler = Schedulers.newParallel(12, Thread::new);
 
 		try {

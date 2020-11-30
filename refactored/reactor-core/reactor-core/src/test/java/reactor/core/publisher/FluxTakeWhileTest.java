@@ -27,10 +27,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxTakeWhileTest {
+class FluxTakeWhileTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxTakeWhile<>(null, v -> true);
 		});
@@ -38,14 +38,14 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().takeWhile(null);
 		});
 	}
 
 	@Test
-	public void takeAll() {
+    void takeAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -58,7 +58,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void takeAllBackpressured() {
+    void takeAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -83,7 +83,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void takeSome() {
+    void takeSome() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -96,7 +96,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void takeSomeBackpressured() {
+    void takeSomeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -121,7 +121,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void takeNone() {
+    void takeNone() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -134,7 +134,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void takeNoneBackpressured() {
+    void takeNoneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -153,7 +153,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -170,7 +170,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void aFluxCanBeLimitedWhile(){
+    void aFluxCanBeLimitedWhile(){
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .takeWhile("test"::equals)
 		)
@@ -179,7 +179,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxTakeWhile<Integer> test = new FluxTakeWhile<>(parent, v -> true);
 
@@ -188,7 +188,7 @@ public class FluxTakeWhileTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeWhile.TakeWhileSubscriber<Integer> test =
         		new FluxTakeWhile.TakeWhileSubscriber<>(actual, i -> true);

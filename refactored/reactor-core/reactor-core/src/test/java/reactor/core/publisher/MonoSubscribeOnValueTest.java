@@ -24,10 +24,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSubscribeOnValueTest {
+class MonoSubscribeOnValueTest {
 
 	@Test
-	public void testSubscribeOnValueFusion() {
+    void testSubscribeOnValueFusion() {
 
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> Mono.just(f + 1)
@@ -49,7 +49,7 @@ public class MonoSubscribeOnValueTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoSubscribeOnValue<String> test = new MonoSubscribeOnValue<>("foo", Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());

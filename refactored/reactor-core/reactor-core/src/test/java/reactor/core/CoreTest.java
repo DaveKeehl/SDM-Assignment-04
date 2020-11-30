@@ -27,16 +27,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class CoreTest {
+class CoreTest {
 
 	@Test
-	public void defaultDisposable(){
+    void defaultDisposable(){
 		Disposable d = () -> {};
 		assertThat(d.isDisposed()).isFalse();
 	}
 
 	@Test
-	public void defaultFuseableQueueSubscription(){
+    void defaultFuseableQueueSubscription(){
 		TestQueueSubscription tqs = new TestQueueSubscription();
 		testUnsupported(() -> tqs.peek());
 		testUnsupported(() -> tqs.add(0));

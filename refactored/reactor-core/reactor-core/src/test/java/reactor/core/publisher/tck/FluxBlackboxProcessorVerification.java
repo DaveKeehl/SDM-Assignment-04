@@ -29,7 +29,7 @@ import reactor.core.scheduler.Schedulers;
  * @author Stephane Maldini
  */
 @org.testng.annotations.Test
-public class FluxBlackboxProcessorVerification extends AbstractFluxVerification {
+class FluxBlackboxProcessorVerification extends AbstractFluxVerification {
 
 	private Scheduler sharedGroup;
 
@@ -61,12 +61,12 @@ public class FluxBlackboxProcessorVerification extends AbstractFluxVerification 
 	}
 
 	@BeforeMethod
-	public void init() {
+	void init() {
 		sharedGroup = Schedulers.newParallel("fluxion-tck", 2);
 	}
 
 	@AfterMethod
-	public void tearDown(){
+	void tearDown(){
 		sharedGroup.dispose();
 	}
 

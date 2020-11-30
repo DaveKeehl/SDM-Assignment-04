@@ -30,10 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoRepeatWhenEmptyTest {
+class MonoRepeatWhenEmptyTest {
 
     @Test
-    public void repeatInfinite() {
+    void repeatInfinite() {
         AtomicInteger c = new AtomicInteger();
 
         Mono<String> source = Mono.defer(() -> c.getAndIncrement() < 3 ? Mono.empty() : Mono.just("test-data"));
@@ -55,7 +55,7 @@ public class MonoRepeatWhenEmptyTest {
     }
 
     @Test
-    public void repeatFinite() {
+    void repeatFinite() {
         AtomicInteger c = new AtomicInteger();
 
         Mono<String> source = Mono.defer(() -> c.getAndIncrement() < 3 ? Mono.empty() : Mono.just("test-data"));
@@ -77,7 +77,7 @@ public class MonoRepeatWhenEmptyTest {
     }
 
     @Test
-    public void repeatFiniteExceeded() {
+    void repeatFiniteExceeded() {
         AtomicInteger c = new AtomicInteger();
 
         Mono<String> source = Mono.defer(() -> c.getAndIncrement() < 3 ? Mono.empty() : Mono.just("test-data"));
@@ -98,7 +98,7 @@ public class MonoRepeatWhenEmptyTest {
 
     @Test
     @Timeout(1)
-    public void gh2196_discardHandlerHang() {
+    void gh2196_discardHandlerHang() {
         StepVerifier.create(Mono.empty()
                 .repeatWhenEmpty(f -> f.next())
                 .doOnDiscard(Object.class, System.out::println))
@@ -108,7 +108,7 @@ public class MonoRepeatWhenEmptyTest {
     }
 
     @Test
-    public void scanOperator(){
+    void scanOperator(){
         MonoRepeatWhen<Integer> test = new MonoRepeatWhen<>(Mono.just(1), o -> Mono.empty());
 
         assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

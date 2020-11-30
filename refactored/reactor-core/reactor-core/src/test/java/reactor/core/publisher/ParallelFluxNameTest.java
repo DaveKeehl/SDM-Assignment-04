@@ -27,10 +27,10 @@ import reactor.util.function.Tuples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelFluxNameTest {
+class ParallelFluxNameTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelFluxName<Integer> test = new ParallelFluxName<>(source, "foo", null);
 
@@ -40,7 +40,7 @@ public class ParallelFluxNameTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		Tuple2<String, String> tag1 = Tuples.of("foo", "oof");
 		Tuple2<String, String> tag2 = Tuples.of("bar", "rab");
 		Set<Tuple2<String, String>> tags = new HashSet<>();
@@ -64,7 +64,7 @@ public class ParallelFluxNameTest {
 	}
 
 	@Test
-	public void scanOperatorNullTags() throws Exception {
+    void scanOperatorNullTags() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelFluxName<Integer> test = new ParallelFluxName<>(source, "foo", null);
 

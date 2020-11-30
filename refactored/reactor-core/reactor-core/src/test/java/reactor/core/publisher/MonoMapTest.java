@@ -26,7 +26,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoMapTest extends MonoOperatorTest<String, String> {
+class MonoMapTest extends MonoOperatorTest<String, String> {
 
 	@Override
 	protected List<Scenario<String, String>> scenarios_operatorSuccess() {
@@ -45,21 +45,21 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	final Mono<Integer> just = Mono.just(1);
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoMap<Integer, Integer>(null, v -> v);
 		});
 	}
 
 	@Test
-	public void nullMapper() {
+    void nullMapper() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			just.map(null);
 		});
 	}
 
 	@Test
-	public void simpleMapping() {
+    void simpleMapping() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		just.map(v -> v + 1)
@@ -71,7 +71,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void simpleMappingBackpressured() {
+    void simpleMappingBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		just.map(v -> v + 1)
@@ -89,7 +89,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapperThrows() {
+    void mapperThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just.map(v -> {
@@ -104,7 +104,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapperReturnsNull() {
+    void mapperReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just.map(v -> null)
@@ -116,7 +116,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapFilter() {
+    void mapFilter() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just
@@ -130,7 +130,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapFilterBackpressured() {
+    void mapFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		just
@@ -150,7 +150,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapFilter() {
+    void hiddenMapFilter() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just
@@ -165,7 +165,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapFilterBackpressured() {
+    void hiddenMapFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		just
@@ -186,7 +186,7 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapHiddenFilterBackpressured() {
+    void hiddenMapHiddenFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		just
@@ -204,14 +204,14 @@ public class MonoMapTest extends MonoOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoMap<String, String> test = new MonoMap<>(Mono.just("foo"), s -> s.toUpperCase());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		MonoMapFuseable<String, String> test = new MonoMapFuseable<>(Mono.just("foo"), s -> s.toUpperCase());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

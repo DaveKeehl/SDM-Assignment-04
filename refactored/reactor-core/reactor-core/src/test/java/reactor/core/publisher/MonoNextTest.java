@@ -25,10 +25,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoNextTest {
+class MonoNextTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		Flux.range(1, 1_000_000)
 		    .next()
 		    .subscribeWith(AssertSubscriber.create())
@@ -37,7 +37,7 @@ public class MonoNextTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 		Flux.range(1, 1_000_000)
 		    .next()
@@ -51,7 +51,7 @@ public class MonoNextTest {
 	}
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		TestPublisher<String> cancelTester = TestPublisher.create();
 
 		StepVerifier.create(cancelTester.flux()
@@ -63,7 +63,7 @@ public class MonoNextTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<String> source = Flux.just("foo", "bar");
 		MonoNext<String> test = new MonoNext<>(source);
 
@@ -73,7 +73,7 @@ public class MonoNextTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoNext.NextSubscriber<String> test = new MonoNext.NextSubscriber<>(actual);
 		Subscription parent = Operators.emptySubscription();

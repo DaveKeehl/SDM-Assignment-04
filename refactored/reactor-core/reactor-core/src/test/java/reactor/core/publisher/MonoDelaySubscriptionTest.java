@@ -27,24 +27,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDelaySubscriptionTest {
+class MonoDelaySubscriptionTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoDelaySubscription<>(null, Mono.never());
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.never().delaySubscription((Publisher<?>) null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -62,7 +62,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void delayedTrigger() {
+    void delayedTrigger() {
 		StepVerifier.withVirtualTime(this::scenario_delayedTrigger)
 		            .thenAwait(Duration.ofSeconds(3))
 		            .expectNext(1)
@@ -75,7 +75,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void delayedTrigger2() {
+    void delayedTrigger2() {
 		StepVerifier.withVirtualTime(this::scenario_delayedTrigger2)
 		            .thenAwait(Duration.ofMillis(50))
 		            .expectNext(1)
@@ -83,7 +83,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -102,7 +102,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void manyTriggered() {
+    void manyTriggered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -115,7 +115,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void manyTriggeredBackpressured() {
+    void manyTriggeredBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -134,7 +134,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void emptyTrigger() {
+    void emptyTrigger() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -147,7 +147,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void emptyTriggerBackpressured() {
+    void emptyTriggerBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -166,7 +166,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void neverTriggered() {
+    void neverTriggered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -179,7 +179,7 @@ public class MonoDelaySubscriptionTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoDelaySubscription<Integer, Integer> test = new MonoDelaySubscription<>(Mono.just(1), Mono.just(2));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MpscLinkedQueueTest {
+class MpscLinkedQueueTest {
 
 	@Test
-	public void mpscQueuesAPI() {
+    void mpscQueuesAPI() {
 		assertThat(Queues.unboundedMultiproducer().get()).isInstanceOf(MpscLinkedQueue.class);
 	}
 
 	@Test
-	public void shouldRejectNullableValues() {
+    void shouldRejectNullableValues() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			q.offer(null);
@@ -23,7 +23,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldRejectNullableValuesForTest() {
+    void shouldRejectNullableValuesForTest() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			q.test(null, null);
@@ -31,7 +31,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldNormallyOfferTwoValues() {
+    void shouldNormallyOfferTwoValues() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<Object>();
 		q.test(1, 2);
 
@@ -41,7 +41,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowIteratingWithIterator() {
+    void shouldNotAllowIteratingWithIterator() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> {
@@ -50,7 +50,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowElementsRemoving() {
+    void shouldNotAllowElementsRemoving() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 
 		q.offer(1);
@@ -60,7 +60,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldClearQueue() {
+    void shouldClearQueue() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 		q.test(1, 2);
 
@@ -74,7 +74,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void shouldNotRemoveElementOnPeek() {
+    void shouldNotRemoveElementOnPeek() {
 		MpscLinkedQueue<Object> q = new MpscLinkedQueue<>();
 		q.test(1, 2);
 
@@ -85,7 +85,7 @@ public class MpscLinkedQueueTest {
 	}
 
 	@Test
-	public void mpscOfferPollRace() throws Exception {
+    void mpscOfferPollRace() throws Exception {
 		final MpscLinkedQueue<Integer> q = new MpscLinkedQueue<Integer>();
 
 		final AtomicInteger c = new AtomicInteger(3);

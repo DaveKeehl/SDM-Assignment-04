@@ -34,7 +34,7 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxWindowConsistencyTest {
+class FluxWindowConsistencyTest {
 
 	Sinks.Many<Integer> sourceProcessor = Sinks.unsafe().many().multicast().directBestEffort();
 
@@ -59,7 +59,7 @@ public class FluxWindowConsistencyTest {
 	private AtomicInteger mainTerminated = new AtomicInteger();
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		source = sourceProcessor.asFlux().doOnNext(i -> sourceCount.incrementAndGet());
 	}
 
@@ -163,7 +163,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowExactComplete() throws Exception {
+    void windowExactComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(3, 3);
 		subscribe(windows);
 		generateAndComplete(0, 6);
@@ -171,7 +171,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowSkipComplete() throws Exception {
+    void windowSkipComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(3, 5);
 		subscribe(windows);
 		generateAndComplete(0, 10);
@@ -179,7 +179,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowOverlapComplete() throws Exception {
+    void windowOverlapComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 3);
 		subscribe(windows);
 		generateAndComplete(0, 5);
@@ -187,7 +187,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowDurationComplete() throws Exception {
+    void windowDurationComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(Duration.ofMillis(200));
 		subscribe(windows);
 		generate(0, 3);
@@ -197,7 +197,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowTimeoutComplete() throws Exception {
+    void windowTimeoutComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowTimeout(5, Duration.ofMillis(200));
 		subscribe(windows);
 		generate(0, 3);
@@ -207,7 +207,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowBoundaryComplete() throws Exception {
+    void windowBoundaryComplete() throws Exception {
 		Sinks.Many<Integer> boundary = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Flux<Integer>> windows = source.window(boundary.asFlux());
 		subscribe(windows);
@@ -218,7 +218,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowStartEndComplete() throws Exception {
+    void windowStartEndComplete() throws Exception {
 		Sinks.Many<Integer> start = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -233,7 +233,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowUntilComplete() throws Exception {
+    void windowUntilComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowUntil(i -> i % 3 == 0);
 		subscribe(windows);
 		generateAndComplete(1, 5);
@@ -241,7 +241,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowWhileComplete() throws Exception {
+    void windowWhileComplete() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowWhile(i -> i % 3 != 0);
 		subscribe(windows);
 		generateAndComplete(1, 5);
@@ -249,7 +249,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void groupByComplete() throws Exception {
+    void groupByComplete() throws Exception {
 		Flux<GroupedFlux<Integer, Integer>> windows = source.groupBy(i -> i % 2);
 		subscribeGroups(windows);
 		generateAndComplete(0, 6);
@@ -257,7 +257,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowExactMainCancel() throws Exception {
+    void windowExactMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 5);
 		subscribe(windows);
 		generateWithCancel(0, 7, 10);
@@ -265,7 +265,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowSkipMainCancel() throws Exception {
+    void windowSkipMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(3, 5);
 		subscribe(windows);
 		generateWithCancel(0, 6, 10);
@@ -273,7 +273,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowOverlapMainCancel() throws Exception {
+    void windowOverlapMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 3);
 		subscribe(windows);
 		generateWithCancel(0, 4, 10);
@@ -281,7 +281,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowDurationMainCancel() throws Exception {
+    void windowDurationMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(Duration.ofMillis(100));
 		subscribe(windows);
 		generate(0, 2);
@@ -293,7 +293,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowTimeoutMainCancel() throws Exception {
+    void windowTimeoutMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowTimeout(10, Duration.ofMillis(100));
 		subscribe(windows);
 		generate(0, 2);
@@ -305,7 +305,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowBoundaryMainCancel() throws Exception {
+    void windowBoundaryMainCancel() throws Exception {
 		Sinks.Many<Integer> boundary = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Flux<Integer>> windows = source.window(boundary.asFlux());
 
@@ -321,7 +321,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowStartEndMainCancel() throws Exception {
+    void windowStartEndMainCancel() throws Exception {
 		Sinks.Many<Integer> start = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -341,7 +341,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowUntilMainCancel() throws Exception {
+    void windowUntilMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowUntil(i -> i % 3 == 0);
 		subscribe(windows);
 		generateWithCancel(1, 4, 10);
@@ -349,7 +349,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowWhileMainCancel() throws Exception {
+    void windowWhileMainCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowWhile(i -> i % 3 != 0);
 		subscribe(windows);
 		generateWithCancel(1, 4, 10);
@@ -357,7 +357,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void groupByMainCancel() throws Exception {
+    void groupByMainCancel() throws Exception {
 		Flux<GroupedFlux<Integer, Integer>> windows = source.groupBy(i -> i % 2);
 		subscribeGroups(windows);
 		generateWithCancel(0, 5, 1);
@@ -365,7 +365,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowExactMainCancelNoNewWindow() throws Exception {
+    void windowExactMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 5);
 		subscribe(windows);
 		generateWithCancel(0, 10, 1);
@@ -373,7 +373,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowSkipMainCancelNoNewWindow() throws Exception {
+    void windowSkipMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(2, 5);
 		subscribe(windows);
 		generateWithCancel(0, 5, 1);
@@ -381,7 +381,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowOverlapMainCancelNoNewWindow() throws Exception {
+    void windowOverlapMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 1);
 		subscribe(windows);
 		generateWithCancel(0, 2, 1);
@@ -389,7 +389,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowDurationMainCancelNoNewWindow() throws Exception {
+    void windowDurationMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(Duration.ofMillis(100));
 		subscribe(windows);
 		generate(0, 2);
@@ -400,7 +400,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowTimeoutMainCancelNoNewWindow() throws Exception {
+    void windowTimeoutMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowTimeout(5, Duration.ofMillis(200));
 		subscribe(windows);
 		generate(0, 1);
@@ -413,7 +413,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowBoundaryMainCancelNoNewWindow() throws Exception {
+    void windowBoundaryMainCancelNoNewWindow() throws Exception {
 		Sinks.Many<Integer> boundary = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Flux<Integer>> windows = source.window(boundary.asFlux());
 
@@ -426,7 +426,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowStartEndMainCancelNoNewWindow() throws Exception {
+    void windowStartEndMainCancelNoNewWindow() throws Exception {
 		Sinks.Many<Integer> start = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -442,7 +442,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowUntilMainCancelNoNewWindow() throws Exception {
+    void windowUntilMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowUntil(i -> i % 3 == 0);
 		subscribe(windows);
 		generateWithCancel(0, 4, 1);
@@ -450,7 +450,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowWhileMainCancelNoNewWindow() throws Exception {
+    void windowWhileMainCancelNoNewWindow() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowWhile(i -> i % 3 != 1);
 		subscribe(windows);
 		generateWithCancel(0, 4, 1);
@@ -458,7 +458,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void groupByMainCancelNoNewWindow() throws Exception {
+    void groupByMainCancelNoNewWindow() throws Exception {
 		Flux<GroupedFlux<Integer, Integer>> windows = source.groupBy(i -> i % 2);
 		subscribeGroups(windows);
 		generateWithCancel(0, 1, 1);
@@ -466,7 +466,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowExactInnerCancel() throws Exception {
+    void windowExactInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 5);
 		subscribe(windows);
 		generateWithCancel(0, 49, 1);
@@ -474,7 +474,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowSkipInnerCancel() throws Exception {
+    void windowSkipInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(2, 5);
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -482,7 +482,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowOverlapInnerCancel() throws Exception {
+    void windowOverlapInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(5, 1);
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -490,7 +490,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowDurationInnerCancel() throws Exception {
+    void windowDurationInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.window(Duration.ofMillis(5000));
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -498,7 +498,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowTimeoutInnerCancel() throws Exception {
+    void windowTimeoutInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowTimeout(5, Duration.ofMillis(5000));
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -506,7 +506,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowBoundaryInnerCancel() throws Exception {
+    void windowBoundaryInnerCancel() throws Exception {
 		Sinks.Many<Integer> boundaryProcessor = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Flux<Integer>> windows = source.window(boundaryProcessor.asFlux());
 		subscribe(windows);
@@ -515,7 +515,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowStartEndInnerCancel() throws Exception {
+    void windowStartEndInnerCancel() throws Exception {
 		Sinks.Many<Integer> start = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> end2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -527,7 +527,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowUntilInnerCancel() throws Exception {
+    void windowUntilInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowUntil(i -> i % 3 == 0);
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -535,7 +535,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void windowWhileInnerCancel() throws Exception {
+    void windowWhileInnerCancel() throws Exception {
 		Flux<Flux<Integer>> windows = source.windowWhile(i -> i % 3 != 1);
 		subscribe(windows);
 		generateWithCancel(0, 6, 1);
@@ -543,7 +543,7 @@ public class FluxWindowConsistencyTest {
 	}
 
 	@Test
-	public void groupByInnerCancel() throws Exception {
+    void groupByInnerCancel() throws Exception {
 		Flux<GroupedFlux<Integer, Integer>> windows = source.groupBy(i -> i % 2);
 		subscribeGroups(windows);
 		generateWithCancel(0, 9, 1);

@@ -30,17 +30,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class QueuesTest {
+class QueuesTest {
 
 	@Test
-	public void capacityReactorUnboundedQueue() {
+    void capacityReactorUnboundedQueue() {
 		Queue q = Queues.unbounded(2).get();
 
 		assertThat(Queues.capacity(q)).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void capacityReactorBoundedQueue() {
+    void capacityReactorBoundedQueue() {
 		//the bounded queue floors at 8 and rounds to the next power of 2
 
 		assertThat(Queues.capacity(Queues.get(2).get()))
@@ -54,35 +54,35 @@ public class QueuesTest {
 	}
 
 	@Test
-	public void capacityBoundedBlockingQueue() {
+    void capacityBoundedBlockingQueue() {
 		Queue q = new LinkedBlockingQueue<>(10);
 
 		assertThat(Queues.capacity(q)).isEqualTo(10);
 	}
 
 	@Test
-	public void capacityUnboundedBlockingQueue() {
+    void capacityUnboundedBlockingQueue() {
 		Queue q = new LinkedBlockingQueue<>();
 
 		assertThat(Queues.capacity(q)).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void capacityUnboundedConcurrentLinkedQueue() {
+    void capacityUnboundedConcurrentLinkedQueue() {
 		Queue q = new ConcurrentLinkedQueue<>();
 
 		assertThat(Queues.capacity(q)).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void capacityUnboundedMpscLinkedQueue() {
+    void capacityUnboundedMpscLinkedQueue() {
 		Queue q = new MpscLinkedQueue();
 
 		assertThat(Queues.capacity(q)).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void capacityOneQueue() {
+    void capacityOneQueue() {
 		Queue q = Queues.one().get();
 
 		assertThat(Queues.capacity(q)).isEqualTo(1);
@@ -90,14 +90,14 @@ public class QueuesTest {
 
 
 	@Test
-	public void capacityEmptyQueue() {
+    void capacityEmptyQueue() {
 		Queue q = Queues.empty().get();
 
 		assertThat(Queues.capacity(q)).isZero();
 	}
 
 	@Test
-	public void capacityOtherQueue() {
+    void capacityOtherQueue() {
 		Queue q = new PriorityQueue<>(10);
 
 		assertThat(Queues.capacity(q))
@@ -106,7 +106,7 @@ public class QueuesTest {
 	}
 
 	@Test
-	public void zeroQueueOperations() {
+    void zeroQueueOperations() {
 		Queue<Integer> q = Queues.<Integer>empty().get();
 		List<Integer> vals = Arrays.asList(1, 2, 3);
 
@@ -144,7 +144,7 @@ public class QueuesTest {
 	}
 
 	@Test    //https://github.com/reactor/reactor-core/issues/1326
-	public void toArrayOnZeroQueueShouldNotFailAlsoOnJava9() {
+	void toArrayOnZeroQueueShouldNotFailAlsoOnJava9() {
 		Queue<Integer> emptyQueue = Queues.<Integer>empty().get();
 
 		assertThat(emptyQueue.toArray(new Integer[0])).as("toArray(empty)").isEmpty();

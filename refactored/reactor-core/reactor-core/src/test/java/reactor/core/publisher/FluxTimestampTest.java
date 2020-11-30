@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 import reactor.util.function.Tuple2;
 
-public class FluxTimestampTest {
+class FluxTimestampTest {
 
 	Flux<Tuple2<Long, String>> scenario_aFluxCanBeTimestamped(){
 		return Flux.just("test")
@@ -29,7 +29,7 @@ public class FluxTimestampTest {
 	}
 
 	@Test
-	public void aFluxCanBeTimestamped(){
+    void aFluxCanBeTimestamped(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeTimestamped, 0)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .thenRequest(1)

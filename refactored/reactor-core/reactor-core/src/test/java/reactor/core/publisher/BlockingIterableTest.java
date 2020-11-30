@@ -38,11 +38,11 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class BlockingIterableTest {
+class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void normal() {
+	void normal() {
 		List<Integer> values = new ArrayList<>();
 
 		for (Integer i : Flux.range(1, 10)
@@ -55,7 +55,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void normal2() {
+	void normal2() {
 		Queue<Integer> q = new ArrayBlockingQueue<>(1);
 		List<Integer> values = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void empty() {
+	void empty() {
 		List<Integer> values = new ArrayList<>();
 
 		for (Integer i : FluxEmpty.<Integer>instance().toIterable()) {
@@ -81,7 +81,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void error() {
+	void error() {
 		List<Integer> values = new ArrayList<>();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
@@ -95,7 +95,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void toStream() {
+	void toStream() {
 		List<Integer> values = new ArrayList<>();
 
 		Flux.range(1, 10)
@@ -107,7 +107,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void streamEmpty() {
+	void streamEmpty() {
 		List<Integer> values = new ArrayList<>();
 
 		FluxEmpty.<Integer>instance().toStream()
@@ -118,7 +118,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void streamLimit() {
+	void streamLimit() {
 		List<Integer> values = new ArrayList<>();
 
 		Flux.range(1, Integer.MAX_VALUE)
@@ -131,7 +131,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(5)
-	public void streamParallel() {
+	void streamParallel() {
 		int n = 1_000_000;
 
 		Optional<Integer> opt = Flux.range(1, n)
@@ -144,7 +144,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Flux<Integer> source = Flux.range(1, 10);
 		BlockingIterable<Integer> test = new BlockingIterable<>(source, 35, Queues.one());
 
@@ -157,7 +157,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanOperatorLargePrefetchIsLimitedToIntMax() {
+    void scanOperatorLargePrefetchIsLimitedToIntMax() {
 		Flux<Integer> source = Flux.range(1, 10);
 		BlockingIterable<Integer> test = new BlockingIterable<>(source,
 				Integer.MAX_VALUE,
@@ -167,7 +167,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		BlockingIterable.SubscriberIterator<String> subscriberIterator =
 				new BlockingIterable.SubscriberIterator<>(Queues.<String>one().get(), 123);
 		Subscription s = Operators.emptySubscription();
@@ -184,7 +184,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanSubscriberLargePrefetchIsLimitedToIntMax() {
+    void scanSubscriberLargePrefetchIsLimitedToIntMax() {
 		BlockingIterable.SubscriberIterator<String> subscriberIterator =
 				new BlockingIterable.SubscriberIterator<>(Queues.<String>one().get(),
 						Integer.MAX_VALUE);
@@ -193,7 +193,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanSubscriberTerminated() {
+    void scanSubscriberTerminated() {
 		BlockingIterable.SubscriberIterator<String> test =
 				new BlockingIterable.SubscriberIterator<>(Queues.<String>one().get(), 123);
 
@@ -205,7 +205,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanSubscriberError() {
+    void scanSubscriberError() {
 		BlockingIterable.SubscriberIterator<String> test = new BlockingIterable.SubscriberIterator<>(
 				Queues.<String>one().get(),
 				123);
@@ -222,7 +222,7 @@ public class BlockingIterableTest {
 	}
 
 	@Test
-	public void scanSubscriberCancelled() {
+    void scanSubscriberCancelled() {
 		BlockingIterable.SubscriberIterator<String> test = new BlockingIterable.SubscriberIterator<>(
 				Queues.<String>one().get(),
 				123);
@@ -237,7 +237,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_streamCreate() {
+	void gh841_streamCreate() {
 		Flux<String> source = Flux.<String>create(sink -> {
 			sink.next("a");
 			sink.next("b");
@@ -253,7 +253,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_streamCreateDeferredError() {
+	void gh841_streamCreateDeferredError() {
 		Flux<Integer> source = Flux.<Integer>create(sink -> {
 			sink.next(1);
 			sink.next(2);
@@ -271,7 +271,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_streamFromIterable() {
+	void gh841_streamFromIterable() {
 		Flux<String> source = Flux.fromIterable(Arrays.asList("a","b"))
 		                          .sort((a, b) -> { throw new IllegalStateException("boom"); });
 
@@ -283,7 +283,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_iteratorFromCreate() {
+	void gh841_iteratorFromCreate() {
 		Iterator<String> it = Flux.<String>create(sink -> {
 			sink.next("a");
 			sink.next("b");
@@ -299,7 +299,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_workaroundFlux() {
+	void gh841_workaroundFlux() {
 		Flux<String> source = Flux.<String>create(sink -> {
 			sink.next("a");
 			sink.next("b");
@@ -317,7 +317,7 @@ public class BlockingIterableTest {
 
 	@Test
 	@Timeout(1)
-	public void gh841_workaroundStream() {
+	void gh841_workaroundStream() {
 		Flux<String> source = Flux.<String>create(sink -> {
 			sink.next("a");
 			sink.next("b");

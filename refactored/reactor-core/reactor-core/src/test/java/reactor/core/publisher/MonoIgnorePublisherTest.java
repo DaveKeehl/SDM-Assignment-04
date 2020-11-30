@@ -6,17 +6,17 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoIgnorePublisherTest {
+class MonoIgnorePublisherTest {
 
     @Test
-    public void normal() {
+    void normal() {
         StepVerifier.create(Mono.ignoreElements(Mono.just("foo")))
                 .expectSubscription()
                 .verifyComplete();
     }
 
     @Test
-    public void scanOperator(){
+    void scanOperator(){
         MonoIgnoreElement<String> test = new MonoIgnoreElement<>(Mono.just("foo"));
 
         assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

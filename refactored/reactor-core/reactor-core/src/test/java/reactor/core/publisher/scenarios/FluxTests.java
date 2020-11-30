@@ -82,7 +82,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxTests extends AbstractReactorTest {
+class FluxTests extends AbstractReactorTest {
 
 	static final Logger LOG = Loggers.getLogger(FluxTests.class);
 
@@ -92,7 +92,7 @@ public class FluxTests extends AbstractReactorTest {
 	AutoDisposingExtension afterTest = new AutoDisposingExtension();
 
 	@Test
-	public void discardLocalMultipleFilters() {
+    void discardLocalMultipleFilters() {
 		AtomicInteger discardNumberCount = new AtomicInteger();
 		AtomicInteger discardStringCount = new AtomicInteger();
 
@@ -113,7 +113,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void discardLocalOrder() {
+    void discardLocalOrder() {
 		List<String> discardOrder = Collections.synchronizedList(new ArrayList<>(2));
 
 		StepVerifier.create(Flux.range(1, 2)
@@ -130,7 +130,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void delayErrorConcatMapVsFlatMap() {
+    void delayErrorConcatMapVsFlatMap() {
 		Function<Integer, Flux<String>> mapFunction = i -> {
 			char c = (char) ('A' + i);
 			return Flux.range(1, i + 1)
@@ -159,7 +159,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void delayErrorConcatMapVsFlatMapTwoErrors() {
+    void delayErrorConcatMapVsFlatMapTwoErrors() {
 		Function<Integer, Flux<String>> mapFunction = i -> {
 			char c = (char) ('A' + i);
 			return Flux.range(1, i + 1)
@@ -203,7 +203,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testDoOnEachSignal() {
+    void testDoOnEachSignal() {
 		List<Signal<Integer>> signals = new ArrayList<>(4);
 		List<Integer> values = new ArrayList<>(2);
 		Flux<Integer> flux = Flux.just(1, 2)
@@ -227,7 +227,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testDoOnEachSignalSingleNextInstance() {
+    void testDoOnEachSignalSingleNextInstance() {
 		Set<Signal<Integer>> signals = Collections.newSetFromMap(
 				new IdentityHashMap<>(2));
 		Flux<Integer> flux = Flux.range(1, 1_000)
@@ -256,7 +256,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testDoOnEachSignalWithError() {
+    void testDoOnEachSignalWithError() {
 		List<Signal<Integer>> signals = new ArrayList<>(4);
 		Flux<Integer> flux = Flux.<Integer>error(new IllegalArgumentException("foo"))
 		                         .doOnEach(signals::add);
@@ -271,14 +271,14 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testDoOnEachSignalNullConsumer() {
+    void testDoOnEachSignalNullConsumer() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.just(1).doOnEach(null);
 		});
 	}
 
 	@Test
-	public void testDoOnEachSignalToSubscriber() {
+    void testDoOnEachSignalToSubscriber() {
 		AssertSubscriber<Integer> peekSubscriber = AssertSubscriber.create();
 		Flux<Integer> flux = Flux.just(1, 2)
 		                         .doOnEach(s -> s.accept(peekSubscriber));
@@ -294,7 +294,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testThenPublisherVoid() throws InterruptedException {
+    void testThenPublisherVoid() throws InterruptedException {
 		Mono<Void> testVoidPublisher = Flux
 				.just("A", "B")
 				.thenEmpty(Mono.fromRunnable(() -> { }));
@@ -307,7 +307,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testComposeFromSingleValue() throws InterruptedException {
+    void testComposeFromSingleValue() throws InterruptedException {
 		Flux<String> stream = Flux.just("Hello World!");
 		Flux<String> s = stream.map(s1 -> "Goodbye then!");
 
@@ -315,14 +315,14 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testComposeFromMultipleValues() throws InterruptedException {
+    void testComposeFromMultipleValues() throws InterruptedException {
 		Flux<String> stream = Flux.just("1", "2", "3", "4", "5");
 		Flux<Integer> s = stream.map(STRING_2_INTEGER)
 		                           .map(new Function<Integer, Integer>() {
 			                          int sum = 0;
 
 			                          @Override
-			                          public Integer apply(Integer i) {
+									  public Integer apply(Integer i) {
 				                          sum += i;
 				                          return sum;
 			                          }
@@ -331,7 +331,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testComposeFromMultipleFilteredValues() throws InterruptedException {
+    void testComposeFromMultipleFilteredValues() throws InterruptedException {
 		Flux<String> stream = Flux.just("1", "2", "3", "4", "5");
 		Flux<Integer> s = stream.map(STRING_2_INTEGER)
 		                           .filter(i -> i % 2 == 0);
@@ -340,7 +340,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testComposedErrorHandlingWithMultipleValues() throws InterruptedException {
+    void testComposedErrorHandlingWithMultipleValues() throws InterruptedException {
 		Flux<String> stream = Flux.just("1", "2", "3", "4", "5");
 
 		final AtomicBoolean exception = new AtomicBoolean(false);
@@ -349,7 +349,7 @@ public class FluxTests extends AbstractReactorTest {
 			                          int sum = 0;
 
 			                          @Override
-			                          public Integer apply(Integer i) {
+									  public Integer apply(Integer i) {
 				                          if (i >= 5) {
 					                          throw new IllegalArgumentException("expected");
 				                          }
@@ -364,7 +364,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testReduce() throws InterruptedException {
+    void testReduce() throws InterruptedException {
 		Flux<String> stream = Flux.just("1", "2", "3", "4", "5");
 		Mono<Integer> s = stream.map(STRING_2_INTEGER)
 		                          .reduce(1, (acc, next) -> acc * next);
@@ -372,7 +372,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testMerge() throws InterruptedException {
+    void testMerge() throws InterruptedException {
 		Flux<String> stream1 = Flux.just("1", "2");
 		Flux<String> stream2 = Flux.just("3", "4", "5");
 		Mono<Integer> s = Flux.merge(stream1, stream2)
@@ -384,7 +384,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testStreamBatchesResults() {
+    void testStreamBatchesResults() {
 		Flux<String> stream = Flux.just("1", "2", "3", "4", "5");
 		Mono<List<Integer>> s = stream.map(STRING_2_INTEGER)
 		                                .collectList();
@@ -403,7 +403,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testHandlersErrorsDownstream() throws InterruptedException {
+    void testHandlersErrorsDownstream() throws InterruptedException {
 		Flux<String> stream = Flux.just("1", "2", "a", "4", "5");
 		final CountDownLatch latch = new CountDownLatch(1);
 		Flux<Integer> s = stream.map(STRING_2_INTEGER)
@@ -411,7 +411,7 @@ public class FluxTests extends AbstractReactorTest {
 			                          int sum = 0;
 
 			                          @Override
-			                          public Integer apply(Integer i) {
+									  public Integer apply(Integer i) {
 				                          if (i >= 5) {
 					                          throw new IllegalArgumentException();
 				                          }
@@ -421,7 +421,7 @@ public class FluxTests extends AbstractReactorTest {
 		                          })
 		                           .doOnError(NumberFormatException.class, new Consumer<NumberFormatException>() {
 			                          @Override
-			                          public void accept(NumberFormatException e) {
+									  public void accept(NumberFormatException e) {
 				                          latch.countDown();
 			                          }
 		                          });
@@ -431,7 +431,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void promiseAcceptCountCannotExceedOne() {
+    void promiseAcceptCountCannotExceedOne() {
 		Sinks.One<Object> deferred = Sinks.one();
 		deferred.emitValue("alpha", FAIL_FAST);
 		try {
@@ -446,7 +446,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void promiseErrorCountCannotExceedOne() {
+    void promiseErrorCountCannotExceedOne() {
 		Sinks.One<Object> deferred = Sinks.one();
 		Throwable error = new IOException("foo");
 
@@ -463,7 +463,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void promiseAcceptCountAndErrorCountCannotExceedOneInTotal() {
+    void promiseAcceptCountAndErrorCountCannotExceedOneInTotal() {
 		Sinks.One<Object> deferred = Sinks.one();
 		Throwable error = new IOException("foo");
 
@@ -518,7 +518,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void analyticsTest() throws Exception {
+    void analyticsTest() throws Exception {
 		Sinks.Many<Integer> source = Sinks.many().replay().all();
 
 		long avgTime = 50l;
@@ -552,7 +552,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void parallelTests() throws InterruptedException {
+    void parallelTests() throws InterruptedException {
 		parallelMapManyTest("sync", 1_000_000);
 		parallelMapManyTest("shared", 1_000_000);
 		parallelTest("sync", 1_000_000);
@@ -736,7 +736,7 @@ public class FluxTests extends AbstractReactorTest {
      * @throws Exception for convenience
 	 */
 	@Test
-	public void partitionByHashCodeShouldNeverCreateMoreStreamsThanSpecified() throws Exception {
+    void partitionByHashCodeShouldNeverCreateMoreStreamsThanSpecified() throws Exception {
 		Flux<Integer> stream = Flux.range(-10, 20)
 		                                 .map(Integer::intValue);
 
@@ -751,7 +751,7 @@ public class FluxTests extends AbstractReactorTest {
 	 * @throws Exception for convenience
 	 */
 	//@Test
-	public void shouldNotFlushStreamOnTimeoutPrematurelyAndShouldDoItConsistently() throws Exception {
+    void shouldNotFlushStreamOnTimeoutPrematurelyAndShouldDoItConsistently() throws Exception {
 		for (int i = 0; i < 100; i++) {
 			shouldNotFlushStreamOnTimeoutPrematurely();
 		}
@@ -762,7 +762,7 @@ public class FluxTests extends AbstractReactorTest {
      * @throws Exception for convenience
 	 */
 	@Test
-	public void shouldNotFlushStreamOnTimeoutPrematurely() throws Exception {
+    void shouldNotFlushStreamOnTimeoutPrematurely() throws Exception {
 		final int NUM_MESSAGES = 100000;
 		final int BATCH_SIZE = 1000;
 		final int TIMEOUT = 100;
@@ -823,7 +823,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void prematureFlatMapCompletion() throws Exception {
+    void prematureFlatMapCompletion() throws Exception {
 
 		long res = Flux.range(0, 1_000_000)
 		                  .flatMap(v -> Flux.range(v, 2))
@@ -833,7 +833,7 @@ public class FluxTests extends AbstractReactorTest {
 		assertThat(res).as("latch value").isEqualTo(2_000_000);
 	}
 	@Test
-	public void cancelOn() throws Exception {
+    void cancelOn() throws Exception {
 		CountDownLatch countDownLatch = new CountDownLatch(1);
 		AtomicReference<Thread> thread = new AtomicReference<>();
 		Disposable res = Flux.never()
@@ -849,7 +849,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void sequenceEqual() throws Exception {
+    void sequenceEqual() throws Exception {
 		boolean res = Mono.sequenceEqual(Flux.just(1, 2, 3), Flux.just(1, 2, 3))
 		                  .block();
 		assertThat(res).isTrue();
@@ -860,7 +860,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void zipOfNull() {
+    void zipOfNull() {
 		try {
 			Flux<String> as = Flux.just("x");
 			Flux<String> bs = Flux.just((String)null);
@@ -875,7 +875,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void shouldCorrectlyDispatchComplexFlow() throws InterruptedException {
+    void shouldCorrectlyDispatchComplexFlow() throws InterruptedException {
 		Sinks.Many<Integer> globalFeed = Sinks.many().multicast().onBackpressureBuffer();
 
 		CountDownLatch afterSubscribe = new CountDownLatch(1);
@@ -912,7 +912,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testParallelAsyncStream2() throws InterruptedException {
+    void testParallelAsyncStream2() throws InterruptedException {
 
 		final int numOps = 25;
 
@@ -943,7 +943,7 @@ public class FluxTests extends AbstractReactorTest {
 	 * @throws InterruptedException on interrupt
 	 */
 	@Test
-	public void testParallelWithJava8StreamsInput() throws InterruptedException {
+    void testParallelWithJava8StreamsInput() throws InterruptedException {
 		Scheduler supplier = afterTest.autoDispose(Schedulers.newParallel("test-p", 2));
 
 		int max = ThreadLocalRandom.current()
@@ -962,7 +962,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testBeyondLongMaxMicroBatching() throws InterruptedException {
+    void testBeyondLongMaxMicroBatching() throws InterruptedException {
 		List<Integer> tasks = IntStream.range(0, 1500)
 		                               .boxed()
 		                               .collect(Collectors.toList());
@@ -988,7 +988,7 @@ public class FluxTests extends AbstractReactorTest {
 
 		final Double x, y;
 
-		public Point(Double x, Double y) {
+		Point(Double x, Double y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -1010,7 +1010,7 @@ public class FluxTests extends AbstractReactorTest {
 
 		final Point point;
 
-		public Sample(Point point) {
+		Sample(Point point) {
 			this.point = point;
 		}
 
@@ -1024,14 +1024,14 @@ public class FluxTests extends AbstractReactorTest {
 
 	private static final class InnerSample extends Sample {
 
-		public InnerSample(Point point) {
+		InnerSample(Point point) {
 			super(point);
 		}
 	}
 
 	private static final class OuterSample extends Sample {
 
-		public OuterSample(Point point) {
+		OuterSample(Point point) {
 			super(point);
 		}
 	}
@@ -1041,7 +1041,7 @@ public class FluxTests extends AbstractReactorTest {
 		final Long totalSamples;
 		final Long inCircle;
 
-		public SimulationState(Long totalSamples, Long inCircle) {
+		SimulationState(Long totalSamples, Long inCircle) {
 			this.totalSamples = totalSamples;
 			this.inCircle = inCircle;
 		}
@@ -1064,7 +1064,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void shouldWindowCorrectly() throws InterruptedException {
+    void shouldWindowCorrectly() throws InterruptedException {
 		Flux<Integer> sensorDataStream = Flux.fromIterable(createTestDataset(1000));
 
 		CountDownLatch endLatch = new CountDownLatch(1000 / 100);
@@ -1089,7 +1089,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void shouldCorrectlyDispatchBatchedTimeout() throws InterruptedException {
+    void shouldCorrectlyDispatchBatchedTimeout() throws InterruptedException {
 
 		long timeout = 100;
 		final int batchsize = 4;
@@ -1123,19 +1123,19 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void mapLotsOfSubAndCancel() throws InterruptedException {
+    void mapLotsOfSubAndCancel() throws InterruptedException {
 		for (long i = 0; i < 199; i++) {
 			mapPassThru();
 		}
 	}
 
-	public void mapPassThru() throws InterruptedException {
+	void mapPassThru() throws InterruptedException {
 		Flux.just(1)
 		       .map(Function.identity());
 	}
 
 	@Test
-	public void consistentMultithreadingWithPartition() throws InterruptedException {
+    void consistentMultithreadingWithPartition() throws InterruptedException {
 		Scheduler supplier1 = afterTest.autoDispose(Schedulers.newParallel("groupByPool", 2));
 		Scheduler supplier2 = afterTest.autoDispose(Schedulers.newParallel("partitionPool", 5));
 
@@ -1160,7 +1160,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxCreateDemoElasticScheduler() throws Exception {
+    void fluxCreateDemoElasticScheduler() throws Exception {
 		final int inputCount = 1000;
 		final CountDownLatch latch = new CountDownLatch(inputCount);
 		Flux.create(
@@ -1180,7 +1180,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void subscribeOnDispatchOn() throws InterruptedException {
+    void subscribeOnDispatchOn() throws InterruptedException {
 		CountDownLatch latch = new CountDownLatch(100);
 
 		Flux.range(1, 100)
@@ -1194,7 +1194,7 @@ public class FluxTests extends AbstractReactorTest {
 		assertThat(latch.getCount()).as("dispatch count").isEqualTo(0L);
 	}
 	@Test
-	public void unimplementedErrorCallback() {
+    void unimplementedErrorCallback() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -1215,7 +1215,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void delayEach() throws InterruptedException {
+    void delayEach() throws InterruptedException {
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 3).delayElements(Duration.ofMillis(1000)))
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofSeconds(1))
@@ -1230,7 +1230,7 @@ public class FluxTests extends AbstractReactorTest {
 	// Test issue https://github.com/reactor/reactor/issues/474
 // code by @masterav10
 	@Test
-	public void combineWithOneElement() throws InterruptedException, TimeoutException {
+    void combineWithOneElement() throws InterruptedException, TimeoutException {
 		AtomicReference<Object> ref = new AtomicReference<>(null);
 
 		Phaser phaser = new Phaser(2);
@@ -1273,7 +1273,7 @@ public class FluxTests extends AbstractReactorTest {
 	 */
 	@Test
 	@Disabled
-	public void endLessTimer() throws InterruptedException, TimeoutException {
+	void endLessTimer() throws InterruptedException, TimeoutException {
 		int tasks = 50;
 		long delayMS = 50; // XXX: Fails when less than 100
 		Phaser barrier = new Phaser(tasks + 1);
@@ -1370,7 +1370,7 @@ public class FluxTests extends AbstractReactorTest {
 	 */
 	@Test
 	@Timeout(10)
-	public void multiplexUsingDispatchersAndSplit() {
+	void multiplexUsingDispatchersAndSplit() {
 		final Sinks.Many<Integer> forkEmitterProcessor = Sinks.many().multicast().onBackpressureBuffer();
 		final Sinks.Many<Integer> computationEmitterProcessor = Sinks.unsafe()
 		                                                             .many()
@@ -1444,7 +1444,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void testThrowWithoutOnErrorShowsUpInSchedulerHandler() {
+    void testThrowWithoutOnErrorShowsUpInSchedulerHandler() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		AtomicReference<String> failure = new AtomicReference<>(null);
@@ -1503,7 +1503,7 @@ public class FluxTests extends AbstractReactorTest {
 
 	@Test
 	@Disabled
-	public void splitBugEventuallyHappens() throws Exception {
+	void splitBugEventuallyHappens() throws Exception {
 		int successCount = 0;
 		try {
 			for (; ; ) {
@@ -1519,7 +1519,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromFluxSourceDoesntCallAssemblyHook() {
+    void fluxFromFluxSourceDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.range(1, 10);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1534,7 +1534,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromScalarJustCallsAssemblyHook() {
+    void fluxFromScalarJustCallsAssemblyHook() {
 		final Mono<String> source = Mono.just("scalarJust");
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1549,7 +1549,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromScalarErrorCallsAssemblyHook() {
+    void fluxFromScalarErrorCallsAssemblyHook() {
 		final Mono<Object> source = Mono.error(new IllegalStateException("scalarError"));
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1564,7 +1564,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromScalarEmptyCallsAssemblyHook() {
+    void fluxFromScalarEmptyCallsAssemblyHook() {
 		final Mono<Object> source = Mono.empty();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1579,7 +1579,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromMonoFuseableCallsAssemblyHook() {
+    void fluxFromMonoFuseableCallsAssemblyHook() {
 		Mono<String> source = Mono.just("monoFuseable").map(i -> i);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1594,7 +1594,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromMonoNormalCallsAssemblyHook() {
+    void fluxFromMonoNormalCallsAssemblyHook() {
 		final Mono<String> source = Mono.just("monoNormal")
 		                                .hide()
 		                                .map(i -> i);
@@ -1611,7 +1611,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxFromPublisherCallsAssemblyHook() {
+    void fluxFromPublisherCallsAssemblyHook() {
 		Publisher<String> publisher = sub -> sub.onSubscribe(Operators.emptySubscription());
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1626,7 +1626,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxNextScalarEmptyCallsAssemblyHook() {
+    void fluxNextScalarEmptyCallsAssemblyHook() {
 		Flux<Integer> source = Flux.empty();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1641,7 +1641,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxNextScalarValuedCallsAssemblyHook() {
+    void fluxNextScalarValuedCallsAssemblyHook() {
 		Flux<Integer> source = Flux.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1656,7 +1656,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxNextScalarErrorCallsAssemblyHook() {
+    void fluxNextScalarErrorCallsAssemblyHook() {
 		Flux<Integer> source = Flux.error(new IllegalStateException("boom"));
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -1671,7 +1671,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxNextCallableCallsAssemblyHook() {
+    void fluxNextCallableCallsAssemblyHook() {
 		Flux<Integer> source = Mono.fromCallable(() -> 1).flux();
 		assertThat(source) //smoke test that we go into the right case
 		          .isInstanceOf(Callable.class)
@@ -1690,7 +1690,7 @@ public class FluxTests extends AbstractReactorTest {
 	}
 
 	@Test
-	public void fluxNextNormalCallsAssemblyHook() {
+    void fluxNextNormalCallsAssemblyHook() {
 		Flux<Integer> source = Flux.range(1, 10);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)

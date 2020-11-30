@@ -31,10 +31,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxGenerateTest {
+class FluxGenerateTest {
 
 	@Test
-	public void stateSupplierNull() {
+    void stateSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.generate(null, (s, o) -> s, s -> {
 			});
@@ -42,7 +42,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorNull() {
+    void generatorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.generate(() -> 1, null, s -> {
 			});
@@ -50,28 +50,28 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void stateConsumerNull() {
+    void stateConsumerNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.generate(() -> 1, (s, o) -> s, null);
 		});
 	}
 
 	@Test
-	public void sinkNotUsed() {
+    void sinkNotUsed() {
 		StepVerifier.create(Flux.generate(sink -> {}))
 		            .expectFusion(Fuseable.NONE)
 		            .verifyErrorMessage("The generator didn't call any of the SynchronousSink method");
 	}
 
 	@Test
-	public void sinkNotUsedFusion() {
+    void sinkNotUsedFusion() {
 		StepVerifier.create(Flux.generate(sink -> {}))
 		            .expectFusion(Fuseable.SYNC)
 		            .verifyErrorMessage("The generator didn't call any of the SynchronousSink method");
 	}
 
 	@Test
-	public void generateEmpty() {
+    void generateEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -84,7 +84,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generateJust() {
+    void generateJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -98,7 +98,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generateError() {
+    void generateError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -112,7 +112,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generateJustBackpressured() {
+    void generateJustBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>generate(o -> {
@@ -132,7 +132,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generateRange() {
+    void generateRange() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer, Integer>generate(() -> 1, (s, o) -> {
@@ -151,7 +151,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generateRangeBackpressured() {
+    void generateRangeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer, Integer>generate(() -> 1, (s, o) -> {
@@ -183,7 +183,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void stateSupplierThrows() {
+    void stateSupplierThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer, Integer>generate(() -> {
@@ -199,7 +199,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorThrows() {
+    void generatorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -213,7 +213,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorThrowsFusion() {
+    void generatorThrowsFusion() {
 		StepVerifier.create(
 				Flux.<Integer>generate(o -> { throw new IllegalStateException("forced failure"); }))
 		            .expectFusion(Fuseable.SYNC)
@@ -222,7 +222,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorMultipleOnErrors() {
+    void generatorMultipleOnErrors() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -237,7 +237,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorMultipleOnCompletes() {
+    void generatorMultipleOnCompletes() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -251,7 +251,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void generatorMultipleOnNexts() {
+    void generatorMultipleOnNexts() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>generate(o -> {
@@ -265,7 +265,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void stateConsumerCalled() {
+    void stateConsumerCalled() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger stateConsumer = new AtomicInteger();
@@ -283,7 +283,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void iterableSource() {
+    void iterableSource() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -304,7 +304,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void iterableSourceBackpressured() {
+    void iterableSourceBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -342,7 +342,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void fusion() {
+    void fusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(Fuseable.ANY);
 
@@ -364,7 +364,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void fusionBoundary() {
+    void fusionBoundary() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(Fuseable.ANY | Fuseable.THREAD_BARRIER);
 
@@ -386,7 +386,7 @@ public class FluxGenerateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		FluxGenerate<Object, Object> test = new FluxGenerate<>(o -> {
 				o.next(1);
 				o.complete();
@@ -396,7 +396,7 @@ public class FluxGenerateTest {
 	}
 
     @Test
-    public void scanSubscription() {
+    void scanSubscription() {
         CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxGenerate.GenerateSubscription<Integer, Integer> test =
                 new FluxGenerate.GenerateSubscription<>(subscriber, 1, (s, o) -> null, s -> {});
@@ -411,7 +411,7 @@ public class FluxGenerateTest {
     }
 
     @Test
-    public void scanSubscriptionError() {
+    void scanSubscriptionError() {
         CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxGenerate.GenerateSubscription<Integer, Integer> test =
                 new FluxGenerate.GenerateSubscription<>(subscriber, 1, (s, o) -> null, s -> {});
@@ -422,7 +422,7 @@ public class FluxGenerateTest {
     }
 
     @Test
-    public void scanSubscriptionCancelled() {
+    void scanSubscriptionCancelled() {
         CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxGenerate.GenerateSubscription<Integer, Integer> test =
                 new FluxGenerate.GenerateSubscription<>(subscriber, 1, (s, o) -> null, s -> {});
@@ -433,7 +433,7 @@ public class FluxGenerateTest {
     }
 
 	@Test
-	public void contextTest() {
+    void contextTest() {
 		StepVerifier.create(Flux.generate(s -> s.next(s.currentContext()
 		                                               .get(AtomicInteger.class)
 		                                               .incrementAndGet()))
@@ -446,7 +446,7 @@ public class FluxGenerateTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1685
 	@Test
-	public void fusedGeneratedNextAndErrorPropagateException() {
+    void fusedGeneratedNextAndErrorPropagateException() {
 		StepVerifier.create(
 				Flux.<String>generate(sink -> {
 					sink.next("foo");
@@ -462,7 +462,7 @@ public class FluxGenerateTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1685
 	@Test
-	public void fusedGenerateErrorThrowsPropagateException() {
+    void fusedGenerateErrorThrowsPropagateException() {
 		StepVerifier.create(
 				Flux.<String>generate(sink -> {
 					sink.error(new IllegalStateException("boom"));

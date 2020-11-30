@@ -26,17 +26,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoJustTest {
+class MonoJustTest {
 
     @Test
-    public void nullValue() {
+    void nullValue() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoJust<Integer>(null);
 		});
 	}
 
     @Test
-    public void valueSame() {
+    void valueSame() {
 	    try {
 		    assertThat(new MonoJust<>(1).call()).isEqualTo(1);
 	    }
@@ -46,53 +46,53 @@ public class MonoJustTest {
     }
 
     @Test
-    public void normal() {
+    void normal() {
 	    StepVerifier.create(Mono.just(1))
 	                .expectNext(1)
 	                .verifyComplete();
     }
 
     @Test
-    public void normalOptional() {
+    void normalOptional() {
 	    StepVerifier.create(Mono.justOrEmpty(Optional.of(1)))
 	                .expectNext(1)
 	                .verifyComplete();
     }
 
 	@Test
-	public void normalOptionalOfNullable() {
+    void normalOptionalOfNullable() {
 		StepVerifier.create(Mono.justOrEmpty(Optional.ofNullable(null)))
 				.verifyComplete();
 	}
 
 	@Test
-	public void normalScalarOptionalEmpty() {
+    void normalScalarOptionalEmpty() {
 		StepVerifier.create(Mono.justOrEmpty(null))
 		            .verifyComplete();
 	}
 
 
 	@Test
-	public void normalScalarOptionalEmpty2() {
+    void normalScalarOptionalEmpty2() {
 		StepVerifier.create(Mono.justOrEmpty((Object)null))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void normalScalarOptional() {
+    void normalScalarOptional() {
 		StepVerifier.create(Mono.justOrEmpty(1))
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
     @Test
-    public void normalOptionalEmpty() {
+    void normalOptionalEmpty() {
         StepVerifier.create(Mono.justOrEmpty(Optional.empty()))
                     .verifyComplete();
     }
 
     @Test
-    public void normalBackpressured() {
+    void normalBackpressured() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
         Mono.just(1).subscribe(ts);
@@ -109,7 +109,7 @@ public class MonoJustTest {
     }
 
     @Test
-    public void fused() {
+    void fused() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
         ts.requestedFusionMode(Fuseable.ANY);
         
@@ -121,13 +121,13 @@ public class MonoJustTest {
     }
 
 	@Test
-	public void onMonoSuccessReturnOnBlock() {
+    void onMonoSuccessReturnOnBlock() {
 		assertThat(Mono.just("test")
 		               .block()).isEqualToIgnoringCase("test");
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
     	MonoJust s = new MonoJust<>("foo");
 
     	assertThat(s.scan(Scannable.Attr.BUFFERED)).isEqualTo(1);

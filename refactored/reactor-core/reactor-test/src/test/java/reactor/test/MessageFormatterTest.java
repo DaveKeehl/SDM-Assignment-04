@@ -25,24 +25,24 @@ import reactor.core.publisher.Signal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MessageFormatterTest {
+class MessageFormatterTest {
 
 	@Test
-	public void noScenarioEmpty() {
+	void noScenarioEmpty() {
 		assertThat(new MessageFormatter("", null, null).scenarioPrefix)
 				.isNotNull()
 				.isEmpty();
 	}
 
 	@Test
-	public void nullScenarioEmpty() {
+	void nullScenarioEmpty() {
 		assertThat(new MessageFormatter(null, null, null).scenarioPrefix)
 				.isNotNull()
 				.isEmpty();
 	}
 
 	@Test
-	public void givenScenarioWrapped() {
+	void givenScenarioWrapped() {
 		assertThat(new MessageFormatter("foo", null, null).scenarioPrefix)
 				.isEqualTo("[foo] ");
 	}
@@ -51,13 +51,13 @@ public class MessageFormatterTest {
 	static final MessageFormatter noScenario = new MessageFormatter("", null, null);
 
 	@Test
-	public void noScenarioFailNullEventNoArgs() {
+	void noScenarioFailNullEventNoArgs() {
 		assertThat(noScenario.fail(null, "details"))
 				.hasMessage("expectation failed (details)");
 	}
 
 	@Test
-	public void noScenarioFailNoDescriptionNoArgs() {
+	void noScenarioFailNoDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -66,7 +66,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void noScenarioFailDescriptionNoArgs() {
+	void noScenarioFailDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -75,14 +75,14 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void noScenarioFailNullEventHasArgs() {
+	void noScenarioFailNullEventHasArgs() {
 		assertThat(noScenario.fail(null, "details = %s", "bar"))
 				.hasMessage("expectation failed (details = bar)");
 	}
 
 
 	@Test
-	public void noScenarioFailNoDescriptionHasArgs() {
+	void noScenarioFailNoDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -91,7 +91,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void noScenarioFailDescriptionHasArgs() {
+	void noScenarioFailDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -100,32 +100,32 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void noScenarioFailOptional() {
+	void noScenarioFailOptional() {
 		assertThat(noScenario.failOptional(null, "foo"))
 				.hasValueSatisfying(ae -> assertThat(ae).hasMessage("expectation failed (foo)"));
 	}
 
 	@Test
-	public void noScenarioFailPrefixNoArgs() {
+	void noScenarioFailPrefixNoArgs() {
 		assertThat(noScenario.failPrefix("firstPart", "secondPart"))
 				.hasMessage("firstPartsecondPart)"); //note the prefix doesn't have an opening parenthesis
 	}
 
 	@Test
-	public void noScenarioFailPrefixHasArgs() {
+	void noScenarioFailPrefixHasArgs() {
 		assertThat(noScenario.failPrefix("firstPart(", "secondPart = %s", "foo"))
 				.hasMessage("firstPart(secondPart = foo)");
 	}
 
 	@Test
-	public void noScenarioAssertionError() {
+	void noScenarioAssertionError() {
 		assertThat(noScenario.assertionError("plain"))
 				.hasMessage("plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void noScenarioAssertionErrorWithCause() {
+	void noScenarioAssertionErrorWithCause() {
 		Throwable cause = new IllegalArgumentException("boom");
 		assertThat(noScenario.assertionError("plain", cause))
 				.hasMessage("plain")
@@ -133,14 +133,14 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void noScenarioAssertionErrorWithNullCause() {
+	void noScenarioAssertionErrorWithNullCause() {
 		assertThat(noScenario.assertionError("plain", null))
 				.hasMessage("plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void noScenarioIllegalStateException() {
+	void noScenarioIllegalStateException() {
 		assertThat(noScenario.<Throwable>error(IllegalStateException::new, "plain"))
 				.isInstanceOf(IllegalStateException.class)
 				.hasMessage("plain");
@@ -152,13 +152,13 @@ public class MessageFormatterTest {
 			withScenario = new MessageFormatter("MessageFormatterTest", null, null);
 
 	@Test
-	public void withScenarioFailNullEventNoArgs() {
+	void withScenarioFailNullEventNoArgs() {
 		assertThat(withScenario.fail(null, "details"))
 				.hasMessage("[MessageFormatterTest] expectation failed (details)");
 	}
 
 	@Test
-	public void withScenarioFailNoDescriptionNoArgs() {
+	void withScenarioFailNoDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -167,7 +167,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withScenarioFailDescriptionNoArgs() {
+	void withScenarioFailDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -176,14 +176,14 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withScenarioFailNullEventHasArgs() {
+	void withScenarioFailNullEventHasArgs() {
 		assertThat(withScenario.fail(null, "details = %s", "bar"))
 				.hasMessage("[MessageFormatterTest] expectation failed (details = bar)");
 	}
 
 
 	@Test
-	public void withScenarioFailNoDescriptionHasArgs() {
+	void withScenarioFailNoDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -192,7 +192,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withScenarioFailDescriptionHasArgs() {
+	void withScenarioFailDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -201,32 +201,32 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withScenarioFailOptional() {
+	void withScenarioFailOptional() {
 		assertThat(withScenario.failOptional(null, "foo"))
 				.hasValueSatisfying(ae -> assertThat(ae).hasMessage("[MessageFormatterTest] expectation failed (foo)"));
 	}
 
 	@Test
-	public void withScenarioFailPrefixNoArgs() {
+	void withScenarioFailPrefixNoArgs() {
 		assertThat(withScenario.failPrefix("firstPart", "secondPart"))
 				.hasMessage("[MessageFormatterTest] firstPartsecondPart)"); //note the prefix doesn't have an opening parenthesis
 	}
 
 	@Test
-	public void withScenarioFailPrefixHasArgs() {
+	void withScenarioFailPrefixHasArgs() {
 		assertThat(withScenario.failPrefix("firstPart(", "secondPart = %s", "foo"))
 				.hasMessage("[MessageFormatterTest] firstPart(secondPart = foo)");
 	}
 
 	@Test
-	public void withScenarioAssertionError() {
+	void withScenarioAssertionError() {
 		assertThat(withScenario.assertionError("plain"))
 				.hasMessage("[MessageFormatterTest] plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void withScenarioAssertionErrorWithCause() {
+	void withScenarioAssertionErrorWithCause() {
 		Throwable cause = new IllegalArgumentException("boom");
 		assertThat(withScenario.assertionError("plain", cause))
 				.hasMessage("[MessageFormatterTest] plain")
@@ -234,14 +234,14 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withScenarioAssertionErrorWithNullCause() {
+	void withScenarioAssertionErrorWithNullCause() {
 		assertThat(withScenario.assertionError("plain", null))
 				.hasMessage("[MessageFormatterTest] plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void withScenarioIllegalStateException() {
+	void withScenarioIllegalStateException() {
 		assertThat(withScenario.<Throwable>error(IllegalStateException::new, "plain"))
 				.isInstanceOf(IllegalStateException.class)
 				.hasMessage("[MessageFormatterTest] plain");
@@ -253,13 +253,13 @@ public class MessageFormatterTest {
 			Arrays.asList(ValueFormatters.DEFAULT_SIGNAL_EXTRACTOR, ValueFormatters.DEFAULT_ITERABLE_EXTRACTOR, ValueFormatters.arrayExtractor(Object[].class)));
 
 	@Test
-	public void withCustomFormatterFailNullEventNoArgs() {
+	void withCustomFormatterFailNullEventNoArgs() {
 		assertThat(withCustomFormatter.fail(null, "details"))
 				.hasMessage("[withCustomFormatter] expectation failed (details)");
 	}
 
 	@Test
-	public void withCustomFormatterFailNoDescriptionNoArgs() {
+	void withCustomFormatterFailNoDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -268,7 +268,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withCustomFormatterFailDescriptionNoArgs() {
+	void withCustomFormatterFailDescriptionNoArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -277,14 +277,14 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withCustomFormatterFailNullEventHasArgs() {
+	void withCustomFormatterFailNullEventHasArgs() {
 		assertThat(withCustomFormatter.fail(null, "details = %s", "bar"))
 				.hasMessage("[withCustomFormatter] expectation failed (details = String=>bar)");
 	}
 
 
 	@Test
-	public void withCustomFormatterFailNoDescriptionHasArgs() {
+	void withCustomFormatterFailNoDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"");
 
@@ -293,7 +293,7 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withCustomFormatterFailDescriptionHasArgs() {
+	void withCustomFormatterFailDescriptionHasArgs() {
 		DefaultStepVerifierBuilder.Event event = new DefaultStepVerifierBuilder.NoEvent(Duration.ofMillis(5),
 				"eventDescription");
 
@@ -302,32 +302,32 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withCustomFormatterFailOptional() {
+	void withCustomFormatterFailOptional() {
 		assertThat(withCustomFormatter.failOptional(null, "foo"))
 				.hasValueSatisfying(ae -> assertThat(ae).hasMessage("[withCustomFormatter] expectation failed (foo)"));
 	}
 
 	@Test
-	public void withCustomFormatterFailPrefixNoArgs() {
+	void withCustomFormatterFailPrefixNoArgs() {
 		assertThat(withCustomFormatter.failPrefix("firstPart", "secondPart"))
 				.hasMessage("[withCustomFormatter] firstPartsecondPart)"); //note the prefix doesn't have an opening parenthesis
 	}
 
 	@Test
-	public void withCustomFormatterFailPrefixHasArgs() {
+	void withCustomFormatterFailPrefixHasArgs() {
 		assertThat(withCustomFormatter.failPrefix("firstPart(", "secondPart = %s", "foo"))
 				.hasMessage("[withCustomFormatter] firstPart(secondPart = String=>foo)");
 	}
 
 	@Test
-	public void withCustomFormatterAssertionError() {
+	void withCustomFormatterAssertionError() {
 		assertThat(withCustomFormatter.assertionError("plain"))
 				.hasMessage("[withCustomFormatter] plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void withCustomFormatterAssertionErrorWithCause() {
+	void withCustomFormatterAssertionErrorWithCause() {
 		Throwable cause = new IllegalArgumentException("boom");
 		assertThat(withCustomFormatter.assertionError("plain", cause))
 				.hasMessage("[withCustomFormatter] plain")
@@ -335,35 +335,35 @@ public class MessageFormatterTest {
 	}
 
 	@Test
-	public void withCustomFormatterAssertionErrorWithNullCause() {
+	void withCustomFormatterAssertionErrorWithNullCause() {
 		assertThat(withCustomFormatter.assertionError("plain", null))
 				.hasMessage("[withCustomFormatter] plain")
 				.hasNoCause();
 	}
 
 	@Test
-	public void withCustomFormatterIllegalStateException() {
+	void withCustomFormatterIllegalStateException() {
 		assertThat(withCustomFormatter.<Throwable>error(IllegalStateException::new, "plain"))
 				.isInstanceOf(IllegalStateException.class)
 				.hasMessage("[withCustomFormatter] plain");
 	}
 
 	@Test
-	public void withCustomFormatterFormatSignal() {
+	void withCustomFormatterFormatSignal() {
 		assertThat(withCustomFormatter.format("expectation %s expected %s got %s",
 				Signal.next("foo"), "foo", Signal.next("bar")))
 				.isEqualTo("expectation onNext(String=>foo) expected String=>foo got onNext(String=>bar)");
 	}
 
 	@Test
-	public void withCustomFormatterFormatIterable() {
+	void withCustomFormatterFormatIterable() {
 		assertThat(withCustomFormatter.format("expectation %s expected %s got %s",
 				Arrays.asList("foo","bar"), "foo", Collections.singletonList("bar")))
 				.isEqualTo("expectation [String=>foo, String=>bar] expected String=>foo got [String=>bar]");
 	}
 
 	@Test
-	public void withCustomFormatterFormatArray() {
+	void withCustomFormatterFormatArray() {
 		assertThat(withCustomFormatter.format("expectation %s expected %s got %s",
 				new Object[] {"foo","bar"}, "foo", new Object[] {"bar"}))
 				.isEqualTo("expectation [String=>foo, String=>bar] expected String=>foo got [String=>bar]");

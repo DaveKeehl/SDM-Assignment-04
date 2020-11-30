@@ -24,10 +24,10 @@ import org.openjdk.jol.info.FieldLayout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QueueDrainSubscriberTest {
+class QueueDrainSubscriberTest {
 
 	@Test
-	public void objectPadding() {
+    void objectPadding() {
 		ClassLayout layout = ClassLayout.parseClass(QueueDrainSubscriber.class);
 		AtomicReference<FieldLayout> wip = new AtomicReference<>();
 		AtomicReference<FieldLayout> requested = new AtomicReference<>();

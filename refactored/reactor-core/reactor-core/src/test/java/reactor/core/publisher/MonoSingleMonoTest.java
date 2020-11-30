@@ -8,10 +8,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSingleMonoTest {
+class MonoSingleMonoTest {
 
 	@Test
-	public void callableEmpty() {
+    void callableEmpty() {
 		StepVerifier.create(Mono.empty().single())
 		            .verifyErrorSatisfies(e -> assertThat(e)
 				            .isInstanceOf(NoSuchElementException.class)
@@ -19,14 +19,14 @@ public class MonoSingleMonoTest {
 	}
 
 	@Test
-	public void callableValued() {
+    void callableValued() {
 		StepVerifier.create(Mono.just("foo").single())
 		            .expectNext("foo")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void normalEmpty() {
+    void normalEmpty() {
 		StepVerifier.create(Mono.empty().hide().single())
 		            .verifyErrorSatisfies(e -> assertThat(e)
 				            .isInstanceOf(NoSuchElementException.class)
@@ -34,14 +34,14 @@ public class MonoSingleMonoTest {
 	}
 
 	@Test
-	public void normalValued() {
+    void normalValued() {
 		StepVerifier.create(Mono.just("foo").hide().single())
 		            .expectNext("foo")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoSingleMono<String> test = new MonoSingleMono<>(Mono.just("foo"));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

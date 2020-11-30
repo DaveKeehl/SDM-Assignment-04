@@ -22,7 +22,7 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BlockingSingleSubscriberTest {
+class BlockingSingleSubscriberTest {
 
 	BlockingSingleSubscriber<Object> test = new BlockingSingleSubscriber<Object>() {
 		@Override
@@ -37,7 +37,7 @@ public class BlockingSingleSubscriberTest {
 	};
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		Subscription s = Operators.emptySubscription();
 		test.onSubscribe(s);
 
@@ -50,14 +50,14 @@ public class BlockingSingleSubscriberTest {
 	}
 
 	@Test
-	public void scanMainTerminated() {
+    void scanMainTerminated() {
 		test.onComplete();
 
 		assertThat(test.scan(Scannable.Attr.TERMINATED)).isTrue();
 	}
 
 	@Test
-	public void scanMainError() {
+    void scanMainError() {
 		test.onError(new IllegalStateException("boom"));
 
 		assertThat(test.scan(Scannable.Attr.ERROR)).hasMessage("boom");
@@ -65,7 +65,7 @@ public class BlockingSingleSubscriberTest {
 	}
 
 	@Test
-	public void scanMainCancelled() {
+    void scanMainCancelled() {
 		test.dispose();
 
 		assertThat(test.scan(Scannable.Attr.CANCELLED)).isTrue();

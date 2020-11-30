@@ -28,17 +28,17 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxSubscribeOnCallableTest {
+class FluxSubscribeOnCallableTest {
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .subscribeOn(Schedulers.single()))
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .subscribeOn(Schedulers.single()))
@@ -46,7 +46,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNull() {
+    void callableReturnsNull() {
 		StepVerifier.create(Mono.empty()
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()))
@@ -54,7 +54,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNull2() {
+    void callableReturnsNull2() {
 		StepVerifier.create(Mono.fromCallable(() -> null)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()), 0)
@@ -62,7 +62,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNull3() {
+    void callableReturnsNull3() {
 		StepVerifier.create(Mono.fromCallable(() -> null)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()), 1)
@@ -70,7 +70,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()))
@@ -80,7 +80,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		StepVerifier.withVirtualTime(() -> Mono.fromCallable(() -> 1)
 		                                       .flux()
 		                                       .subscribeOn(Schedulers.single()), 0)
@@ -94,7 +94,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNullFused() {
+    void callableReturnsNullFused() {
 		StepVerifier.create(Mono.empty()
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()))
@@ -103,7 +103,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNullFused2() {
+    void callableReturnsNullFused2() {
 		StepVerifier.create(Mono.fromCallable(() -> null)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single())
@@ -114,7 +114,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNullFused3() {
+    void callableReturnsNullFused3() {
 		StepVerifier.create(Mono.fromCallable(() -> null)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()), 0)
@@ -123,7 +123,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normalFused() {
+    void normalFused() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .subscribeOn(Schedulers.single()))
@@ -134,7 +134,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normalBackpressuredFused() {
+    void normalBackpressuredFused() {
 		StepVerifier.withVirtualTime(() -> Mono.fromCallable(() -> 1)
 		                                       .flux()
 		                                       .subscribeOn(
@@ -154,7 +154,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normalBackpressuredFusedCancelled() {
+    void normalBackpressuredFusedCancelled() {
 		StepVerifier.withVirtualTime(() -> Mono.fromCallable(() -> 1)
 		                                       .flux()
 		                                       .subscribeOn(
@@ -166,7 +166,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableThrows() {
+    void callableThrows() {
 		StepVerifier.create(Mono.fromCallable(() -> {
 			throw new IOException("forced failure");
 		})
@@ -178,7 +178,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxSubscribeOnCallable test = new FluxSubscribeOnCallable<>(() -> "foo", Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -186,7 +186,7 @@ public class FluxSubscribeOnCallableTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSubscribeOnCallable.CallableSubscribeOnSubscription<Integer> test =
         		new FluxSubscribeOnCallable.CallableSubscribeOnSubscription<Integer>(actual, () -> 1, Schedulers.single());

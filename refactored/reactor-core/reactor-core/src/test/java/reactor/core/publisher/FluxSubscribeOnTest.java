@@ -37,10 +37,10 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.FluxSink.OverflowStrategy.DROP;
 
-public class FluxSubscribeOnTest {
+class FluxSubscribeOnTest {
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(FluxPublishOn.class);
 
 		ctb.addRef("source", Flux.never());
@@ -51,7 +51,7 @@ public class FluxSubscribeOnTest {
 	}*/
 
 	@Test
-	public void classic() {
+    void classic() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -64,7 +64,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void classicBackpressured() throws Exception {
+    void classicBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).log().subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -93,7 +93,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void classicJust() {
+    void classicJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1).subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -106,7 +106,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void classicJustBackpressured() throws Exception {
+    void classicJustBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.just(1).subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -127,7 +127,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void classicEmpty() {
+    void classicEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -140,7 +140,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void classicEmptyBackpressured() throws Exception {
+    void classicEmptyBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool())).subscribe(ts);
@@ -154,7 +154,7 @@ public class FluxSubscribeOnTest {
 
 
 	@Test
-	public void callableEvaluatedTheRightTime() {
+    void callableEvaluatedTheRightTime() {
 
 		AtomicInteger count = new AtomicInteger();
 
@@ -168,7 +168,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    Flux<Integer> parent = Flux.just(1);
 		Scheduler scheduler = Schedulers.single();
 		FluxSubscribeOn<Integer> test = new FluxSubscribeOn<>(parent, scheduler, false);
@@ -179,7 +179,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		Scheduler.Worker worker = Schedulers.single().createWorker();
 		FluxSubscribeOn.SubscribeOnSubscriber<Integer> test =
@@ -200,7 +200,7 @@ public class FluxSubscribeOnTest {
     }
 
 	@Test
-	public void scheduleRequestsByDefault() {
+    void scheduleRequestsByDefault() {
 		Flux<Integer> test = Flux.<Integer>create(sink -> {
 			for (int i = 1; i < 1001; i++) {
 				sink.next(i);
@@ -224,7 +224,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void forceNoScheduledRequests() {
+    void forceNoScheduledRequests() {
 		Flux<Integer> test = Flux.<Integer>create(sink -> {
 			for (int i = 1; i < 1001; i++) {
 				sink.next(i);
@@ -251,7 +251,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void forceScheduledRequests() {
+    void forceScheduledRequests() {
 		Flux<Integer> test = Flux.<Integer>create(sink -> {
 			for (int i = 1; i < 1001; i++) {
 				sink.next(i);
@@ -278,7 +278,7 @@ public class FluxSubscribeOnTest {
 	}
 
 	@Test
-	public void gh507() {
+    void gh507() {
 		Scheduler s = Schedulers.newSingle("subscribe");
 		Scheduler s2 = Schedulers.newParallel("receive");
 		AtomicBoolean interrupted = new AtomicBoolean();

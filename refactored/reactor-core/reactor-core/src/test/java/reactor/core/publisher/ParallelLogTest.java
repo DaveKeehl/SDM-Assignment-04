@@ -22,10 +22,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelLogTest {
+class ParallelLogTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelLog<Integer> test = new ParallelLog<>(source, null);
 
@@ -35,7 +35,7 @@ public class ParallelLogTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelLog<Integer> test = new ParallelLog<>(source, null);
 
@@ -47,7 +47,7 @@ public class ParallelLogTest {
 	}
 
 	@Test
-	public void conditional() {
+    void conditional() {
 		Flux<Integer> source = Flux.range(1, 1_000);
 		for (int i = 1; i < 33; i++) {
 			Flux<Integer> result = ParallelFlux.from(source, i)

@@ -29,17 +29,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxTakeUntilOtherTest {
+class FluxTakeUntilOtherTest {
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxTakeUntilOther<>(null, Flux.never());
 		});
 	}
 
 	@Test
-	public void nullOther() {
+    void nullOther() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.takeUntilOther(null);
@@ -47,7 +47,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeAll() {
+    void takeAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -60,7 +60,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeAllBackpressured() {
+    void takeAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -85,7 +85,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeNone() {
+    void takeNone() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -98,7 +98,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeNoneBackpressured() {
+    void takeNoneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -111,7 +111,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeNoneOtherMany() {
+    void takeNoneOtherMany() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -124,7 +124,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void takeNoneBackpressuredOtherMany() {
+    void takeNoneBackpressuredOtherMany() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -137,7 +137,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void otherSignalsError() {
+    void otherSignalsError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -151,7 +151,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void otherSignalsErrorBackpressured() {
+    void otherSignalsErrorBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -170,7 +170,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void aFluxCanBeLimitedByTime(){
+    void aFluxCanBeLimitedByTime(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeLimitedByTime)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .expectNextCount(1000)
@@ -183,21 +183,21 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-	public void aFluxCanBeLimitedByTime2(){
+    void aFluxCanBeLimitedByTime2(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeLimitedByTime2)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .expectNextCount(1000)
 		            .verifyComplete();
 	}
 	@Test
-	public void aFluxCanBeLimitedByTime3(){
+    void aFluxCanBeLimitedByTime3(){
 		StepVerifier.create(Flux.range(0, 1000).take(Duration.ofMillis(0L)))
 		            .thenAwait(Duration.ofSeconds(2))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxTakeUntilOther<Integer, Integer> test = new FluxTakeUntilOther<>(parent, Flux.just(2));
 
@@ -206,7 +206,7 @@ public class FluxTakeUntilOtherTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeUntilOther.TakeUntilMainSubscriber<Integer> test =
         		new FluxTakeUntilOther.TakeUntilMainSubscriber<>(actual);
@@ -226,7 +226,7 @@ public class FluxTakeUntilOtherTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeUntilOther.TakeUntilMainSubscriber<Integer> main =
         		new FluxTakeUntilOther.TakeUntilMainSubscriber<>(actual);

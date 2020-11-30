@@ -24,24 +24,24 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoIgnoreEmptyTest {
+class MonoIgnoreEmptyTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.just(1)
 		                        .thenEmpty(Flux.empty()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void normal3() {
+    void normal3() {
 		StepVerifier.create(Flux.just(1)
 		                        .then())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoIgnoreElements.IgnoreElementsSubscriber<String> test = new
 				MonoIgnoreElements.IgnoreElementsSubscriber<>(actual);

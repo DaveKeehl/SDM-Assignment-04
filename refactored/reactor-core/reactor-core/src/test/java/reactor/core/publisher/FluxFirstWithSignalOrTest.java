@@ -22,10 +22,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxFirstWithSignalOrTest {
+class FluxFirstWithSignalOrTest {
 
 	@Test
-	public void noStackOverflow() {
+    void noStackOverflow() {
 		int n = 5000;
 		
 		Flux<Integer> source = Flux.just(1);
@@ -46,7 +46,7 @@ public class FluxFirstWithSignalOrTest {
 	}
 
 	@Test
-	public void dontBreakAmb() {
+    void dontBreakAmb() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		
 		Flux.firstWithSignal(Flux.just(1), Flux.just(2)).or(Flux.just(3))
@@ -59,7 +59,7 @@ public class FluxFirstWithSignalOrTest {
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Flux<Integer> f = Flux.firstWithSignal(Mono.just(1), Mono.just(2))
 		                      .or(Mono.just(3));
 
@@ -74,7 +74,7 @@ public class FluxFirstWithSignalOrTest {
 	}
 
 	@Test
-	public void pairWiseIterable() {
+    void pairWiseIterable() {
 		Flux<Integer> f = Flux.firstWithSignal(Arrays.asList(Mono.just(1), Mono.just(2)))
 		                      .or(Mono.just(3));
 

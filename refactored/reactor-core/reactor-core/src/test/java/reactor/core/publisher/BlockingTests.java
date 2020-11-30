@@ -44,45 +44,45 @@ import static reactor.core.publisher.Flux.range;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
-public class BlockingTests {
+class BlockingTests {
 
 	static Scheduler scheduler;
 	static Scheduler nonBlockingScheduler;
 
 	@BeforeAll
-	public static void before() {
+	static void before() {
 		scheduler = Schedulers.fromExecutorService(Executors.newSingleThreadExecutor());
 		nonBlockingScheduler = Schedulers.newSingle("nonBlockingScheduler");
 	}
 
 	@AfterAll
-	public static void after() {
+	static void after() {
 		scheduler.dispose();
 		nonBlockingScheduler.dispose();
 	}
 
 	@Test
-	public void blockingFirst() {
+    void blockingFirst() {
 		assertThat(range(1, 10)
 				.publishOn(scheduler)
 				.blockFirst()).isEqualTo((Integer) 1);
 	}
 
 	@Test
-	public void blockingFirst2() {
+    void blockingFirst2() {
 		assertThat(range(1, 10)
 				.publishOn(scheduler)
 				.blockFirst(ofSeconds(10))).isEqualTo((Integer) 1);
 	}
 
 	@Test
-	public void blockingFirstEarlyComplete() {
+    void blockingFirstEarlyComplete() {
 		assertThat(Flux.empty()
 		               .blockFirst(Duration.ofMillis(1))).isNull();
 	}
 
 	@Test
-	public void blockingFirstTimeout() {
+    void blockingFirstTimeout() {
 		assertThatIllegalStateException().isThrownBy(() ->
 				Flux.just(1).delayElements(Duration.ofSeconds(1))
 				.blockFirst(Duration.ofMillis(1)))
@@ -90,27 +90,27 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void blockingLast() {
+    void blockingLast() {
 		assertThat(range(1, 10)
 				.publishOn(scheduler)
 				.blockLast()).isEqualTo((Integer) 10);
 	}
 
 	@Test
-	public void blockingLast2() {
+    void blockingLast2() {
 		assertThat(range(1, 10)
 				.publishOn(scheduler)
 				.blockLast(ofSeconds(10))).isEqualTo((Integer) 10);
 	}
 
 	@Test
-	public void blockingLastEarlyComplete() {
+    void blockingLastEarlyComplete() {
 		assertThat(Flux.empty()
 		               .blockLast(Duration.ofMillis(1))).isNull();
 	}
 
 	@Test
-	public void blockingLastTimeout() {
+    void blockingLastTimeout() {
 		assertThatIllegalStateException().isThrownBy(() ->
 				Flux.just(1).delayElements(Duration.ofMillis(100))
 						.blockLast(Duration.ofNanos(50)))
@@ -119,7 +119,7 @@ public class BlockingTests {
 
 
 	@Test
-	public void blockingFirstError() {
+    void blockingFirstError() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Flux.error(new RuntimeException("test"))
 					.publishOn(scheduler)
@@ -128,7 +128,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void blockingFirstError2() {
+    void blockingFirstError2() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Flux.error(new RuntimeException("test"))
 					.publishOn(scheduler)
@@ -137,7 +137,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void blockingLastError() {
+    void blockingLastError() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Flux.defer(() -> Mono.error(new RuntimeException("test")))
 					.subscribeOn(scheduler)
@@ -146,7 +146,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void blockingLastError2() {
+    void blockingLastError2() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Flux.defer(() -> Mono.error(new RuntimeException("test")))
 					.subscribeOn(scheduler)
@@ -155,7 +155,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void blockingLastInterrupted() throws Exception {
+    void blockingLastInterrupted() throws Exception {
 		CountDownLatch latch = new CountDownLatch(1);
 		Thread t = new Thread(() -> {
 			try {
@@ -177,12 +177,12 @@ public class BlockingTests {
 	}
 
 	/*@Test
-	public void fillIn() throws Exception {
+    void fillIn() throws Exception {
 		Path sourcePath = Paths.get(
 				"/Users/smaldini/work/reactor-core/src/main/java/reactor/core/publisher");
 
 		String template =
-				"package reactor.core.publisher;\n\nimport org.junit.Test;\n\npublic " + "class {name} { @Test public" + " void normal(){} }";
+				"package reactor.core.publisher;\n\nimport org.junit.Test;\n\n" + "class {name} { @Test public" + " void normal(){} }";
 
 		Flux.fromStream(Files.list(sourcePath))
 		    .map(Path::toFile)
@@ -222,7 +222,7 @@ public class BlockingTests {
 	}*/
 
 	@Test
-	public void fluxBlockFirstCancelsOnce() {
+    void fluxBlockFirstCancelsOnce() {
 		AtomicLong cancelCount = new AtomicLong();
 		Flux.range(1, 10)
 	        .doOnCancel(cancelCount::incrementAndGet)
@@ -232,7 +232,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void fluxBlockLastDoesntCancel() {
+    void fluxBlockLastDoesntCancel() {
 		AtomicLong cancelCount = new AtomicLong();
 		Flux.range(1, 10)
 	        .doOnCancel(cancelCount::incrementAndGet)
@@ -242,7 +242,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void monoBlockDoesntCancel() {
+    void monoBlockDoesntCancel() {
 		AtomicLong cancelCount = new AtomicLong();
 		Mono.just("data")
 	        .doOnCancel(cancelCount::incrementAndGet)
@@ -252,7 +252,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void monoBlockOptionalDoesntCancel() {
+    void monoBlockOptionalDoesntCancel() {
 		AtomicLong cancelCount = new AtomicLong();
 		Mono.just("data")
 	        .doOnCancel(cancelCount::incrementAndGet)
@@ -262,13 +262,13 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void monoBlockSupportsNanos() {
+    void monoBlockSupportsNanos() {
 		assertThatIllegalStateException().isThrownBy(() -> Mono.never().block(Duration.ofNanos(9_000L)))
 				.withMessage("Timeout on blocking read for 9000 NANOSECONDS");
 	}
 
 	@Test
-	public void fluxBlockFirstForbidden() {
+    void fluxBlockFirstForbidden() {
 		Function<String, String> badMapper = v -> Flux.just(v).hide()
 		                                              .blockFirst();
 		Function<String, String> badMapperTimeout = v -> Flux.just(v).hide()
@@ -296,7 +296,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void fluxBlockLastForbidden() {
+    void fluxBlockLastForbidden() {
 		Function<String, String> badMapper = v -> Flux.just(v).hide()
 		                                              .blockLast();
 		Function<String, String> badMapperTimeout = v -> Flux.just(v).hide()
@@ -324,7 +324,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void monoBlockForbidden() {
+    void monoBlockForbidden() {
 		Function<String, String> badMapper = v -> Mono.just(v).hide()
 		                                              .block();
 		Function<String, String> badMapperTimeout = v -> Mono.just(v).hide()
@@ -352,7 +352,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void monoBlockOptionalForbidden() {
+    void monoBlockOptionalForbidden() {
 		Function<String, Optional<String>> badMapper = v -> Mono.just(v).hide()
 		                                                        .blockOptional();
 		Function<String, Optional<String>> badMapperTimeout = v -> Mono.just(v).hide()
@@ -380,7 +380,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void fluxToIterableOkButIterationForbidden() throws InterruptedException {
+    void fluxToIterableOkButIterationForbidden() throws InterruptedException {
 		AtomicReference<Iterable<Integer>> ref = new AtomicReference<>();
 		AtomicReference<Throwable> refError = new AtomicReference<>();
 		final CountDownLatch latch1 = new CountDownLatch(1);
@@ -432,7 +432,7 @@ public class BlockingTests {
 	}
 
 	@Test
-	public void fluxToStreamOkButIterationForbidden() throws InterruptedException {
+    void fluxToStreamOkButIterationForbidden() throws InterruptedException {
 		AtomicReference<Stream<Integer>> ref = new AtomicReference<>();
 		AtomicReference<Throwable> refError = new AtomicReference<>();
 		CountDownLatch latch = new CountDownLatch(1);

@@ -26,10 +26,10 @@ import reactor.util.function.Tuple2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxCacheTest {
+class FluxCacheTest {
 
 	@Test
-	public void cacheFlux() {
+    void cacheFlux() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
@@ -54,7 +54,7 @@ public class FluxCacheTest {
 	}
 
 	@Test
-	public void cacheFluxTTL() {
+    void cacheFluxTTL() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
@@ -78,7 +78,7 @@ public class FluxCacheTest {
 	}
 
 	@Test
-	public void cacheFluxHistoryTTL() {
+    void cacheFluxHistoryTTL() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
@@ -103,7 +103,7 @@ public class FluxCacheTest {
 	}
 
 	@Test
-	public void cacheFluxTTL2() {
+    void cacheFluxTTL2() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		AtomicInteger i = new AtomicInteger(0);
@@ -126,7 +126,7 @@ public class FluxCacheTest {
 	}
 
 	@Test
-	public void cacheContextHistory() {
+    void cacheContextHistory() {
 		AtomicInteger contextFillCount = new AtomicInteger();
 		Flux<String> cached = Flux.just(1, 2)
 		                          .flatMap(i -> Mono.deferContextual(Mono::just)
@@ -157,7 +157,7 @@ public class FluxCacheTest {
 	}
 
 	@Test
-	public void cacheContextTime() {
+    void cacheContextTime() {
 		AtomicInteger contextFillCount = new AtomicInteger();
 
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();

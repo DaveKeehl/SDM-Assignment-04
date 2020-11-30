@@ -30,18 +30,18 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.from;
 
-public class FluxSubscribeOnValueTest {
+class FluxSubscribeOnValueTest {
 
 	ConcurrentMap<Integer, Integer> execs = new ConcurrentHashMap<>();
 
 	@Test
-	public void finishedConstantsAreNotSame() {
+    void finishedConstantsAreNotSame() {
 		assertThat(FluxSubscribeOnValue.ScheduledScalar.FINISHED)
 				.isNotSameAs(FluxSubscribeOnValue.ScheduledEmpty.FINISHED);
 	}
 
 	@Test
-	public void testSubscribeOnValueFusion() {
+    void testSubscribeOnValueFusion() {
 
 		StepVerifier.create(Flux.range(1, 100)
 		                        .flatMap(f -> Flux.just(f)
@@ -75,7 +75,7 @@ public class FluxSubscribeOnValueTest {
 	}
 
 	@Test
-    public void scanOperator() {
+    void scanOperator() {
 		final Flux<Integer> test = Flux.just(1).subscribeOn(Schedulers.immediate());
 
 		assertThat(test).isInstanceOf(Scannable.class)
@@ -86,7 +86,7 @@ public class FluxSubscribeOnValueTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSubscribeOnValue.ScheduledScalar<Integer> test =
         		new FluxSubscribeOnValue.ScheduledScalar<Integer>(actual, 1, Schedulers.single());

@@ -22,16 +22,16 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoErrorTest {
+class MonoErrorTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.error(new Exception("test")))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void onMonoRejectedThrowOnBlock() {
+    void onMonoRejectedThrowOnBlock() {
 		assertThatExceptionOfType(Exception.class).isThrownBy(() -> {
 			Mono.error(new Exception("test"))
 					.block();
@@ -39,7 +39,7 @@ public class MonoErrorTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoError test = new MonoError(new NullPointerException());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

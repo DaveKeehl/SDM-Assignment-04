@@ -35,10 +35,10 @@ import reactor.util.retry.Retry.RetrySignal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class RetrySpecTest {
+class RetrySpecTest {
 
 	@Test
-	public void builderMethodsProduceNewInstances() {
+    void builderMethodsProduceNewInstances() {
 		RetrySpec init = Retry.max(1);
 		assertThat(init)
 				.isNotSameAs(init.maxAttempts(10))
@@ -54,14 +54,14 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void retryContextIsCorrectlyPropagatedAndSet() {
+    void retryContextIsCorrectlyPropagatedAndSet() {
 		RetrySpec init = Retry.max(1);
 		assertThat(init.withRetryContext(Context.of("foo", "bar")).maxAttempts(10))
 				.satisfies(rs -> rs.retryContext().get("foo").equals("bar"));
 	}
 
 	@Test
-	public void builderCanBeUsedAsTemplate() {
+    void builderCanBeUsedAsTemplate() {
 		//a base builder can be reused across several Flux with different tuning for each flux
 		RetrySpec template = Retry.max(1).transientErrors(false);
 
@@ -97,7 +97,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void throwablePredicateReplacesThePredicate() {
+    void throwablePredicateReplacesThePredicate() {
 		RetrySpec retrySpec = Retry.max(1)
 		                           .filter(t -> t instanceof RuntimeException)
 		                           .filter(t -> t instanceof IllegalStateException);
@@ -109,7 +109,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void throwablePredicateModifierAugmentsThePredicate() {
+    void throwablePredicateModifierAugmentsThePredicate() {
 		RetrySpec retrySpec = Retry.max(1)
 		                           .filter(t -> t instanceof RuntimeException)
 		                           .modifyErrorFilter(p -> p.and(t -> t.getMessage().length() == 3));
@@ -122,7 +122,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void throwablePredicateModifierWorksIfNoPreviousPredicate() {
+    void throwablePredicateModifierWorksIfNoPreviousPredicate() {
 		RetrySpec retrySpec = Retry.max(1)
 		                           .modifyErrorFilter(p -> p.and(t -> t.getMessage().length() == 3));
 
@@ -134,19 +134,19 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void throwablePredicateModifierRejectsNullGenerator() {
+    void throwablePredicateModifierRejectsNullGenerator() {
 		assertThatNullPointerException().isThrownBy(() -> Retry.max(1).modifyErrorFilter(p -> null))
 		                                .withMessage("predicateAdjuster must return a new predicate");
 	}
 
 	@Test
-	public void throwablePredicateModifierRejectsNullFunction() {
+    void throwablePredicateModifierRejectsNullFunction() {
 		assertThatNullPointerException().isThrownBy(() -> Retry.max(1).modifyErrorFilter(null))
 		                                .withMessage("predicateAdjuster");
 	}
 
 	@Test
-	public void doBeforeRetryIsCumulative() {
+    void doBeforeRetryIsCumulative() {
 		AtomicInteger atomic = new AtomicInteger();
 		RetrySpec retrySpec = Retry
 				.max(1)
@@ -159,7 +159,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void doAfterRetryIsCumulative() {
+    void doAfterRetryIsCumulative() {
 		AtomicInteger atomic = new AtomicInteger();
 		RetrySpec retrySpec = Retry
 				.max(1)
@@ -172,7 +172,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void delayRetryWithIsCumulative() {
+    void delayRetryWithIsCumulative() {
 		AtomicInteger atomic = new AtomicInteger();
 		RetrySpec retrySpec = Retry
 				.max(1)
@@ -185,7 +185,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void retryThenIsCumulative() {
+    void retryThenIsCumulative() {
 		AtomicInteger atomic = new AtomicInteger();
 		RetrySpec retrySpec = Retry
 				.max(1)
@@ -199,7 +199,7 @@ public class RetrySpecTest {
 
 
 	@Test
-	public void retryExceptionDefaultsToRetryExhausted() {
+    void retryExceptionDefaultsToRetryExhausted() {
 		RetrySpec retrySpec = Retry.max(50).transientErrors(true);
 
 		final ImmutableRetrySignal trigger = new ImmutableRetrySignal(100, 50, new IllegalStateException("boom"));
@@ -212,7 +212,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void retryExceptionCanBeCustomized() {
+    void retryExceptionCanBeCustomized() {
 		RetrySpec retrySpec = Retry
 				.max(50)
 				.onRetryExhaustedThrow((builder, rs) -> new IllegalArgumentException("max" + builder.maxAttempts));
@@ -227,20 +227,20 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void defaultRetryExhaustedMessageWithNoTransientErrors() {
+    void defaultRetryExhaustedMessageWithNoTransientErrors() {
 		assertThat(RetrySpec.RETRY_EXCEPTION_GENERATOR.apply(Retry.max(123), new ImmutableRetrySignal(123, 123, null)))
 				.hasMessage("Retries exhausted: 123/123");
 	}
 
 	@Test
-	public void defaultRetryExhaustedMessageWithTransientErrors() {
+    void defaultRetryExhaustedMessageWithTransientErrors() {
 		assertThat(RetrySpec.RETRY_EXCEPTION_GENERATOR.apply(Retry.max(12).transientErrors(true),
 				new ImmutableRetrySignal(123, 12, null)))
 				.hasMessage("Retries exhausted: 12/12 in a row (123 total)");
 	}
 
 	@Test
-	public void companionWaitsForAllHooksBeforeTrigger() {
+    void companionWaitsForAllHooksBeforeTrigger() {
 		//this tests the companion directly, vs cumulatedRetryHooks which test full integration in the retryWhen operator
 		IllegalArgumentException ignored = new IllegalArgumentException("ignored");
 		RetrySignal sig1 = new ImmutableRetrySignal(1, 1, ignored);
@@ -255,7 +255,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void cumulatedRetryHooks() {
+    void cumulatedRetryHooks() {
 		List<String> order = new CopyOnWriteArrayList<>();
 		AtomicInteger beforeHookTracker = new AtomicInteger();
 		AtomicInteger afterHookTracker = new AtomicInteger();
@@ -298,7 +298,7 @@ public class RetrySpecTest {
 	}
 
 	@Test
-	public void cumulatedRetryHooksWithTransient() {
+    void cumulatedRetryHooksWithTransient() {
 		List<String> order = new CopyOnWriteArrayList<>();
 		AtomicInteger beforeHookTracker = new AtomicInteger();
 		AtomicInteger afterHookTracker = new AtomicInteger();

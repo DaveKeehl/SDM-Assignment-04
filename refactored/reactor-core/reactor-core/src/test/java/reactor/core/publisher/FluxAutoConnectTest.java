@@ -27,10 +27,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxAutoConnectTest {
+class FluxAutoConnectTest {
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(StreamAutoConnect.class);
 		
 		ctb.addRef("source", Flux.never().publish());
@@ -41,7 +41,7 @@ public class FluxAutoConnectTest {
 	}*/
 	
 	@Test
-	public void connectImmediately() {
+    void connectImmediately() {
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
 
 		AtomicReference<Disposable> cancel = new AtomicReference<>();
@@ -56,7 +56,7 @@ public class FluxAutoConnectTest {
 	}
 
 	@Test
-	public void connectAfterMany() {
+    void connectAfterMany() {
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
 
 		AtomicReference<Disposable> cancel = new AtomicReference<>();
@@ -81,7 +81,7 @@ public class FluxAutoConnectTest {
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		@SuppressWarnings("unchecked")
 		ConnectableFlux<String> source = Mockito.mock(MockUtils.TestScannableConnectableFlux.class);
 		Mockito.when(source.getPrefetch()).thenReturn(888);

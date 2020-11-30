@@ -23,17 +23,17 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoPeekTerminalTest {
+class MonoPeekTerminalTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoPeekTerminal<String> test = new MonoPeekTerminal<>(Mono.just("foo"), null, null, null);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoPeekTerminal<String> main = new MonoPeekTerminal<>(Mono.just("foo"), null, null, null);
 		MonoPeekTerminal.MonoTerminalPeekSubscriber<String> test = new MonoPeekTerminal.MonoTerminalPeekSubscriber<>(

@@ -34,7 +34,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
+class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 
 	@Override
 	protected Scenario<String, List<String>> defaultScenarioOptions(Scenario<String, List<String>> defaultOptions) {
@@ -98,35 +98,35 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxBuffer<>(null, 1, ArrayList::new);
 		});
 	}
 
 	@Test
-	public void supplierNull() {
+    void supplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().buffer(1, 1, null);
 		});
 	}
 
 	@Test
-	public void sizeZero() {
+    void sizeZero() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().buffer(0, 1);
 		});
 	}
 
 	@Test
-	public void skipZero() {
+    void skipZero() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().buffer(1, 0);
 		});
 	}
 
 	@Test
-	public void normalExact() {
+    void normalExact() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).buffer(2).subscribe(ts);
@@ -141,7 +141,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void normalExactBackpressured() {
+    void normalExactBackpressured() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).buffer(2).subscribe(ts);
@@ -168,7 +168,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void largerSkip() {
+    void largerSkip() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).buffer(2, 3).subscribe(ts);
@@ -182,7 +182,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void largerSkipEven() {
+    void largerSkipEven() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 8).buffer(2, 3).subscribe(ts);
@@ -193,7 +193,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void largerSkipEvenBackpressured() {
+    void largerSkipEvenBackpressured() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 8).buffer(2, 3).subscribe(ts);
@@ -216,7 +216,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void largerSkipBackpressured() {
+    void largerSkipBackpressured() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).buffer(2, 3).subscribe(ts);
@@ -242,7 +242,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void smallerSkip() {
+    void smallerSkip() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).buffer(2, 1).subscribe(ts);
@@ -262,7 +262,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void smallerSkipBackpressured() {
+    void smallerSkipBackpressured() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).buffer(2, 1).subscribe(ts);
@@ -317,7 +317,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void smallerSkip3Backpressured() {
+    void smallerSkip3Backpressured() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).buffer(3, 1).subscribe(ts);
@@ -385,7 +385,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void supplierReturnsNull() {
+    void supplierReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).buffer(2, 1, () -> null).subscribe(ts);
@@ -396,7 +396,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void supplierThrows() {
+    void supplierThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).buffer(2, 1, () -> {
@@ -410,7 +410,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFlux() {
+    void bufferWillSubdivideAnInputFlux() {
 		Flux<Integer> numbers = Flux.just(1, 2, 3, 4, 5, 6, 7, 8);
 
 		//"non overlapping buffers"
@@ -424,7 +424,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxOverlap() {
+    void bufferWillSubdivideAnInputFluxOverlap() {
 		Flux<Integer> numbers = Flux.just(1, 2, 3, 4, 5, 6, 7, 8);
 
 		//"non overlapping buffers"
@@ -440,7 +440,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void bufferWillRerouteAsManyElementAsSpecified() {
+    void bufferWillRerouteAsManyElementAsSpecified() {
 		assertThat(Flux.just(1, 2, 3, 4, 5)
 		               .buffer(2)
 		               .collectList()
@@ -450,14 +450,14 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxBuffer<Integer, List<Integer>> test = new FluxBuffer<>(Flux.just(1, 2, 3), 2, 1, ArrayList::new);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanExactSubscriber() {
+    void scanExactSubscriber() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxBuffer.BufferExactSubscriber<String, List<String>> test = new FluxBuffer.BufferExactSubscriber<>(
 					actual, 23, ArrayList::new	);
@@ -480,7 +480,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void scanOverlappingSubscriber() {
+    void scanOverlappingSubscriber() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxBuffer.BufferOverlappingSubscriber<String, List<String>> test =
@@ -511,7 +511,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void scanOverlappingSubscriberCancelled() {
+    void scanOverlappingSubscriberCancelled() {
 		CoreSubscriber<? super List>
 				actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxBuffer.BufferOverlappingSubscriber<String, List<String>> test = new FluxBuffer.BufferOverlappingSubscriber<>(
@@ -525,7 +525,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void scanSkipSubscriber() {
+    void scanSkipSubscriber() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 
 		FluxBuffer.BufferSkipSubscriber<String, List<String>> test = new FluxBuffer.BufferSkipSubscriber<>(actual, 2, 3, ArrayList::new);
@@ -553,7 +553,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.never())
 		                        .buffer(4))
@@ -564,7 +564,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnCancelSkip() {
+    void discardOnCancelSkip() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5)
 		                        .limitRequest(2)
 		                        .concatWith(Mono.never())
@@ -576,7 +576,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnCancelOverlap() {
+    void discardOnCancelOverlap() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6)
 		                        .limitRequest(2)
 		                        .concatWith(Mono.never())
@@ -588,7 +588,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnNextSupplierError() {
+    void discardOnNextSupplierError() {
 		Supplier<List<Integer>> bufferSupplier = () -> null;
 
 		StepVerifier.create(Flux.just(1, 2, 3)
@@ -599,7 +599,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnNextSupplierErrorSkip() {
+    void discardOnNextSupplierErrorSkip() {
 		Supplier<List<Integer>> bufferSupplier = () -> null;
 
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5)
@@ -610,7 +610,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnNextSupplierErrorOverlap() {
+    void discardOnNextSupplierErrorOverlap() {
 		Supplier<List<Integer>> bufferSupplier = () -> null;
 
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6)
@@ -621,7 +621,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnSkippedElements() {
+    void discardOnSkippedElements() {
 		//the skip flavor should discard elements that are not added to any buffer
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5)
 		                        .buffer(2, 3)
@@ -633,7 +633,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .buffer(4))
@@ -643,7 +643,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnErrorSkip() {
+    void discardOnErrorSkip() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .buffer(4, 5))
@@ -653,7 +653,7 @@ public class FluxBufferTest extends FluxOperatorTest<String, List<String>> {
 	}
 
 	@Test
-	public void discardOnErrorOverlap() {
+    void discardOnErrorOverlap() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .buffer(4, 2))

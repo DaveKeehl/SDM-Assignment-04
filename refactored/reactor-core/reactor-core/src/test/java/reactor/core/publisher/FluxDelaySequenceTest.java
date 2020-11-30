@@ -35,10 +35,10 @@ import reactor.util.function.Tuple2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxDelaySequenceTest {
+class FluxDelaySequenceTest {
 
 	@Test
-	public void delayFirstInterval() {
+    void delayFirstInterval() {
 		Supplier<Flux<Tuple2<Long, Long>>> test = () -> Flux.interval(Duration.ofMillis(50))
 	                                                    .delaySequence(Duration.ofMillis(500))
 	                                                    .elapsed()
@@ -61,7 +61,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void delayFirstAsymmetricDelays() {
+    void delayFirstAsymmetricDelays() {
 
 		Supplier<Flux<Tuple2<Long, Long>>> test = () -> {
 			Flux<Long> asymmetricDelays = Flux.concat(
@@ -105,7 +105,7 @@ public class FluxDelaySequenceTest {
 
 	@Disabled("delayElements test for local comparison run")
 	@Test
-	public void delayElements() {
+    void delayElements() {
 		Flux<Tuple2<Long, Long>> test = Flux.interval(Duration.ofMillis(50))
 		                                    .onBackpressureDrop()
 		                                    .delayElements(Duration.ofMillis(500))
@@ -119,7 +119,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void every50msThenErrorDelaysError() {
+    void every50msThenErrorDelaysError() {
 
 		Supplier<Flux<Long>> test = () -> {
 			Flux<Long> source = Flux.concat(Mono.delay(Duration.ofMillis(50))
@@ -144,7 +144,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void emptyErrorErrorsImmediately() {
+    void emptyErrorErrorsImmediately() {
 		Flux<Long> source = Flux.error(new IllegalStateException("boom"));
 
 		Flux<Long> test = source
@@ -161,7 +161,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void emptyCompletesImmediately() {
+    void emptyCompletesImmediately() {
 		Flux<Long> source = Flux.empty();
 
 		Flux<Long> test = source
@@ -177,7 +177,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void allDelayInNanos() {
+    void allDelayInNanos() {
 		Duration longDelay = Duration.ofMillis(59_999);
 		long expected = longDelay.toNanos();
 
@@ -188,7 +188,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void onNextAfterCompleteDrops() {
+    void onNextAfterCompleteDrops() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(
 				TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
@@ -204,7 +204,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void onNextAfterErrorDrops() {
+    void onNextAfterErrorDrops() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(
 				TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
@@ -220,7 +220,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void onCompleteAfterComplete() {
+    void onCompleteAfterComplete() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(
 				TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
@@ -236,7 +236,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void onErrorAfterCompleteDrops() {
+    void onErrorAfterCompleteDrops() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(
 				TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
@@ -252,7 +252,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxDelaySequence<String> test = new FluxDelaySequence<>(Flux.empty(), Duration.ofSeconds(1), Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -260,7 +260,7 @@ public class FluxDelaySequenceTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		Scheduler.Worker worker = Schedulers.immediate().createWorker();
 
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, null, null, null);

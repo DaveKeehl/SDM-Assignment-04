@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author Stephane Maldini
  */
-public abstract class AbstractFluxVerification
+abstract class AbstractFluxVerification
 		extends org.reactivestreams.tck.PublisherVerification<Integer> {
 
 

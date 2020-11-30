@@ -39,13 +39,13 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoCollectTest {
+class MonoCollectTest {
 
 	static final Logger LOGGER = Loggers.getLogger(MonoCollectListTest.class);
 
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoCollect<>(null, () -> 1, (a, b) -> {
 			});
@@ -53,7 +53,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void nullSupplier() {
+    void nullSupplier() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().collect(null, (a, b) -> {
 			});
@@ -61,14 +61,14 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void nullAction() {
+    void nullAction() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().collect(() -> 1, null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<ArrayList<Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).collect(ArrayList<Integer>::new, ArrayList::add).subscribe(ts);
@@ -79,7 +79,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<ArrayList<Integer>> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).collect(ArrayList<Integer>::new, ArrayList::add).subscribe(ts);
@@ -96,7 +96,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void supplierThrows() {
+    void supplierThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).collect(() -> {
@@ -112,7 +112,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void supplierReturnsNull() {
+    void supplierReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).collect(() -> null, (a, b) -> {
@@ -124,7 +124,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void actionThrows() {
+    void actionThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).collect(() -> 1, (a, b) -> {
@@ -138,7 +138,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> source = Flux.just(1, 2, 3);
 		MonoCollect<Integer, List<Integer>> test = new MonoCollect<>(source, ArrayList::new, (a, b) -> {});
 
@@ -148,7 +148,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<List<String>> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		CollectSubscriber<String, List<String>> test = new CollectSubscriber<>(
 				actual, (l, v) -> l.add(v), new ArrayList<>());
@@ -171,7 +171,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardElementOnAccumulatorFailure() {
+    void discardElementOnAccumulatorFailure() {
 		Flux.range(1, 4)
 		    .collect(ArrayList::new, (l, t) -> { throw new IllegalStateException("accumulator: boom"); })
 		    .as(StepVerifier::create)
@@ -181,7 +181,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardElementAndBufferOnAccumulatorLateFailure() {
+    void discardElementAndBufferOnAccumulatorLateFailure() {
 		Flux.just(1, 2, 3, 4)
 		    .hide()
 		    .collect(ArrayList::new, (l, t) -> {
@@ -197,7 +197,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardElementAndBufferOnAccumulatorLateFailure_fused() {
+    void discardElementAndBufferOnAccumulatorLateFailure_fused() {
 		Flux.just(1, 2, 3, 4)
 		    .collect(ArrayList::new, (l, t) -> {
 			    if (t == 3) {
@@ -214,7 +214,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardListElementsOnError() {
+    void discardListElementsOnError() {
 		Mono<List<Integer>> test =
 				Flux.range(1, 10)
 				    .hide()
@@ -233,7 +233,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardListElementsOnCancel() {
+    void discardListElementsOnCancel() {
 		StepVerifier.withVirtualTime(() ->
 				Flux.interval(Duration.ofMillis(100))
 				    .take(10)
@@ -247,7 +247,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardWholeArrayOnError() {
+    void discardWholeArrayOnError() {
 		List<Object> discarded = new ArrayList<>();
 		AtomicInteger index = new AtomicInteger();
 
@@ -274,7 +274,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardWholeArrayOnCancel() {
+    void discardWholeArrayOnCancel() {
 		List<Object> discarded = new ArrayList<>();
 		AtomicInteger index = new AtomicInteger();
 
@@ -295,7 +295,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardCancelNextRace() {
+    void discardCancelNextRace() {
 		AtomicInteger doubleDiscardCounter = new AtomicInteger();
 		Context discardingContext = Operators.enableOnDiscard(null, o -> {
 			AtomicBoolean ab = (AtomicBoolean) o;
@@ -325,7 +325,7 @@ public class MonoCollectTest {
 	}
 
 	@Test
-	public void discardCancelCompleteRace() {
+    void discardCancelCompleteRace() {
 		AtomicInteger doubleDiscardCounter = new AtomicInteger();
 		Context discardingContext = Operators.enableOnDiscard(null, o -> {
 			AtomicBoolean ab = (AtomicBoolean) o;

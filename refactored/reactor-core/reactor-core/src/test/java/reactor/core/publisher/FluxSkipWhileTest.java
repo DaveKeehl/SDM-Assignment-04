@@ -31,7 +31,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
+class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected List<Scenario<String, String>> scenarios_operatorError() {
@@ -57,14 +57,14 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxSkipWhile<>(null, v -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.skipWhile(null);
@@ -72,7 +72,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNone() {
+    void skipNone() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -85,7 +85,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNoneBackpressured() {
+    void skipNoneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -110,7 +110,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipSome() {
+    void skipSome() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -123,7 +123,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipSomeBackpressured() {
+    void skipSomeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -148,7 +148,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipAll() {
+    void skipAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -161,7 +161,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipAllBackpressured() {
+    void skipAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -180,7 +180,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -197,7 +197,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkippedWhile(){
+    void aFluxCanBeSkippedWhile(){
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .skipWhile("test"::equals)
 		)
@@ -206,7 +206,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxSkipWhile<Integer> test = new FluxSkipWhile<>(parent, p -> true);
 
@@ -215,7 +215,7 @@ public class FluxSkipWhileTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSkipWhile.SkipWhileSubscriber<Integer> test = new FluxSkipWhile.SkipWhileSubscriber<>(actual, i -> true);
         Subscription parent = Operators.emptySubscription();

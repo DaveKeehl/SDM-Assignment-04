@@ -21,10 +21,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoNeverTest {
+class MonoNeverTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		Mono.never()
 		    .subscribeWith(AssertSubscriber.create())
 		    .assertSubscribed()
@@ -33,7 +33,7 @@ public class MonoNeverTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoNever test = new MonoNever();
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

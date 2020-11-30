@@ -24,7 +24,7 @@ import org.testng.SkipException;
  * @author Stephane Maldini
  */
 @org.testng.annotations.Test
-public class EmitterProcessorVerification extends AbstractProcessorVerification {
+class EmitterProcessorVerification extends AbstractProcessorVerification {
 
 	@Override
 	@SuppressWarnings("deprecation") // This is ok because this uses FluxProcessor and EmitterProcessor, to be removed in 3.5

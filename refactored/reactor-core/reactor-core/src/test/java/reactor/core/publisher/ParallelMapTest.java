@@ -22,10 +22,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelMapTest {
+class ParallelMapTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelMap<Integer, String> test = new ParallelMap<>(source, i -> "" + i);
 
@@ -34,7 +34,7 @@ public class ParallelMapTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelMap<Integer, String> test = new ParallelMap<>(source, i -> "" + i);
 
@@ -44,7 +44,7 @@ public class ParallelMapTest {
 	}
 
 	@Test
-	public void conditional() {
+    void conditional() {
 		Flux<Integer> source = Flux.range(1, 1_000);
 		for (int i = 1; i < 33; i++) {
 			Flux<Integer> result = ParallelFlux.from(source, i)

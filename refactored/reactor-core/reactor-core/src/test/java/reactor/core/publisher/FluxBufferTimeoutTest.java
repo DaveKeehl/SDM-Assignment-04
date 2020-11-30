@@ -46,10 +46,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.from;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxBufferTimeoutTest {
+class FluxBufferTimeoutTest {
 
 	@AfterEach
-	public void tearDown() {
+	void tearDown() {
 		VirtualTimeScheduler.reset();
 	}
 
@@ -60,7 +60,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void bufferWithTimeoutAccumulateOnSize() {
+    void bufferWithTimeoutAccumulateOnSize() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWithTimeoutAccumulateOnSize)
 		            .thenAwait(Duration.ofMillis(1500))
 		            .assertNext(s -> assertThat(s).containsExactly(1, 2, 3, 4, 5))
@@ -76,7 +76,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void bufferWithTimeoutAccumulateOnTime() {
+    void bufferWithTimeoutAccumulateOnTime() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWithTimeoutAccumulateOnTime)
 				//.create(this.scenario_bufferWithTimeoutAccumulateOnTime())
 		            .thenAwait(Duration.ofNanos(1800))
@@ -93,7 +93,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void bufferWithTimeoutThrowingExceptionOnTimeOrSizeIfDownstreamDemandIsLow() {
+    void bufferWithTimeoutThrowingExceptionOnTimeOrSizeIfDownstreamDemandIsLow() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWithTimeoutThrowingExceptionOnTimeOrSizeIfDownstreamDemandIsLow, 0)
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofMillis(300))
@@ -109,7 +109,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 
 		final Scheduler.Worker worker = Schedulers.boundedElastic()
@@ -147,7 +147,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		final Flux<List<Integer>> flux = Flux.just(1).bufferTimeout(3, Duration.ofSeconds(1));
 
 		assertThat(flux).isInstanceOf(Scannable.class);
@@ -156,7 +156,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void shouldShowActualSubscriberDemand() {
+    void shouldShowActualSubscriberDemand() {
 		Subscription[] subscriptionsHolder = new Subscription[1];
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {}, null, s -> subscriptionsHolder[0] = s);
 
@@ -172,7 +172,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void downstreamDemandShouldBeAbleToDecreaseOnFullBuffer() {
+    void downstreamDemandShouldBeAbleToDecreaseOnFullBuffer() {
 		Subscription[] subscriptionsHolder = new Subscription[1];
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {}, null, s -> subscriptionsHolder[0] = s);
 
@@ -191,7 +191,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void downstreamDemandShouldBeAbleToDecreaseOnTimeSpan() {
+    void downstreamDemandShouldBeAbleToDecreaseOnTimeSpan() {
 		Subscription[] subscriptionsHolder = new Subscription[1];
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {}, null, s -> subscriptionsHolder[0] = s);
 
@@ -211,7 +211,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void requestedFromUpstreamShouldNotExceedDownstreamDemand() {
+    void requestedFromUpstreamShouldNotExceedDownstreamDemand() {
 		Sinks.Many<String> sink = Sinks.many().multicast().onBackpressureBuffer();
 		Flux<String> emitter = sink.asFlux();
 
@@ -239,7 +239,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void exceedingUpstreamDemandResultsInError() {
+    void exceedingUpstreamDemandResultsInError() {
 		Subscription[] subscriptionsHolder = new Subscription[1];
 
 		AtomicReference<Throwable> capturedException = new AtomicReference<>();
@@ -267,7 +267,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void scanSubscriberCancelled() {
+    void scanSubscriberCancelled() {
 		CoreSubscriber<List<String>>
 				actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 
@@ -283,7 +283,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void flushShouldNotRaceWithNext() {
+    void flushShouldNotRaceWithNext() {
 		Set<Integer> seen = new HashSet<>();
 		Consumer<List<Integer>> consumer = integers -> {
 			for (Integer i : integers) {
@@ -310,7 +310,7 @@ public class FluxBufferTimeoutTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1247
 	@Test
-	public void rejectedOnNextLeadsToOnError() {
+    void rejectedOnNextLeadsToOnError() {
 		Scheduler scheduler = Schedulers.newSingle("rejectedOnNextLeadsToOnError");
 		scheduler.dispose();
 
@@ -321,7 +321,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.never())
 		                        .bufferTimeout(10, Duration.ofMillis(100)))
@@ -332,7 +332,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void discardOnFlushWithoutRequest() {
+    void discardOnFlushWithoutRequest() {
 		TestPublisher<Integer> testPublisher = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
 		StepVerifier.create(testPublisher
@@ -347,7 +347,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void discardOnTimerRejected() {
+    void discardOnTimerRejected() {
 		Scheduler scheduler = Schedulers.newSingle("discardOnTimerRejected");
 
 		StepVerifier.create(Flux.just(1, 2, 3)
@@ -359,7 +359,7 @@ public class FluxBufferTimeoutTest {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .bufferTimeout(10, Duration.ofMillis(100)))

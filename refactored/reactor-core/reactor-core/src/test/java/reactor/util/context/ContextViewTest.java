@@ -23,19 +23,19 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ContextViewTest {
+class ContextViewTest {
 
 	// == tests for default methods ==
 
 	@Test
-	public void getWithClass() {
+    void getWithClass() {
 		ContextView context = Context.of(String.class, "someString");
 
 		assertThat(context.get(String.class)).isEqualTo("someString");
 	}
 
 	@Test
-	public void getWithClassKeyButNonMatchingInstance() {
+    void getWithClassKeyButNonMatchingInstance() {
 		ContextView context = Context.of(String.class, 4);
 
 		assertThatExceptionOfType(NoSuchElementException.class)
@@ -44,14 +44,14 @@ public class ContextViewTest {
 	}
 
 	@Test
-	public void getOrEmptyWhenMatch() {
+    void getOrEmptyWhenMatch() {
 		ContextView context = Context.of(1, "A");
 
 		assertThat(context.getOrEmpty(1)).hasValue("A");
 	}
 
 	@Test
-	public void getOrEmptyWhenNoMatch() {
+    void getOrEmptyWhenNoMatch() {
 		ContextView context = Context.of(1, "A");
 
 		assertThat(context.getOrEmpty(2)).isEmpty();

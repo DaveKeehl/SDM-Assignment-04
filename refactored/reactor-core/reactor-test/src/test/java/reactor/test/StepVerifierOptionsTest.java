@@ -26,17 +26,17 @@ import reactor.test.ValueFormatters.Extractor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StepVerifierOptionsTest {
+class StepVerifierOptionsTest {
 
 	@Test
-	public void valueFormatterDefaultNull() {
+	void valueFormatterDefaultNull() {
 		StepVerifierOptions options = StepVerifierOptions.create();
 
 		assertThat(options.getValueFormatter()).isNull();
 	}
 
 	@Test
-	public void valueFormatterCanSetNull() {
+	void valueFormatterCanSetNull() {
 		ValueFormatters.ToStringConverter formatter = ValueFormatters.forClass(Object.class, o -> o.getClass().getSimpleName());
 		final StepVerifierOptions options = StepVerifierOptions.create().valueFormatter(formatter);
 
@@ -48,7 +48,7 @@ public class StepVerifierOptionsTest {
 	}
 
 	@Test
-	public void valueFormatterSetterReplaces() {
+	void valueFormatterSetterReplaces() {
 		ValueFormatters.ToStringConverter formatter1 = ValueFormatters.forClass(Object.class, o -> o.getClass().getSimpleName());
 		ValueFormatters.ToStringConverter formatter2 = ValueFormatters.forClass(Object.class, o -> o.getClass().getSimpleName());
 
@@ -62,7 +62,7 @@ public class StepVerifierOptionsTest {
 	}
 
 	@Test
-	public void extractorsDefaultAtEnd() {
+	void extractorsDefaultAtEnd() {
 		StepVerifierOptions options = StepVerifierOptions.create();
 
 		options.extractor(new Extractor<String>() {
@@ -84,7 +84,7 @@ public class StepVerifierOptionsTest {
 	}
 
 	@Test
-	public void extractorReplacingDefaultMovesUp() {
+	void extractorReplacingDefaultMovesUp() {
 		StepVerifierOptions options = StepVerifierOptions.create();
 
 		options.extractor(new Extractor<Signal>() {
@@ -132,7 +132,7 @@ public class StepVerifierOptionsTest {
 	}
 
 	@Test
-	public void extractorReplacingCustomInPlace() {
+	void extractorReplacingCustomInPlace() {
 		StepVerifierOptions options = StepVerifierOptions.create();
 		Extractor<String> extractorV1 = new Extractor<String>() {
 			@Override
@@ -171,7 +171,7 @@ public class StepVerifierOptionsTest {
 	}
 
 	@Test
-	public void getExtractorsIsCopy() {
+	void getExtractorsIsCopy() {
 		StepVerifierOptions options = StepVerifierOptions.create();
 		options.extractor(new Extractor<String>() {
 			@Override

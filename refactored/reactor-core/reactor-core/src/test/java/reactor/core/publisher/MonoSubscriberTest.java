@@ -33,17 +33,17 @@ import reactor.util.function.Tuple2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSubscriberTest {
+class MonoSubscriberTest {
 
 	@Test
-	public void queueSubscriptionSyncRejected() {
+    void queueSubscriptionSyncRejected() {
 		MonoSubscriber<Integer, Integer> ds = new MonoSubscriber<>(new AssertSubscriber<>());
 
 		assertThat(ds.requestFusion(Fuseable.SYNC)).isEqualTo(Fuseable.NONE);
 	}
 
 	@Test
-	public void clear() {
+    void clear() {
 		MonoSubscriber<Integer, Integer> ds = new MonoSubscriber<>(new AssertSubscriber<>());
 
 		ds.value = 1;
@@ -55,7 +55,7 @@ public class MonoSubscriberTest {
 	}
 
 	@Test
-	public void completeCancelRace() {
+    void completeCancelRace() {
 		for (int i = 0; i < 500; i++) {
 			final MonoSubscriber<Integer, Integer> ds = new MonoSubscriber<>(new AssertSubscriber<>());
 
@@ -68,7 +68,7 @@ public class MonoSubscriberTest {
 	}
 
 	@Test
-	public void requestClearRace() {
+    void requestClearRace() {
 		for (int i = 0; i < 5000; i++) {
 			AssertSubscriber<Integer> ts = new AssertSubscriber<Integer>(0L);
 
@@ -89,7 +89,7 @@ public class MonoSubscriberTest {
 	}
 
 	@Test
-	public void requestCancelRace() {
+    void requestCancelRace() {
 		for (int i = 0; i < 5000; i++) {
 			AssertSubscriber<Integer> ts = new AssertSubscriber<>(0L);
 
@@ -118,7 +118,7 @@ public class MonoSubscriberTest {
 	 * @param s the scheduler to use
 	 */
 	//TODO pull into reactor-tests?
-	public static void race(final Runnable r1, final Runnable r2, Scheduler s) {
+	static void race(final Runnable r1, final Runnable r2, Scheduler s) {
 		final AtomicInteger count = new AtomicInteger(2);
 		final CountDownLatch cdl = new CountDownLatch(2);
 
@@ -176,7 +176,7 @@ public class MonoSubscriberTest {
 	}
 
 	@Test
-	public void issue1719() {
+    void issue1719() {
 		for (int i = 0; i < 10000; i++) {
 			Map<String, Mono<Integer>> input = new HashMap<>();
 			input.put("one", Mono.just(1));

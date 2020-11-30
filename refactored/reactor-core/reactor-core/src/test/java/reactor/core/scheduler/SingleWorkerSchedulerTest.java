@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class SingleWorkerSchedulerTest extends AbstractSchedulerTest {
+class SingleWorkerSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -51,7 +51,7 @@ public class SingleWorkerSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Scheduler withNamedFactory = Schedulers.single(Schedulers.newSingle("scanName"));
 		Scheduler withBasicFactory = Schedulers.single(Schedulers.newParallel(9, Thread::new));
 

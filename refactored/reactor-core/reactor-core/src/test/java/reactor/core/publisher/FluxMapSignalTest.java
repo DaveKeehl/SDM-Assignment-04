@@ -29,10 +29,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
+class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 
 	@Test
-	public void allNull() {
+    void allNull() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().flatMap(null, null, null);
 		});
@@ -66,7 +66,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void completeOnlyBackpressured() {
+    void completeOnlyBackpressured() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
 
         new FluxMapSignal<>(Flux.empty(), null, null, () -> 1)
@@ -84,7 +84,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void errorOnlyBackpressured() {
+    void errorOnlyBackpressured() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
 
         new FluxMapSignal<>(Flux.error(new RuntimeException()), null, e -> 1, null)
@@ -102,7 +102,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void flatMapSignal() {
+    void flatMapSignal() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(d -> Flux.just(d * 2),
 				                        e -> Flux.just(99),
@@ -112,7 +112,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void flatMapSignalError() {
+    void flatMapSignalError() {
 		StepVerifier.create(Flux.just(1, 2, 3).concatWith(Flux.error(new Exception("test")))
 		                        .flatMap(d -> Flux.just(d * 2),
 				                        e -> Flux.just(99),
@@ -122,7 +122,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void flatMapSignal2() {
+    void flatMapSignal2() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(d -> Flux.just(d * 2),
 				                        e -> Flux.just(99),
@@ -135,7 +135,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxMapSignal<Integer, Integer> test = new FluxMapSignal<>(parent, v -> v, e -> 1, () -> 10);
 
@@ -144,7 +144,7 @@ public class FluxMapSignalTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxMapSignal<Object, Integer> main = new FluxMapSignal<>(Flux.empty(), null, null, () -> 1);
         FluxMapSignal.FluxMapSignalSubscriber<Object, Integer> test =

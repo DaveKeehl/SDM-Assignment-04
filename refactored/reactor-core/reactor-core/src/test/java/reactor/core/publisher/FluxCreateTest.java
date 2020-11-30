@@ -258,7 +258,7 @@ class FluxCreateTest {
 				this.sink = sink;
 			}
 
-			public void emit(long n) {
+			void emit(long n) {
 				for (int i = 0; i < n; i++)
 					sink.next(i);
 				sink.complete();
@@ -1099,10 +1099,10 @@ class FluxCreateTest {
 			this.sink = sink;
 		}
 
-		public void onRequest(int count) {
+		void onRequest(int count) {
 		}
 
-		public void generate(int count) {
+		void generate(int count) {
 			for (int i = 0; i < count; i++)
 				queue.offer(index.getAndIncrement());
 			pushToSink();
@@ -1121,7 +1121,7 @@ class FluxCreateTest {
 			pushToSink();
 		}
 
-		public void pushToSink() {
+		void pushToSink() {
 			while (sink.requestedFromDownstream() > 0) {
 				Integer item = queue.poll();
 				if (item != null) {
@@ -1132,7 +1132,7 @@ class FluxCreateTest {
 			}
 		}
 
-		public void close() {
+		void close() {
 			executor.shutdown();
 		}
 	}
@@ -1142,12 +1142,12 @@ class FluxCreateTest {
 		private Semaphore pushSemaphore = new Semaphore(0);
 
 		@Override
-		public void onRequest(int count) {
+		void onRequest(int count) {
 			pushSemaphore.release(count);
 		}
 
 		@Override
-		public void pushToSink() {
+		void pushToSink() {
 			while (pushSemaphore.tryAcquire()) {
 				Integer item = queue.poll();
 				if (item != null) {
@@ -1161,7 +1161,7 @@ class FluxCreateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		FluxCreate<?> test = new FluxCreate<>(v -> {}, OverflowStrategy.BUFFER, FluxCreate.CreateMode.PUSH_ONLY);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.ASYNC);

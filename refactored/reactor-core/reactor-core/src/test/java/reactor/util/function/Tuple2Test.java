@@ -22,25 +22,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class Tuple2Test {
+class Tuple2Test {
 
 	private Tuple2<Integer, Integer> full = new Tuple2<>(1, 2);
 
 	@Test
-	public void nullT1Rejected() {
+    void nullT1Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple2<>(null, 2))
 				.withMessage("t1");
 	}
 
 	@Test
-	public void nullT2Rejected() {
+    void nullT2Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple2<>(1, null))
 				.withMessage("t2");
 	}
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple2<String, Integer> base = Tuples.of("Foo", 200);
 
 		Tuple2<?,?> mapped = base.mapT1(String::length);
@@ -51,7 +51,7 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple2<Integer, String> base = Tuples.of(100, "Foo");
 
 		Tuple2<?,?> mapped = base.mapT2(String::length);
@@ -62,7 +62,7 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void mapT1Null() {
+    void mapT1Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2)
 				      .mapT1(i -> null)
@@ -70,7 +70,7 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void mapT2Null() {
+    void mapT2Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2)
 				      .mapT2(i -> null)
@@ -78,17 +78,17 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -97,18 +97,18 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 	                    .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void equals() {
+    void equals() {
 		Tuple2<Integer, Integer> otherFull = new Tuple2<>(1, 2);
 
 		assertThat(full)
@@ -116,7 +116,7 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void invertedContentNotEquals() {
+    void invertedContentNotEquals() {
 		Tuple2<Integer, Integer> otherFull = new Tuple2<>(2, 1);
 
 		assertThat(full)
@@ -124,7 +124,7 @@ public class Tuple2Test {
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple2<Integer, Integer> same = new Tuple2<>(1, 2);
 		Tuple2<Integer, Integer> different = new Tuple2<>(2, 1);
 

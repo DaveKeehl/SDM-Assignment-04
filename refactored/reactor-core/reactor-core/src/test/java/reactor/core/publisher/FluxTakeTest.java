@@ -39,17 +39,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxTakeTest {
+class FluxTakeTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxTake<>(null, 1);
 		});
 	}
 
 	@Test
-	public void numberIsInvalid() {
+    void numberIsInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.take(-1);
@@ -57,7 +57,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void numberIsInvalidFused() {
+    void numberIsInvalidFused() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.just(1)
 					.take(-1);
@@ -65,7 +65,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -78,7 +78,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -103,7 +103,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeZero() {
+    void takeZero() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -116,7 +116,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeNever() {
+    void takeNever() {
 		StepVerifier.create(
 				Flux.never().take(1))
 		            .expectSubscription()
@@ -126,7 +126,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeNeverZero() {
+    void takeNeverZero() {
 		PublisherProbe<Object> probe = PublisherProbe.of(Flux.never());
 		StepVerifier.create(probe.flux().take(0))
 		            .expectSubscription()
@@ -137,7 +137,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeOverflowAttempt() {
+    void takeOverflowAttempt() {
 		Publisher<Integer> p = s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext(1);
@@ -153,7 +153,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void aFluxCanBeLimited(){
+    void aFluxCanBeLimited(){
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(2)
 		)
@@ -162,7 +162,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeBackpressured() {
+    void takeBackpressured() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(new Subscription() {
 				@Override
@@ -193,7 +193,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFusedBackpressured() {
+    void takeFusedBackpressured() {
 		Sinks.Many<String> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux()
 							  .take(3), 0)
@@ -211,7 +211,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFusedBackpressuredCancelled() {
+    void takeFusedBackpressuredCancelled() {
 		Sinks.Many<String> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux()
 							  .take(3).doOnSubscribe(s -> {
@@ -229,7 +229,7 @@ public class FluxTakeTest {
 
 
 	@Test
-	public void takeBackpressuredConditional() {
+    void takeBackpressuredConditional() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(new Subscription() {
 				@Override
@@ -262,7 +262,7 @@ public class FluxTakeTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void takeBackpressuredSourceConditional() {
+	void takeBackpressuredSourceConditional() {
 		StepVerifier.create(Flux.from(_s -> {
 			Fuseable.ConditionalSubscriber s = (Fuseable.ConditionalSubscriber)_s;
 
@@ -296,7 +296,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void failNextIfTerminatedTake() {
+    void failNextIfTerminatedTake() {
 		Hooks.onNextDropped(t -> assertThat(t).isEqualTo(1));
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
@@ -309,7 +309,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void failNextIfTerminatedTakeFused() {
+    void failNextIfTerminatedTakeFused() {
 		TestPublisher<Integer> up = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 		Hooks.onNextDropped(t -> assertThat(t).isEqualTo(1));
 		StepVerifier.create(up.flux().take(2))
@@ -320,7 +320,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void failNextIfTerminatedTakeConditional() {
+    void failNextIfTerminatedTakeConditional() {
 		Hooks.onNextDropped(t -> assertThat(t).isEqualTo(1));
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
@@ -335,7 +335,7 @@ public class FluxTakeTest {
 
 	@Test // fixme when we have a fuseable testPublisher or an improved hide operator
 	@SuppressWarnings("unchecked")
-	public void failNextIfTerminatedTakeSourceConditional() {
+	void failNextIfTerminatedTakeSourceConditional() {
 		Hooks.onNextDropped(t -> assertThat(t).isEqualTo(1));
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
@@ -349,7 +349,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void take() {
+    void take() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .hide()
 		                        .take(2))
@@ -358,7 +358,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeCancel() {
+    void takeCancel() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .hide()
 		                        .take(3), 2)
@@ -368,7 +368,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFused() {
+    void takeFused() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(2))
 		            .expectNext("test", "test2")
@@ -376,7 +376,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFusedSync() {
+    void takeFusedSync() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(2))
 		            .expectFusion(Fuseable.SYNC)
@@ -385,7 +385,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFusedAsync() {
+    void takeFusedAsync() {
 		Sinks.Many<String> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux()
 							  .take(2))
@@ -399,7 +399,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeFusedCancel() {
+    void takeFusedCancel() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(3), 2)
 		            .expectNext("test", "test2")
@@ -409,7 +409,7 @@ public class FluxTakeTest {
 
 
 	@Test
-	public void takeConditional() {
+    void takeConditional() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .hide()
 		                        .take(2)
@@ -419,7 +419,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeConditionalCancel() {
+    void takeConditionalCancel() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .hide()
 		                        .take(3)
@@ -429,7 +429,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeConditionalFused() {
+    void takeConditionalFused() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(2)
 		                        .filter("test2"::equals))
@@ -438,7 +438,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeConditionalFusedCancel() {
+    void takeConditionalFusedCancel() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .take(3)
 		                        .filter("test2"::equals), 2)
@@ -462,7 +462,7 @@ public class FluxTakeTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void failDoubleError() {
+	void failDoubleError() {
 		Hooks.onErrorDropped(e -> assertThat(e).hasMessage("test2"));
 		StepVerifier.create(Flux.from(s -> {
 			assertTrackableBeforeOnSubscribe((InnerOperator)s);
@@ -478,7 +478,7 @@ public class FluxTakeTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void failConditionalDoubleError() {
+	void failConditionalDoubleError() {
 		Hooks.onErrorDropped(e -> assertThat(e).hasMessage("test2"));
 		StepVerifier.create(Flux.from(s -> {
 			assertTrackableBeforeOnSubscribe((InnerOperator)s);
@@ -495,7 +495,7 @@ public class FluxTakeTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void failFusedDoubleError() {
+	void failFusedDoubleError() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		Hooks.onErrorDropped(e -> assertThat(e).hasMessage("test2"));
 		StepVerifier.create(up.asFlux()
@@ -514,7 +514,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void ignoreFusedDoubleComplete() {
+    void ignoreFusedDoubleComplete() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux()
 							  .take(2).filter(d -> true))
@@ -532,7 +532,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void ignoreDoubleComplete() {
+    void ignoreDoubleComplete() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onComplete();
@@ -543,7 +543,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void assertPrefetch() {
+    void assertPrefetch() {
 		assertThat(Flux.just("test", "test2", "test3")
 		               .hide()
 		               .take(2)
@@ -551,7 +551,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void ignoreDoubleOnSubscribe() {
+    void ignoreDoubleOnSubscribe() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onSubscribe(Operators.emptySubscription());
@@ -561,7 +561,7 @@ public class FluxTakeTest {
 		            .verifyComplete();
 	}
 	@Test
-	public void ignoreConditionalDoubleOnSubscribe() {
+    void ignoreConditionalDoubleOnSubscribe() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onSubscribe(Operators.emptySubscription());
@@ -573,7 +573,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeZeroCancelsWhenNoRequest() {
+    void takeZeroCancelsWhenNoRequest() {
 		TestPublisher<Integer> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .take(0), 0)
@@ -585,7 +585,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeZeroIgnoresRequestAndCancels() {
+    void takeZeroIgnoresRequestAndCancels() {
 		TestPublisher<Integer> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .take(0), 3)
@@ -597,7 +597,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeConditionalZeroCancelsWhenNoRequest() {
+    void takeConditionalZeroCancelsWhenNoRequest() {
 		TestPublisher<Integer> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .take(0)
@@ -610,7 +610,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void takeConditionalZeroIgnoresRequestAndCancels() {
+    void takeConditionalZeroIgnoresRequestAndCancels() {
 		TestPublisher<Integer> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .take(0)
@@ -623,7 +623,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxTake<Integer> test = new FluxTake<>(parent, 3);
 
@@ -632,7 +632,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxTakeFuseable<Integer> test = new FluxTakeFuseable<>(parent, 3);
 
@@ -641,7 +641,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTake.TakeSubscriber<Integer> test = new FluxTake.TakeSubscriber<>(actual, 5);
         Subscription parent = Operators.emptySubscription();
@@ -657,7 +657,7 @@ public class FluxTakeTest {
     }
 
 	@Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Integer> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxTake.TakeConditionalSubscriber<Integer> test = new FluxTake.TakeConditionalSubscriber<>(actual, 5);
@@ -674,7 +674,7 @@ public class FluxTakeTest {
     }
 
     @Test
-    public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTake.TakeFuseableSubscriber<Integer> test = new FluxTake.TakeFuseableSubscriber<>(actual, 10);
         Subscription parent = Operators.emptySubscription();
@@ -690,7 +690,7 @@ public class FluxTakeTest {
     }
 
     @Test
-	public void onSubscribeRaceRequestingShouldBeConsistentForTakeFuseableTest() throws InterruptedException {
+    void onSubscribeRaceRequestingShouldBeConsistentForTakeFuseableTest() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			int take = 3000;
 			RaceSubscriber<Integer> actual = new RaceSubscriber<>(take);
@@ -703,7 +703,7 @@ public class FluxTakeTest {
     }
 
 	@Test
-	public void onSubscribeRaceRequestingShouldBeConsistentForTakeConditionalTest() throws InterruptedException {
+    void onSubscribeRaceRequestingShouldBeConsistentForTakeConditionalTest() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			int take = 3000;
 			RaceSubscriber<Integer> actual = new RaceSubscriber<>(take);
@@ -717,7 +717,7 @@ public class FluxTakeTest {
 	}
 
 	@Test
-	public void onSubscribeRaceRequestingShouldBeConsistentForTakeTest() throws InterruptedException {
+    void onSubscribeRaceRequestingShouldBeConsistentForTakeTest() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			int take = 3000;
 			RaceSubscriber<Integer> actual = new RaceSubscriber<>(take);
@@ -767,7 +767,7 @@ public class FluxTakeTest {
 			countDownLatch.countDown();
 		}
 
-		public void await(int timeout, TimeUnit unit) throws InterruptedException {
+		void await(int timeout, TimeUnit unit) throws InterruptedException {
 			if (!countDownLatch.await(timeout, unit)) {
 				throw new RuntimeException("Expected Completion within "+ timeout +
 						" " + unit.name() + " but Complete signal was not emitted");

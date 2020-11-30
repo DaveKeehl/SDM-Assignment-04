@@ -22,20 +22,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class Tuple7Test {
+class Tuple7Test {
 
 	private Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> full =
 			new Tuple7<>(1, 2, 3, 4, 5, 6, 7);
 
 	@Test
-	public void nullT7Rejected() {
+    void nullT7Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple7<>(1, 2, 3, 4, 5, 6, null))
 				.withMessage("t7");
 	}
 
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple7<String, Integer, Integer, Integer, Integer, Integer, Integer> base =
 				Tuples.of("Foo", 200, 300, 400, 500, 600, 700);
 
@@ -48,7 +48,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple7<Integer, String, Integer, Integer, Integer, Integer, Integer> base =
 				Tuples.of(100, "Foo", 300, 400, 500, 600, 700);
 
@@ -61,7 +61,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT3() {
+    void mapT3() {
 		Tuple7<Integer, Integer, String, Integer, Integer, Integer, Integer> base =
 				Tuples.of(100, 200, "Foo", 400, 500, 600, 700);
 
@@ -74,7 +74,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT4() {
+    void mapT4() {
 		Tuple7<Integer, Integer, Integer, String, Integer, Integer, Integer> base =
 				Tuples.of(100, 200, 300, "Foo", 500, 600, 700);
 
@@ -87,7 +87,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT5() {
+    void mapT5() {
 		Tuple7<Integer, Integer, Integer, Integer, String, Integer, Integer> base =
 				Tuples.of(100, 200, 300, 400, "Foo", 600, 700);
 
@@ -100,7 +100,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT6() {
+    void mapT6() {
 		Tuple7<Integer, Integer, Integer, Integer, Integer, String, Integer> base =
 				Tuples.of(100, 200, 300, 400, 500, "Foo", 700);
 
@@ -113,7 +113,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT7() {
+    void mapT7() {
 		Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, String> base =
 				Tuples.of(100, 200, 300, 400, 500, 600, "Foo");
 
@@ -126,7 +126,7 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void mapT7Null() {
+    void mapT7Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2, 3, 4, 5, 6, 7)
 				      .mapT7(i -> null)
@@ -134,17 +134,17 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -153,25 +153,25 @@ public class Tuple7Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 		                .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void t7Combinations() {
+    void t7Combinations() {
 		assertThat(new Tuple7<>(1, 2, 3, 4, 5, 6, 7))
 				.isNotEqualTo(new Tuple7<>(1, 2, 3, 4, 5, 6, 10))
 				.isEqualTo(new Tuple7<>(1, 2, 3, 4, 5, 6, 7));
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> same = new Tuple7<>(1, 2, 3, 4, 5, 6, 7);
 		Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, Integer> different = new Tuple7<>(1, 2, 3, 4, 5, 6,1);
 

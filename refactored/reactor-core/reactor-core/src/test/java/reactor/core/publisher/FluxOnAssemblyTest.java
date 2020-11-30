@@ -32,10 +32,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxOnAssemblyTest {
+class FluxOnAssemblyTest {
 
 	@Test
-	public void stacktraceHeaderTraceEmpty() {
+    void stacktraceHeaderTraceEmpty() {
 		StringBuilder sb = new StringBuilder();
 
 		FluxOnAssembly.fillStacktraceHeader(sb, String.class, null);
@@ -45,7 +45,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stacktraceHeaderTraceDescriptionNull() {
+    void stacktraceHeaderTraceDescriptionNull() {
 		StringBuilder sb = new StringBuilder();
 
 		FluxOnAssembly.fillStacktraceHeader(sb, String.class, null);
@@ -55,7 +55,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stacktraceHeaderTraceDescription() {
+    void stacktraceHeaderTraceDescription() {
 		StringBuilder sb = new StringBuilder();
 
 		FluxOnAssembly.fillStacktraceHeader(sb, String.class, "1234");
@@ -66,7 +66,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void checkpointEmpty() {
+    void checkpointEmpty() {
 		StringWriter sw = new StringWriter();
 
 		Flux<Integer> tested = Flux.range(1, 10)
@@ -84,7 +84,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void checkpointEmptyAndDebug() {
+    void checkpointEmptyAndDebug() {
 		StringWriter sw = new StringWriter();
 
 		Hooks.onOperatorDebug();
@@ -106,7 +106,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void checkpointDescriptionAndForceStack() {
+    void checkpointDescriptionAndForceStack() {
 		StringWriter sw = new StringWriter();
 		Flux<Integer> tested = Flux.range(1, 10)
 		                           .map(i -> i < 3 ? i : null)
@@ -124,7 +124,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void checkpointWithDescriptionIsLight() {
+    void checkpointWithDescriptionIsLight() {
 		StringWriter sw = new StringWriter();
 		Flux<Integer> tested = Flux.range(1, 10)
 		                           .map(i -> i < 3 ? i : null)
@@ -146,7 +146,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void monoCheckpointEmpty() {
+    void monoCheckpointEmpty() {
 		StringWriter sw = new StringWriter();
 		Mono<Object> tested = Mono.just(1)
 		                          .map(i -> null)
@@ -163,7 +163,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void monoCheckpointDescriptionAndForceStack() {
+    void monoCheckpointDescriptionAndForceStack() {
 		StringWriter sw = new StringWriter();
 		Mono<Object> tested = Mono.just(1)
 		                          .map(i -> null)
@@ -180,7 +180,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void monoCheckpointWithDescriptionIsLight() {
+    void monoCheckpointWithDescriptionIsLight() {
 		StringWriter sw = new StringWriter();
 		Mono<Object> tested = Mono.just(1)
 		                          .map(i -> null)
@@ -201,7 +201,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void parallelFluxCheckpointEmpty() {
+    void parallelFluxCheckpointEmpty() {
 		StringWriter sw = new StringWriter();
 		Flux<Integer> tested = Flux.range(1, 10)
 		                         .parallel(2)
@@ -219,7 +219,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void parallelFluxCheckpointDescriptionAndForceStack() {
+    void parallelFluxCheckpointDescriptionAndForceStack() {
 		StringWriter sw = new StringWriter();
 		int baseline = getBaseline();
 		Flux<Integer> tested = Flux.range(1, 10)
@@ -248,7 +248,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void parallelFluxCheckpointDescriptionIsLight() {
+    void parallelFluxCheckpointDescriptionIsLight() {
 		StringWriter sw = new StringWriter();
 		Flux<Integer> tested = Flux.range(1, 10)
 		                           .parallel(2)
@@ -270,7 +270,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void onAssemblyDescription() {
+    void onAssemblyDescription() {
 		String fluxOnAssemblyStr = Flux.just(1).checkpoint("onAssemblyDescription").toString();
 		String expectedDescription = "checkpoint(\"onAssemblyDescription\")";
 		assertThat(fluxOnAssemblyStr).contains(expectedDescription);
@@ -279,7 +279,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		AssemblySnapshot snapshot = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		FluxOnAssembly.OnAssemblySubscriber<Integer> test =
@@ -293,7 +293,7 @@ public class FluxOnAssemblyTest {
     }
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Flux<?> source = Flux.empty();
 		FluxOnAssembly<?> test = new FluxOnAssembly<>(source, new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get()));
 
@@ -304,7 +304,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stepNameAndToString() {
+    void stepNameAndToString() {
 		int baseline = getBaseline();
 		FluxOnAssembly<?> test = new FluxOnAssembly<>(Flux.empty(), new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get()));
 
@@ -314,7 +314,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stackAndLightCheckpoint() {
+    void stackAndLightCheckpoint() {
 		Hooks.onOperatorDebug();
 		StringWriter sw = new StringWriter();
 		Mono<Integer> tested = Flux.just(1, 2)
@@ -339,7 +339,7 @@ public class FluxOnAssemblyTest {
 	}
 
 	@Test
-	public void checkpointedPublisher() {
+    void checkpointedPublisher() {
 		StringWriter sw = new StringWriter();
 		Publisher<?> tested = Flux
 				.just(1, 2)

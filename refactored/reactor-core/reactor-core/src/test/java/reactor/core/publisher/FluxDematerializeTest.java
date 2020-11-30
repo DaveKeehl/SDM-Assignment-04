@@ -31,7 +31,7 @@ import reactor.util.function.Tuple2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, String> {
+class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, String> {
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -72,7 +72,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	Signal<Integer> error = Signal.error(new RuntimeException("Forced failure"));
 
 	@Test
-	public void singleCompletion() {
+    void singleCompletion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> dematerialize = Flux.just(Signal.<Integer>complete()).dematerialize();
@@ -85,7 +85,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void singleError() {
+    void singleError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> dematerialize = Flux.just(error)
@@ -99,7 +99,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void immediateCompletionNeedsRequestOne() {
+    void immediateCompletionNeedsRequestOne() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux<Integer> dematerialize = Flux.just(Signal.<Integer>complete()).dematerialize();
@@ -115,7 +115,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void immediateErrorNeedsRequestOne() {
+    void immediateErrorNeedsRequestOne() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux<Integer> dematerialize = Flux.just(error).dematerialize();
@@ -131,7 +131,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void doesntCompleteWithoutRequest() {
+    void doesntCompleteWithoutRequest() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux<Integer> dematerialize = Flux.just(Signal.next(1), Signal.<Integer>complete()).dematerialize();
@@ -153,7 +153,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void doesntErrorWithoutRequest() {
+    void doesntErrorWithoutRequest() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux<Integer> dematerialize = Flux.just(Signal.next(1), error).dematerialize();
@@ -175,7 +175,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void twoSignalsAndComplete() {
+    void twoSignalsAndComplete() {
 		Flux<Integer> dematerialize = Flux.just(Signal.next(1), Signal.next(2), Signal.<Integer>complete())
 		                                  .dematerialize();
 
@@ -193,7 +193,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void twoSignalsAndError() {
+    void twoSignalsAndError() {
 		Flux<Integer> dematerialize = Flux.just(Signal.next(1), Signal.next(2), error)
 		                                  .dematerialize();
 
@@ -211,7 +211,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void neverEndingSignalSourceWithCompleteSignal() {
+    void neverEndingSignalSourceWithCompleteSignal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> dematerialize = Flux.just(Signal.next(1), Signal.next(2),
@@ -227,7 +227,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void dematerializeUnbounded() {
+    void dematerializeUnbounded() {
 		StepVerifier.create(Flux.just(Signal.next("Three"),
 				Signal.next("Two"),
 				Signal.next("One"),
@@ -240,14 +240,14 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void materializeDematerializeUnbounded() {
+    void materializeDematerializeUnbounded() {
 		StepVerifier.create(Flux.just(1, 2, 3).materialize().dematerialize())
 		            .expectNext(1, 2, 3)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void materializeDematerializeRequestOneByOne() {
+    void materializeDematerializeRequestOneByOne() {
 		StepVerifier.create(Flux.just(1, 2, 3).materialize().dematerialize(), 0)
 		            .thenRequest(1)
 		            .expectNext(1)
@@ -261,7 +261,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void emissionTimingsAreGrouped() {
+    void emissionTimingsAreGrouped() {
 		StepVerifier.withVirtualTime(() ->
 				Flux.interval(Duration.ofSeconds(1))
 				    .map(i -> "tick" + i)
@@ -282,7 +282,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Signal<Integer>> parent = Flux.just(Signal.next(1));
 		FluxDematerialize<Integer> test = new FluxDematerialize<>(parent);
 
@@ -291,7 +291,7 @@ public class FluxDematerializeTest extends FluxOperatorTest<Signal<String>, Stri
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null,
 				sub -> sub.request(100));
 		FluxDematerialize.DematerializeSubscriber<String> test =

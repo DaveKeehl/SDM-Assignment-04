@@ -38,13 +38,13 @@ import static reactor.core.Fuseable.SYNC;
  * subscribers in {@link FluxDoFinally}, these tests are kind of duplicates of
  * {@link FluxDoFinallyTest} and thus are less numerous.
  */
-public class MonoDoFinallyTest implements Consumer<SignalType> {
+class MonoDoFinallyTest implements Consumer<SignalType> {
 
 	volatile SignalType signalType;
 	volatile int calls;
 
 	@BeforeEach
-	public void before() {
+	void before() {
 		signalType = null;
 		calls = 0;
 	}
@@ -56,7 +56,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalJust() {
+    void normalJust() {
 		StepVerifier.create(Mono.just(1).hide().doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectNext(1)
@@ -68,7 +68,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalEmpty() {
+    void normalEmpty() {
 		StepVerifier.create(Mono.empty().doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectComplete()
@@ -79,7 +79,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalError() {
+    void normalError() {
 		StepVerifier.create(Mono.error(new IllegalArgumentException()).doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectError(IllegalArgumentException.class)
@@ -91,7 +91,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 
 
 	@Test
-	public void normalCancel() {
+    void normalCancel() {
 		AtomicBoolean cancelCheck = new AtomicBoolean(false);
 
 		StepVerifier.create(Mono.just(1).hide()
@@ -108,7 +108,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalJustConditional() {
+    void normalJustConditional() {
 		StepVerifier.create(Mono.just(1)
 		                        .hide()
 		                        .doFinally(this)
@@ -123,7 +123,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFused() {
+    void syncFused() {
 		StepVerifier.create(Mono.just(1).doFinally(this))
 		            .expectFusion(SYNC)
 		            .expectNext(1)
@@ -135,7 +135,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFusedConditional() {
+    void syncFusedConditional() {
 		StepVerifier.create(Mono.just(1).doFinally(this).filter(i -> true))
 		            .expectFusion(SYNC)
 		            .expectNext(1)
@@ -148,14 +148,14 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 
 
 	@Test
-	public void nullCallback() {
+    void nullCallback() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.just(1).doFinally(null);
 		});
 	}
 
 	@Test
-	public void callbackThrows() {
+    void callbackThrows() {
 		try {
 			StepVerifier.create(Mono.just(1)
 			                        .doFinally(signal -> {
@@ -173,7 +173,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void callbackThrowsConditional() {
+    void callbackThrowsConditional() {
 		try {
 			StepVerifier.create(Mono.just(1)
 			                        .doFinally(signal -> {
@@ -192,7 +192,7 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void severalInARowExecutedInReverseOrder() {
+    void severalInARowExecutedInReverseOrder() {
 		Queue<String> finallyOrder = new ConcurrentLinkedDeque<>();
 
 		Flux.just("b")
@@ -206,14 +206,14 @@ public class MonoDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoDoFinally<String> test = new MonoDoFinally<>(Mono.just("foo"), this);
 
 		Assertions.assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		MonoDoFinallyFuseable<String> test = new MonoDoFinallyFuseable<>(Mono.just("foo"), this);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

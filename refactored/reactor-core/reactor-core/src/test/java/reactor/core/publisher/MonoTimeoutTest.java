@@ -28,10 +28,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class MonoTimeoutTest {
+class MonoTimeoutTest {
 
 	@Test
-	public void noTimeout() {
+    void noTimeout() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -44,7 +44,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void noTimeoutOnInstantSource() {
+    void noTimeoutOnInstantSource() {
 		Mono.just(1)
 		    .timeout(Mono.empty())
 		    .as(StepVerifier::create)
@@ -53,7 +53,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void immediateTimeout() {
+    void immediateTimeout() {
 		Mono.just(1)
 		    .delaySubscription(Duration.ofMillis(1))
 		    .timeout(Mono.empty())
@@ -62,7 +62,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void dropsErrorOnCompletedSource() {
+    void dropsErrorOnCompletedSource() {
 		Mono.just(1)
 		    .timeout(Mono.error(new RuntimeException("forced " + "failure")))
 		    .as(StepVerifier::create)
@@ -71,7 +71,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void firstTimeoutError() {
+    void firstTimeoutError() {
 		TestPublisher<Object> source = TestPublisher.create();
 		source.flux()
 		      .timeout(Mono.error(new RuntimeException("forced " + "failure")))
@@ -81,7 +81,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void timeoutRequested() {
+    void timeoutRequested() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.One<Integer> source = Sinks.unsafe().one();
@@ -107,7 +107,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void timeoutCanBeBoundWithCallback() {
+    void timeoutCanBeBoundWithCallback() {
 		StepVerifier.withVirtualTime(this::scenario_timeoutCanBeBoundWithCallback)
 		            .thenAwait(Duration.ofMillis(500))
 		            .expectNext(-5)
@@ -120,7 +120,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void timeoutCanBeBoundWithCallback2() {
+    void timeoutCanBeBoundWithCallback2() {
 		StepVerifier.withVirtualTime(this::scenario_timeoutCanBeBoundWithCallback2)
 		            .thenAwait(Duration.ofMillis(500))
 		            .expectNext(-5)
@@ -133,14 +133,14 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void MonoPropagatesErrorUsingAwait() {
+    void MonoPropagatesErrorUsingAwait() {
 		StepVerifier.withVirtualTime(this::scenario_timeoutThrown)
 		            .thenAwait(Duration.ofMillis(500))
 		            .verifyError(TimeoutException.class);
 	}
 
 	@Test
-	public void timeoutDurationMessageDefault() {
+    void timeoutDurationMessageDefault() {
 		StepVerifier.withVirtualTime(() -> Mono.never()
 		                                       .timeout(Duration.ofHours(1)))
 		            .thenAwait(Duration.ofHours(2))
@@ -151,7 +151,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void timeoutDurationMessageWithName() {
+    void timeoutDurationMessageWithName() {
 		StepVerifier.withVirtualTime(() -> Mono.never()
 		                                       .name("Name")
 		                                       .timeout(Duration.ofHours(1)))
@@ -164,7 +164,7 @@ public class MonoTimeoutTest {
 
 
 	@Test
-	public void timeoutNotDurationMessage() {
+    void timeoutNotDurationMessage() {
 		StepVerifier.create(Mono.never()
 		                        .timeout(Mono.just("immediate")))
 		            .expectErrorMessage("Did not observe any item or terminal signal within " +
@@ -174,7 +174,7 @@ public class MonoTimeoutTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoTimeout<Integer, String, String> test = new MonoTimeout<>(Mono.just(1), Mono.just("foo"), "timeout");
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

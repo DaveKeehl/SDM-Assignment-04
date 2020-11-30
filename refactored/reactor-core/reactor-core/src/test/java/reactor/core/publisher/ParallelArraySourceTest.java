@@ -23,10 +23,10 @@ import reactor.core.Scannable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Flux.just;
 
-public class ParallelArraySourceTest {
+class ParallelArraySourceTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		@SuppressWarnings("unchecked")
 		Publisher<Integer>[] sources = new Publisher[2];
 		sources[0] = Flux.range(1, 4);
@@ -37,7 +37,7 @@ public class ParallelArraySourceTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		@SuppressWarnings("unchecked")
 		Publisher<Integer>[] sources = new Publisher[2];
 		sources[0] = Flux.range(1, 4);

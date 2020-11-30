@@ -23,10 +23,10 @@ import reactor.test.FakeDisposable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DisposableTest {
+class DisposableTest {
 
 	@Test
-	public void compositeDisposableAddAllDefault() {
+    void compositeDisposableAddAllDefault() {
 		FakeDisposable d1 = new FakeDisposable();
 		FakeDisposable d2 = new FakeDisposable();
 
@@ -73,7 +73,7 @@ public class DisposableTest {
 	}
 
 	@Test
-	public void compositeDisposableAddAllDefaultAfterDispose() throws Exception {
+    void compositeDisposableAddAllDefaultAfterDispose() throws Exception {
 		final FakeDisposable d1 = new FakeDisposable();
 		final FakeDisposable d2 = new FakeDisposable();
 
@@ -119,7 +119,7 @@ public class DisposableTest {
 	}
 
 	@Test
-	public void compositeDisposableAddAllDefaultDuringDispose() throws Exception {
+    void compositeDisposableAddAllDefaultDuringDispose() throws Exception {
 		final FakeDisposable d1 = new FakeDisposable();
 		final FakeDisposable d2 = new FakeDisposable();
 		final FakeDisposable d3 = new FakeDisposable();
@@ -175,14 +175,14 @@ public class DisposableTest {
 	}
 
 	@Test
-	public void singleDisposableInitiallyNotDisposed() {
+    void singleDisposableInitiallyNotDisposed() {
 		Disposable single = Disposables.single();
 
 		assertThat(single.isDisposed()).isFalse();
 	}
 
 	@Test
-	public void singleDisposableCanBeDisposed() {
+    void singleDisposableCanBeDisposed() {
 		Disposable single = Disposables.single();
 		assertThat(single.isDisposed()).isFalse();
 
@@ -191,27 +191,27 @@ public class DisposableTest {
 	}
 
 	@Test
-	public void singleDisposableCreatesInstances() {
+    void singleDisposableCreatesInstances() {
 		assertThat(Disposables.single()).isNotSameAs(Disposables.single());
 	}
 
 	@Test
-	public void disposedInitiallyDisposed() {
+    void disposedInitiallyDisposed() {
 		assertThat(Disposables.disposed().isDisposed()).isTrue();
 	}
 
 	@Test
-	public void disposedCreatesInstances() {
+    void disposedCreatesInstances() {
 		assertThat(Disposables.disposed()).isNotSameAs(Disposables.disposed());
 	}
 
 	@Test
-	public void neverInitiallyNotDisposed() {
+    void neverInitiallyNotDisposed() {
 		assertThat(Disposables.never().isDisposed()).isFalse();
 	}
 
 	@Test
-	public void neverImmutable() {
+    void neverImmutable() {
 		Disposable never = Disposables.never();
 		assertThat(never.isDisposed()).isFalse();
 
@@ -220,7 +220,7 @@ public class DisposableTest {
 	}
 
 	@Test
-	public void neverCreatesInstances() {
+    void neverCreatesInstances() {
 		assertThat(Disposables.never()).isNotSameAs(Disposables.never());
 	}
 

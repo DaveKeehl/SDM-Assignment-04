@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxSourceMonoTest {
+class FluxSourceMonoTest {
 
     @Test
-    public void scanOperatorWithSyncSource(){
+    void scanOperatorWithSyncSource(){
         Mono<String> source = Mono.just("Foo");
         FluxSourceMono<String> test = new FluxSourceMono<>(source);
 
@@ -21,7 +21,7 @@ public class FluxSourceMonoTest {
     }
 
     @Test
-    public void scanOperatorWithAsyncSource(){
+    void scanOperatorWithAsyncSource(){
         MonoDelayElement<String> source = new MonoDelayElement<>(Mono.empty(), 1, TimeUnit.SECONDS, Schedulers.immediate());
 
         FluxSourceMono<String> test = new FluxSourceMono<>(source);
@@ -32,7 +32,7 @@ public class FluxSourceMonoTest {
     }
 
     @Test
-    public void scanFuseableOperatorWithSyncSource(){
+    void scanFuseableOperatorWithSyncSource(){
         Mono<String> source = Mono.just("Foo");
         FluxSourceMonoFuseable<String> test = new FluxSourceMonoFuseable<>(source);
 
@@ -42,7 +42,7 @@ public class FluxSourceMonoTest {
     }
 
     @Test
-    public void scanFuseableOperatorWithAsyncSource(){
+    void scanFuseableOperatorWithAsyncSource(){
         MonoDelayElement<String> source = new MonoDelayElement<>(Mono.empty(), 1, TimeUnit.SECONDS, Schedulers.immediate());
 
         FluxSourceMonoFuseable<String> test = new FluxSourceMonoFuseable<>(source);

@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxMapTest extends FluxOperatorTest<String, String> {
+class FluxMapTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -67,21 +67,21 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	Flux<Integer> just = Flux.just(1);
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxMap<Integer, Integer>(null, v -> v);
 		});
 	}
 
 	@Test
-	public void nullMapper() {
+    void nullMapper() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			just.map(null);
 		});
 	}
 
 	@Test
-	public void simpleMapping() {
+    void simpleMapping() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		just.map(v -> v + 1)
@@ -93,7 +93,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void simpleMappingBackpressured() {
+    void simpleMappingBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		just.map(v -> v + 1)
@@ -111,7 +111,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapperThrows() {
+    void mapperThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just.map(v -> {
@@ -126,7 +126,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapperReturnsNull() {
+    void mapperReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		just.map(v -> null)
@@ -138,7 +138,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncFusion() {
+    void syncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -151,7 +151,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusion() {
+    void asyncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> up = Sinks.unsafe().many().unicast().onBackpressureBuffer(new ConcurrentLinkedQueue<>());
@@ -171,7 +171,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusionBackpressured() {
+    void asyncFusionBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(1);
 
 		Sinks.Many<Integer> up =
@@ -196,7 +196,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapFilter() {
+    void mapFilter() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(0, 1_000_000)
@@ -210,7 +210,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void mapFilterBackpressured() {
+    void mapFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		Flux.range(0, 1_000_000)
@@ -236,7 +236,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapFilter() {
+    void hiddenMapFilter() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(0, 1_000_000)
@@ -251,7 +251,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapFilterBackpressured() {
+    void hiddenMapFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		Flux.range(0, 1_000_000)
@@ -278,7 +278,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void hiddenMapHiddenFilterBackpressured() {
+    void hiddenMapHiddenFilterBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		Flux.range(0, 1_000_000)
@@ -306,7 +306,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxMap<Integer, String> test = new FluxMap<>(parent, v -> v.toString());
 
@@ -315,7 +315,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxMap.MapSubscriber<Integer, String> test = new FluxMap.MapSubscriber<>(actual, i -> String.valueOf(i));
         Subscription parent = Operators.emptySubscription();
@@ -331,7 +331,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 	    @SuppressWarnings("unchecked")
 	    Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxMap.MapConditionalSubscriber<Integer, String> test = new FluxMap.MapConditionalSubscriber<>(actual, i -> String.valueOf(i));
@@ -348,14 +348,14 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		FluxMapFuseable<Integer, String> test = new FluxMapFuseable<>(Flux.just(1), v -> v.toString());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
     @Test
-    public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxMapFuseable.MapFuseableSubscriber<Integer, String> test =
         		new FluxMapFuseable.MapFuseableSubscriber<>(actual, i -> String.valueOf(i));
@@ -372,7 +372,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanFuseableConditionalSubscriber() {
+    void scanFuseableConditionalSubscriber() {
 	    @SuppressWarnings("unchecked")
 	    Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxMapFuseable.MapFuseableConditionalSubscriber<Integer, String> test =
@@ -390,7 +390,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-	public void mapFailureStrategyResume() {
+    void mapFailureStrategyResume() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 
 		try {
@@ -414,7 +414,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-	public void mapFailureStrategyCustomResume() {
+    void mapFailureStrategyCustomResume() {
 	    List<Object> valuesDropped = new ArrayList<>();
 	    List<Throwable> errorsDropped = new ArrayList<>();
 	    Hooks.onNextError(OnNextFailureStrategy.resume(
@@ -451,7 +451,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void mapTryOnNextFailureStrategyResume() {
+    void mapTryOnNextFailureStrategyResume() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 
 		try {
@@ -473,7 +473,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-	public void mapFuseableFailureStrategyResume() {
+    void mapFuseableFailureStrategyResume() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 
 		try {
@@ -496,7 +496,7 @@ public class FluxMapTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void mapFuseableTryOnNextFailureStrategyResume() {
+    void mapFuseableTryOnNextFailureStrategyResume() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 
 		try {

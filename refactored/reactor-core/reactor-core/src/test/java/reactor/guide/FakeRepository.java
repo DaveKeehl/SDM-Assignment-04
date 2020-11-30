@@ -21,7 +21,7 @@ import reactor.core.publisher.Flux;
 /**
  * @author Simon Baslé
  */
-public class FakeRepository {
+class FakeRepository {
 
 	public static Flux<String> findAllUserByName(Flux<String> source) {
 		return source.map(s -> { throw new IllegalStateException("boom"); })

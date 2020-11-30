@@ -26,25 +26,25 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DisposablesTest {
+class DisposablesTest {
 
 	//==== PUBLIC API TESTS ====
 
 	@Test
-	public void sequentialEmpty() {
+    void sequentialEmpty() {
 		assertThat(Disposables.swap()
 		                      .get()).isNull();
 	}
 
 	@Test
-	public void compositeEmpty() {
+    void compositeEmpty() {
 		Disposable.Composite cd = Disposables.composite();
 		assertThat(cd.size()).isZero();
 		assertThat(cd.isDisposed()).isFalse();
 	}
 
 	@Test
-	public void compositeFromArray() {
+    void compositeFromArray() {
 		Disposable d1 = new FakeDisposable();
 		Disposable d2 = new FakeDisposable();
 
@@ -54,7 +54,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void compositeFromCollection() {
+    void compositeFromCollection() {
 		Disposable d1 = new FakeDisposable();
 		Disposable d2 = new FakeDisposable();
 
@@ -87,7 +87,7 @@ public class DisposablesTest {
 
 
 	@Test
-	public void singletonIsDisposed() {
+    void singletonIsDisposed() {
 		assertThat(Disposables.DISPOSED.isDisposed()).isTrue();
 		Disposables.DISPOSED.dispose();
 		assertThat(Disposables.DISPOSED.isDisposed()).isTrue();
@@ -95,7 +95,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void disposeRace() {
+    void disposeRace() {
 		for (int i = 0; i < 500; i++) {
 
 			TestDisposable r = new TestDisposable() {
@@ -110,7 +110,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void setReplace() {
+    void setReplace() {
 		for (int i = 0; i < 500; i++) {
 
 			TestDisposable r = new TestDisposable() {
@@ -125,7 +125,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void setRace() {
+    void setRace() {
 		for (int i = 0; i < 500; i++) {
 			TestDisposable r = new TestDisposable() {
 				@Override
@@ -139,7 +139,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void setReplaceNull() {
+    void setReplaceNull() {
 		TestDisposable r = new TestDisposable();
 
 		Disposables.dispose(DISPOSABLE_UPDATER, r);
@@ -149,7 +149,7 @@ public class DisposablesTest {
 	}
 
 	@Test
-	public void dispose() {
+    void dispose() {
 		Disposable u = Disposables.single();
 		TestDisposable r = new TestDisposable(u);
 

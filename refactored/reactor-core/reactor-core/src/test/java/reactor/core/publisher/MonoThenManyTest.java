@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class MonoThenManyTest {
+class MonoThenManyTest {
 
 	@Test
-	public void testThenManySameType() {
+    void testThenManySameType() {
 		Flux<String> test = Mono.just("A")
 		                        .thenMany(Flux.just("C", "D"));
 
@@ -38,7 +38,7 @@ public class MonoThenManyTest {
 	}
 
 	@Test
-	public void testThenManyFusion() {
+    void testThenManyFusion() {
 		Flux<Integer> test = Mono.just("A")
 		                         .thenMany(Flux.just("C", "D"))
 		                         .thenMany(Flux.just(1, 2));
@@ -55,7 +55,7 @@ public class MonoThenManyTest {
 	}
 
 	@Test
-	public void testThenManyDifferentType() {
+    void testThenManyDifferentType() {
 		Flux<String> test = Mono.just(1)
 		                        .thenMany(Flux.just("C", "D"));
 

@@ -26,7 +26,7 @@ import reactor.core.Scannable;
 import reactor.test.StepVerifier;
 import reactor.test.publisher.FluxOperatorTest;
 
-public class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
+class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected List<Scenario<String, String>> scenarios_operatorError() {
@@ -51,7 +51,7 @@ public class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalHidden() {
+    void normalHidden() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide()
 		                        .skipUntil(v -> v > 4))
@@ -60,7 +60,7 @@ public class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .skipUntil(v -> v > 4))
 		            .expectNext(5, 6, 7, 8, 9, 10)
@@ -68,7 +68,7 @@ public class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxSkipUntil<Integer> test = new FluxSkipUntil<>(parent, p -> true);
 
@@ -77,7 +77,7 @@ public class FluxSkipUntilTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSkipUntil.SkipUntilSubscriber<Integer> test = new FluxSkipUntil.SkipUntilSubscriber<>(actual, i -> true);
         Subscription parent = Operators.emptySubscription();

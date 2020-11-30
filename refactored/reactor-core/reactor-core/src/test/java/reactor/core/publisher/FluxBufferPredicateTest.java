@@ -55,13 +55,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxBufferPredicateTest {
+class FluxBufferPredicateTest {
 
 	private static final int ROUNDS = 10_000; //increase this number locally if you want better confidence that no race condition occurs
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalUntil() {
+	void normalUntil() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(), FluxBufferPredicate.Mode.UNTIL);
@@ -92,7 +92,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void onCompletionBeforeLastBoundaryBufferEmitted() {
+	void onCompletionBeforeLastBoundaryBufferEmitted() {
 		Flux<Integer> source = Flux.just(1, 2);
 
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil =
@@ -125,7 +125,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void mainErrorUntil() {
+	void mainErrorUntil() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(), FluxBufferPredicate.Mode.UNTIL);
@@ -145,7 +145,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void predicateErrorUntil() {
+	void predicateErrorUntil() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
 				sp1.asFlux(),
@@ -169,7 +169,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalUntilOther() {
+	void normalUntilOther() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntilOther = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(), FluxBufferPredicate.Mode.UNTIL_CUT_BEFORE);
@@ -200,7 +200,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void mainErrorUntilOther() {
+	void mainErrorUntilOther() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntilOther =
 				new FluxBufferPredicate<>(sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(),
@@ -221,7 +221,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void predicateErrorUntilOther() {
+	void predicateErrorUntilOther() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntilOther =
 				new FluxBufferPredicate<>(sp1.asFlux(),
@@ -244,7 +244,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedNoRepetition() {
+    void untilChangedNoRepetition() {
 		StepVerifier.create(Flux.range(0, 5)
 		                        .bufferUntilChanged())
 		            .expectSubscription()
@@ -258,7 +258,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedWithKeySelector() {
+    void untilChangedWithKeySelector() {
 		StepVerifier.create(Flux.range(0, 5)
 		                        .bufferUntilChanged(i -> i / 2))
 		            .expectSubscription()
@@ -270,7 +270,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedNoSharedState() {
+    void untilChangedNoSharedState() {
 		List<List<Integer>> buffers = new CopyOnWriteArrayList<>();
 		List<Integer> list1 = Arrays.asList(1, 1, 1, 1);
 		List<Integer> list2 = Arrays.asList(3, 3, 2, 2, 2, 2, 2, 2, 2, 2);
@@ -295,7 +295,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedSomeRepetition() {
+    void untilChangedSomeRepetition() {
 		StepVerifier.create(Flux.just(1, 1, 2, 2, 3, 3, 1)
 		                        .bufferUntilChanged())
 		            .expectSubscription()
@@ -308,7 +308,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnComplete() {
+    void untilChangedDisposesStateOnComplete() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<List<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -328,7 +328,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnError() {
+    void untilChangedDisposesStateOnError() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<List<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -350,7 +350,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnCancel() {
+    void untilChangedDisposesStateOnCancel() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<List<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -374,7 +374,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalWhile() {
+	void normalWhile() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferWhile = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 != 0, Flux.listSupplier(),
@@ -406,7 +406,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalWhileDoesntInitiallyMatch() {
+	void normalWhileDoesntInitiallyMatch() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferWhile = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(), FluxBufferPredicate.Mode.WHILE);
@@ -437,7 +437,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalWhileDoesntMatch() {
+	void normalWhileDoesntMatch() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferWhile = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i > 4, Flux.listSupplier(), FluxBufferPredicate.Mode.WHILE);
@@ -463,7 +463,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void mainErrorWhile() {
+	void mainErrorWhile() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferWhile = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0, Flux.listSupplier(), FluxBufferPredicate.Mode.WHILE);
@@ -483,7 +483,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void predicateErrorWhile() {
+	void predicateErrorWhile() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferWhile = new FluxBufferPredicate<>(
 				sp1.asFlux(),
@@ -508,7 +508,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void bufferSupplierThrows() {
+	void bufferSupplierThrows() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0,
@@ -523,7 +523,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void bufferSupplierThrowsLater() {
+    void bufferSupplierThrowsLater() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		int count[] = {1};
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
@@ -548,7 +548,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void bufferSupplierReturnsNull() {
+    void bufferSupplierReturnsNull() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxBufferPredicate<Integer, List<Integer>> bufferUntil = new FluxBufferPredicate<>(
 				sp1.asFlux(), i -> i % 3 == 0,
@@ -566,7 +566,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void multipleTriggersOfEmptyBufferKeepInitialBuffer() {
+	void multipleTriggersOfEmptyBufferKeepInitialBuffer() {
 		//this is best demonstrated with bufferWhile:
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		LongAdder bufferCount = new LongAdder();
@@ -601,7 +601,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void requestBounded() {
+	void requestBounded() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -648,7 +648,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void requestBoundedSeveralInitial() {
+    void requestBoundedSeveralInitial() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -690,7 +690,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void requestRemainingBuffersAfterBufferEmission() {
+    void requestRemainingBuffersAfterBufferEmission() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -733,7 +733,7 @@ public class FluxBufferPredicateTest {
 	// the 3 race condition tests below essentially validate that racing request vs onNext
 	// don't lead to backpressure errors.
 	@Test
-	public void requestRaceWithOnNext() {
+    void requestRaceWithOnNext() {
 		AtomicLong requested = new AtomicLong();
 		TestPublisher<Integer> testPublisher = TestPublisher.create();
 		FluxBufferPredicate<Integer, List<Integer>> bufferPredicate = new FluxBufferPredicate<>(
@@ -764,7 +764,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void onNextRaceWithRequest() {
+    void onNextRaceWithRequest() {
 		AtomicLong requested = new AtomicLong();
 		TestPublisher<Integer> testPublisher = TestPublisher.create();
 		FluxBufferPredicate<Integer, List<Integer>> bufferPredicate = new FluxBufferPredicate<>(
@@ -795,7 +795,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void onNextRaceWithRequestOfTwo() {
+    void onNextRaceWithRequestOfTwo() {
 		AtomicLong requested = new AtomicLong();
 		TestPublisher<Integer> testPublisher = TestPublisher.create();
 		FluxBufferPredicate<Integer, List<Integer>> bufferPredicate = new FluxBufferPredicate<>(
@@ -826,7 +826,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void requestRaceWithOnNextLoops() {
+    void requestRaceWithOnNextLoops() {
 		for (int i = 0; i < ROUNDS; i++) {
 			requestRaceWithOnNext();
 			onNextRaceWithRequest();
@@ -836,7 +836,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void requestUnboundedFromStartRequestsSourceOnce() {
+	void requestUnboundedFromStartRequestsSourceOnce() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -859,7 +859,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void requestSwitchingToMaxRequestsSourceOnlyOnceMore() {
+	void requestSwitchingToMaxRequestsSourceOnlyOnceMore() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -885,7 +885,7 @@ public class FluxBufferPredicateTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void requestBoundedConditionalFusesDemands() {
+	void requestBoundedConditionalFusesDemands() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10)
@@ -914,7 +914,7 @@ public class FluxBufferPredicateTest {
 
 
 	@Test
-	public void testBufferPredicateUntilIncludesBoundaryLast() {
+    void testBufferPredicateUntilIncludesBoundaryLast() {
 		String[] colorSeparated = new String[]{"red", "green", "blue", "#", "green", "green", "#", "blue", "cyan"};
 
 		Flux<List<String>> colors = Flux
@@ -931,7 +931,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void testBufferPredicateUntilIncludesBoundaryLastAfter() {
+    void testBufferPredicateUntilIncludesBoundaryLastAfter() {
 		String[] colorSeparated = new String[]{"red", "green", "blue", "#", "green", "green", "#", "blue", "cyan"};
 
 		Flux<List<String>> colors = Flux
@@ -948,7 +948,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void testBufferPredicateUntilCutBeforeIncludesBoundaryFirst() {
+    void testBufferPredicateUntilCutBeforeIncludesBoundaryFirst() {
 		String[] colorSeparated = new String[]{"red", "green", "blue", "#", "green", "green", "#", "blue", "cyan"};
 
 		Flux<List<String>> colors = Flux
@@ -966,7 +966,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void testBufferPredicateWhileDoesntIncludeBoundary() {
+    void testBufferPredicateWhileDoesntIncludeBoundary() {
 		String[] colorSeparated = new String[]{"red", "green", "blue", "#", "green", "green", "#", "blue", "cyan"};
 
 		Flux<List<String>> colors = Flux
@@ -983,7 +983,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxBufferPredicate<Integer, ArrayList<Integer>> test =
 				new FluxBufferPredicate<>(parent, v -> v != 0, ArrayList::new, FluxBufferPredicate.Mode.UNTIL);
@@ -993,7 +993,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {}, null,
 				sub -> sub.request(100));
 		List<String> initialBuffer = Arrays.asList("foo", "bar");
@@ -1018,7 +1018,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void scanMainCancelled() {
+    void scanMainCancelled() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {}, null,
 				sub -> sub.request(100));
 		List<String> initialBuffer = Arrays.asList("foo", "bar");
@@ -1033,7 +1033,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.never())
 		                        .bufferUntil(i -> i > 10))
@@ -1044,7 +1044,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardOnPredicateError() {
+    void discardOnPredicateError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 				.bufferUntil(i -> { if (i == 3) throw new IllegalStateException("boom"); else return false; }))
 		            .expectErrorMessage("boom")
@@ -1053,7 +1053,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .bufferUntil(i -> i > 10))
@@ -1079,7 +1079,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardRaceWithOnNext_bufferAdds() {
+    void discardRaceWithOnNext_bufferAdds() {
 		Predicate<AtomicInteger> predicate = v -> v.get() == 100;
 		FluxBufferPredicate.Mode mode = FluxBufferPredicate.Mode.UNTIL;
 
@@ -1110,7 +1110,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardRaceWithOnNext_bufferUntilWithMatch() {
+    void discardRaceWithOnNext_bufferUntilWithMatch() {
 		Predicate<AtomicInteger> predicate = v -> v.get() == -2;
 		FluxBufferPredicate.Mode mode = FluxBufferPredicate.Mode.UNTIL;
 
@@ -1142,7 +1142,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardRaceWithOnNext_bufferUntilCutBeforeWithMatch() {
+    void discardRaceWithOnNext_bufferUntilCutBeforeWithMatch() {
 		Predicate<AtomicInteger> predicate = v -> v.get() == -2;
 		FluxBufferPredicate.Mode mode = FluxBufferPredicate.Mode.UNTIL_CUT_BEFORE;
 
@@ -1173,7 +1173,7 @@ public class FluxBufferPredicateTest {
 	}
 
 	@Test
-	public void discardRaceWithOnNext_bufferWhileWithNoMatch() {
+    void discardRaceWithOnNext_bufferWhileWithNoMatch() {
 		Predicate<AtomicInteger> predicate = v -> v.get() != -2;
 		FluxBufferPredicate.Mode mode = FluxBufferPredicate.Mode.WHILE;
 
@@ -1207,7 +1207,7 @@ public class FluxBufferPredicateTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1937
 	@Test
-	public void testBufferUntilNoExtraRequestFromEmit() {
+    void testBufferUntilNoExtraRequestFromEmit() {
 		Flux<List<Integer>> numbers = Flux.just(1, 2, 3)
 		                                  .hide()
 		                                  .bufferUntil(val -> true);
@@ -1224,7 +1224,7 @@ public class FluxBufferPredicateTest {
 
 	//see https://github.com/reactor/reactor-core/pull/2027
 	@Test
-	public void testBufferUntilNoExtraRequestFromConcurrentEmitAndRequest() {
+    void testBufferUntilNoExtraRequestFromConcurrentEmitAndRequest() {
 		AtomicReference<Throwable> errorOrComplete = new AtomicReference<>();
 		ConcurrentLinkedQueue<List<Integer>> buffers = new ConcurrentLinkedQueue<>();
 		final BaseSubscriber<List<Integer>> subscriber = new BaseSubscriber<List<Integer>>() {

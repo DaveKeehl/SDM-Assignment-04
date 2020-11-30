@@ -39,14 +39,14 @@ import reactor.test.scheduler.VirtualTimeScheduler;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class MonoDelayElementTest {
+class MonoDelayElementTest {
 
 	private Scheduler defaultSchedulerForDelay() {
 		return Schedulers.parallel(); //reflects the default used in Mono.delay(duration)
 	}
 
 	@Test
-	public void normalIsDelayed() {
+    void normalIsDelayed() {
 		Mono<String> source = Mono.just("foo").log().hide();
 
 		StepVerifier.withVirtualTime(() -> new MonoDelayElement<>(source, 2, TimeUnit.SECONDS,
@@ -58,7 +58,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void subMillisDelay() {
+    void subMillisDelay() {
 		Mono<String> source = Mono.just("foo");
 
 		StepVerifier.withVirtualTime(() -> source.delayElement(Duration.ofNanos(5000L)).log())
@@ -69,7 +69,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void cancelDuringDelay() {
+    void cancelDuringDelay() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		AtomicBoolean emitted = new AtomicBoolean();
 		AtomicBoolean cancelled = new AtomicBoolean();
@@ -92,7 +92,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void cancelBeforeNext() {
+    void cancelBeforeNext() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		AtomicBoolean emitted = new AtomicBoolean();
 		AtomicBoolean cancelled = new AtomicBoolean();
@@ -116,7 +116,7 @@ public class MonoDelayElementTest {
 
 	@Test
 	@Timeout(5)
-	public void emptyIsImmediate() {
+	void emptyIsImmediate() {
 		Mono<String> source = Mono.<String>empty().log().hide();
 
 		Duration d = StepVerifier.create(new MonoDelayElement<>(source, 10, TimeUnit.SECONDS,
@@ -128,7 +128,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void errorIsImmediate() {
+    void errorIsImmediate() {
 		Mono<String> source = Mono.<String>error(new IllegalStateException("boom")).hide();
 
 		Duration d = StepVerifier.create(new MonoDelayElement<>(source, 10, TimeUnit.SECONDS, defaultSchedulerForDelay()).log())
@@ -139,7 +139,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void errorAfterNextIsNeverTriggered() {
+    void errorAfterNextIsNeverTriggered() {
 		TestPublisher<String> source = TestPublisher.create();
 		AtomicReference<Throwable> errorDropped = new AtomicReference<>();
 		Hooks.onErrorDropped(errorDropped::set);
@@ -156,7 +156,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void onNextOnDisposedSchedulerThrows() {
+    void onNextOnDisposedSchedulerThrows() {
 		VirtualTimeScheduler scheduler = VirtualTimeScheduler.create();
 		scheduler.dispose();
 		Mono<String> source = Mono.just("foo").hide();
@@ -170,7 +170,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void cancelUpstreamOnceWhenCancelled() {
+    void cancelUpstreamOnceWhenCancelled() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		AtomicLong upstreamCancelCount = new AtomicLong();
 
@@ -190,7 +190,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void cancelUpstreamOnceWhenRejected() {
+    void cancelUpstreamOnceWhenRejected() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		vts.dispose();
 
@@ -209,7 +209,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void monoApiTestDuration() {
+    void monoApiTestDuration() {
 		StepVerifier.withVirtualTime(() -> Mono.just("foo").delayElement(Duration.ofHours(1)))
 	                .expectSubscription()
 	                .expectNoEvent(Duration.ofHours(1))
@@ -218,7 +218,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void monoApiTestMillis() {
+    void monoApiTestMillis() {
 		StepVerifier.withVirtualTime(() -> Mono.just("foo").delayElement(Duration.ofMillis(5000L)))
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofSeconds(5))
@@ -227,7 +227,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void monoApiTestMillisAndTimer() {
+    void monoApiTestMillisAndTimer() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		StepVerifier.withVirtualTime(
@@ -240,7 +240,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void guardedAgainstMultipleOnNext() {
+    void guardedAgainstMultipleOnNext() {
 		AtomicReference<Object> dropped = new AtomicReference<>();
 		Hooks.onNextDropped(dropped::set);
 
@@ -268,7 +268,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void guardedAgainstOnComplete() {
+    void guardedAgainstOnComplete() {
 		Mono<String> source = Mono.fromDirect(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext("foo");
@@ -286,7 +286,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void guardedAgainstOnError() {
+    void guardedAgainstOnError() {
 		AtomicReference<Throwable> dropped = new AtomicReference<>();
 		Hooks.onErrorDropped(dropped::set);
 
@@ -309,7 +309,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void upstreamIsDelayedSource() {
+    void upstreamIsDelayedSource() {
 		AtomicReference<Object> upstream = new AtomicReference<>();
 
 		StepVerifier.withVirtualTime(() -> Mono.just(1).delayElement(Duration.ofSeconds
@@ -331,7 +331,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void completeOnNextWithoutCancel() {
+    void completeOnNextWithoutCancel() {
 		AtomicInteger onCancel = new AtomicInteger();
 		AtomicInteger sourceOnCancel = new AtomicInteger();
 		AtomicInteger onTerminate = new AtomicInteger();
@@ -362,7 +362,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoDelayElement<String> test = new MonoDelayElement<>(Mono.empty(), 1, TimeUnit.SECONDS, Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -370,7 +370,7 @@ public class MonoDelayElementTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoDelayElement.DelayElementSubscriber<String> test = new MonoDelayElement.DelayElementSubscriber<>(
 				actual, Schedulers.single(), 10, TimeUnit.MILLISECONDS);

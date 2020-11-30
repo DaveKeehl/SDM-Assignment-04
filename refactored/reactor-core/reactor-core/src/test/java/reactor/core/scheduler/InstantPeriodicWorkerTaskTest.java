@@ -29,13 +29,13 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class InstantPeriodicWorkerTaskTest {
+class InstantPeriodicWorkerTaskTest {
     private static final RuntimeException exception = new RuntimeException();
     private static final Runnable errorRunnable = () -> { throw exception; };
     private static final Runnable emptyRunnable = () -> { };
 
     @Test
-    public void taskCrash() {
+    void taskCrash() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composite = Disposables.composite();
         List<Throwable> throwables = prepareErrorHook();
@@ -53,7 +53,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void dispose() {
+    void dispose() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -77,7 +77,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void dispose2() {
+    void dispose2() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -104,7 +104,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void dispose2CurrentThread() {
+    void dispose2CurrentThread() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -134,7 +134,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void dispose3() {
+    void dispose3() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -160,7 +160,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void disposeOnCurrentThread() {
+    void disposeOnCurrentThread() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -188,7 +188,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void firstCancelRace() {
+    void firstCancelRace() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 
@@ -214,7 +214,7 @@ public class InstantPeriodicWorkerTaskTest {
     }
 
     @Test
-    public void restCancelRace() {
+    void restCancelRace() {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         Disposable.Composite composit = Disposables.composite();
 

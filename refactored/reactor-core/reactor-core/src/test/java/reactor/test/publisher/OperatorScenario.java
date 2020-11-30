@@ -31,7 +31,7 @@ import static reactor.core.Fuseable.NONE;
 /**
  * @author Stephane Maldini
  */
-public class OperatorScenario<I, PI extends Publisher<? extends I>, O, PO extends Publisher<? extends O>> {
+class OperatorScenario<I, PI extends Publisher<? extends I>, O, PO extends Publisher<? extends O>> {
 
 	final Function<PI, ? extends PO> body;
 	final Exception                  stack;

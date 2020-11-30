@@ -28,10 +28,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxMergeTest {
+class FluxMergeTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.merge(Flux.just(1),
@@ -46,14 +46,14 @@ public class FluxMergeTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		StepVerifier.create(Mono.just(1).mergeWith(Flux.just(2, 3)))
 		            .expectNext(1, 2, 3)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void mergeWithNoStackoverflow() {
+    void mergeWithNoStackoverflow() {
 		int n = 5000;
 
 		Flux<Integer> source = Flux.just(1);
@@ -73,21 +73,21 @@ public class FluxMergeTest {
 	}
 
 	@Test
-	public void mergeEmpty(){
+    void mergeEmpty(){
 		StepVerifier.create(Flux.merge())
 	                .verifyComplete();
 	}
 
 
 	@Test
-	public void mergeOne(){
+    void mergeOne(){
 		StepVerifier.create(Flux.merge(Flux.just(1)))
 		            .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void mergePublisherPublisher(){
+    void mergePublisherPublisher(){
 		AtomicLong request = new AtomicLong();
 		StepVerifier.create(Flux.merge(Flux.just(Flux.just(1, 2), Flux.just(3, 4)).doOnRequest(request::set)))
 	                .expectNext(1, 2, 3, 4)
@@ -97,21 +97,21 @@ public class FluxMergeTest {
 
 
 	@Test
-	public void mergePublisherPublisher2(){
+    void mergePublisherPublisher2(){
 		StepVerifier.create(Flux.merge(Flux.just(Flux.just(1, 2), Flux.just(3, 4)), 1))
 	                .expectNext(1, 2, 3, 4)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void mergePublisherPublisherIterable(){
+    void mergePublisherPublisherIterable(){
 		StepVerifier.create(Flux.merge(Arrays.asList(Flux.just(1, 2), Flux.just(3, 4))))
 	                .expectNext(1, 2, 3, 4)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void mergeDelayError() {
+    void mergeDelayError() {
 		IllegalStateException boom = new IllegalStateException("boom");
 
 		StepVerifier.create(Flux.mergeDelayError(32,
@@ -124,7 +124,7 @@ public class FluxMergeTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void delayErrorWithFluxError() {
+    void delayErrorWithFluxError() {
 		StepVerifier.create(
 				Flux.mergeDelayError(32, Flux.just(1, 2),
 						Flux.error(new Exception("test")),
@@ -136,7 +136,7 @@ public class FluxMergeTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void delayErrorWithMonoError() {
+    void delayErrorWithMonoError() {
 		StepVerifier.create(
 				Flux.mergeDelayError(32,
 						Flux.just(1, 2),
@@ -148,7 +148,7 @@ public class FluxMergeTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		@SuppressWarnings("unchecked")
 		Publisher<String>[] sources = new Publisher[0];
 		FluxMerge<String> s = new FluxMerge<>(sources, true, 3, Queues.small(), 123, Queues.small());

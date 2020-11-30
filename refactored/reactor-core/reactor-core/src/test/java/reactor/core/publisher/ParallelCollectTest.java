@@ -34,10 +34,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelCollectTest {
+class ParallelCollectTest {
 
 	@Test
-	public void collect() {
+    void collect() {
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -64,7 +64,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void failInitial() {
+    void failInitial() {
 		Supplier<List<Integer>> as = () -> {
 			throw new RuntimeException("test");
 		};
@@ -76,7 +76,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void failCombination() {
+    void failCombination() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .parallel(3)
 		                        .collect(() -> 0, (a, b) -> {
@@ -86,7 +86,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void testPrefetch() {
+    void testPrefetch() {
 		assertThat(Flux.range(1, 10)
 		               .parallel(3)
 		               .collect(ArrayList::new, List::add)
@@ -94,7 +94,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelCollect<Integer, List<Integer>> test = new ParallelCollect<>(source, ArrayList::new, List::add);
 
@@ -104,7 +104,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelCollect<Integer, List<Integer>> test = new ParallelCollect<>(source, ArrayList::new, List::add);
 
@@ -114,7 +114,7 @@ public class ParallelCollectTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<List<Integer>> subscriber = new LambdaSubscriber<>(null, e -> {}, null, null);
 		ParallelCollectSubscriber<Integer, List<Integer>> test = new ParallelCollectSubscriber<>(
 				subscriber, new ArrayList<>(), List::add);

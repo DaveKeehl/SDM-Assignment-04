@@ -23,10 +23,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDeferTest {
+class MonoDeferTest {
 
 	@Test
-	public void deferMono(){
+    void deferMono(){
 		AtomicInteger i = new AtomicInteger();
 
 		Mono<Integer> source =
@@ -38,7 +38,7 @@ public class MonoDeferTest {
 	}
 
 	@Test
-	public void deferMonoWithContext() {
+    void deferMonoWithContext() {
 		Mono<Integer> source = Mono
 				.deferContextual(ctx -> {
 					AtomicInteger i = ctx.get("i");
@@ -54,7 +54,7 @@ public class MonoDeferTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		AtomicInteger i = new AtomicInteger();
 
 		MonoDefer<Integer> test = new MonoDefer<>(() -> Mono.just(i.incrementAndGet()));
@@ -64,7 +64,7 @@ public class MonoDeferTest {
 	}
 
 	@Test
-	public void scanOperatorWithContext() {
+    void scanOperatorWithContext() {
 		AtomicInteger i = new AtomicInteger();
 
 		MonoDeferContextual<Integer> test = new MonoDeferContextual<>(c -> Mono.just(i.incrementAndGet()));

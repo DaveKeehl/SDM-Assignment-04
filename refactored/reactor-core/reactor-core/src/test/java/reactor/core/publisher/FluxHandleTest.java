@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static reactor.core.Fuseable.*;
 
-public class FluxHandleTest extends FluxOperatorTest<String, String> {
+class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -130,7 +130,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		Set<Integer> expectedValues = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
 
 		Flux.range(1, 5)
@@ -142,7 +142,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalHide() {
+    void normalHide() {
 		Set<Integer> expectedValues = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
 
 		Flux.range(1, 5)
@@ -155,7 +155,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void filterNullMapResult() {
+    void filterNullMapResult() {
 		Set<Integer> expectedValues = new HashSet<>(Arrays.asList(4, 8));
 
 		Flux.range(1, 5)
@@ -171,7 +171,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalSyncFusion() {
+    void normalSyncFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		Set<Integer> expectedValues = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
 		ts.requestedFusionMode(SYNC);
@@ -186,7 +186,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalAsyncFusion() {
+    void normalAsyncFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(ASYNC);
 
@@ -204,7 +204,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void filterNullMapResultSyncFusion() {
+    void filterNullMapResultSyncFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(SYNC);
 
@@ -223,7 +223,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void filterNullMapResultAsyncFusion() {
+    void filterNullMapResultAsyncFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(ASYNC);
 
@@ -244,7 +244,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorSignal() {
+    void errorSignal() {
 
 		int data = 1;
 		Exception exception = new IllegalStateException();
@@ -275,7 +275,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorPropagated() {
+    void errorPropagated() {
 
 		int data = 1;
 		IllegalStateException exception = new IllegalStateException();
@@ -306,7 +306,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void handleBackpressuredBothConditional() {
+    void handleBackpressuredBothConditional() {
 		TestPublisher<String> ts = TestPublisher.create();
 
 		StepVerifier.create(ts.flux()
@@ -321,7 +321,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void handleBackpressuredSourceConditional() {
+    void handleBackpressuredSourceConditional() {
 		TestPublisher<String> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .as(this::filterTest2)
@@ -336,7 +336,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void handleBackpressuredTargetConditional() {
+    void handleBackpressuredTargetConditional() {
 		TestPublisher<String> ts = TestPublisher.create();
 		StepVerifier.create(ts.flux()
 		                      .hide()
@@ -367,7 +367,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteFusedSync() {
+    void prematureCompleteFusedSync() {
 		StepVerifier.create(Flux.just("test")
 		                        .as(this::passThrough)
 		                        .filter(t -> true))
@@ -377,7 +377,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void dropHandleFusedSync() {
+    void dropHandleFusedSync() {
 		StepVerifier.create(Flux.just("test", "test2")
 		                        .handle((data, s) -> {
 		                        })
@@ -387,7 +387,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxHandle<Integer, ?> test = new FluxHandle<>(parent, (t, s) -> { });
 
@@ -396,7 +396,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxHandleFuseable<Integer, ?> test = new FluxHandleFuseable<>(parent, (t, s) -> { });
 
@@ -405,7 +405,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxHandle.HandleSubscriber<String, String> test = new FluxHandle.HandleSubscriber<>(actual, (a, b) -> {});
         Subscription parent = Operators.emptySubscription();
@@ -423,7 +423,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 	    @SuppressWarnings("unchecked")
 	    Fuseable.ConditionalSubscriber<? super Object> subscriber = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxHandle.HandleConditionalSubscriber<String, String> test =
@@ -443,7 +443,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxHandleFuseable.HandleFuseableSubscriber<String, String> test =
         		new FluxHandleFuseable.HandleFuseableSubscriber<>(actual, (a, b) -> {});
@@ -462,7 +462,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanFuseableConditionalSubscriber() {
+    void scanFuseableConditionalSubscriber() {
 	    @SuppressWarnings("unchecked")
 	    Fuseable.ConditionalSubscriber<? super Object> subscriber = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 	    FluxHandleFuseable.HandleFuseableConditionalSubscriber<String, String> test =
@@ -483,7 +483,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void contextTest() {
+    void contextTest() {
 		StepVerifier.create(Flux.just("foo")
 		                        .handle((d, s) -> s.next(s.currentContext()
 		                                               .get(AtomicInteger.class)
@@ -496,7 +496,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void contextTestHide() {
+    void contextTestHide() {
 		StepVerifier.create(Flux.just("foo")
 		                        .hide()
 		                        .handle((d, s) -> s.next(s.currentContext()
@@ -510,7 +510,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void contextTestFilter() {
+    void contextTestFilter() {
 		StepVerifier.create(Flux.just("foo")
 		                        .handle((d, s) -> s.next(s.currentContext()
 		                                               .get(AtomicInteger.class)
@@ -523,7 +523,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 		            .verifyComplete();
 	}
 	@Test
-	public void contextTestFilterHide() {
+    void contextTestFilterHide() {
 		StepVerifier.create(Flux.just("foo")
 		                        .handle((d, s) -> s.next(s.currentContext()
 		                                               .get(AtomicInteger.class)
@@ -537,7 +537,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterCompleteNormal() {
+    void nextAfterCompleteNormal() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .handle((v, sink) -> {
@@ -549,7 +549,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterErrorNormal() {
+    void nextAfterErrorNormal() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .handle((v, sink) -> {
@@ -562,7 +562,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void errorAfterCompleteNormal() {
+    void errorAfterCompleteNormal() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .handle((v, sink) -> {
@@ -575,7 +575,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void completeAfterErrorNormal() {
+    void completeAfterErrorNormal() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .handle((v, sink) -> {
@@ -587,7 +587,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterNextNormal() {
+    void nextAfterNextNormal() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .handle((v, sink) -> {
@@ -599,7 +599,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterCompleteNormalConditional() {
+    void nextAfterCompleteNormalConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .filter(i -> true)
@@ -612,7 +612,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterErrorNormalConditional() {
+    void nextAfterErrorNormalConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .filter(i -> true)
@@ -626,7 +626,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void errorAfterCompleteNormalConditional() {
+    void errorAfterCompleteNormalConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .filter(i -> true)
@@ -640,7 +640,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void completeAfterErrorNormalConditional() {
+    void completeAfterErrorNormalConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .filter(i -> true)
@@ -653,7 +653,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterNextNormalConditional() {
+    void nextAfterNextNormalConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .filter(i -> true)
@@ -666,7 +666,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterCompleteFused() {
+    void nextAfterCompleteFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .handle((v, sink) -> {
 			                        sink.complete();
@@ -677,7 +677,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterErrorFused() {
+    void nextAfterErrorFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .handle((v, sink) -> {
 			                        sink.error(new NullPointerException("boom"));
@@ -688,7 +688,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void runtimeExceptionFused() {
+    void runtimeExceptionFused() {
         // Check issue that for fuseable and Exception thrown inside handle it did not propagate signal -> hanging flux
         //  and throws IllegalStateException: Timeout on blocking read
         assertThatNullPointerException().isThrownBy(() -> {
@@ -701,7 +701,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void errorAfterCompleteFused() {
+    void errorAfterCompleteFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .handle((v, sink) -> {
 			                        sink.complete();
@@ -713,7 +713,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void completeAfterErrorFused() {
+    void completeAfterErrorFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .handle((v, sink) -> {
 			                        sink.error(new NullPointerException("boom"));
@@ -724,7 +724,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterNextFused() {
+    void nextAfterNextFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .handle((v, sink) -> {
 			                        sink.next(v);
@@ -735,7 +735,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterCompleteFusedConditional() {
+    void nextAfterCompleteFusedConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .filter(i -> true)
 		                        .handle((v, sink) -> {
@@ -747,7 +747,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterErrorFusedConditional() {
+    void nextAfterErrorFusedConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .filter(i -> true)
 		                        .handle((v, sink) -> {
@@ -760,7 +760,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void errorAfterCompleteFusedConditional() {
+    void errorAfterCompleteFusedConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .filter(i -> true)
 		                        .handle((v, sink) -> {
@@ -772,7 +772,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void completeAfterErrorFusedConditional() {
+    void completeAfterErrorFusedConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .filter(i -> true)
 		                        .handle((v, sink) -> {
@@ -784,7 +784,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nextAfterNextFusedConditional() {
+    void nextAfterNextFusedConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .filter(i -> true)
 		                        .handle((v, sink) -> {
@@ -796,7 +796,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeExceptionThrown() {
+    void failureStrategyResumeExceptionThrown() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			AtomicLong r = new AtomicLong();
@@ -819,7 +819,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeExceptionSignalled() {
+    void failureStrategyResumeExceptionSignalled() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
@@ -850,7 +850,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeTryOnNextExceptionThrown() {
+    void failureStrategyResumeTryOnNextExceptionThrown() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -869,7 +869,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeTryOnNextExceptionSignalled() {
+    void failureStrategyResumeTryOnNextExceptionSignalled() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
@@ -896,7 +896,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalExceptionThrown() {
+    void failureStrategyResumeConditionalExceptionThrown() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			AtomicLong r = new AtomicLong();
@@ -920,7 +920,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalExceptionSignalled() {
+    void failureStrategyResumeConditionalExceptionSignalled() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
@@ -952,7 +952,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalTryOnNextExceptionThrown() {
+    void failureStrategyResumeConditionalTryOnNextExceptionThrown() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -972,7 +972,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalTryOnNextExceptionSignalled() {
+    void failureStrategyResumeConditionalTryOnNextExceptionSignalled() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
@@ -1000,7 +1000,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeExceptionThrownFuseable() {
+    void failureStrategyResumeExceptionThrownFuseable() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -1018,7 +1018,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeExceptionSignalledFuesable() {
+    void failureStrategyResumeExceptionSignalledFuesable() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
@@ -1044,7 +1044,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalExceptionThrownFuseable() {
+    void failureStrategyResumeConditionalExceptionThrownFuseable() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -1063,7 +1063,7 @@ public class FluxHandleTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalExceptionSignalledFuseable() {
+    void failureStrategyResumeConditionalExceptionSignalledFuseable() {
 		Throwable error = new Throwable();
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {

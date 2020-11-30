@@ -24,17 +24,17 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelSourceTest {
+class ParallelSourceTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		Flux<String> source = Flux.empty();
 		ParallelSource<String> test = new ParallelSource<>(source, 100, 123, Queues.small());
 		assertThat(test.parallelism()).isEqualTo(100);
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		Flux<String> source = Flux.just("").map(i -> i);
 		ParallelSource<String> test = new ParallelSource<>(source, 100, 123,
 				Queues.small());
@@ -45,7 +45,7 @@ public class ParallelSourceTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		@SuppressWarnings("unchecked")
 		CoreSubscriber<String>[] subs = new CoreSubscriber[1];
 		subs[0] = new LambdaSubscriber<>(null, e -> {}, null, null);
@@ -77,7 +77,7 @@ public class ParallelSourceTest {
 	}
 
 	@Test
-	public void scanInnerSubscriber() {
+    void scanInnerSubscriber() {
 		@SuppressWarnings("unchecked")
 		CoreSubscriber<String>[] subs = new CoreSubscriber[2];
 		subs[0] = new LambdaSubscriber<>(null, e -> {}, null, null);

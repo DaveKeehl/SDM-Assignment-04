@@ -30,7 +30,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxMaterializeTest
+class FluxMaterializeTest
 		extends FluxOperatorTest<String, Signal<String>> {
 
 	@Override
@@ -97,7 +97,7 @@ public class FluxMaterializeTest
 	}
 
 	@Test
-	public void completeOnlyBackpressured() {
+    void completeOnlyBackpressured() {
 		AssertSubscriber<Signal<Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.<Integer>empty().materialize()
@@ -115,7 +115,7 @@ public class FluxMaterializeTest
 	}
 
 	@Test
-	public void errorOnlyBackpressured() {
+    void errorOnlyBackpressured() {
 		AssertSubscriber<Signal<Integer>> ts = AssertSubscriber.create(0L);
 
 		RuntimeException ex = new RuntimeException();
@@ -135,7 +135,7 @@ public class FluxMaterializeTest
 	}
 
 	@Test
-	public void materialize() {
+    void materialize() {
 		StepVerifier.create(Flux.just("Three", "Two", "One")
 		                        .materialize())
 		            .expectNextMatches(s -> s.isOnNext() && "Three".equals(s.get()))
@@ -146,7 +146,7 @@ public class FluxMaterializeTest
 	}
 
 	@Test
-	public void materialize2() {
+    void materialize2() {
 		StepVerifier.create(Flux.just("Three", "Two")
 		                        .concatWith(Flux.error(new RuntimeException("test")))
 		                        .materialize())
@@ -158,7 +158,7 @@ public class FluxMaterializeTest
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxMaterialize<Integer> test = new FluxMaterialize<>(parent);
 
@@ -167,7 +167,7 @@ public class FluxMaterializeTest
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Signal<String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxMaterialize.MaterializeSubscriber<String> test = new FluxMaterialize.MaterializeSubscriber<String>(actual);
         Subscription parent = Operators.emptySubscription();

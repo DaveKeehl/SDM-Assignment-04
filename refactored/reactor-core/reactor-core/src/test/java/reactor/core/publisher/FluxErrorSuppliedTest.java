@@ -42,16 +42,16 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxErrorSuppliedTest {
+class FluxErrorSuppliedTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.error(() -> new Exception("test")))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void throwOnCall() {
+    void throwOnCall() {
 		assertThatExceptionOfType(IllegalStateException.class)
 				.isThrownBy(() -> new FluxErrorSupplied<>(() -> new IllegalStateException("boom"))
 						.call()
@@ -60,7 +60,7 @@ public class FluxErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedSubscribe() {
+    void lazilyEvaluatedSubscribe() {
 		AtomicInteger count = new AtomicInteger();
 		Flux<Object> error = Flux.error(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -71,7 +71,7 @@ public class FluxErrorSuppliedTest {
 	}
 
 	@Test
-	public void lazilyEvaluatedCall() {
+    void lazilyEvaluatedCall() {
 		AtomicInteger count = new AtomicInteger();
 		FluxErrorSupplied<Object> error = new FluxErrorSupplied<>(() -> new IllegalStateException("boom" + count.incrementAndGet()));
 
@@ -85,7 +85,7 @@ public class FluxErrorSuppliedTest {
 	}
 
 	@Test
-	public void supplierMethod() {
+    void supplierMethod() {
 		StepVerifier.create(Flux.error(illegalStateExceptionSupplier()))
 				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
 						.hasMessage("boom"));
@@ -96,7 +96,7 @@ public class FluxErrorSuppliedTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxErrorSupplied<?> test = new FluxErrorSupplied<>(() -> new IllegalStateException());
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

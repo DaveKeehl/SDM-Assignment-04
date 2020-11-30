@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 /**
  * @author Stephane Maldini
  */
-public class ImmediateSchedulerTest extends AbstractSchedulerTest {
+class ImmediateSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -64,13 +64,13 @@ public class ImmediateSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	@Test
-	public void restartSupport() {
+    void restartSupport() {
 		//immediate is a bit weird: disposing doesn't make sense any more than restarting
 		Assumptions.assumeThat(false).as("immediate cannot be either disposed nor restarted").isFalse();
 	}
 
 	@Test
-	public void directAndWorkerTimeSchedulingRejected() {
+    void directAndWorkerTimeSchedulingRejected() {
 		Scheduler scheduler = scheduler();
 		Worker worker = scheduler.createWorker();
 		try {
@@ -94,7 +94,7 @@ public class ImmediateSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanScheduler() {
+    void scanScheduler() {
 		ImmediateScheduler s = (ImmediateScheduler) Schedulers.immediate();
 
 		assertThat(s.scan(Scannable.Attr.NAME)).isEqualTo(Schedulers.IMMEDIATE);
@@ -102,7 +102,7 @@ public class ImmediateSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanWorker() {
+    void scanWorker() {
 		Worker worker = Schedulers.immediate().createWorker();
 		Scannable s = (Scannable) worker;
 

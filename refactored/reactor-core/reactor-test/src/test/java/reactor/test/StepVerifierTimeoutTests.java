@@ -22,10 +22,10 @@ import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class StepVerifierTimeoutTests {
+class StepVerifierTimeoutTests {
 
 	@Test
-	public void verifyThenAssert_failsAfterCustomTimeout() {
+	void verifyThenAssert_failsAfterCustomTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -35,7 +35,7 @@ public class StepVerifierTimeoutTests {
 	}
 
 	@Test
-	public void verifyThenAssertUsesCustomTimeout() {
+	void verifyThenAssertUsesCustomTimeout() {
 		try {
 			StepVerifier.setDefaultTimeout(Duration.ofMillis(50));
 

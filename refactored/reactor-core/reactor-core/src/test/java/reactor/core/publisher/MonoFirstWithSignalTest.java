@@ -30,11 +30,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Mono.delay;
 import static reactor.core.publisher.Mono.firstWithSignal;
 
-public class MonoFirstWithSignalTest {
+class MonoFirstWithSignalTest {
 
 	@Test
 	@Timeout(5)
-	public void allEmpty() {
+	void allEmpty() {
 		assertThat(Mono.firstWithSignal(Mono.empty(),
 				Mono.delay(Duration.ofMillis(250))
 				    .ignoreElement())
@@ -43,20 +43,20 @@ public class MonoFirstWithSignalTest {
 
 	@Test
 	@Timeout(5)
-	public void someEmpty() {
+	void someEmpty() {
 		assertThat(Mono.firstWithSignal(Mono.empty(), Mono.delay(Duration.ofMillis(250)))
 		                      .block()).isNull();
 	}
 
 	@Test//(timeout = 5000)
-	public void all2NonEmpty() {
+	void all2NonEmpty() {
 		assertThat(firstWithSignal(delay(ofMillis(150))
 				.map(i -> MIN_VALUE), delay(ofMillis(250)))
 				.block()).isEqualTo(MIN_VALUE);
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Mono<Integer> f = Mono.firstWithSignal(Mono.just(1), Mono.just(2))
 		                      .or(Mono.just(3));
 
@@ -72,7 +72,7 @@ public class MonoFirstWithSignalTest {
 
 	@Test
 	@Timeout(5)
-	public void allEmptyIterable() {
+	void allEmptyIterable() {
 		assertThat(Mono.firstWithSignal(Arrays.asList(Mono.empty(),
 				Mono.delay(Duration.ofMillis(250))
 				    .ignoreElement()))
@@ -81,21 +81,21 @@ public class MonoFirstWithSignalTest {
 
 	@Test
 	@Timeout(5)
-	public void someEmptyIterable() {
+	void someEmptyIterable() {
 		assertThat(Mono.firstWithSignal(Arrays.asList(Mono.empty(),
 				Mono.delay(Duration.ofMillis(250))))
 		                      .block()).isNull();
 	}
 
 	@Test//(timeout = 5000)
-	public void all2NonEmptyIterable() {
+	void all2NonEmptyIterable() {
 		assertThat(Mono.firstWithSignal(Mono.delay(Duration.ofMillis(150))
 				.map(i -> Integer.MIN_VALUE), Mono.delay(Duration.ofMillis(250)))
 				.block()).isEqualTo(Integer.MIN_VALUE);
 	}
 
 	@Test
-	public void pairWiseIterable() {
+    void pairWiseIterable() {
 		Mono<Integer> f = Mono.firstWithSignal(Arrays.asList(Mono.just(1), Mono.just(2)))
 		                      .or(Mono.just(3));
 
@@ -111,7 +111,7 @@ public class MonoFirstWithSignalTest {
 
 
 	@Test
-	public void firstMonoJust() {
+    void firstMonoJust() {
 		StepVerifier.create(Mono.firstWithSignal(Mono.just(1), Mono.just(2)))
 		            .expectNext(1)
 		            .verifyComplete();
@@ -125,7 +125,7 @@ public class MonoFirstWithSignalTest {
 	}
 
 	@Test
-	public void fastestSource() {
+    void fastestSource() {
 		StepVerifier.withVirtualTime(this::scenario_fastestSource)
 		            .thenAwait(Duration.ofSeconds(4))
 		            .expectNext(2)
@@ -133,7 +133,7 @@ public class MonoFirstWithSignalTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		@SuppressWarnings("unchecked") MonoFirstWithSignal<Integer>
 				test = new MonoFirstWithSignal<>(Mono.just(1), Mono.just(2));
 

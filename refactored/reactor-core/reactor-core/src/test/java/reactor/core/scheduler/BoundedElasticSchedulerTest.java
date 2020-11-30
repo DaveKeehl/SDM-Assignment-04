@@ -70,7 +70,7 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author Simon Baslé
  */
-public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
+class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 
 	private static final Logger LOGGER = Loggers.getLogger(BoundedElasticSchedulerTest.class);
 	private static final AtomicLong COUNTER = new AtomicLong();
@@ -116,7 +116,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void extraWorkersShareBackingExecutorAndBoundedState() throws InterruptedException {
+    void extraWorkersShareBackingExecutorAndBoundedState() throws InterruptedException {
 		Scheduler s = schedulerNotCached();
 
 		ExecutorServiceWorker worker1 = (ExecutorServiceWorker) afterTest.autoDispose(s.createWorker());
@@ -157,7 +157,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void doubleSubscribeOn() {
+    void doubleSubscribeOn() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, Integer.MAX_VALUE,
 				new ReactorThreadFactory("subscriberElastic", new AtomicLong(), false, false, null), 60));
 		scheduler.start();
@@ -171,7 +171,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void testLargeNumberOfWorkers() throws InterruptedException {
+    void testLargeNumberOfWorkers() throws InterruptedException {
 		final int maxThreads = 3;
 		final int maxQueue = 10;
 
@@ -216,7 +216,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void testSmallTaskCapacityReached() {
+    void testSmallTaskCapacityReached() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 2,
 				new ReactorThreadFactory("testSmallTaskCapacityReached", new AtomicLong(), false, false, null), 60));
 		scheduler.start();
@@ -236,7 +236,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void testSmallTaskCapacityJustEnough() {
+    void testSmallTaskCapacityJustEnough() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 2,
 				new ReactorThreadFactory("testSmallTaskCapacityJustEnough", new AtomicLong(), false, false, null), 60));
 		scheduler.start();
@@ -250,7 +250,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void TODO_TEST_MUTUALLY_DELAYING_TASKS() {
+    void TODO_TEST_MUTUALLY_DELAYING_TASKS() {
 //		AtomicInteger taskRun = new Atomic Integer();
 //		worker1.schedule(() -> {});
 //		worker2.schedule(() -> {});
@@ -275,7 +275,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void whenCapReachedPicksLeastBusyExecutor() throws InterruptedException {
+    void whenCapReachedPicksLeastBusyExecutor() throws InterruptedException {
 		BoundedElasticScheduler s = scheduler();
 		//reach the cap of workers
 		BoundedState state1 = afterTest.autoDispose(s.boundedServices.pick());
@@ -304,7 +304,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void startNoOpIfStarted() {
+    void startNoOpIfStarted() {
 		BoundedElasticScheduler s = scheduler();
 		//need a first call to `start()` after construction
 		BoundedServices servicesBefore = s.boundedServices;
@@ -317,7 +317,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void restartSupported() {
+    void restartSupported() {
 		BoundedElasticScheduler s = scheduler();
 		s.dispose();
 		BoundedServices servicesBefore = s.boundedServices;
@@ -333,55 +333,55 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 
 	// below tests similar to ElasticScheduler
 	@Test
-	public void negativeTtl() {
+    void negativeTtl() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(1, Integer.MAX_VALUE,null, -1))
 				.withMessage("TTL must be strictly positive, was -1000ms");
 	}
 
 	@Test
-	public void zeroTtl() {
+    void zeroTtl() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(1, Integer.MAX_VALUE,null, 0))
 				.withMessage("TTL must be strictly positive, was 0ms");
 	}
 
 	@Test
-	public void maximumTtl() {
+    void maximumTtl() {
 		BoundedElasticScheduler s = new BoundedElasticScheduler(1, Integer.MAX_VALUE,null, Integer.MAX_VALUE);
 		assertThat(s.ttlMillis).isEqualTo(Integer.MAX_VALUE * 1000L);
 	}
 
 	@Test
-	public void negativeThreadCap() {
+    void negativeThreadCap() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(-1, Integer.MAX_VALUE, null, 1))
 				.withMessage("maxThreads must be strictly positive, was -1");
 	}
 
 	@Test
-	public void zeroThreadCap() {
+    void zeroThreadCap() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(0, Integer.MAX_VALUE, null, 1))
 				.withMessage("maxThreads must be strictly positive, was 0");
 	}
 
 	@Test
-	public void negativeTaskCap() {
+    void negativeTaskCap() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(1, -1, null, 1))
 				.withMessage("maxTaskQueuedPerThread must be strictly positive, was -1");
 	}
 
 	@Test
-	public void zeroTaskCap() {
+    void zeroTaskCap() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new BoundedElasticScheduler(1, 0, null, 1))
 				.withMessage("maxTaskQueuedPerThread must be strictly positive, was 0");
 	}
 
 	@Test
-	public void evictionForWorkerScheduling() {
+    void evictionForWorkerScheduling() {
 		MockUtils.VirtualClock clock = new MockUtils.VirtualClock(Instant.ofEpochMilli(1_000_000), ZoneId.systemDefault());
 		BoundedElasticScheduler s = afterTest.autoDispose(new BoundedElasticScheduler(2, Integer.MAX_VALUE, r -> new Thread(r, "eviction"),
 				60*1000, clock));
@@ -421,7 +421,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void lifoEvictionNoThreadRegrowth() throws InterruptedException {
+    void lifoEvictionNoThreadRegrowth() throws InterruptedException {
 		int otherThreads = Thread.activeCount(); //don't count the evictor at shutdown
 		Set<String> preExistingEvictors = dumpThreadNames().filter(s -> s.startsWith("boundedElastic-evictor")).collect(Collectors.toSet());
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(200, Integer.MAX_VALUE,
@@ -501,7 +501,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void userWorkerShutdownBySchedulerDisposal() throws InterruptedException {
+    void userWorkerShutdownBySchedulerDisposal() throws InterruptedException {
 		Scheduler s = afterTest.autoDispose(Schedulers.newBoundedElastic(4, Integer.MAX_VALUE, "boundedElasticUserThread", 10, false));
 		Worker w = afterTest.autoDispose(s.createWorker());
 
@@ -523,7 +523,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void regrowFromEviction() {
+    void regrowFromEviction() {
 		MockUtils.VirtualClock virtualClock = new MockUtils.VirtualClock();
 		BoundedElasticScheduler
 				scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, Integer.MAX_VALUE, r -> new Thread(r, "regrowFromEviction"),
@@ -565,7 +565,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void taskCapIsOnExecutorAndNotWorker() {
+    void taskCapIsOnExecutorAndNotWorker() {
 		BoundedElasticScheduler
 				boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 9, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -604,7 +604,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityIsSumOfWorkers() {
+    void estimateRemainingTaskCapacityIsSumOfWorkers() {
 		//3 workers
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(3, 5, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -617,7 +617,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityWithSomeUnobservableWorkers() {
+    void estimateRemainingTaskCapacityWithSomeUnobservableWorkers() {
 		//3 workers, 1 not observable
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(3, 5, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -630,7 +630,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityWithUnobservableOnly() {
+    void estimateRemainingTaskCapacityWithUnobservableOnly() {
 		//3 workers, 1 not observable
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(3, 5, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -643,7 +643,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityResetWhenDirectTaskIsExecuted()
+    void estimateRemainingTaskCapacityResetWhenDirectTaskIsExecuted()
 			throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -670,7 +670,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityResetWhenWorkerTaskIsExecuted()
+    void estimateRemainingTaskCapacityResetWhenWorkerTaskIsExecuted()
 			throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -698,7 +698,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityResetWhenDirectTaskIsDisposed()
+    void estimateRemainingTaskCapacityResetWhenDirectTaskIsDisposed()
 			throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -727,7 +727,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void estimateRemainingTaskCapacityResetWhenWorkerTaskIsDisposed()
+    void estimateRemainingTaskCapacityResetWhenWorkerTaskIsDisposed()
 			throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
@@ -757,7 +757,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void taskPutInPendingQueueCanBeRemovedOnCancel() throws InterruptedException {
+    void taskPutInPendingQueueCanBeRemovedOnCancel() throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
 
@@ -800,7 +800,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void taskPutInPendingQueueIsEventuallyExecuted() throws InterruptedException {
+    void taskPutInPendingQueueIsEventuallyExecuted() throws InterruptedException {
 		BoundedElasticScheduler boundedElasticScheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, Thread::new, 10));
 		boundedElasticScheduler.start();
 
@@ -835,7 +835,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void workerRejectsTasksAfterBeingDisposed() {
+    void workerRejectsTasksAfterBeingDisposed() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose((BoundedElasticScheduler) Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, "test"));
 		Worker worker = scheduler.createWorker();
 		worker.dispose();
@@ -857,7 +857,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void blockingTasksWith100kLimit() throws InterruptedException {
+    void blockingTasksWith100kLimit() throws InterruptedException {
 		AtomicInteger taskDone = new AtomicInteger();
 		AtomicInteger taskRejected = new AtomicInteger();
 
@@ -930,7 +930,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void delayedTasksWith100kLimit() {
+    void delayedTasksWith100kLimit() {
 		AtomicInteger taskDone = new AtomicInteger();
 		AtomicInteger taskRejected = new AtomicInteger();
 
@@ -998,7 +998,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void subscribeOnDisposesWorkerWhenCancelled() throws InterruptedException {
+    void subscribeOnDisposesWorkerWhenCancelled() throws InterruptedException {
 		AtomicInteger taskExecuted = new AtomicInteger();
 
 		BoundedElasticScheduler bounded = afterTest.autoDispose(
@@ -1058,7 +1058,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void publishOnDisposesWorkerWhenCancelled() {
+    void publishOnDisposesWorkerWhenCancelled() {
 		AtomicInteger taskExecuted = new AtomicInteger();
 		Function<String, Integer> sleepAndIncrement = v -> {
 			try {
@@ -1124,7 +1124,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void pickSetIdleRaceBusy() {
+    void pickSetIdleRaceBusy() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, r -> new Thread(r, "test"),
 				1000));
 		scheduler.start();
@@ -1143,7 +1143,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 
 	}
 	@Test
-	public void pickSetIdleRaceIdle() {
+    void pickSetIdleRaceIdle() {
 		BoundedElasticScheduler scheduler = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, r -> new Thread(r, "test"),
 				1000));
 		scheduler.start();
@@ -1162,7 +1162,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 
 	//gh-1992 smoke test
 	@Test
-	public void gh1992() {
+    void gh1992() {
 		final Scheduler scheduler = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, "test"));
 
 		final Mono<Integer> integerMono = Mono
@@ -1178,7 +1178,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 
 	//gh-1973 smoke test
 	@Test
-	public void testGh1973() throws InterruptedException {
+    void testGh1973() throws InterruptedException {
 		Scheduler scheduler = afterTest.autoDispose(Schedulers.newBoundedElastic(3, 100000, "subscriberElastic", 600, true));
 		LinkedList<MonoSink<String>> listeners = new LinkedList<>();
 		List<Disposable> scheduled = new LinkedList<>();
@@ -1250,7 +1250,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void defaultBoundedElasticConfigurationIsConsistentWithJavadoc() {
+    void defaultBoundedElasticConfigurationIsConsistentWithJavadoc() {
 		Schedulers.CachedScheduler cachedBoundedElastic = (Schedulers.CachedScheduler) Schedulers.boundedElastic();
 		BoundedElasticScheduler boundedElastic = (BoundedElasticScheduler) cachedBoundedElastic.cached;
 
@@ -1277,7 +1277,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Scheduler withNamedFactory = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, "scanName", 3));
 		Scheduler withBasicFactory = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, Thread::new, 3));
 		Scheduler withTaskCap = afterTest.autoDispose(Schedulers.newBoundedElastic(1, 123, Thread::new, 3));
@@ -1304,7 +1304,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanWorkerName() {
+    void scanWorkerName() {
 		Scheduler withNamedFactory = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, "scanName", 3));
 		Scheduler withBasicFactory = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, Thread::new, 3));
 
@@ -1321,7 +1321,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanCapacityBounded() {
+    void scanCapacityBounded() {
 		Scheduler scheduler = afterTest.autoDispose(Schedulers.newBoundedElastic(1, 123, Thread::new, 2));
 		Scheduler.Worker activeWorker = afterTest.autoDispose(scheduler.createWorker());
 		Scheduler.Worker deferredWorker = afterTest.autoDispose(scheduler.createWorker());
@@ -1331,7 +1331,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanCapacityUnbounded() {
+    void scanCapacityUnbounded() {
 		Scheduler scheduler = afterTest.autoDispose(Schedulers.newBoundedElastic(1, Integer.MAX_VALUE, Thread::new, 2));
 		Scheduler.Worker activeWorker = afterTest.autoDispose(scheduler.createWorker());
 		Scheduler.Worker deferredWorker = afterTest.autoDispose(scheduler.createWorker());
@@ -1341,19 +1341,19 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void toStringOfTtlInSplitSeconds() {
+    void toStringOfTtlInSplitSeconds() {
 		String toString = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, null, 1659, Clock.systemDefaultZone())).toString();
 		assertThat(toString).endsWith("ttl=1s)");
 	}
 
 	@Test
-	public void toStringOfTtlUnderOneSecond() {
+    void toStringOfTtlUnderOneSecond() {
 		String toString = afterTest.autoDispose(new BoundedElasticScheduler(1, 1, null, 523, Clock.systemDefaultZone())).toString();
 		assertThat(toString).endsWith("ttl=523ms)");
 	}
 
 	@Test
-	public void toStringOfExecutorReflectsBoundedVsUnboundedAndCompletedVsQueued()
+    void toStringOfExecutorReflectsBoundedVsUnboundedAndCompletedVsQueued()
 			throws InterruptedException {
 		BoundedScheduledExecutorService bounded = new BoundedScheduledExecutorService(123, Thread::new);
 		BoundedScheduledExecutorService unbounded = new BoundedScheduledExecutorService(Integer.MAX_VALUE, Thread::new);
@@ -1376,7 +1376,7 @@ public class BoundedElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void toStringOfExecutorReflectsIdleVsActive() throws InterruptedException {
+    void toStringOfExecutorReflectsIdleVsActive() throws InterruptedException {
 		BoundedScheduledExecutorService bounded = new BoundedScheduledExecutorService(123, Thread::new);
 		BoundedScheduledExecutorService unbounded = new BoundedScheduledExecutorService(Integer.MAX_VALUE, Thread::new);
 

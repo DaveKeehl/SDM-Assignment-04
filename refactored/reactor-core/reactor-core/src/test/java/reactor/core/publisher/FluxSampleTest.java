@@ -31,17 +31,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxSampleTest {
+class FluxSampleTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxSample<>(null, Flux.never());
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().sample((Publisher<Object>) null);
 		});
@@ -113,27 +113,27 @@ public class FluxSampleTest {
 	}
 
 	@Test
-	public void normal1() {
+    void normal1() {
 		sample(true, false);
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		sample(true, true);
 	}
 
 	@Test
-	public void error1() {
+    void error1() {
 		sample(false, false);
 	}
 
 	@Test
-	public void error2() {
+    void error2() {
 		sample(false, true);
 	}
 
 	@Test
-	public void subscriberCancels() {
+    void subscriberCancels() {
 		Sinks.Many<Integer> main = Sinks.unsafe().many().multicast().directBestEffort();
 
 		Sinks.Many<String> other = Sinks.unsafe().many().multicast().directBestEffort();
@@ -155,7 +155,7 @@ public class FluxSampleTest {
 		  .assertNotComplete();
 	}
 
-	public void completeImmediately(boolean which) {
+	void completeImmediately(boolean which) {
 		Sinks.Many<Integer> main = Sinks.unsafe().many().multicast().directBestEffort();
 
 		Sinks.Many<String> other = Sinks.unsafe().many().multicast().directBestEffort();
@@ -180,17 +180,17 @@ public class FluxSampleTest {
 	}
 
 	@Test
-	public void mainCompletesImmediately() {
+    void mainCompletesImmediately() {
 		completeImmediately(true);
 	}
 
 	@Test
-	public void otherCompletesImmediately() {
+    void otherCompletesImmediately() {
 		completeImmediately(false);
 	}
 
 	@Test
-	public void sampleIncludesLastItem() {
+    void sampleIncludesLastItem() {
 		Flux<Integer> source = Flux.concat(
 				Flux.range(1, 5),
 				Mono.delay(Duration.ofMillis(300)).ignoreElement().map(Long::intValue),
@@ -207,7 +207,7 @@ public class FluxSampleTest {
 	}
 
 	@Test
-	public void sourceTerminatesBeforeSamplingEmits() {
+    void sourceTerminatesBeforeSamplingEmits() {
 		Flux<Integer> source = Flux.just(1, 2).hide();
 
 		Duration duration = StepVerifier.create(source.sample(Duration.ofMillis(250)))
@@ -219,7 +219,7 @@ public class FluxSampleTest {
 	}
 
 	@Test
-	public void sourceErrorsBeforeSamplingNoEmission() {
+    void sourceErrorsBeforeSamplingNoEmission() {
 		Flux<Integer> source = Flux.just(1, 2).concatWith(Mono.error(new IllegalStateException("boom")));
 
 		Duration duration = StepVerifier.create(source.sample(Duration.ofMillis(250)))
@@ -230,7 +230,7 @@ public class FluxSampleTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSample.SampleMainSubscriber<Integer> test = new FluxSample.SampleMainSubscriber<>(actual);
         Subscription parent = Operators.emptySubscription();
@@ -250,7 +250,7 @@ public class FluxSampleTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSample.SampleMainSubscriber<Integer> main = new FluxSample.SampleMainSubscriber<>(actual);
         FluxSample.SampleOther<Integer, Integer> test = new FluxSample.SampleOther<>(main);

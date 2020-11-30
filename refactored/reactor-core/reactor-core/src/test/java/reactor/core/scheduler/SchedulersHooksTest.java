@@ -31,7 +31,7 @@ import reactor.test.AutoDisposingExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-public class SchedulersHooksTest {
+class SchedulersHooksTest {
 
 	@RegisterExtension
 	public AutoDisposingExtension afterTest = new AutoDisposingExtension();
@@ -42,7 +42,7 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onScheduleIsAdditive() throws Exception {
+    void onScheduleIsAdditive() throws Exception {
 		AtomicInteger tracker = new AtomicInteger();
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 1));
 		Schedulers.onScheduleHook("k2", new TrackingDecorator(tracker, 10));
@@ -57,7 +57,7 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onScheduleReplaces() throws Exception {
+    void onScheduleReplaces() throws Exception {
 		AtomicInteger tracker = new AtomicInteger();
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 1));
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 10));
@@ -72,7 +72,7 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onScheduleWorksWhenEmpty() throws Exception {
+    void onScheduleWorksWhenEmpty() throws Exception {
 		AtomicInteger tracker = new AtomicInteger();
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 1));
 		Schedulers.resetOnScheduleHook("k1");
@@ -86,13 +86,13 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onScheduleIgnoresUnknownRemovals() {
+    void onScheduleIgnoresUnknownRemovals() {
 		assertThatCode(() -> Schedulers.resetOnScheduleHook("k1"))
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void onScheduleResetOne() throws InterruptedException {
+    void onScheduleResetOne() throws InterruptedException {
 		AtomicInteger tracker = new AtomicInteger();
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 1));
 		Schedulers.onScheduleHook("k2", new TrackingDecorator(tracker, 10));
@@ -108,7 +108,7 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onScheduleResetAll() throws InterruptedException {
+    void onScheduleResetAll() throws InterruptedException {
 		AtomicInteger tracker = new AtomicInteger();
 		Schedulers.onScheduleHook("k1", new TrackingDecorator(tracker, 1));
 		Schedulers.onScheduleHook("k2", new TrackingDecorator(tracker, 10));
@@ -124,7 +124,7 @@ public class SchedulersHooksTest {
 	}
 
 	@Test
-	public void onSchedulesAreOrdered() throws Exception {
+    void onSchedulesAreOrdered() throws Exception {
 		CopyOnWriteArrayList<String> items = new CopyOnWriteArrayList<>();
 		Schedulers.onScheduleHook("k1", new ApplicationOrderRecordingDecorator(items, "k1"));
 		Schedulers.onScheduleHook("k2", new ApplicationOrderRecordingDecorator(items, "k2"));

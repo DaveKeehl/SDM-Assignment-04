@@ -36,7 +36,7 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
+class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -133,7 +133,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void singleSourceIsMapped() {
+    void singleSourceIsMapped() {
 
 		AssertSubscriber<String> ts = AssertSubscriber.create();
 
@@ -146,7 +146,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void iterableSingleSourceIsMapped() {
+    void iterableSingleSourceIsMapped() {
 
 		AssertSubscriber<String> ts = AssertSubscriber.create();
 
@@ -159,7 +159,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void fused() {
+    void fused() {
 		Sinks.Many<Integer> dp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> dp2 = Sinks.unsafe().many().multicast().directBestEffort();
 
@@ -187,20 +187,20 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void combineLatest() {
+    void combineLatest() {
 		StepVerifier.create(Flux.combineLatest(obj -> (int) obj[0], Flux.just(1)))
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void combineLatestEmpty() {
+    void combineLatestEmpty() {
 		StepVerifier.create(Flux.combineLatest(obj -> (int) obj[0]))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void combineLatestHide() {
+    void combineLatestHide() {
 		StepVerifier.create(Flux.combineLatest(obj -> (int) obj[0],
 				Flux.just(1)
 				    .hide()))
@@ -209,14 +209,14 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void combineLatest2() {
+    void combineLatest2() {
 		StepVerifier.create(Flux.combineLatest(Flux.just(1), Flux.just(2), (a, b) -> a))
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void combineLatest3() {
+    void combineLatest3() {
 		StepVerifier.create(Flux.combineLatest(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -226,7 +226,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void combineLatest4() {
+    void combineLatest4() {
 		StepVerifier.create(Flux.combineLatest(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -237,7 +237,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void combineLatest5() {
+    void combineLatest5() {
 		StepVerifier.create(Flux.combineLatest(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -249,7 +249,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void combineLatest6() {
+    void combineLatest6() {
 		StepVerifier.create(Flux.combineLatest(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -262,14 +262,14 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxCombineLatest s = new FluxCombineLatest<>(Collections.emptyList(), v -> v, Queues.small(), 123);
 		assertThat(s.scan(Scannable.Attr.PREFETCH)).isEqualTo(123);
 		assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 
 		FluxCombineLatest.CombineLatestCoordinator<String, Integer> test = new FluxCombineLatest.CombineLatestCoordinator<>(
@@ -290,7 +290,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxCombineLatest.CombineLatestCoordinator<String, Integer> main = new FluxCombineLatest.CombineLatestCoordinator<>(
 				actual, arr -> arr.length, 123, Queues.<FluxCombineLatest.SourceAndArray>one().get(), 456);
@@ -310,7 +310,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void singleSourceNormalWithFuseableDownstream() {
+    void singleSourceNormalWithFuseableDownstream() {
 		StepVerifier.create(
 				Flux.combineLatest(Collections.singletonList(Flux.just(1, 2, 3).hide()), (arr) -> arr[0].toString())
 				    //the map is Fuseable and sees the combine as fuseable too
@@ -321,7 +321,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void singleSourceNormalWithoutFuseableDownstream() {
+    void singleSourceNormalWithoutFuseableDownstream() {
 		StepVerifier.create(
 				Flux.combineLatest(
 						Collections.singletonList(Flux.just(1, 2, 3).hide()),
@@ -334,7 +334,7 @@ public class FluxCombineLatestTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void singleSourceFusedWithFuseableDownstream() {
+    void singleSourceFusedWithFuseableDownstream() {
 		StepVerifier.create(
 				Flux.combineLatest(
 						Collections.singletonList(Flux.just(1, 2, 3)),

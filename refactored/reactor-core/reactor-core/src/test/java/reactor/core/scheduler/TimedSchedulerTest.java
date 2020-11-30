@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
-public class TimedSchedulerTest extends AbstractSchedulerTest {
+class TimedSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -35,7 +35,7 @@ public class TimedSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void independentWorkers() throws InterruptedException {
+    void independentWorkers() throws InterruptedException {
 		Scheduler timer = Schedulers.newSingle("test-timer");
         
         try {
@@ -63,7 +63,7 @@ public class TimedSchedulerTest extends AbstractSchedulerTest {
     }
 
     @Test
-    public void massCancel() throws InterruptedException {
+    void massCancel() throws InterruptedException {
         Scheduler timer = Schedulers.newSingle("test-timer");
         
         try {

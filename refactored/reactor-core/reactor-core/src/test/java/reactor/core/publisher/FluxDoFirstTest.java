@@ -31,10 +31,10 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class FluxDoFirstTest {
+class FluxDoFirstTest {
 
 	@Test
-	public void rejectsNullRunnable() {
+    void rejectsNullRunnable() {
 		Flux<Integer> source = Flux.empty();
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
@@ -43,7 +43,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void orderIsReversed_NoFusion() {
+    void orderIsReversed_NoFusion() {
 		List<String> order = new ArrayList<>();
 
 		@SuppressWarnings("divzero")
@@ -64,7 +64,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void orderIsReversed_Fused() {
+    void orderIsReversed_Fused() {
 		List<String> order = new ArrayList<>();
 
 		@SuppressWarnings("divzero")
@@ -84,7 +84,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void mixedWithOnSubscribe_NoFusion() {
+    void mixedWithOnSubscribe_NoFusion() {
 		List<String> order = new ArrayList<>();
 
 		StepVerifier.create(
@@ -105,7 +105,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void mixedWithOnSubscribe_Fused() {
+    void mixedWithOnSubscribe_Fused() {
 		List<String> order = new ArrayList<>();
 
 		StepVerifier.create(
@@ -125,7 +125,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void runnableFailure_NotFuseable() {
+    void runnableFailure_NotFuseable() {
 		Flux<Integer> test = Flux.just(1, 2)
 		                         .hide()
 		                         .doFirst(() -> {
@@ -139,7 +139,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void runnableFailure_Fuseable() {
+    void runnableFailure_Fuseable() {
 		Flux<Integer> test = Flux.just(1, 2)
 		                         .doFirst(() -> {
 			                         throw new IllegalStateException("expected");
@@ -152,7 +152,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void performsDirectSubscriberToSource_NoFusion() {
+    void performsDirectSubscriberToSource_NoFusion() {
 		AtomicReference<Subscription> subRef = new AtomicReference<>();
 		Flux<Integer> test = Flux.just(1, 2)
 		                         .hide()
@@ -164,7 +164,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void performsDirectSubscriberToSource_Fused() {
+    void performsDirectSubscriberToSource_Fused() {
 		AtomicReference<Subscription> subRef = new AtomicReference<>();
 		Flux<Integer> test = Flux.just(1, 2)
 		                         .map(Function.identity())
@@ -176,7 +176,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoFirst<Integer> test = new FluxDoFirst<>(parent, () -> {});
 
@@ -185,7 +185,7 @@ public class FluxDoFirstTest {
 	}
 
 	@Test
-	public void scanOperatorFuseable(){
+    void scanOperatorFuseable(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoFirstFuseable<Integer> test = new FluxDoFirstFuseable<>(parent, () -> {});
 

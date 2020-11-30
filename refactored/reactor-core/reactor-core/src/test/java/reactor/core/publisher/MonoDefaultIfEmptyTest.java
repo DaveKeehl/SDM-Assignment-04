@@ -25,31 +25,31 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDefaultIfEmptyTest {
+class MonoDefaultIfEmptyTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoDefaultIfEmpty<>(null, 1);
 		});
 	}
 
 	@Test
-	public void valueNull() {
+    void valueNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.never().defaultIfEmpty(null);
 		});
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .defaultIfEmpty("blah"))
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .defaultIfEmpty("blah"))
@@ -57,7 +57,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmpty() {
+    void nonEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).defaultIfEmpty(10).subscribe(ts);
@@ -68,7 +68,7 @@ public class MonoDefaultIfEmptyTest {
 
 	}
 	@Test
-	public void nonEmptyHide() {
+    void nonEmptyHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).hide().defaultIfEmpty(10).subscribe(ts);
@@ -80,7 +80,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyHideBackpressured() {
+    void nonEmptyHideBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1).hide().defaultIfEmpty(10).subscribe(ts);
@@ -98,7 +98,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyBackpressured() {
+    void nonEmptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1).defaultIfEmpty(10).subscribe(ts);
@@ -116,7 +116,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>empty().defaultIfEmpty(10).subscribe(ts);
@@ -128,7 +128,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyHide() {
+    void emptyHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>empty().hide().defaultIfEmpty(10).subscribe(ts);
@@ -140,7 +140,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>empty().defaultIfEmpty(10).subscribe(ts);
@@ -158,7 +158,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressuredHide() {
+    void emptyBackpressuredHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>empty().hide().defaultIfEmpty(10).subscribe(ts);
@@ -176,7 +176,7 @@ public class MonoDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoDefaultIfEmpty<Integer> test = new MonoDefaultIfEmpty<>(Mono.empty(), 10);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

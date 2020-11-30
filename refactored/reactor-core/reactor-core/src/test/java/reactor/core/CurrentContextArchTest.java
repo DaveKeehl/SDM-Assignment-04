@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-public class CurrentContextArchTest {
+class CurrentContextArchTest {
 
 	static JavaClasses CORE_SUBSCRIBER_CLASSES = new ClassFileImporter()
 			.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
@@ -44,7 +44,7 @@ public class CurrentContextArchTest {
 			.importPackagesOf(reactor.core.publisher.FluxProcessor.class);
 
 	@Test
-	public void corePublishersShouldNotUseDefaultCurrentContext() {
+    void corePublishersShouldNotUseDefaultCurrentContext() {
 		classes()
 				.that().implement(CoreSubscriber.class)
 				.and().doNotHaveModifier(JavaModifier.ABSTRACT)
@@ -72,7 +72,7 @@ public class CurrentContextArchTest {
 	@Test
 	// This is ok as this class tests the deprecated FluxProcessor. Will be removed with it in 3.5.
 	@SuppressWarnings("deprecation")
-	public void fluxProcessorsShouldNotUseDefaultCurrentContext() {
+	void fluxProcessorsShouldNotUseDefaultCurrentContext() {
 		classes()
 				.that().areAssignableTo(reactor.core.publisher.FluxProcessor.class)
 				.and().doNotHaveModifier(JavaModifier.ABSTRACT)

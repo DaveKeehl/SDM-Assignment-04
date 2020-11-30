@@ -27,10 +27,10 @@ import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class StepVerifierAssertionsTests {
+class StepVerifierAssertionsTests {
 
 	@Test
-	public void assertDroppedElementsAllPass() {
+	void assertDroppedElementsAllPass() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext("foo");
@@ -47,7 +47,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertNotDroppedElementsFailureOneDrop() {
+	void assertNotDroppedElementsFailureOneDrop() {
 		try {
 			StepVerifier.create(Flux.from(s -> {
 				s.onSubscribe(Operators.emptySubscription());
@@ -67,7 +67,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedElementsFailureNoDrop() {
+	void assertDroppedElementsFailureNoDrop() {
 		try {
 			StepVerifier.create(Mono.empty())
 			            .expectComplete()
@@ -82,7 +82,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedElementsFailureOneExtra() {
+	void assertDroppedElementsFailureOneExtra() {
 		try {
 			StepVerifier.create(Flux.from(s -> {
 				s.onSubscribe(Operators.emptySubscription());
@@ -103,7 +103,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedElementsFailureOneMissing() {
+	void assertDroppedElementsFailureOneMissing() {
 		try {
 			StepVerifier.create(Flux.from(s -> {
 				s.onSubscribe(Operators.emptySubscription());
@@ -124,7 +124,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDiscardedElementsAllPass() {
+	void assertDiscardedElementsAllPass() {
 		StepVerifier.create(Flux.just(1, 2, 3).filter(i -> i == 2))
 		            .expectNext(2)
 		            .expectComplete()
@@ -137,7 +137,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertNotDiscardedElementsFailureOneDiscarded() {
+	void assertNotDiscardedElementsFailureOneDiscarded() {
 		try {
 			StepVerifier.create(Flux.just(1, 2).filter(i -> i == 2))
 			            .expectNext(2)
@@ -152,7 +152,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDiscardedElementsFailureNoDiscarded() {
+	void assertDiscardedElementsFailureNoDiscarded() {
 		try {
 			StepVerifier.create(Mono.empty())
 			            .expectComplete()
@@ -167,7 +167,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDiscardedElementsFailureOneExtra() {
+	void assertDiscardedElementsFailureOneExtra() {
 		try {
 			StepVerifier.create(Flux.just(1, 2, 3).filter(i -> i == 2))
 			            .expectNext(2)
@@ -182,7 +182,7 @@ public class StepVerifierAssertionsTests {
 	}
 
         @Test
-        public void assertDiscardedElementsSatisfyingFailureOneExtra() {
+        void assertDiscardedElementsSatisfyingFailureOneExtra() {
 		try {
 	                 StepVerifier.create(Flux.just(1, 2, 3).filter(i -> i == 2))
 		                     .expectNext(2)
@@ -197,7 +197,7 @@ public class StepVerifierAssertionsTests {
         }
 
 	@Test
-	public void assertDiscardedElementsMatchingFailureOneExtra() {
+	void assertDiscardedElementsMatchingFailureOneExtra() {
 		try {
 			StepVerifier.create(Flux.just(1, 2, 3).filter(i -> i == 2))
 					.expectNext(2)
@@ -213,7 +213,7 @@ public class StepVerifierAssertionsTests {
 
 
 	@Test
-	public void assertDiscardedElementsFailureOneMissing() {
+	void assertDiscardedElementsFailureOneMissing() {
 		try {
 			StepVerifier.create(Flux.just(1, 2, 3).filter(i -> i == 2))
 			            .expectNext(2)
@@ -228,7 +228,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorAllPass() {
+	void assertDroppedErrorAllPass() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		StepVerifier.create(Flux.from(s -> {
@@ -248,7 +248,7 @@ public class StepVerifierAssertionsTests {
 
 
 	@Test
-	public void assertNotDroppedErrorsFailureOneDrop() {
+	void assertNotDroppedErrorsFailureOneDrop() {
 		try {
 			StepVerifier.create(Flux.from(s -> {
 				s.onSubscribe(Operators.emptySubscription());
@@ -268,7 +268,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorFailureNoDrop() {
+	void assertDroppedErrorFailureNoDrop() {
 		try {
 			StepVerifier.create(Mono.empty())
 			            .expectComplete()
@@ -283,7 +283,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorFailureWrongType() {
+	void assertDroppedErrorFailureWrongType() {
 		try {
 			Throwable err1 = new IllegalStateException("boom1");
 			Throwable err2 = new IllegalStateException("boom2");
@@ -303,7 +303,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorFailureWrongContains() {
+	void assertDroppedErrorFailureWrongContains() {
 		try {
 			Throwable err1 = new IllegalStateException("boom1");
 			Throwable err2 = new IllegalStateException("boom2");
@@ -323,7 +323,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorFailureWrongMessage() {
+	void assertDroppedErrorFailureWrongMessage() {
 		try {
 			Throwable err1 = new IllegalStateException("boom1");
 			Throwable err2 = new IllegalStateException("boom2");
@@ -343,7 +343,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorFailureWrongMatch() {
+	void assertDroppedErrorFailureWrongMatch() {
 		try {
 			Throwable err1 = new IllegalStateException("boom1");
 			Throwable err2 = new IllegalStateException("boom2");
@@ -363,7 +363,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorsFailureWrongCount() {
+	void assertDroppedErrorsFailureWrongCount() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -386,7 +386,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorsNotSatisfying() {
+	void assertDroppedErrorsNotSatisfying() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -408,7 +408,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDroppedErrorsNotMatching() {
+	void assertDroppedErrorsNotMatching() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -432,7 +432,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorAllPass() {
+	void assertOperatorErrorAllPass() {
 		IllegalStateException err1 = new IllegalStateException("boom1");
 		StepVerifier.create(Flux.just("test").map(d -> {
 			throw err1;
@@ -448,7 +448,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorFailureNoDrop() {
+	void assertOperatorErrorFailureNoDrop() {
 		try {
 			StepVerifier.create(Mono.empty())
 			            .expectComplete()
@@ -462,7 +462,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorFailureWrongType() {
+	void assertOperatorErrorFailureWrongType() {
 		try {
 			IllegalStateException err1 = new IllegalStateException("boom1");
 			StepVerifier.create(Flux.just("test").map(d -> {
@@ -479,7 +479,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorFailureWrongContains() {
+	void assertOperatorErrorFailureWrongContains() {
 		try {
 			IllegalStateException err1 = new IllegalStateException("boom1");
 			StepVerifier.create(Flux.just("test").map(d -> {
@@ -496,7 +496,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorFailureWrongMessage() {
+	void assertOperatorErrorFailureWrongMessage() {
 		try {
 			IllegalStateException err1 = new IllegalStateException("boom1");
 			StepVerifier.create(Flux.just("test").map(d -> {
@@ -513,7 +513,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorFailureWrongMatch() {
+	void assertOperatorErrorFailureWrongMatch() {
 		try {
 			IllegalStateException err1 = new IllegalStateException("boom1");
 			StepVerifier.create(Flux.just("test").map(d -> {
@@ -531,7 +531,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorsFailureWrongCount() {
+	void assertOperatorErrorsFailureWrongCount() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -554,7 +554,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorsNotSatisfying() {
+	void assertOperatorErrorsNotSatisfying() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -578,7 +578,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperatorErrorsNotMatching() {
+	void assertOperatorErrorsNotMatching() {
 		Throwable err1 = new IllegalStateException("boom1");
 		Throwable err2 = new IllegalStateException("boom2");
 		Throwable err3 = new IllegalStateException("boom3");
@@ -603,7 +603,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationLessThanOk() {
+	void assertDurationLessThanOk() {
 		StepVerifier.create(Mono.delay(Duration.ofMillis(500)).then())
 		            .expectComplete()
 		            .verifyThenAssertThat()
@@ -611,7 +611,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationLessThanFailure() {
+	void assertDurationLessThanFailure() {
 		try {
 			StepVerifier.create(Mono.delay(Duration.ofMillis(500)).then())
 		                .expectComplete()
@@ -629,7 +629,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationConsidersEqualsASuccess() {
+	void assertDurationConsidersEqualsASuccess() {
 		new DefaultStepVerifierBuilder.DefaultStepVerifierAssertions(null,
 				Duration.ofSeconds(3),
 				new MessageFormatter(null, null, null))
@@ -638,7 +638,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationFailureWithScenarioName() {
+	void assertDurationFailureWithScenarioName() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						new DefaultStepVerifierBuilder.DefaultStepVerifierAssertions(null
@@ -650,7 +650,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationMoreThanOk() {
+	void assertDurationMoreThanOk() {
 		StepVerifier.create(Mono.delay(Duration.ofMillis(500)).then())
 		            .expectComplete()
 		            .verifyThenAssertThat()
@@ -658,7 +658,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertDurationMoreThanFailure() {
+	void assertDurationMoreThanFailure() {
 		try {
 			StepVerifier.create(Mono.delay(Duration.ofMillis(500)).then())
 		                .expectComplete()
@@ -676,7 +676,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperationErrorShortcutTestExactCount() {
+	void assertOperationErrorShortcutTestExactCount() {
 		try {
 			StepVerifier.create(Flux.empty())
 			            .expectComplete()
@@ -690,7 +690,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void assertOperationErrorShortcutTestTupleContainsError() {
+	void assertOperationErrorShortcutTestTupleContainsError() {
 		try {
 			StepVerifier.create(Flux.from(f -> {
 				f.onSubscribe(Operators.emptySubscription());
@@ -708,7 +708,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void contextDiscardCaptureWithNoInitialContext() {
+	void contextDiscardCaptureWithNoInitialContext() {
 		StepVerifier.create(Mono.deferContextual(Mono::just)
 		                        .flatMapIterable(ctx -> ctx.stream()
 		                                                   .map(Map.Entry::getKey)
@@ -724,7 +724,7 @@ public class StepVerifierAssertionsTests {
 	}
 
 	@Test
-	public void contextDiscardCaptureWithInitialContext() {
+	void contextDiscardCaptureWithInitialContext() {
 		Context initial = Context.of("foo", "bar");
 		StepVerifier.create(Mono.deferContextual(Mono::just)
 				.flatMapIterable(ctx -> ctx.stream()

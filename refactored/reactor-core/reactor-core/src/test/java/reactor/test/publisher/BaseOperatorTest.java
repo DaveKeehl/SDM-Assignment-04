@@ -54,20 +54,20 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 /**
  * @author Stephane Maldini
  */
-public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, PO extends Publisher<? extends O>> {
+abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, PO extends Publisher<? extends O>> {
 
 	OperatorScenario<I, PI, O, PO> defaultScenario;
 
 	boolean defaultEmpty;
 
 	@BeforeEach
-	public final void initDefaultScenario() {
+	final void initDefaultScenario() {
 		defaultEmpty = false;
 		defaultScenario = defaultScenarioOptions(new OperatorScenario<>(null, null));
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> cancelOnSubscribe() {
+	final Stream<DynamicTest> cancelOnSubscribe() {
 		defaultEmpty = true;
 		return toDynamicTests(scenarios_operatorSuccess(), s -> {
 			OperatorScenario<I, PI, O, PO> scenario = s.duplicate()
@@ -107,7 +107,7 @@ public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, 
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> assertPrePostState() {
+	final Stream<DynamicTest> assertPrePostState() {
 		return toDynamicTests(scenarios_touchAndAssertState(), scenario -> {
 			this.inputHiddenOutputState(scenario);
 
@@ -120,7 +120,7 @@ public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, 
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> sequenceOfNextAndComplete() {
+	final Stream<DynamicTest> sequenceOfNextAndComplete() {
 		return toDynamicTests(scenarios_operatorSuccess(), scenario -> {
 			Consumer<StepVerifier.Step<O>> verifier = scenario.verifier();
 
@@ -159,7 +159,7 @@ public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, 
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> sequenceOfNextWithCallbackError() {
+	final Stream<DynamicTest> sequenceOfNextWithCallbackError() {
 		defaultEmpty = true;
 		defaultScenario.producerError(new RuntimeException("test"));
 		return toDynamicTests(scenarios_operatorError(), scenario -> {
@@ -228,7 +228,7 @@ public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, 
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> errorOnSubscribe() {
+	final Stream<DynamicTest> errorOnSubscribe() {
 		defaultEmpty = true;
 		String exceptionMessage = "test";
 
@@ -317,13 +317,13 @@ public abstract class BaseOperatorTest<I, PI extends Publisher<? extends I>, O, 
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> sequenceOfNextAndCancel() {
+	final Stream<DynamicTest> sequenceOfNextAndCancel() {
 		return toDynamicTests(scenarios_operatorSuccess(), scenario -> {
 		});
 	}
 
 	@TestFactory
-	public final Stream<DynamicTest> sequenceOfNextAndError() {
+	final Stream<DynamicTest> sequenceOfNextAndError() {
 		return toDynamicTests(scenarios_operatorSuccess(), scenario -> {
 		});
 	}

@@ -42,10 +42,10 @@ import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.scheduler.Schedulers.fromExecutor;
 import static reactor.core.scheduler.Schedulers.fromExecutorService;
 
-public class MonoPublishOnTest {
+class MonoPublishOnTest {
 
 	@Test
-	public void rejectedExecutionExceptionOnDataSignalExecutor()
+    void rejectedExecutionExceptionOnDataSignalExecutor()
 			throws InterruptedException {
 
 		int data = 1;
@@ -98,7 +98,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void rejectedExecutionExceptionOnErrorSignalExecutor()
+    void rejectedExecutionExceptionOnErrorSignalExecutor()
 			throws InterruptedException {
 
 		int data = 1;
@@ -154,7 +154,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void rejectedExecutionExceptionOnDataSignalExecutorService()
+    void rejectedExecutionExceptionOnDataSignalExecutorService()
 			throws InterruptedException {
 
 		int data = 1;
@@ -207,7 +207,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void rejectedExecutionExceptionOnErrorSignalExecutorService()
+    void rejectedExecutionExceptionOnErrorSignalExecutorService()
 			throws InterruptedException {
 
 		int data = 1;
@@ -265,7 +265,7 @@ public class MonoPublishOnTest {
 	@Test
 	@Disabled
 	//FIXME the behavior is not failing fast anymore, find original issue and re-evaluate
-	public void rejectedExecutionSubscribeExecutorScheduler() {
+	void rejectedExecutionSubscribeExecutorScheduler() {
 		CountDownLatch latch = new CountDownLatch(1);
 		ExecutorService executor = new ThreadPoolExecutor(1,
 				1,
@@ -305,7 +305,7 @@ public class MonoPublishOnTest {
 	@Test
 	@Disabled
 	//FIXME the behavior is not failing fast anymore, find original issue and re-evaluate
-	public void rejectedExecutionSubscribeExecutorServiceScheduler() {
+	void rejectedExecutionSubscribeExecutorServiceScheduler() {
 		CountDownLatch latch = new CountDownLatch(1);
 		ExecutorService executor = new ThreadPoolExecutor(1,
 				1,
@@ -341,7 +341,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoPublishOn<String> test = new MonoPublishOn<>(Mono.empty(), Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -349,7 +349,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoPublishOn.PublishOnSubscriber<String> test = new MonoPublishOn.PublishOnSubscriber<>(
 				actual, Schedulers.single());
@@ -367,7 +367,7 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void scanSubscriberError() {
+    void scanSubscriberError() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoPublishOn.PublishOnSubscriber<String> test = new MonoPublishOn.PublishOnSubscriber<>(
 				actual, Schedulers.single());
@@ -378,14 +378,14 @@ public class MonoPublishOnTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .publishOn(Schedulers.single()))
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .publishOn(Schedulers.single()))

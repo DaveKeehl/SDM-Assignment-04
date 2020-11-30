@@ -32,10 +32,10 @@ import reactor.test.publisher.TestPublisher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoFilterWhenTest {
+class MonoFilterWhenTest {
 
 	@Test
-	public void normalFiltered() {
+    void normalFiltered() {
 		StepVerifier.withVirtualTime(() -> Mono.just(1)
 		                                       .filterWhen(v -> Mono.just(v % 2 == 0)
 		                                                            .delayElement(Duration.ofMillis(100))))
@@ -45,7 +45,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void normalNotFiltered() {
+    void normalNotFiltered() {
 		StepVerifier.withVirtualTime(() -> Mono.just(2)
 		                                       .filterWhen(v -> Mono.just(v % 2 == 0)
 		                                                            .delayElement(Duration.ofMillis(100))))
@@ -56,14 +56,14 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void normalSyncFiltered() {
+    void normalSyncFiltered() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0).hide()))
 	                .verifyComplete();
 	}
 
 	@Test
-	public void normalSyncNotFiltered() {
+    void normalSyncNotFiltered() {
 		StepVerifier.create(Mono.just(2)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0).hide()))
 		            .expectNext(2)
@@ -71,14 +71,14 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void normalSyncFusedFiltered() {
+    void normalSyncFusedFiltered() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0)))
 	                .verifyComplete();
 	}
 
 	@Test
-	public void normalSyncFusedNotFiltered() {
+    void normalSyncFusedNotFiltered() {
 		StepVerifier.create(Mono.just(2)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0)))
 		            .expectNext(2)
@@ -86,49 +86,49 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void allEmpty() {
+    void allEmpty() {
 		StepVerifier.create(Mono.just(2)
 		                        .filterWhen(v -> Mono.<Boolean>empty().hide()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void allEmptyFused() {
+    void allEmptyFused() {
 		StepVerifier.create(Mono.just(2)
 		                        .filterWhen(v -> Mono.empty()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		StepVerifier.create(Mono.<Integer>empty()
 								.filterWhen(v -> Mono.just(true)))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		StepVerifier.create(Mono.<Integer>empty()
 				.filterWhen(v -> Mono.just(true)), 0L)
 				.verifyComplete();
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.<Integer>error(new IllegalStateException())
 				.filterWhen(v -> Mono.just(true)))
 				.verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void errorBackpressured() {
+    void errorBackpressured() {
 		StepVerifier.create(Mono.<Integer>error(new IllegalStateException())
 				.filterWhen(v -> Mono.just(true)), 0L)
 				.verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void backpressureExactlyOne() {
+    void backpressureExactlyOne() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Mono.just(true)), 1L)
 		            .expectNext(1)
@@ -136,7 +136,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void oneAndErrorInner() {
+    void oneAndErrorInner() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> s -> {
 			                        s.onSubscribe(Operators.emptySubscription());
@@ -154,20 +154,20 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> { throw new IllegalStateException(); }))
 		            .verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		StepVerifier.create(Mono.just(1).filterWhen(v -> null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void predicateError() {
+    void predicateError() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Mono.<Boolean>error(new IllegalStateException()).hide()))
 		            .verifyError(IllegalStateException.class);
@@ -175,14 +175,14 @@ public class MonoFilterWhenTest {
 
 
 	@Test
-	public void predicateErrorFused() {
+    void predicateErrorFused() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Mono.fromCallable(() -> { throw new IllegalStateException(); })))
 		            .verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void take1Cancel() {
+    void take1Cancel() {
 		AtomicLong onNextCount = new AtomicLong();
 		AtomicReference<SignalType> endSignal = new AtomicReference<>();
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
@@ -214,7 +214,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void take1CancelBackpressured() {
+    void take1CancelBackpressured() {
 		AtomicLong onNextCount = new AtomicLong();
 		AtomicReference<SignalType> endSignal = new AtomicReference<>();
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
@@ -247,7 +247,7 @@ public class MonoFilterWhenTest {
 
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		final Sinks.Many<Boolean> pp = Sinks.many().multicast().onBackpressureBuffer();
 
 		StepVerifier.create(Mono.just(1)
@@ -258,7 +258,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void innerFluxCancelled() {
+    void innerFluxCancelled() {
 		AtomicInteger cancelCount = new AtomicInteger();
 
 		StepVerifier.create(Mono.just(1)
@@ -271,14 +271,14 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void innerFluxOnlyConsidersFirstValue() {
+    void innerFluxOnlyConsidersFirstValue() {
 		StepVerifier.create(Mono.just(1)
 		                        .filterWhen(v -> Flux.just(false, true, true)))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void innerMonoNotCancelled() {
+    void innerMonoNotCancelled() {
 		AtomicInteger cancelCount = new AtomicInteger();
 
 		StepVerifier.create(Mono.just(3)
@@ -291,7 +291,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void scanTerminatedOnlyTrueIfFilterTerminated() {
+    void scanTerminatedOnlyTrueIfFilterTerminated() {
 		AtomicReference<Subscriber> subscriber = new AtomicReference<>();
 		TestPublisher<Boolean> filter = TestPublisher.create();
 		new MonoFilterWhen<>(new Mono<Integer>() {
@@ -317,14 +317,14 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoFilterWhen<Integer> test = new MonoFilterWhen<>(Mono.just(1), null);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFilterWhen.MonoFilterWhenMain<String>
 				test = new MonoFilterWhen.MonoFilterWhenMain<>(
@@ -346,7 +346,7 @@ public class MonoFilterWhenTest {
 	}
 
 	@Test
-	public void scanFilterWhenInner() {
+    void scanFilterWhenInner() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFilterWhen.MonoFilterWhenMain<String>
 				main = new MonoFilterWhen.MonoFilterWhenMain<>(

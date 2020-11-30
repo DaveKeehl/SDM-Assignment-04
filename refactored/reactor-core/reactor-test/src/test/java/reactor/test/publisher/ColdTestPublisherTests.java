@@ -30,17 +30,17 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ColdTestPublisherTests {
+class ColdTestPublisherTests {
 
 	@Test
-	public void gh1236_test() {
+	void gh1236_test() {
 		TestPublisher<String> result = TestPublisher.createCold();
 
 		assertThat(result.emit("value").mono().block()).isEqualTo("value");
 	}
 
 	@Test
-	public void coldWithSequentialSubscriptions() {
+	void coldWithSequentialSubscriptions() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.emit("A", "B", "C");
 
@@ -58,7 +58,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void coldWithSequentialSubscriptionsAndTerminalSignalChanges() {
+	void coldWithSequentialSubscriptionsAndTerminalSignalChanges() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.emit("A", "B", "C");
 
@@ -80,7 +80,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void coldWithSignalEmittingWithinStepVerifier() {
+	void coldWithSignalEmittingWithinStepVerifier() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		StepVerifier.create(publisher)
@@ -90,7 +90,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void normalDisallowsNull() {
+	void normalDisallowsNull() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -99,7 +99,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingAllowsNull() {
+	void misbehavingAllowsNull() {
 		TestPublisher<String> publisher = TestPublisher.createColdNonCompliant(false, TestPublisher.Violation.ALLOW_NULL);
 		publisher.emit("foo", null);
 
@@ -110,7 +110,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void normalDisallowsOverflow() {
+	void normalDisallowsOverflow() {
 		TestPublisher<String> publisher =
 				TestPublisher.createColdNonBuffering();
 
@@ -126,7 +126,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void normalDisallowsOverflow2() {
+	void normalDisallowsOverflow2() {
 		TestPublisher<String> publisher =
 				TestPublisher.createColdNonBuffering();
 		publisher.emit("foo", "bar");
@@ -141,7 +141,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingAllowsOverflow() {
+	void misbehavingAllowsOverflow() {
 		TestPublisher<String> publisher = TestPublisher.createColdNonCompliant(false, TestPublisher.Violation.REQUEST_OVERFLOW);
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -156,7 +156,7 @@ public class ColdTestPublisherTests {
 
 
 	@Test
-	public void coldAllowsMultipleReplayOnSubscribe() {
+	void coldAllowsMultipleReplayOnSubscribe() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.emit("A", "B");
 
@@ -170,7 +170,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void coldIgnoresMultipleTerminations() {
+	void coldIgnoresMultipleTerminations() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		AtomicLong count = new AtomicLong();
 
@@ -201,7 +201,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectSubscribers() {
+	void expectSubscribers() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -216,7 +216,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectAssertSubscribersN() {
+	void expectAssertSubscribersN() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -234,7 +234,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectSubscribersCountN() {
+	void expectSubscribersCountN() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -255,7 +255,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectCancelled() {
+	void expectCancelled() {
 		TestPublisher<Object> publisher = TestPublisher.createCold();
 		StepVerifier.create(publisher)
 	                .then(publisher::assertNotCancelled)
@@ -271,7 +271,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectMinRequestedNormal() {
+	void expectMinRequestedNormal() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		StepVerifier.create(Flux.from(publisher), 5)
@@ -285,7 +285,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectMinRequestedFailure() {
+	void expectMinRequestedFailure() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -302,7 +302,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedNormal() {
+	void expectMaxRequestedNormal() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		Flux.from(publisher).limitRequest(5).subscribe();
@@ -314,7 +314,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedWithUnbounded() {
+	void expectMaxRequestedWithUnbounded() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		Flux.from(publisher).limitRequest(5).subscribe();
@@ -326,7 +326,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedFailure() {
+	void expectMaxRequestedFailure() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		Flux.from(publisher).limitRequest(7).subscribe();
@@ -337,7 +337,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void emitCompletes() {
+	void emitCompletes() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		StepVerifier.create(publisher)
 	                .then(() -> publisher.emit("foo", "bar"))
@@ -347,7 +347,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void nextVarargNull() {
+	void nextVarargNull() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -356,7 +356,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void emitVarargNull() {
+	void emitVarargNull() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -365,7 +365,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void testError() {
+	void testError() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		StepVerifier.create(publisher)
 	                .then(() -> publisher.next("foo", "bar").error(new IllegalArgumentException("boom")))
@@ -375,7 +375,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void testErrorCold() {
+	void testErrorCold() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.next("foo", "bar").error(new IllegalArgumentException("boom"));
 		StepVerifier.create(publisher)
@@ -385,7 +385,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void conditionalSupport() {
+	void conditionalSupport() {
 		TestPublisher<String> up = TestPublisher.createCold();
 		StepVerifier.create(up.flux().filter("test"::equals), 2)
 		            .then(() -> up.next("test"))
@@ -396,7 +396,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void testBufferSupport() {
+	void testBufferSupport() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.emit("A", "B", "C", "D", "E", "F");
 		StepVerifier.create(publisher, 3L)
@@ -409,7 +409,7 @@ public class ColdTestPublisherTests {
 	}
 
 	@Test
-	public void testBufferSupportSubsequentDataAdded() {
+	void testBufferSupportSubsequentDataAdded() {
 		TestPublisher<String> publisher = TestPublisher.createCold();
 		publisher.next("A", "B", "C", "D", "E", "F");
 		StepVerifier.create(publisher, 3L)

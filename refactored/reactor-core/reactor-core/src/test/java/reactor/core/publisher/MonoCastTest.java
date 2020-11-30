@@ -21,24 +21,24 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoCastTest {
+class MonoCastTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.just(1).cast(null);
 		});
 	}
 
 	@Test
-	public void sourceNull2() {
+    void sourceNull2() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.just(1).ofType(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.just(1)
 		                        .cast(Number.class))
 		            .expectNext(1)
@@ -46,7 +46,7 @@ public class MonoCastTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.just(1)
 		                        .cast(String.class))
 		            .verifyError(ClassCastException.class);
@@ -55,7 +55,7 @@ public class MonoCastTest {
 
 
 	@Test
-	public void normalOfType() {
+    void normalOfType() {
 		StepVerifier.create(Mono.just(1)
 		                        .ofType(Number.class))
 		            .expectNext(1)
@@ -63,7 +63,7 @@ public class MonoCastTest {
 	}
 
 	@Test
-	public void errorOfType() {
+    void errorOfType() {
 		StepVerifier.create(Mono.just(1)
 		                        .ofType(String.class))
 		            .verifyComplete();

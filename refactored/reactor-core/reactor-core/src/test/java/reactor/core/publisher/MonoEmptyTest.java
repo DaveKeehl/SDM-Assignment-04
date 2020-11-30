@@ -21,16 +21,16 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoEmptyTest {
+class MonoEmptyTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.empty())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoEmpty test = new MonoEmpty();
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

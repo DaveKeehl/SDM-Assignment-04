@@ -39,13 +39,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Fuseable.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxDoFinallyTest implements Consumer<SignalType> {
+class FluxDoFinallyTest implements Consumer<SignalType> {
 
 	volatile SignalType signalType;
 	volatile int calls;
 
 	@BeforeEach
-	public void before() {
+	void before() {
 		signalType = null;
 		calls = 0;
 	}
@@ -57,7 +57,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalJust() {
+    void normalJust() {
 		StepVerifier.create(Flux.just(1).hide().doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectNext(1)
@@ -69,7 +69,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalEmpty() {
+    void normalEmpty() {
 		StepVerifier.create(Flux.empty().doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectComplete()
@@ -80,7 +80,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalError() {
+    void normalError() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException()).doFinally(this))
 		            .expectNoFusionSupport()
 		            .expectError(IllegalArgumentException.class)
@@ -91,7 +91,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalCancel() {
+    void normalCancel() {
 		StepVerifier.create(Flux.range(1, 10).hide().doFinally(this).take(5))
 		            .expectNoFusionSupport()
 		            .expectNext(1, 2, 3, 4, 5)
@@ -103,7 +103,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalTake() {
+    void normalTake() {
 		StepVerifier.create(Flux.range(1, 5)
 		                        .hide()
 		                        .doFinally(this))
@@ -117,7 +117,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFused() {
+    void syncFused() {
 		StepVerifier.create(Flux.range(1, 5).doFinally(this))
 		            .expectFusion(SYNC)
 		            .expectNext(1, 2, 3, 4, 5)
@@ -129,7 +129,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFusedThreadBarrier() {
+    void syncFusedThreadBarrier() {
 		StepVerifier.create(Flux.range(1, 5).doFinally(this))
 		            .expectFusion(SYNC | THREAD_BARRIER , NONE)
 		            .expectNext(1, 2, 3, 4, 5)
@@ -141,7 +141,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void asyncFused() {
+    void asyncFused() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		up.emitNext(1, FAIL_FAST);
 		up.emitNext(2, FAIL_FAST);
@@ -161,7 +161,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void asyncFusedThreadBarrier() {
+    void asyncFusedThreadBarrier() {
 		Sinks.Many<Object> up = Sinks.many().unicast().onBackpressureBuffer();
 		up.emitNext(1, FAIL_FAST);
 		up.emitNext(2, FAIL_FAST);
@@ -181,7 +181,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalJustConditional() {
+    void normalJustConditional() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .doFinally(this)
@@ -196,7 +196,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalEmptyConditional() {
+    void normalEmptyConditional() {
 		StepVerifier.create(Flux.empty()
 		                        .hide()
 		                        .doFinally(this)
@@ -210,7 +210,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalErrorConditional() {
+    void normalErrorConditional() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException())
 		                        .hide()
 		                        .doFinally(this)
@@ -224,7 +224,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalCancelConditional() {
+    void normalCancelConditional() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide()
 		                        .doFinally(this)
@@ -240,7 +240,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void normalTakeConditional() {
+    void normalTakeConditional() {
 		StepVerifier.create(Flux.range(1, 5)
 		                        .hide()
 		                        .doFinally(this)
@@ -255,7 +255,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFusedConditional() {
+    void syncFusedConditional() {
 		StepVerifier.create(Flux.range(1, 5)
 		                        .doFinally(this)
 		                        .filter(i -> true))
@@ -269,7 +269,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void syncFusedThreadBarrierConditional() {
+    void syncFusedThreadBarrierConditional() {
 		StepVerifier.create(Flux.range(1, 5)
 		                        .doFinally(this)
 		                        .filter(i -> true))
@@ -283,7 +283,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void asyncFusedConditional() {
+    void asyncFusedConditional() {
 		Sinks.Many<Object> up = Sinks.many().unicast().onBackpressureBuffer();
 		up.emitNext(1, FAIL_FAST);
 		up.emitNext(2, FAIL_FAST);
@@ -304,7 +304,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void asyncFusedThreadBarrierConditional() {
+    void asyncFusedThreadBarrierConditional() {
 		Sinks.Many<Object> up = Sinks.many().unicast().onBackpressureBuffer();
 		up.emitNext(1, FAIL_FAST);
 		up.emitNext(2, FAIL_FAST);
@@ -325,14 +325,14 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void nullCallback() {
+    void nullCallback() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.just(1).doFinally(null);
 		});
 	}
 
 	@Test
-	public void callbackThrows() {
+    void callbackThrows() {
 		try {
 			StepVerifier.create(Flux.just(1)
 			                        .doFinally(signal -> {
@@ -350,7 +350,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void callbackThrowsConditional() {
+    void callbackThrowsConditional() {
 		try {
 			StepVerifier.create(Flux.just(1)
 			                        .doFinally(signal -> {
@@ -369,7 +369,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void severalInARowExecutedInReverseOrder() {
+    void severalInARowExecutedInReverseOrder() {
 		Queue<String> finallyOrder = new ConcurrentLinkedDeque<>();
 
 		Flux.just("b")
@@ -383,7 +383,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoFinally test = new FluxDoFinally<>(parent, v -> {});
 
@@ -392,7 +392,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoFinallyFuseable<Integer> test = new FluxDoFinallyFuseable<>(parent, s -> {});
 
@@ -401,7 +401,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxDoFinally.DoFinallySubscriber<String> test = new FluxDoFinally.DoFinallySubscriber<>(actual, st -> {});
 		Subscription parent = Operators.emptySubscription();
@@ -422,7 +422,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 
 	@Test
 	//see https://github.com/reactor/reactor-core/issues/951
-	public void gh951_withoutConsumerInSubscribe() {
+	void gh951_withoutConsumerInSubscribe() {
 		List<String> events = new ArrayList<>();
 		Mono.just(true)
 		    .map(this::throwError)
@@ -459,7 +459,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 
 	@Test
 	//see https://github.com/reactor/reactor-core/issues/951
-	public void gh951_withConsumerInSubscribe() {
+	void gh951_withConsumerInSubscribe() {
 		List<String> events = new ArrayList<>();
 
 		Mono.just(true)
@@ -497,7 +497,7 @@ public class FluxDoFinallyTest implements Consumer<SignalType> {
 
 	@Test
 	//see https://github.com/reactor/reactor-core/issues/951
-	public void gh951_withoutDoOnError() {
+	void gh951_withoutDoOnError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {

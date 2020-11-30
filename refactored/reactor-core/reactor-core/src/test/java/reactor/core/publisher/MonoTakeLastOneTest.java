@@ -27,10 +27,10 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class MonoTakeLastOneTest {
+class MonoTakeLastOneTest {
 
 	@Test
-	public void emptyThrowsNoSuchElement() {
+    void emptyThrowsNoSuchElement() {
 		StepVerifier.create(Flux.empty()
 		                        .hide()
 		                        .last())
@@ -39,7 +39,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void emptyCallableThrowsNoSuchElement() {
+    void emptyCallableThrowsNoSuchElement() {
 		StepVerifier.create(Flux.empty()
 		                        .last())
 		            .verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(NoSuchElementException.class)
@@ -47,7 +47,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void fallback() {
+    void fallback() {
 		StepVerifier.create(Flux.empty()
 		                        .last(1))
 		            .expectNext(1)
@@ -55,14 +55,14 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .last())
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .hide()
 		                        .last())
@@ -70,14 +70,14 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void errorDefault() {
+    void errorDefault() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .last("blah"))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void errorHideDefault() {
+    void errorHideDefault() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .hide()
 		                        .last("blah"))
@@ -85,7 +85,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .last())
 		            .expectNext(100)
@@ -93,7 +93,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .last(-1))
 		            .expectNext(100)
@@ -102,7 +102,7 @@ public class MonoTakeLastOneTest {
 
 
 	@Test
-	public void normal3() {
+    void normal3() {
 		StepVerifier.create(Mono.fromCallable(() -> 100)
 		                        .flux()
 		                        .last(-1))
@@ -111,7 +111,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void normalHide() {
+    void normalHide() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
 		                        .last())
@@ -120,7 +120,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void norma2() {
+    void norma2() {
 		StepVerifier.create(Flux.just(100)
 		                        .last(-1))
 		            .expectNext(100)
@@ -128,7 +128,7 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void defaultUsingZip() {
+    void defaultUsingZip() {
 		Sinks.Many<String> sink1 = Sinks.many().unicast().onBackpressureBuffer();
 		Flux<String> processor1 = sink1.asFlux();
 		Sinks.Many<String> sink2 = Sinks.many().unicast().onBackpressureBuffer();
@@ -155,14 +155,14 @@ public class MonoTakeLastOneTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoTakeLastOne<Integer> test = new MonoTakeLastOne<>(Flux.just(1, 2, 3));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanTakeLastOneSubscriber() {
+    void scanTakeLastOneSubscriber() {
 		CoreSubscriber<String>
 				actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoTakeLastOne.TakeLastOneSubscriber<String> test = new MonoTakeLastOne.TakeLastOneSubscriber<>(

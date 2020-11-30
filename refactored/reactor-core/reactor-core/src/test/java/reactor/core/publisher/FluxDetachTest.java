@@ -29,12 +29,12 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxDetachTest {
+class FluxDetachTest {
 
 	Object o;
 
 	@Test
-	public void just() throws Exception {
+    void just() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -61,7 +61,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Object> ts = new AssertSubscriber<>();
 
 		Flux.error(new RuntimeException("forced failure"))
@@ -74,7 +74,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Object> ts = new AssertSubscriber<>();
 
 		Flux.empty()
@@ -87,7 +87,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void range() {
+    void range() {
 		AssertSubscriber<Object> ts = new AssertSubscriber<>();
 
 		Flux.range(1, 1000)
@@ -100,7 +100,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void backpressured() throws Exception {
+    void backpressured() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -130,7 +130,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void justUnsubscribed() throws Exception {
+    void justUnsubscribed() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -158,7 +158,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void deferredUpstreamProducer() {
+    void deferredUpstreamProducer() {
 		final AtomicReference<Subscriber<? super Object>> subscriber =
 				new AtomicReference<>();
 
@@ -182,14 +182,14 @@ public class FluxDetachTest {
 	}
 	
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxDetach<Integer> test = new FluxDetach<>(Flux.just(1));
 	    
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxDetach.DetachSubscriber<String> test = new FluxDetach.DetachSubscriber<>(actual);
@@ -210,7 +210,7 @@ public class FluxDetachTest {
 	}
 
 	@Test
-	public void scanSubscriberCancelled() {
+    void scanSubscriberCancelled() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxDetach.DetachSubscriber<String> test = new FluxDetach.DetachSubscriber<>(actual);
 		Subscription parent = Operators.emptySubscription();

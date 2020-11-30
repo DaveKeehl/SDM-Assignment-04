@@ -35,11 +35,11 @@ import static org.assertj.core.api.Assertions.fail;
 
 // This is ok as this class tests the deprecated FluxProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class FluxProcessorTest {
+class FluxProcessorTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void failNullSubscriber() {
+	void failNullSubscriber() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			FluxProcessor.wrap(UnicastProcessor.create(), UnicastProcessor.create())
 					.subscribe((Subscriber) null);
@@ -47,21 +47,21 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void failNullUpstream() {
+    void failNullUpstream() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			FluxProcessor.wrap(null, UnicastProcessor.create());
 		});
 	}
 
 	@Test
-	public void failNullDownstream() {
+    void failNullDownstream() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			FluxProcessor.wrap(UnicastProcessor.create(), null);
 		});
 	}
 
 	@Test
-	public void testCapacity(){
+    void testCapacity(){
 		assertThat(FluxProcessor.wrap(UnicastProcessor.create(), UnicastProcessor
 				.create()).getBufferSize())
 				.isEqualTo(Integer.MAX_VALUE);
@@ -69,7 +69,7 @@ public class FluxProcessorTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void normalBlackboxProcessor(){
+	void normalBlackboxProcessor(){
 		UnicastProcessor<Integer> upstream = UnicastProcessor.create();
 		FluxProcessor<Integer, Integer> processor =
 				FluxProcessor.wrap(upstream, upstream.map(i -> i + 1)
@@ -89,7 +89,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void disconnectedBlackboxProcessor(){
+    void disconnectedBlackboxProcessor(){
 		UnicastProcessor<Integer> upstream = UnicastProcessor.create();
 		FluxProcessor<Integer, Integer> processor =
 				FluxProcessor.wrap(upstream, Flux.just(1));
@@ -100,7 +100,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void symmetricBlackboxProcessor(){
+    void symmetricBlackboxProcessor(){
 		UnicastProcessor<Integer> upstream = UnicastProcessor.create();
 		FluxProcessor<Integer, Integer> processor =
 				FluxProcessor.wrap(upstream, upstream);
@@ -112,7 +112,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void errorSymmetricBlackboxProcessor(){
+    void errorSymmetricBlackboxProcessor(){
 		UnicastProcessor<Integer> upstream = UnicastProcessor.create();
 		FluxProcessor<Integer, Integer> processor =
 				FluxProcessor.wrap(upstream, upstream);
@@ -123,7 +123,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void testSubmitSession() throws Exception {
+    void testSubmitSession() throws Exception {
 		FluxProcessor<Integer, Integer> processor = EmitterProcessor.create();
 		AtomicInteger count = new AtomicInteger();
 		CountDownLatch latch = new CountDownLatch(1);
@@ -147,7 +147,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void testEmitter() throws Throwable {
+    void testEmitter() throws Throwable {
 		FluxProcessor<Integer, Integer> processor = EmitterProcessor.create();
 
 		int n = 100_000;
@@ -174,7 +174,7 @@ public class FluxProcessorTest {
 		c.dispose();
 	}
 	@Test
-	public void testEmitter2() throws Throwable {
+    void testEmitter2() throws Throwable {
 		FluxProcessor<Integer, Integer> processor = EmitterProcessor.create();
 
 		int n = 100_000;
@@ -203,7 +203,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void serializedConcurrent() {
+    void serializedConcurrent() {
 		Scheduler.Worker w1 = Schedulers.boundedElastic().createWorker();
 		Scheduler.Worker w2 = Schedulers.boundedElastic().createWorker();
 		CountDownLatch latch = new CountDownLatch(1);
@@ -261,7 +261,7 @@ public class FluxProcessorTest {
 	}
 
 	@Test
-	public void scanProcessor() {
+    void scanProcessor() {
 		FluxProcessor<String, String> test = DirectProcessor.<String>create().serialize();
 
 		assertThat(test.scan(Scannable.Attr.CAPACITY)).isEqualTo(16);

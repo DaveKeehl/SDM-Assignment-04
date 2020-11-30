@@ -26,10 +26,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-public class ScatterGatherTests {
+class ScatterGatherTests {
 
 	@Test
-	public void test() throws Exception {
+    void test() throws Exception {
 
 		Flux.just("red", "white", "blue")
 		    .log("source")
@@ -53,21 +53,21 @@ public class ScatterGatherTests {
 
 		private long duration;
 
-		public long add(String colour) {
+		long add(String colour) {
 			AtomicLong value = counts.getOrDefault(colour, new AtomicLong());
 			counts.putIfAbsent(colour, value);
 			return value.incrementAndGet();
 		}
 
-		public void stop() {
+		void stop() {
 			this.duration = System.currentTimeMillis() - timestamp;
 		}
 
-		public long getDuration() {
+		long getDuration() {
 			return duration;
 		}
 
-		public Map<String, AtomicLong> getCounts() {
+		Map<String, AtomicLong> getCounts() {
 			return counts;
 		}
 

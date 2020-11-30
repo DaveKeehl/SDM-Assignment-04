@@ -30,17 +30,17 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxDelayUntilTest {
+class FluxDelayUntilTest {
 
 	@Test
-	public void testFluxEmptyAndPublisherVoid() {
+    void testFluxEmptyAndPublisherVoid() {
 		Publisher<Void> voidPublisher = Mono.fromRunnable(() -> { });
 		StepVerifier.create(Flux.<String>empty().delayUntil(a -> voidPublisher))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void testFlux1AndPublisherVoid() {
+    void testFlux1AndPublisherVoid() {
 		Publisher<Void> voidPublisher = Mono.fromRunnable(() -> { });
 
 		StepVerifier.create(Flux.just("foo").delayUntil(a -> voidPublisher))
@@ -49,7 +49,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void testFlux2AndPublisherVoid() {
+    void testFlux2AndPublisherVoid() {
 		Publisher<Void> voidPublisher = Mono.fromRunnable(() -> { });
 
 		StepVerifier.create(Flux.just("foo", "bar").delayUntil(a -> voidPublisher))
@@ -58,7 +58,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void testFlux2DoesntReorderViaDelays() {
+    void testFlux2DoesntReorderViaDelays() {
 		StepVerifier.withVirtualTime(() ->
 				Flux.just(100, 200, 300)
 				    .delayUntil(v -> Mono.delay(Duration.ofMillis(400 - v)))
@@ -74,7 +74,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceWithDelays() {
+    void triggerSequenceWithDelays() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo", "bar")
 		                                       .delayUntil(a -> Flux.just(1, 2, 3).hide().delayElements(Duration.ofMillis(500))))
 		            .expectSubscription()
@@ -87,7 +87,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceHasMultipleValuesNotCancelled() {
+    void triggerSequenceHasMultipleValuesNotCancelled() {
 		AtomicBoolean triggerCancelled = new AtomicBoolean();
 		StepVerifier.create(Flux.just("foo")
 		                        .delayUntil(
@@ -99,7 +99,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceHasSingleValueNotCancelled() {
+    void triggerSequenceHasSingleValueNotCancelled() {
 		AtomicBoolean triggerCancelled = new AtomicBoolean();
 		StepVerifier.create(Flux.just("foo")
 		                        .delayUntil(
@@ -111,7 +111,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceDoneFirst() {
+    void triggerSequenceDoneFirst() {
 		StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofSeconds(2))
 		                                       .flatMapMany(Flux::just)
 		                                       .delayUntil(a -> Mono.just("foo")))
@@ -122,21 +122,21 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void sourceHasError() {
+    void sourceHasError() {
 		StepVerifier.create(Flux.<String>error(new IllegalStateException("boom"))
 				.delayUntil(a -> Mono.just("foo")))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void triggerHasError() {
+    void triggerHasError() {
 		StepVerifier.create(Flux.just("foo")
 		                        .delayUntil(a -> Mono.<String>error(new IllegalStateException("boom"))))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void sourceAndTriggerHaveErrorsNotDelayed() {
+    void sourceAndTriggerHaveErrorsNotDelayed() {
 		StepVerifier.create(Flux.<String>error(new IllegalStateException("boom1"))
 				.delayUntil(a -> Mono.<Integer>error(new IllegalStateException("boom2"))))
 		            .verifyErrorMessage("boom1");
@@ -144,7 +144,7 @@ public class FluxDelayUntilTest {
 
 
 	@Test
-	public void testAPIDelayUntil() {
+    void testAPIDelayUntil() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo")
 		                                       .delayUntil(a -> Mono.delay(Duration.ofSeconds(2))))
 		            .expectSubscription()
@@ -154,7 +154,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void testAPIDelayUntilErrorsImmediately() {
+    void testAPIDelayUntilErrorsImmediately() {
 		IllegalArgumentException boom = new IllegalArgumentException("boom");
 		StepVerifier.create(Flux.error(boom)
 		                        .delayUntil(a -> Mono.delay(Duration.ofSeconds(2))))
@@ -163,7 +163,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void testAPIchainingCumulatesDelaysAfterValueGenerated() {
+    void testAPIchainingCumulatesDelaysAfterValueGenerated() {
 		AtomicInteger generator1Used = new AtomicInteger();
 		AtomicInteger generator2Used = new AtomicInteger();
 
@@ -195,7 +195,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void immediateCancel() {
+    void immediateCancel() {
 		AtomicReference<String> value = new AtomicReference<>();
 		AtomicReference<Throwable> error = new AtomicReference<>();
 
@@ -208,7 +208,7 @@ public class FluxDelayUntilTest {
 	}
 
 	@Test
-	public void isAlias() {
+    void isAlias() {
 		assertThat(Flux.range(1, 10).delayUntil(a -> Mono.empty()))
 				.isInstanceOf(FluxConcatMap.class);
 	}

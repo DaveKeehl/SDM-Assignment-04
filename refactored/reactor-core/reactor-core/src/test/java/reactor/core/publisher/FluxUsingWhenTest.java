@@ -54,10 +54,10 @@ import reactor.util.function.Tuple2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class FluxUsingWhenTest {
+class FluxUsingWhenTest {
 
 	@Test
-	public void nullResourcePublisherRejected() {
+    void nullResourcePublisherRejected() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Flux.usingWhen(null,
 						tr -> Mono.empty(),
@@ -69,7 +69,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void emptyResourcePublisherDoesntApplyCallback() {
+    void emptyResourcePublisherDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -87,7 +87,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void emptyResourceCallableDoesntApplyCallback() {
+    void emptyResourceCallableDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -105,7 +105,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourcePublisherDoesntApplyCallback() {
+    void errorResourcePublisherDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -128,7 +128,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourceCallableDoesntApplyCallback() {
+    void errorResourceCallableDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -151,7 +151,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourcePublisherAfterEmitIsDropped() {
+    void errorResourcePublisherAfterEmitIsDropped() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -178,7 +178,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void secondResourceInPublisherIsDropped() {
+    void secondResourceInPublisherIsDropped() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -205,7 +205,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void fluxResourcePublisherIsCancelled() {
+    void fluxResourcePublisherIsCancelled() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -232,7 +232,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void monoResourcePublisherIsNotCancelled() {
+    void monoResourcePublisherIsNotCancelled() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -259,7 +259,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void lateFluxResourcePublisherIsCancelledOnCancel() {
+    void lateFluxResourcePublisherIsCancelledOnCancel() {
 		AtomicBoolean resourceCancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -286,7 +286,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void lateMonoResourcePublisherIsCancelledOnCancel() {
+    void lateMonoResourcePublisherIsCancelledOnCancel() {
 		AtomicBoolean resourceCancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -315,7 +315,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void blockOnNeverResourceCanBeCancelled() throws InterruptedException {
+    void blockOnNeverResourceCanBeCancelled() throws InterruptedException {
 		CountDownLatch latch = new CountDownLatch(1);
 		Disposable disposable = Flux.usingWhen(Flux.<String>never(),
 				Flux::just,
@@ -335,7 +335,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void failToGenerateClosureAppliesRollback() {
+    void failToGenerateClosureAppliesRollback() {
 		TestResource testResource = new TestResource();
 
 		Flux<String> test = Flux.usingWhen(Mono.just(testResource),
@@ -355,7 +355,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void nullClosureAppliesRollback() {
+    void nullClosureAppliesRollback() {
 		TestResource testResource = new TestResource();
 
 		Flux<String> test = Flux.usingWhen(Mono.just(testResource),
@@ -376,7 +376,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sources01")
-	public void cancelWithHandler(Flux<String> source) {
+	void cancelWithHandler(Flux<String> source) {
 		TestResource testResource = new TestResource();
 
 		Flux<String> test = Flux.usingWhen(Mono.just(testResource),
@@ -397,7 +397,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sources01")
-	public void cancelWithHandlerFailure(Flux<String> source) {
+	void cancelWithHandlerFailure(Flux<String> source) {
 		TestResource testResource = new TestResource();
 		final TestLogger tl = new TestLogger();
 		Loggers.useCustomLoggers(name -> tl);
@@ -431,7 +431,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sources01")
-	public void cancelWithHandlerGenerationFailureLogs(Flux<String> source) throws InterruptedException {
+	void cancelWithHandlerGenerationFailureLogs(Flux<String> source) throws InterruptedException {
 		TestLogger tl = new TestLogger();
 		Loggers.useCustomLoggers(name -> tl);
 		TestResource testResource = new TestResource();
@@ -463,7 +463,7 @@ public class FluxUsingWhenTest {
 	@ParameterizedTest
 	@MethodSource("sources01")
 	@Deprecated
-	public void cancelWithoutHandlerAppliesCommit(Flux<String> source) {
+	void cancelWithoutHandlerAppliesCommit(Flux<String> source) {
 		TestResource testResource = new TestResource();
 
 		Flux<String> test = Flux
@@ -488,7 +488,7 @@ public class FluxUsingWhenTest {
 	@ParameterizedTest
 	@MethodSource("sources01")
 	@Deprecated
-	public void cancelDefaultHandlerFailure(Flux<String> source) {
+	void cancelDefaultHandlerFailure(Flux<String> source) {
 		TestResource testResource = new TestResource();
 		final TestLogger tl = new TestLogger();
 		Loggers.useCustomLoggers(name -> tl);
@@ -527,7 +527,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void apiCommit(Flux<String> fullTransaction) {
+	void apiCommit(Flux<String> fullTransaction) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
@@ -555,7 +555,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void apiCommitFailure(Flux<String> fullTransaction) {
+	void apiCommitFailure(Flux<String> fullTransaction) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
@@ -584,7 +584,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void commitGeneratingNull(Flux<String> fullTransaction) {
+	void commitGeneratingNull(Flux<String> fullTransaction) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
@@ -614,7 +614,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesTransactionError")
-	public void apiRollback(Flux<String> transactionWithError) {
+	void apiRollback(Flux<String> transactionWithError) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
 				d -> {
@@ -642,7 +642,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesTransactionError")
-	public void apiRollbackFailure(Flux<String> transactionWithError) {
+	void apiRollbackFailure(Flux<String> transactionWithError) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
 				d -> {
@@ -670,7 +670,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesTransactionError")
-	public void apiRollbackGeneratingNull(Flux<String> transactionWithError) {
+	void apiRollbackGeneratingNull(Flux<String> transactionWithError) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
 				d -> {
@@ -698,7 +698,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void apiCancel(Flux<String> transactionWithError) {
+	void apiCancel(Flux<String> transactionWithError) {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
 				d -> {
@@ -722,7 +722,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void apiCancelFailure(Flux<String> transaction) {
+	void apiCancelFailure(Flux<String> transaction) {
 		TestLogger testLogger = new TestLogger();
 		Loggers.useCustomLoggers(s -> testLogger);
 		try {
@@ -761,7 +761,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesFullTransaction")
-	public void apiCancelGeneratingNullLogs(Flux<String> transactionWithError) {
+	void apiCancelGeneratingNullLogs(Flux<String> transactionWithError) {
 		TestLogger testLogger = new TestLogger();
 		Loggers.useCustomLoggers(s -> testLogger);
 		try {
@@ -796,7 +796,7 @@ public class FluxUsingWhenTest {
 
 	@Test
 	@Deprecated
-	public void apiSingleAsyncCleanup() {
+	void apiSingleAsyncCleanup() {
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 
 		Flux<String> flux = Flux.usingWhen(Mono.fromCallable(TestResource::new),
@@ -820,7 +820,7 @@ public class FluxUsingWhenTest {
 
 	@Test
 	@Deprecated
-	public void apiSingleAsyncCleanupFailure() {
+	void apiSingleAsyncCleanupFailure() {
 		final RuntimeException rollbackCause = new IllegalStateException("boom");
 		final AtomicReference<TestResource> ref = new AtomicReference<>();
 
@@ -848,7 +848,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void normalHasNoQueueOperations() {
+    void normalHasNoQueueOperations() {
 		final FluxPeekFuseableTest.AssertQueueSubscription<String> assertQueueSubscription =
 				new FluxPeekFuseableTest.AssertQueueSubscription<>();
 		assertQueueSubscription.offer("foo");
@@ -864,7 +864,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesContext")
-	public void contextPropagationOnCommit(Mono<String> source) {
+	void contextPropagationOnCommit(Mono<String> source) {
 		AtomicReference<String> probeContextValue = new AtomicReference<>();
 		AtomicReference<String> resourceContextValue = new AtomicReference<>();
 
@@ -905,7 +905,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesContextError")
-	public void contextPropagationOnRollback(Mono<String> source) {
+	void contextPropagationOnRollback(Mono<String> source) {
 		AtomicReference<String> probeContextValue = new AtomicReference<>();
 		AtomicReference<String> resourceContextValue = new AtomicReference<>();
 
@@ -945,7 +945,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sources01")
-	public void contextPropagationOnCancel(Flux<String> source) {
+	void contextPropagationOnCancel(Flux<String> source) {
 		TestResource testResource = new TestResource();
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		PublisherProbe<String> probe = PublisherProbe.of(
@@ -975,7 +975,7 @@ public class FluxUsingWhenTest {
 
 	@ParameterizedTest
 	@MethodSource("sources01")
-	public void contextPropagationOnCancelWithNoHandler(Flux<String> source) {
+	void contextPropagationOnCancelWithNoHandler(Flux<String> source) {
 		TestResource testResource = new TestResource();
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		PublisherProbe<String> probe = PublisherProbe.of(
@@ -1006,7 +1006,7 @@ public class FluxUsingWhenTest {
 	// == tests checking callbacks don't pile up ==
 
 	@Test
-	public void noCancelCallbackAfterComplete() {
+    void noCancelCallbackAfterComplete() {
 		LongAdder cleanupCount = new LongAdder();
 		Flux<String> flux = Flux.usingWhen(Mono.defer(() -> Mono.just("foo")), Mono::just,
 				s -> Mono.fromRunnable(() -> cleanupCount.add(10)), //10 for completion
@@ -1039,7 +1039,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void noCancelCallbackAfterError() {
+    void noCancelCallbackAfterError() {
 		LongAdder cleanupCount = new LongAdder();
 		Flux<String> flux = Flux.usingWhen(Mono.just("foo"), v -> Mono.error(new IllegalStateException("boom")),
 				s -> Mono.fromRunnable(() -> cleanupCount.add(10)), //10 for completion
@@ -1072,7 +1072,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void noCompleteCallbackAfterCancel() throws InterruptedException {
+    void noCompleteCallbackAfterCancel() throws InterruptedException {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		LongAdder cleanupCount = new LongAdder();
 
@@ -1125,7 +1125,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void noErrorCallbackAfterCancel() throws InterruptedException {
+    void noErrorCallbackAfterCancel() throws InterruptedException {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		LongAdder cleanupCount = new LongAdder();
 
@@ -1178,7 +1178,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void errorCallbackReceivesCause() {
+    void errorCallbackReceivesCause() {
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		NullPointerException npe = new NullPointerException("original error");
 
@@ -1199,14 +1199,14 @@ public class FluxUsingWhenTest {
 	// == scanUnsafe tests ==
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxUsingWhen<Object, Object> op = new FluxUsingWhen<>(Mono.empty(), Mono::just, Mono::just, (s, err) -> Mono.just(s), Mono::just);
 
 		assertThat(op.scan(Attr.RUN_STYLE)).isSameAs(Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanResourceSubscriber() {
+    void scanResourceSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		ResourceSubscriber<String, Integer> op = new ResourceSubscriber<>(actual, s -> Flux.just(s.length()), Mono::just, (s, err) -> Mono.just(s), Mono::just, true);
 		final Subscription parent = Operators.emptySubscription();
@@ -1226,7 +1226,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void scanUsingWhenSubscriber() {
+    void scanUsingWhenSubscriber() {
 		CoreSubscriber<? super Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		UsingWhenSubscriber<Integer, String> op = new UsingWhenSubscriber<>(actual, "RESOURCE", Mono::just, (s, err) -> Mono.just(s), Mono::just, null);
 		final Subscription parent = Operators.emptySubscription();
@@ -1250,7 +1250,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void scanCommitInner() {
+    void scanCommitInner() {
 		CoreSubscriber<? super Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		UsingWhenSubscriber<Integer, String> up = new UsingWhenSubscriber<>(actual, "RESOURCE", Mono::just, (s, err) -> Mono.just(s), Mono::just, null);
 		final Subscription parent = Operators.emptySubscription();
@@ -1277,7 +1277,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void scanRollbackInner() {
+    void scanRollbackInner() {
 		CoreSubscriber<? super Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		UsingWhenSubscriber<Integer, String> up = new UsingWhenSubscriber<>(actual, "RESOURCE", Mono::just, (s, err) -> Mono.just(s), Mono::just, null);
 		final Subscription parent = Operators.emptySubscription();
@@ -1302,7 +1302,7 @@ public class FluxUsingWhenTest {
 	}
 
 	@Test
-	public void scanCancelInner() {
+    void scanCancelInner() {
 		CoreSubscriber<? super Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		UsingWhenSubscriber<Integer, String> up = new UsingWhenSubscriber<>(actual, "RESOURCE", Mono::just, (s, err) -> Mono.just(s), Mono::just, null);
 		final Subscription parent = Operators.emptySubscription();
@@ -1335,18 +1335,18 @@ public class FluxUsingWhenTest {
 			this.level = level;
 		}
 
-		public Flux<String> data() {
+		Flux<String> data() {
 			return Flux.just("Transaction started");
 		}
 
-		public Flux<Integer> commit() {
+		Flux<Integer> commit() {
 			this.commitProbe = PublisherProbe.of(
 					Flux.just(3, 2, 1)
 					    .log("commit method used", level, SignalType.ON_NEXT, SignalType.ON_COMPLETE));
 			return commitProbe.flux();
 		}
 
-		public Flux<Integer> commitDelay() {
+		Flux<Integer> commitDelay() {
 			this.commitProbe = PublisherProbe.of(
 					Flux.just(3, 2, 1)
 					    .delayElements(DELAY)
@@ -1354,7 +1354,7 @@ public class FluxUsingWhenTest {
 			return commitProbe.flux();
 		}
 
-		public Flux<Integer> commitError() {
+		Flux<Integer> commitError() {
 			this.commitProbe = PublisherProbe.of(
 					Flux.just(3, 2, 1)
 					    .delayElements(DELAY)
@@ -1364,18 +1364,18 @@ public class FluxUsingWhenTest {
 		}
 
 		@Nullable
-		public Flux<Integer> commitNull() {
+		Flux<Integer> commitNull() {
 			return null;
 		}
 
-		public Flux<Integer> rollback(Throwable error) {
+		Flux<Integer> rollback(Throwable error) {
 			this.rollbackProbe = PublisherProbe.of(
 					Flux.just(5, 4, 3, 2, 1)
 					    .log("rollback me thod used on: " + error, level, SignalType.ON_NEXT, SignalType.ON_COMPLETE));
 			return rollbackProbe.flux();
 		}
 
-		public Flux<Integer> rollbackDelay(Throwable error) {
+		Flux<Integer> rollbackDelay(Throwable error) {
 			this.rollbackProbe = PublisherProbe.of(
 					Flux.just(5, 4, 3, 2, 1)
 					    .delayElements(DELAY)
@@ -1383,7 +1383,7 @@ public class FluxUsingWhenTest {
 			return rollbackProbe.flux();
 		}
 
-		public Flux<Integer> rollbackError(Throwable error) {
+		Flux<Integer> rollbackError(Throwable error) {
 			this.rollbackProbe = PublisherProbe.of(
 					Flux.just(5, 4, 3, 2, 1)
 					    .delayElements(DELAY)
@@ -1393,18 +1393,18 @@ public class FluxUsingWhenTest {
 		}
 
 		@Nullable
-		public Flux<Integer> rollbackNull(Throwable error) {
+		Flux<Integer> rollbackNull(Throwable error) {
 			return null;
 		}
 
-		public Flux<Integer> cancel() {
+		Flux<Integer> cancel() {
 			this.cancelProbe = PublisherProbe.of(
 					Flux.just(5, 4, 3, 2, 1)
 					    .log("cancel method used", level, SignalType.ON_NEXT, SignalType.ON_COMPLETE));
 			return cancelProbe.flux();
 		}
 
-		public Flux<Integer> cancelError() {
+		Flux<Integer> cancelError() {
 			this.cancelProbe = PublisherProbe.of(
 					Flux.just(5, 4, 3, 2, 1)
 					    .delayElements(DELAY)
@@ -1414,7 +1414,7 @@ public class FluxUsingWhenTest {
 		}
 
 		@Nullable
-		public Flux<Integer> cancelNull() {
+		Flux<Integer> cancelNull() {
 			return null;
 		}
 	}

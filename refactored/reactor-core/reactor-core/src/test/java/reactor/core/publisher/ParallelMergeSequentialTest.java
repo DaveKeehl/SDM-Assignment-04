@@ -26,10 +26,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelMergeSequentialTest {
+class ParallelMergeSequentialTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.just(500, 300).parallel(10);
 		ParallelMergeSequential<Integer> test = new ParallelMergeSequential<>(source, 123, Queues.one());
 
@@ -39,7 +39,7 @@ public class ParallelMergeSequentialTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		LambdaSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				s -> s.request(2));
 		MergeSequentialMain<Integer>
@@ -60,7 +60,7 @@ public class ParallelMergeSequentialTest {
 	}
 
 	@Test
-	public void scanMainSubscriberDoneAfterNComplete() {
+    void scanMainSubscriberDoneAfterNComplete() {
 		LambdaSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				s -> s.request(2));
 
@@ -81,7 +81,7 @@ public class ParallelMergeSequentialTest {
 	}
 
 	@Test
-	public void scanMainSubscriberError() {
+    void scanMainSubscriberError() {
 		LambdaSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				s -> s.request(2));
 		MergeSequentialMain<Integer>
@@ -98,7 +98,7 @@ public class ParallelMergeSequentialTest {
 	}
 
 	@Test
-	public void scanInnerSubscriber() {
+    void scanInnerSubscriber() {
 		CoreSubscriber<Integer>
 				mainActual = new LambdaSubscriber<>(null, e -> { }, null, null);
 		MergeSequentialMain<Integer> main = new MergeSequentialMain<>(mainActual, 2,  123, Queues.small());

@@ -6,10 +6,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxErrorOnRequestTest {
+class FluxErrorOnRequestTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxErrorOnRequest test = new FluxErrorOnRequest(new IllegalStateException());
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
@@ -17,7 +17,7 @@ public class FluxErrorOnRequestTest {
 	}
 
 	@Test
-	public void scanSubscription() {
+    void scanSubscription() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		IllegalStateException error = new IllegalStateException();
 		FluxErrorOnRequest.ErrorSubscription test = new FluxErrorOnRequest.ErrorSubscription(actual, error);

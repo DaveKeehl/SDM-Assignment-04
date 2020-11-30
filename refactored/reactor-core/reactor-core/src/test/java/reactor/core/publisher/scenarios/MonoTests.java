@@ -49,10 +49,10 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 /**
  * @author Stephane Maldini
  */
-public class MonoTests {
+class MonoTests {
 
 	@Test
-	public void errorContinueOnMonoReduction() {
+    void errorContinueOnMonoReduction() {
 		AtomicReference<Tuple2<Class, Object>> ref = new AtomicReference<>();
 		StepVerifier.create(Flux.just(1, 0, 2)
 		                        .map(v -> 100 / v)
@@ -65,7 +65,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void discardLocalOrder() {
+    void discardLocalOrder() {
 		List<String> discardOrder = Collections.synchronizedList(new ArrayList<>(2));
 
 		StepVerifier.create(Mono.just(1)
@@ -81,7 +81,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testDoOnEachSignal() {
+    void testDoOnEachSignal() {
 		List<Signal<Integer>> signals = new ArrayList<>(4);
 		Mono<Integer> mono = Mono.just(1)
 		                         .doOnEach(signals::add);
@@ -97,7 +97,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testDoOnEachEmpty() {
+    void testDoOnEachEmpty() {
 		List<Signal<Integer>> signals = new ArrayList<>(4);
 		Mono<Integer> mono = Mono.<Integer>empty()
 		                         .doOnEach(signals::add);
@@ -112,7 +112,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testDoOnEachSignalWithError() {
+    void testDoOnEachSignalWithError() {
 		List<Signal<Integer>> signals = new ArrayList<>(4);
 		Mono<Integer> mono = Mono.<Integer>error(new IllegalArgumentException("foo"))
 				.doOnEach(signals::add);
@@ -127,14 +127,14 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testDoOnEachSignalNullConsumer() {
+    void testDoOnEachSignalNullConsumer() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.just(1).doOnEach(null);
 		});
 	}
 
 	@Test
-	public void testDoOnEachSignalToSubscriber() {
+    void testDoOnEachSignalToSubscriber() {
 		AssertSubscriber<Integer> peekSubscriber = AssertSubscriber.create();
 		Mono<Integer> mono = Mono.just(1)
 		                         .doOnEach(s -> s.accept(peekSubscriber));
@@ -150,7 +150,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testMonoThenManySupplier() {
+    void testMonoThenManySupplier() {
 		AssertSubscriber<String> ts = AssertSubscriber.create();
 		Flux<String> test = Mono.just(1).thenMany(Flux.defer(() -> Flux.just("A", "B")));
 
@@ -161,7 +161,7 @@ public class MonoTests {
 
 	// test issue https://github.com/reactor/reactor/issues/485
 	@Test
-	public void promiseOnErrorHandlesExceptions() throws Exception {
+    void promiseOnErrorHandlesExceptions() throws Exception {
 		CountDownLatch latch1 = new CountDownLatch(1);
 		CountDownLatch latch2 = new CountDownLatch(1);
 
@@ -182,7 +182,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void promiseOnAfter() throws Exception {
+    void promiseOnAfter() throws Exception {
 		String h = Mono.fromCallable(() -> {
 			Thread.sleep(400);
 			return "hello";
@@ -194,7 +194,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void promiseDelays() throws Exception {
+    void promiseDelays() throws Exception {
 		Tuple2<Long, String> h = Mono.delay(Duration.ofMillis(3000))
 		                             .log("time1")
 		                             .map(d -> "Spring wins")
@@ -207,7 +207,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testMono() throws Exception {
+    void testMono() throws Exception {
 		Sinks.One<String> promise = Sinks.one();
 		promise.emitValue("test", FAIL_FAST);
 		final CountDownLatch successCountDownLatch = new CountDownLatch(1);
@@ -220,7 +220,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testMonoAndFunction() {
+    void testMonoAndFunction() {
 		StepVerifier.create(Mono.just("source")
 		                        .zipWhen(t -> handle(t)))
 		            .expectNextMatches(pair -> pair.getT1().equals("source") && pair.getT2() == 6)
@@ -229,7 +229,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testMonoAndFunctionEmpty() {
+    void testMonoAndFunctionEmpty() {
 		StepVerifier.create(
 				Mono.<String>empty().zipWhen(MonoTests::handle))
 		            .expectComplete()
@@ -237,7 +237,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void testMonoAndFunctionRightSideEmpty() {
+    void testMonoAndFunctionRightSideEmpty() {
 		StepVerifier.create(
 				Mono.just("foo").zipWhen(t -> Mono.empty()))
 		            .expectComplete()
@@ -245,7 +245,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void fromFutureSupplier() {
+    void fromFutureSupplier() {
 		AtomicInteger source = new AtomicInteger();
 
 		Supplier<CompletableFuture<Integer>> supplier = () -> CompletableFuture.completedFuture(source.incrementAndGet());
@@ -263,7 +263,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void fromCompletionStageSupplier() {
+    void fromCompletionStageSupplier() {
 		AtomicInteger source = new AtomicInteger();
 
 		Supplier<CompletableFuture<Integer>> supplier = () -> CompletableFuture.completedFuture(source.incrementAndGet());
@@ -281,7 +281,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoCacheContextHistory() {
+    void monoCacheContextHistory() {
 		AtomicInteger contextFillCount = new AtomicInteger();
 		Mono<String> cached = Mono.deferContextual(Mono::just)
 		                          .map(ctx -> ctx.getOrDefault("a", "BAD"))
@@ -310,7 +310,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromMonoDoesntCallAssemblyHook() {
+    void monoFromMonoDoesntCallAssemblyHook() {
 		final Mono<Integer> source = Mono.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -325,7 +325,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromFluxWrappingMonoDoesntCallAssemblyHook() {
+    void monoFromFluxWrappingMonoDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.from(Mono.just(1).hide());
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -340,7 +340,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromCallableFluxCallsAssemblyHook() {
+    void monoFromCallableFluxCallsAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -355,7 +355,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromFluxCallsAssemblyHook() {
+    void monoFromFluxCallsAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1).hide();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -370,7 +370,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromPublisherCallsAssemblyHook() {
+    void monoFromPublisherCallsAssemblyHook() {
 		final Publisher<Integer> source = TestPublisher.create();
 		Assertions.assertThat(source).isNotInstanceOf(Flux.class); //smoke test this is a Publisher
 
@@ -386,7 +386,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromDirectMonoDoesntCallAssemblyHook() {
+    void monoFromDirectMonoDoesntCallAssemblyHook() {
 		final Mono<Integer> source = Mono.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -401,7 +401,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromDirectFluxWrappingMonoDoesntCallAssemblyHook() {
+    void monoFromDirectFluxWrappingMonoDoesntCallAssemblyHook() {
 		final Flux<Integer> source = Flux.from(Mono.just(1).hide());
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -416,7 +416,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromDirectCallableFluxCallsAssemblyHook() {
+    void monoFromDirectCallableFluxCallsAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1);
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -431,7 +431,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromDirectFluxCallsAssemblyHook() {
+    void monoFromDirectFluxCallsAssemblyHook() {
 		final Flux<Integer> source = Flux.just(1).hide();
 
 		//set the hook AFTER the original operators have been invoked (since they trigger assembly themselves)
@@ -446,7 +446,7 @@ public class MonoTests {
 	}
 
 	@Test
-	public void monoFromDirectPublisherCallsAssemblyHook() {
+    void monoFromDirectPublisherCallsAssemblyHook() {
 		final Publisher<Integer> source = TestPublisher.create();
 		Assertions.assertThat(source).isNotInstanceOf(Flux.class); //smoke test this is a Publisher
 

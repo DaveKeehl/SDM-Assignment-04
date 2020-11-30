@@ -32,7 +32,7 @@ import reactor.test.util.RaceTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class
+class
 FluxScanSeedTest extends FluxOperatorTest<String, String> {
 
 	@Override
@@ -78,14 +78,14 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxScanSeed<>(null, () -> 1, (a, b) -> a);
 		});
 	}
 
 	@Test
-	public void initialValueNull() {
+    void initialValueNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.scan(null, (a, b) -> a);
@@ -93,7 +93,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void accumulatorNull() {
+    void accumulatorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.scan(1, null);
@@ -101,7 +101,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -114,7 +114,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -145,7 +145,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void accumulatorThrows() {
+    void accumulatorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -161,7 +161,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void accumulatorReturnsNull() {
+    void accumulatorReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -174,7 +174,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void onNextAndCancelRaceDontPassNullToAccumulator() {
+    void onNextAndCancelRaceDontPassNullToAccumulator() {
 		AtomicBoolean accumulatorCheck = new AtomicBoolean(true);
 		final AssertSubscriber<Object> testSubscriber = AssertSubscriber.create();
 
@@ -196,7 +196,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void noRetainValueOnComplete() {
+    void noRetainValueOnComplete() {
 		final AssertSubscriber<Object> testSubscriber = AssertSubscriber.create();
 
 		FluxScanSeed.ScanSeedSubscriber<Integer, Integer> sub =
@@ -216,7 +216,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void noRetainValueOnError() {
+    void noRetainValueOnError() {
 		final AssertSubscriber<Object> testSubscriber = AssertSubscriber.create();
 
 		FluxScanSeed.ScanSeedSubscriber<Integer, Integer> sub =
@@ -236,7 +236,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxScanSeed<Integer, Integer> test = new FluxScanSeed<>(parent, () -> 0, (v1, v2) -> 1);
 
@@ -245,7 +245,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanCoordinator(){
+    void scanCoordinator(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxScanSeed.ScanSeedCoordinator<Integer, Integer> test =
 				new FluxScanSeed.ScanSeedCoordinator<>(actual, Flux.just(1), (v1, v2) -> v1, () -> 0);
@@ -258,7 +258,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxScanSeed.ScanSeedSubscriber<Integer, Integer> test = new FluxScanSeed.ScanSeedSubscriber<>(actual,
         		(i, j) -> i + j, 0);
@@ -275,7 +275,7 @@ FluxScanSeedTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void onlyConsumerPartOfRange() {
+    void onlyConsumerPartOfRange() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>create(sink -> {

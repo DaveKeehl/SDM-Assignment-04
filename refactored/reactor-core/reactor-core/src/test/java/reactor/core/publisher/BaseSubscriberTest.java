@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class BaseSubscriberTest {
+class BaseSubscriberTest {
 
 	@Test
-	public void partialRequestAndCancel() throws InterruptedException {
+    void partialRequestAndCancel() throws InterruptedException {
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicInteger lastValue = new AtomicInteger(0);
 
@@ -82,7 +82,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void onErrorCallbackNotImplemented() {
+    void onErrorCallbackNotImplemented() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -109,7 +109,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void onSubscribeErrorPropagatedToOnError() {
+    void onSubscribeErrorPropagatedToOnError() {
 		Flux<String> flux = Flux.just("foo");
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
@@ -140,7 +140,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void onSubscribeFatalThrown() {
+    void onSubscribeFatalThrown() {
 		Flux<String> flux = Flux.just("foo");
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
@@ -173,7 +173,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void onNextErrorPropagatedToOnError() {
+    void onNextErrorPropagatedToOnError() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
 		Flux<String> flux = Flux.just("foo");
@@ -204,7 +204,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void onCompleteErrorPropagatedToOnError() {
+    void onCompleteErrorPropagatedToOnError() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
 		Flux<String> flux = Flux.just("foo");
@@ -240,7 +240,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void finallyExecutesWhenHookOnCompleteFails() {
+    void finallyExecutesWhenHookOnCompleteFails() {
 		RuntimeException err = new IllegalArgumentException("hookOnComplete");
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
 		AtomicReference<Throwable> error = new AtomicReference<>();
@@ -277,7 +277,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void finallyExecutesWhenHookOnErrorFails() {
+    void finallyExecutesWhenHookOnErrorFails() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -315,7 +315,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void finallyExecutesWhenHookOnCancelFails() {
+    void finallyExecutesWhenHookOnCancelFails() {
 		RuntimeException err = new IllegalArgumentException("hookOnCancel");
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
 		AtomicReference<Throwable> error = new AtomicReference<>();
@@ -352,7 +352,7 @@ public class BaseSubscriberTest {
 	}
 
 	@Test
-	public void disposeCancels() throws InterruptedException {
+    void disposeCancels() throws InterruptedException {
 		AtomicReference<SignalType> onFinally = new AtomicReference<>();
 		CountDownLatch latch = new CountDownLatch(1);
 

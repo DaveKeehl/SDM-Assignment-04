@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, String> {
+class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected List<Scenario<String, String>> scenarios_operatorError() {
@@ -68,28 +68,28 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinctUntilChanged<>(null, v -> v, (k1, k2) -> true);
 		});
 	}
 
 	@Test
-	public void keyExtractorNull() {
+    void keyExtractorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().distinctUntilChanged(null);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().distinctUntilChanged(v -> v, null);
 		});
 	}
 
 	@Test
-	public void allDistinct() {
+    void allDistinct() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -102,7 +102,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void allDistinctBackpressured() {
+    void allDistinctBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -133,7 +133,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void someRepetition() {
+    void someRepetition() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 3, 3)
@@ -146,7 +146,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void someRepetitionBackpressured() {
+    void someRepetitionBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.just(1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 3, 3)
@@ -177,7 +177,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void withKeySelector() {
+    void withKeySelector() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -190,7 +190,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 	
 	@Test
-	public void withKeyComparator() {
+    void withKeyComparator() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -203,7 +203,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void keySelectorThrows() {
+    void keySelectorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -219,7 +219,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void keyComparatorThrows() {
+    void keyComparatorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -235,7 +235,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void allDistinctConditional() {
+    void allDistinctConditional() {
 		Sinks.Many<Integer> dp = Sinks.unsafe().many().multicast().directBestEffort();
 
 		AssertSubscriber<Integer> ts = dp.asFlux()
@@ -252,14 +252,14 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxDistinctUntilChanged<Integer, Integer> test = new FluxDistinctUntilChanged<>(Flux.just(1), v -> v, (k1, k2) -> true);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		DistinctUntilChangedSubscriber<String, Integer> test = new DistinctUntilChangedSubscriber<>(
 			actual, String::hashCode, Objects::equals);
@@ -276,7 +276,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		DistinctUntilChangedConditionalSubscriber<String, Integer> test = new DistinctUntilChangedConditionalSubscriber<>(
@@ -294,7 +294,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void distinctUntilChangedDefaultWithHashcodeCollisions() {
+    void distinctUntilChangedDefaultWithHashcodeCollisions() {
 		Object foo = new Object() {
 			@Override
 			public int hashCode() {
@@ -317,7 +317,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void distinctUntilChangedDefaultDoesntRetainObjects() throws InterruptedException {
+    void distinctUntilChangedDefaultDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefault> test = Flux.range(1, 100)
 		                                                  .map(i -> retainedDetector.tracked(new DistinctDefault(i)))
@@ -336,7 +336,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void distinctUntilChangedDefaultErrorDoesntRetainObjects() throws InterruptedException {
+    void distinctUntilChangedDefaultErrorDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefaultError> test = Flux.range(1, 100)
 		                                                  .map(i -> retainedDetector.tracked(new DistinctDefaultError(i)))
@@ -356,7 +356,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void distinctUntilChangedDefaultCancelDoesntRetainObjects() throws InterruptedException {
+    void distinctUntilChangedDefaultCancelDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefaultCancel> test = Flux.range(1, 100)
 		                                                  .map(i -> retainedDetector.tracked(new DistinctDefaultCancel(i)))
@@ -376,7 +376,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCompleteOnSubscriber() {
+    void doesntRetainObjectsWithForcedCompleteOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 
@@ -397,7 +397,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCompleteOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedCompleteOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 
@@ -418,7 +418,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedErrorOnSubscriber() {
+    void doesntRetainObjectsWithForcedErrorOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 
@@ -442,7 +442,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedErrorOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedErrorOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 
@@ -466,7 +466,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCancelOnSubscriber() {
+    void doesntRetainObjectsWithForcedCancelOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 
@@ -487,7 +487,7 @@ public class FluxDistinctUntilChangedTest extends FluxOperatorTest<String, Strin
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCancelOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedCancelOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		AtomicReference<DistinctDefaultCancel> fooRef = new AtomicReference<>(retainedDetector.tracked(new DistinctDefaultCancel(0)));
 

@@ -38,12 +38,12 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.test.publisher.TestPublisher.Violation.CLEANUP_ON_TERMINATE;
 
-public class MonoCollectListTest {
+class MonoCollectListTest {
 
 	static final Logger LOGGER = Loggers.getLogger(MonoCollectListTest.class);
 
 	@Test
-	public void aFluxCanBeSorted(){
+    void aFluxCanBeSorted(){
 		List<Integer> vals = Flux.just(43, 32122, 422, 321, 43, 443311)
 		                         .collectSortedList()
 		                         .block();
@@ -52,7 +52,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void aFluxCanBeSorted2(){
+    void aFluxCanBeSorted2(){
 		List<Integer> vals = Flux.just(1, 2, 3, 4)
 		                         .collectSortedList(Comparator.reverseOrder())
 		                         .block();
@@ -61,7 +61,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void aFluxCanBeSorted3(){
+    void aFluxCanBeSorted3(){
 		StepVerifier.create(Flux.just(43, 32122, 422, 321, 43, 443311)
 		                        .sort(Comparator.reverseOrder()))
 		            .expectNext(443311, 32122, 422, 321, 43, 43)
@@ -69,7 +69,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void aFluxCanBeSorted4(){
+    void aFluxCanBeSorted4(){
 		StepVerifier.create(Flux.just(43, 32122, 422, 321, 43, 443311)
 		                        .sort())
 		            .expectNext(43, 43, 321, 422, 32122, 443311)
@@ -77,7 +77,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void collectListOne() {
+    void collectListOne() {
 		StepVerifier.create(Flux.just(1)
 		                        .collectList())
 		            .assertNext(d -> assertThat(d).containsExactly(1))
@@ -86,7 +86,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void collectListEmpty() {
+    void collectListEmpty() {
 		StepVerifier.create(Flux.empty()
 		                        .collectList())
 		            .assertNext(d -> assertThat(d).isEmpty())
@@ -95,7 +95,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void collectListCallable() {
+    void collectListCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .collectList())
@@ -105,14 +105,14 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void collectListError() {
+    void collectListError() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .collectList())
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void collectListErrorHide() {
+    void collectListErrorHide() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .hide()
 		                        .collectList())
@@ -121,7 +121,7 @@ public class MonoCollectListTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1523
 	@Test
-	public void protocolErrorsOnNext() {
+    void protocolErrorsOnNext() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(testPublisher.flux().collectList())
@@ -136,7 +136,7 @@ public class MonoCollectListTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1523
 	@Test
-	public void protocolErrorsOnError() {
+    void protocolErrorsOnError() {
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(testPublisher.flux().collectList())
@@ -150,7 +150,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    Flux<Integer> source = Flux.just(1);
 		MonoCollectList<Integer> test = new MonoCollectList<>(source);
 
@@ -160,7 +160,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void scanBufferAllSubscriber() {
+    void scanBufferAllSubscriber() {
 		CoreSubscriber<List<String>> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoCollectListSubscriber<String> test = new MonoCollectListSubscriber<>(actual);
 		Subscription parent = Operators.emptySubscription();
@@ -182,7 +182,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		Mono<List<Integer>> test = Flux.range(1, 10)
 		                               .hide()
 		                               .map(i -> {
@@ -198,7 +198,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		Mono<List<Long>> test = Flux.interval(Duration.ofMillis(100))
 		                            .take(10)
 		                            .collectList();
@@ -213,7 +213,7 @@ public class MonoCollectListTest {
 
 
 	@Test
-	public void discardCancelNextRace() {
+    void discardCancelNextRace() {
 		AtomicInteger doubleDiscardCounter = new AtomicInteger();
 		Context discardingContext = Operators.enableOnDiscard(null, o -> {
 			AtomicBoolean ab = (AtomicBoolean) o;
@@ -242,7 +242,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void discardCancelCompleteRace() {
+    void discardCancelCompleteRace() {
 		AtomicInteger doubleDiscardCounter = new AtomicInteger();
 		Context discardingContext = Operators.enableOnDiscard(null, o -> {
 			AtomicBoolean ab = (AtomicBoolean) o;
@@ -269,7 +269,7 @@ public class MonoCollectListTest {
 	}
 
 	@Test
-	public void emptyCallable() {
+    void emptyCallable() {
 		class EmptyFluxCallable extends Flux<Object> implements Callable<Object> {
 			@Override
 			public Object call() {

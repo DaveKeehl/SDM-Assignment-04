@@ -28,10 +28,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoRepeatTest {
+class MonoRepeatTest {
 
 	@Test
-	public void timesInvalid() {
+    void timesInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Mono.never()
 					.repeat(-1);
@@ -39,7 +39,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void zeroRepeat() {
+    void zeroRepeat() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -49,7 +49,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void oneRepeat() {
+    void oneRepeat() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -59,7 +59,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void oneRepeatBackpressured() {
+    void oneRepeatBackpressured() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -72,7 +72,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void twoRepeat() {
+    void twoRepeat() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -82,7 +82,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormal() {
+    void twoRepeatNormal() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -94,7 +94,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormalSupplier() {
+    void twoRepeatNormalSupplier() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -108,7 +108,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatBackpressured() {
+    void twoRepeatBackpressured() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Mono.fromCallable(i::incrementAndGet)
@@ -123,7 +123,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void repeatInfinite() {
+    void repeatInfinite() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger i = new AtomicInteger();
@@ -138,7 +138,7 @@ public class MonoRepeatTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoRepeat<Integer> test = new MonoRepeat<>(Mono.just(1), 5L);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

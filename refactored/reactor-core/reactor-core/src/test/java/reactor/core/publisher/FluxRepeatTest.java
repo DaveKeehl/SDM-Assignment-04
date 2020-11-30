@@ -31,10 +31,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxRepeatTest {
+class FluxRepeatTest {
 
 	@Test
-	public void timesInvalid() {
+    void timesInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.repeat(-1);
@@ -42,7 +42,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void zeroRepeat() {
+    void zeroRepeat() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .repeat(0))
 		            .expectNextCount(10)
@@ -50,7 +50,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void oneRepeat() {
+    void oneRepeat() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .repeat(1))
 		            .expectNext(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -59,7 +59,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void oneRepeatBackpressured() {
+    void oneRepeatBackpressured() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .repeat(1),
 				0)
@@ -78,7 +78,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeat() {
+    void twoRepeat() {
 		StepVerifier.create(Flux.range(1, 5)
 		                        .repeat(2))
 		            .expectNext(1, 2, 3, 4, 5)
@@ -88,7 +88,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormal() {
+    void twoRepeatNormal() {
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .repeat(2)
 		                        .count())
@@ -98,7 +98,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatBackpressured() {
+    void twoRepeatBackpressured() {
 		StepVerifier.create(Flux.range(1, 5)
 		    .repeat(2), 0)
 		            .expectSubscription()
@@ -115,7 +115,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void repeatInfinite() {
+    void repeatInfinite() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 2)
@@ -131,7 +131,7 @@ public class FluxRepeatTest {
 
 
 	@Test
-	public void twoRepeatNormalSupplier() {
+    void twoRepeatNormalSupplier() {
 		AtomicBoolean bool = new AtomicBoolean(true);
 
 		StepVerifier.create(Flux.range(1, 4)
@@ -144,7 +144,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormalSupplier2() {
+    void twoRepeatNormalSupplier2() {
 		AtomicBoolean bool = new AtomicBoolean(false);
 
 		StepVerifier.create(Flux.range(1, 4)
@@ -154,7 +154,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormalSupplier3() {
+    void twoRepeatNormalSupplier3() {
 		AtomicBoolean bool = new AtomicBoolean(true);
 
 		StepVerifier.create(Flux.range(1, 4)
@@ -166,7 +166,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void twoRepeatNormalSupplier4() {
+    void twoRepeatNormalSupplier4() {
 		AtomicBoolean bool = new AtomicBoolean(false);
 
 		StepVerifier.create(Flux.range(1, 4)
@@ -176,7 +176,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void onLastAssemblyOnce() {
+    void onLastAssemblyOnce() {
 		AtomicInteger onAssemblyCounter = new AtomicInteger();
 		String hookKey = UUID.randomUUID().toString();
 		try {
@@ -196,7 +196,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxRepeat<Integer> test = new FluxRepeat<>(parent, 4);
 
@@ -205,7 +205,7 @@ public class FluxRepeatTest {
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		Flux<Integer> source = Flux.just(1);
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxRepeat.RepeatSubscriber<Integer> test = new FluxRepeat.RepeatSubscriber<>(source, actual, 3);

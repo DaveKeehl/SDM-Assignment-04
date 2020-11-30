@@ -31,10 +31,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Flux.just;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxOnErrorResumeTest {
+class FluxOnErrorResumeTest {
 /*
 	@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(FluxOnErrorResume.class);
 		
 		ctb.addRef("source", Flux.never());
@@ -44,7 +44,7 @@ public class FluxOnErrorResumeTest {
 	}*/
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -57,7 +57,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -88,7 +88,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> Flux.range(
@@ -102,7 +102,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorFiltered() {
+    void errorFiltered() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).onErrorResume(e -> e.getMessage()
@@ -116,7 +116,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorMap() {
+    void errorMap() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>error(new Exception()).onErrorMap(d -> new RuntimeException("forced" + " " + "failure"))
@@ -129,7 +129,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorBackpressured() {
+    void errorBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> Flux.range(
@@ -161,7 +161,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void someFirst() {
+    void someFirst() {
 		Sinks.Many<Integer> tp = Sinks.many().multicast().onBackpressureBuffer();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -183,7 +183,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void someFirstBackpressured() {
+    void someFirstBackpressured() {
 		Sinks.Many<Integer> tp = Sinks.many().multicast().onBackpressureBuffer();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(10);
@@ -211,7 +211,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void nextFactoryThrows() {
+    void nextFactoryThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> {
@@ -226,7 +226,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void nextFactoryReturnsNull() {
+    void nextFactoryReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).onErrorResume(v -> null)
@@ -238,7 +238,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorPropagated() {
+    void errorPropagated() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Exception exception = new NullPointerException("forced failure");
@@ -253,7 +253,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void errorPublisherCanReturn() {
+    void errorPublisherCanReturn() {
 		StepVerifier.create(Flux.<String>error(new IllegalStateException("boo")).onErrorReturn(
 				"recovered"))
 		            .expectNext("recovered")
@@ -261,7 +261,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void returnFromIterableError() {
+    void returnFromIterableError() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .map(t -> {
 			                        if (t == 3) {
@@ -275,7 +275,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void switchFromIterableError() {
+    void switchFromIterableError() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .map(t -> {
 			                        if (t == 3) {
@@ -289,7 +289,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void switchFromCreateError() {
+    void switchFromCreateError() {
 		Flux<String> source = Flux.create(s -> {
 					s.next("Three");
 					s.next("Two");
@@ -308,7 +308,7 @@ public class FluxOnErrorResumeTest {
 		            .verifyComplete();
 	}
 	@Test
-	public void switchFromCreateError2() {
+    void switchFromCreateError2() {
 		Flux<String> source = Flux.create(s -> {
 					s.next("Three");
 					s.next("Two");
@@ -324,14 +324,14 @@ public class FluxOnErrorResumeTest {
 	static final class TestException extends Exception {}
 
 	@Test
-	public void mapError() {
+    void mapError() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorMap(TestException.class, e -> new Exception("test")))
 				.verifyErrorMessage("test");
 	}
 
 	@Test
-	public void onErrorResumeErrorPredicate() {
+    void onErrorResumeErrorPredicate() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorResume(TestException.class, e -> Mono.just(1)))
 				.expectNext(1)
@@ -339,14 +339,14 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void onErrorResumeErrorPredicateNot() {
+    void onErrorResumeErrorPredicateNot() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorResume(RuntimeException.class, e -> Mono.just(1)))
 				.verifyError(TestException.class);
 	}
 
 	@Test
-	public void onErrorReturnErrorPredicate() {
+    void onErrorReturnErrorPredicate() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorReturn(TestException.class, 1))
 				.expectNext(1)
@@ -354,13 +354,13 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void onErrorReturnErrorPredicateNot() {
+    void onErrorReturnErrorPredicateNot() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorReturn(RuntimeException.class, 1))
 				.verifyError(TestException.class);
 	}
 	@Test
-	public void onErrorReturnErrorPredicate2() {
+    void onErrorReturnErrorPredicate2() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorReturn(TestException.class::isInstance, 1))
 				.expectNext(1)
@@ -368,14 +368,14 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void onErrorReturnErrorPredicateNot2() {
+    void onErrorReturnErrorPredicateNot2() {
 		StepVerifier.create(Flux.<Integer>error(new TestException())
 				.onErrorReturn(RuntimeException.class::isInstance, 1))
 				.verifyError(TestException.class);
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = just(1);
 		FluxOnErrorResume<Integer> test = new FluxOnErrorResume<>(parent, (e) -> just(10));
 
@@ -384,7 +384,7 @@ public class FluxOnErrorResumeTest {
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Integer> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxOnErrorResume.ResumeSubscriber<Integer> test = new FluxOnErrorResume.ResumeSubscriber<>(actual, (e) -> just(10));

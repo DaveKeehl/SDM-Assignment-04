@@ -34,11 +34,11 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxRefCountGraceTest {
+class FluxRefCountGraceTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1738
 	@Test
-	public void avoidUnexpectedDoubleCancel() {
+    void avoidUnexpectedDoubleCancel() {
 		AtomicBoolean unexpectedCancellation = new AtomicBoolean();
 
 		Flux<Integer> test = Flux.range(0, 100)
@@ -58,7 +58,7 @@ public class FluxRefCountGraceTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1385
 	@Test
-	public void sizeOneCanRetry() {
+    void sizeOneCanRetry() {
 		AtomicInteger subCount = new AtomicInteger();
 
 		final Flux<Object> flux = Flux
@@ -84,7 +84,7 @@ public class FluxRefCountGraceTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1385
 	@Test
-	public void sizeOneCanRepeat() {
+    void sizeOneCanRepeat() {
 		AtomicInteger subCount = new AtomicInteger();
 
 		final Flux<Object> flux = Flux
@@ -112,7 +112,7 @@ public class FluxRefCountGraceTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1260
 	@Test
-	public void raceSubscribeAndCancel() {
+    void raceSubscribeAndCancel() {
 		final Flux<String> testFlux = Flux.<String>create(fluxSink -> fluxSink.next("Test").complete())
 				.replay(1)
 				.refCount(1, Duration.ofMillis(50));
@@ -140,7 +140,7 @@ public class FluxRefCountGraceTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1260
 	@Test
-	public void raceSubscribeAndCancelNoTimeout() {
+    void raceSubscribeAndCancelNoTimeout() {
 		final Flux<String> testFlux = Flux.<String>create(fluxSink -> fluxSink.next("Test").complete())
 				.replay(1)
 				.refCount(1, Duration.ofMillis(0));
@@ -167,7 +167,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.error(new IllegalStateException("boom"))
 		                        .publish()
 				                .refCount(1, Duration.ofMillis(500)))
@@ -175,7 +175,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void upstreamCompletes() {
+    void upstreamCompletes() {
 		Flux<Integer> p = Flux.range(1, 5).publish().refCount(1, Duration.ofMillis(100));
 
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
@@ -194,7 +194,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void upstreamCompletesTwoSubscribers() {
+    void upstreamCompletesTwoSubscribers() {
 		Flux<Integer> p = Flux.range(1, 5).publish().refCount(2, Duration.ofMillis(100));
 
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
@@ -210,7 +210,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void subscribersComeAndGoBelowThreshold() {
+    void subscribersComeAndGoBelowThreshold() {
 		Flux<Integer> p = Flux.range(1, 5).publish().refCount(2, Duration.ofMillis(500));
 
 		Disposable r = p.subscribe();
@@ -233,7 +233,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void testFusion() {
+    void testFusion() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .replay()
 		                        .refCount(1, Duration.ofSeconds(1)))
@@ -244,7 +244,7 @@ public class FluxRefCountGraceTest {
 
 
 	@Test
-	public void doesntDisconnectAfterRefCountZeroAndQuickResubscribe()
+    void doesntDisconnectAfterRefCountZeroAndQuickResubscribe()
 			throws InterruptedException {
 		AtomicLong subscriptionCount = new AtomicLong();
 		AtomicReference<SignalType> termination = new AtomicReference<>();
@@ -293,7 +293,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void doesDisconnectAfterRefCountZeroAndSlowResubscribe()
+    void doesDisconnectAfterRefCountZeroAndSlowResubscribe()
 			throws InterruptedException {
 		AtomicLong subscriptionCount = new AtomicLong();
 		AtomicReference<SignalType> termination = new AtomicReference<>();
@@ -342,7 +342,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void shouldNotRetainSubscriptionToSourceWhenComplete() throws Exception {
+    void shouldNotRetainSubscriptionToSourceWhenComplete() throws Exception {
 		VirtualTimeScheduler scheduler = VirtualTimeScheduler.create();
 		Duration gracePeriod = Duration.ofMillis(10);
 		Flux<String> f = Flux.just("hello world")
@@ -364,7 +364,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ConnectableFlux<Integer> parent = Flux.just(10).publish();
 		FluxRefCountGrace<Integer> test = new FluxRefCountGrace<Integer>(parent, 17, Duration.ofSeconds(1), Schedulers.single());
 
@@ -374,7 +374,7 @@ public class FluxRefCountGraceTest {
 	}
 
 	@Test
-	public void scanInner(){
+    void scanInner(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		FluxRefCountGrace<Integer> parent = new FluxRefCountGrace<>(Flux.just(10).publish(), 17, Duration.ofSeconds(1), Schedulers.single());
 

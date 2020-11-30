@@ -46,10 +46,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxSpecTests {
+class FluxSpecTests {
 
 	@Test
-	public void fluxInitialValueAvailableOnceIfBroadcasted() {
+    void fluxInitialValueAvailableOnceIfBroadcasted() {
 //		"A deferred Flux with an initial value makes that value available once if broadcasted"
 //		given: "a composable with an initial value"
 		Flux<String> stream = Flux.just("test")
@@ -68,7 +68,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void deferredFluxInitialValueLaterAvailableUpToLongMax() throws InterruptedException {
+    void deferredFluxInitialValueLaterAvailableUpToLongMax() throws InterruptedException {
 //		"A deferred Flux with an initial value makes that value available later up to Long.MAX "
 //		given: "a composable with an initial value"
 		AtomicReference<Throwable> e = new AtomicReference<>();
@@ -96,7 +96,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxInitialValueCanBeConsumedMultipleTimes() {
+    void fluxInitialValueCanBeConsumedMultipleTimes() {
 //	    "A deferred Flux with initial values can be consumed multiple times"
 // 		given: "a composable with an initial value"
 		Flux<String> stream = Flux.just("test", "test2", "test3")
@@ -112,7 +112,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanFilterTerminalStates() {
+    void fluxCanFilterTerminalStates() {
 //		"A deferred Flux can filter terminal states"
 //		given: "a composable with an initial value"
 		Flux<String> stream = Flux.just("test");
@@ -132,7 +132,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanListenForTerminalStates() {
+    void fluxCanListenForTerminalStates() {
 //	"A deferred Flux can listen for terminal states"
 //		given: "a composable with an initial value"
 		Flux<String> stream = Flux.just("test");
@@ -151,7 +151,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeTranslatedToList() {
+    void fluxCanBeTranslatedToList() {
 //		"A deferred Flux can be translated into a list"
 //		given: "a composable with an initial value"
 		Flux<String> stream = Flux.just("test", "test2", "test3");
@@ -165,7 +165,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeTranslatedToCompletableQueue() {
+    void fluxCanBeTranslatedToCompletableQueue() {
 //		"A deferred Flux can be translated into a completable queue"
 //		given:	"a composable with an initial value"
 		Flux<String> stream = Flux.just("test", "test2", "test3")
@@ -190,7 +190,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void readQueuesFromPublishers() {
+    void readQueuesFromPublishers() {
 //		"Read Queues from Publishers"
 //		given: "Iterable publisher of 1000 to read queue"
 		List<Integer> thousand = new ArrayList<>(1000);
@@ -224,7 +224,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanSampleValuesOverTime() {
+    void fluxCanSampleValuesOverTime() {
 		StepVerifier.withVirtualTime(this::scenario_rangeTimedSample)
 		            .thenAwait(Duration.ofSeconds(4))
 		            .expectNext(39)
@@ -239,7 +239,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanSampleValuesOverTimeTake() {
+    void fluxCanSampleValuesOverTimeTake() {
 		StepVerifier.withVirtualTime(this::scenario_rangeTimedTake)
 		            .thenAwait(Duration.ofSeconds(4))
 		            .expectNext(39)
@@ -247,7 +247,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeEnforcedToDispatchValuesDistinctFromPredecessors() {
+    void fluxCanBeEnforcedToDispatchValuesDistinctFromPredecessors() {
 //		"A Flux can be enforced to dispatch values distinct from their immediate predecessors"
 //		given:"a composable with values 1 to 3 with duplicates"
 		Flux<Integer> s = Flux.fromIterable(Arrays.asList(1, 1, 2, 2, 3));
@@ -262,7 +262,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeEnforcedToDispatchValuesWithKeysDistinctFromPredecessors() {
+    void fluxCanBeEnforcedToDispatchValuesWithKeysDistinctFromPredecessors() {
 //		"A Flux can be enforced to dispatch values with keys distinct from their immediate predecessors keys"
 //		given:"a composable with values 1 to 5 with duplicate keys"
 		Flux<Integer> s = Flux.fromIterable(Arrays.asList(2, 4, 3, 5, 2, 5));
@@ -277,7 +277,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeEnforcedToDispatchDistinctValues() {
+    void fluxCanBeEnforcedToDispatchDistinctValues() {
 //		"A Flux can be enforced to dispatch distinct values"
 //		given:"a composable with values 1 to 4 with duplicates"
 		Flux<Integer> s = Flux.fromIterable(Arrays.asList(1, 2, 3, 1, 2, 3, 4));
@@ -293,7 +293,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanBeEnforcedToDispatchValuesHavingDistinctKeys() {
+    void fluxCanBeEnforcedToDispatchValuesHavingDistinctKeys() {
 //		"A Flux can be enforced to dispatch values having distinct keys"
 //		given: "a composable with values 1 to 4 with duplicate keys"
 		Flux<Integer> s = Flux.fromIterable(Arrays.asList(1, 2, 3, 1, 2, 3, 4));
@@ -309,7 +309,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanCheckForValueSatisfyingPredicate() {
+    void fluxCanCheckForValueSatisfyingPredicate() {
 //		"A Flux can check if there is a value satisfying a predicate"
 //		given: "a composable with values 1 to 5"
 		Flux<Integer> s = Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
@@ -338,7 +338,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxInitialValuesArePassedToConsumers() {
+    void fluxInitialValuesArePassedToConsumers() {
 //		"A Flux"s initial values are passed to consumers"
 //		given: "a composable with values 1 to 5 inclusive"
 		Flux<Integer> stream = Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
@@ -352,7 +352,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void streamStateRelatedSignalsCanBeConsumed() {
+    void streamStateRelatedSignalsCanBeConsumed() {
 //		"Stream "state" related signals can be consumed"
 //		given: "a composable with values 1 to 5 inclusive"
 		Flux<Integer> stream = Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
@@ -377,7 +377,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void streamCanEmitDefaultValueIfEmpty() {
+    void streamCanEmitDefaultValueIfEmpty() {
 //		"Stream can emit a default value if empty"
 //		given: "a composable that only completes"
 		Flux<String> stream = Flux.empty();
@@ -395,7 +395,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void acceptedValuesArePassedToRegisteredConsumer() {
+    void acceptedValuesArePassedToRegisteredConsumer() {
 //		"Accepted values are passed to a registered Consumer"
 //		given: "a composable with a registered consumer"
 		Sinks.Many<Integer> composable = Sinks.many().multicast().onBackpressureBuffer();
@@ -417,7 +417,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void acceptedErrorsArePassedToRegisteredConsumer() {
+    void acceptedErrorsArePassedToRegisteredConsumer() {
 //		"Accepted errors are passed to a registered Consumer"
 //		given: "a composable with a registered consumer of RuntimeExceptions"
 		Sinks.Many<Integer> composable =
@@ -439,7 +439,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenAcceptedEventIsIterableSplitCanIterateOverValues() {
+    void whenAcceptedEventIsIterableSplitCanIterateOverValues() {
 //		"When the accepted event is Iterable, split can iterate over values"
 //		given: "a composable with a known number of values"
 		Sinks.Many<Iterable<String>> d = Sinks.many().multicast().onBackpressureBuffer();
@@ -455,7 +455,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxValuesCanBeMapped() {
+    void fluxValuesCanBeMapped() {
 //		"A Flux"s values can be mapped"
 //		given: "a source composable with a mapping function"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -471,7 +471,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void streamValuesCanBeExploded() {
+    void streamValuesCanBeExploded() {
 //		Stream"s values can be exploded
 //			given: "a source composable with a mapMany function"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -491,7 +491,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void multipleStreamValuesCanBeMerged() {
+    void multipleStreamValuesCanBeMerged() {
 //		"Multiple Stream"s values can be merged"
 //		given: "source composables to merge, buffer and tap"
 		Sinks.Many<Integer> source1 = Sinks.many().multicast().onBackpressureBuffer();
@@ -519,7 +519,7 @@ public class FluxSpecTests {
 
 
 	@Test
-	public void aDifferentWayOfConsuming() {
+    void aDifferentWayOfConsuming() {
 //		"A different way of consuming"
 //		given: "source composables to merge, buffer and tap"
 		Flux<Integer> odds = Flux.just(1, 3, 5, 7, 9);
@@ -546,7 +546,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void combineLatestStreamData() {
+    void combineLatestStreamData() {
 //		"Combine latest stream data"
 //		given: "source composables to combine, buffer and tap"
 		Sinks.Many<String> w1 = Sinks.many().multicast().onBackpressureBuffer();
@@ -588,7 +588,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void simpleConcat() {
+    void simpleConcat() {
 //		"A simple concat"
 //		given: "source composables to concated, buffer and tap"
 		Flux<Integer> firsts = Flux.just(1, 2, 3);
@@ -642,7 +642,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void mappedConcat() {
+    void mappedConcat() {
 //		"A mapped concat"
 //		given: "source composables to concatMap, buffer and tap"
 		Flux<Integer> firsts = Flux.just(1, 2, 3);
@@ -665,7 +665,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void streamCanBeCounted() {
+    void streamCanBeCounted() {
 //		"Stream can be counted"
 //		given: "source composables to count and tap"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -684,7 +684,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanReturnValueAtCertainIndex() {
+    void fluxCanReturnValueAtCertainIndex() {
 //		"A Flux can return a value at a certain index"
 //		given: "a composable with values 1 to 5"
 		Flux<Integer> s = Flux.just(1, 2, 3, 4, 5);
@@ -710,7 +710,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxCanReturnValueAtCertainIndexOrDefaultValue() {
+    void fluxCanReturnValueAtCertainIndexOrDefaultValue() {
 //		"A Flux can return a value at a certain index or a default value"
 //		given: "a composable with values 1 to 5"
 		Flux<Integer> s = Flux.just(1, 2, 3, 4, 5);
@@ -730,7 +730,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxValuesCanBeFiltered() {
+    void fluxValuesCanBeFiltered() {
 //		"A Flux"s values can be filtered"
 //		given: "a source composable with a filter that rejects odd values"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -769,7 +769,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenMappingFunctionThrowsMappedComposableAcceptsError() {
+    void whenMappingFunctionThrowsMappedComposableAcceptsError() {
 //		"When a mapping function throws an exception, the mapped composable accepts the error"
 //		given: "a source composable with a mapping function that throws an error"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -794,7 +794,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenProcessorIsStreamed() {
+    void whenProcessorIsStreamed() {
 //		"When a processor is streamed"
 //		given: "a source composable and a async downstream"
 		Sinks.Many<Integer> source = Sinks.many().replay().all();
@@ -827,7 +827,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenFilterFunctionThrowsFilteredComposableAcceptsError() {
+    void whenFilterFunctionThrowsFilteredComposableAcceptsError() {
 //		"When a filter function throws an exception, the filtered composable accepts the error"
 //		given: "a source composable with a filter function that throws an error"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -850,7 +850,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void knownSetOfValuesCanBeReduced() {
+    void knownSetOfValuesCanBeReduced() {
 //		"A known set of values can be reduced"
 //		given: "a composable with a known set of values"
 		Flux<Integer> source = Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5));
@@ -870,7 +870,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenReducingKnownSetOfValuesOnlyFinalValueIsPassedToConsumers() {
+    void whenReducingKnownSetOfValuesOnlyFinalValueIsPassedToConsumers() {
 //		"When reducing a known set of values, only the final value is passed to consumers"
 //		given: "a composable with a known set of values and a reduce function"
 		Mono<Integer> reduced = Flux.just(1, 2, 3, 4, 5).reduce(new Reduction());
@@ -883,7 +883,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenReducingKnownNumberOfValuesOnlyFinalValueIsPassedToConsumers() {
+    void whenReducingKnownNumberOfValuesOnlyFinalValueIsPassedToConsumers() {
 //		"When reducing a known number of values, only the final value is passed to consumers"
 //		given: "a composable with a known number of values and a reduce function"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -904,7 +904,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void knownNumberOfValuesCanBeReduced() {
+    void knownNumberOfValuesCanBeReduced() {
 //		"A known number of values can be reduced"
 //		given: "a composable that will accept 5 values and a reduce function"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -924,7 +924,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenKnownNumberOfValuesIsReducedOnlyFinalValueMadeAvailable() {
+    void whenKnownNumberOfValuesIsReducedOnlyFinalValueMadeAvailable() {
 //		"When a known number of values is being reduced, only the final value is made available"
 //		given: "a composable that will accept 2 values and a reduce function"
 		Sinks.Many<Integer> source = Sinks.many().multicast().onBackpressureBuffer();
@@ -948,7 +948,7 @@ public class FluxSpecTests {
 
 
 	@Test
-	public void whenUnknownNumberOfValueScannedEachReductionPassedToConsumer() {
+    void whenUnknownNumberOfValueScannedEachReductionPassedToConsumer() {
 //		"When an unknown number of values is being scanned, each reduction is passed to a consumer"
 //		given: "a composable with a reduce function"
 		Sinks.Many<Integer> source =
@@ -978,7 +978,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void reduceWillAccumulateListOfAcceptedValues() {
+    void reduceWillAccumulateListOfAcceptedValues() {
 		Sinks.Many<Integer> source =
 				Sinks.many().multicast().onBackpressureBuffer();
 
@@ -992,7 +992,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void whenUnknownNumberOfValuesReducedEachReductionPassedToConsumerOnWindow() {
+    void whenUnknownNumberOfValuesReducedEachReductionPassedToConsumerOnWindow() {
 //		"When an unknown number of values is being reduced, each reduction is passed to a consumer on window"
 //		given: "a composable with a reduce function"
 		Sinks.Many<Integer> source =
@@ -1020,7 +1020,7 @@ public class FluxSpecTests {
 
 
 	@Test
-	public void countRange(){
+    void countRange(){
 		StepVerifier.create(Flux.range(1, 10).count())
 	                .expectNext(10L)
 	                .verifyComplete();
@@ -1033,7 +1033,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void delayItems() {
+    void delayItems() {
 		StepVerifier.withVirtualTime(this::scenario_delayItems)
 		            .thenAwait(Duration.ofMillis(2000))
 		            .assertNext(s -> assertThat(s).containsExactly(1, 2))
@@ -1055,7 +1055,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxItemCanBeShiftedByTime() {
+    void fluxItemCanBeShiftedByTime() {
 		StepVerifier.withVirtualTime(this::scenario_fluxItemCanBeShiftedByTime)
 		            .thenAwait(Duration.ofMillis(15_000))
 		            .expectNext(150L)
@@ -1074,7 +1074,7 @@ public class FluxSpecTests {
 	}
 
 	@Test
-	public void fluxItemCanBeShiftedByTime2() {
+    void fluxItemCanBeShiftedByTime2() {
 		StepVerifier.withVirtualTime(this::scenario_fluxItemCanBeShiftedByTime2)
 		            .thenAwait(Duration.ofMillis(15_000))
 		            .expectNext(150L)
@@ -1083,7 +1083,7 @@ public class FluxSpecTests {
 
 	@Test
 	@Timeout(10)
-	public void collectFromMultipleThread1() throws Exception {
+	void collectFromMultipleThread1() throws Exception {
 		Sinks.Many<Integer> head = Sinks.many().multicast().onBackpressureBuffer();
 		AtomicInteger sum = new AtomicInteger();
 

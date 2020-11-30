@@ -26,24 +26,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxTakeLastTest {
+class FluxTakeLastTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxTakeLast<>(null, 1);
 		});
 	}
 
 	@Test
-	public void negativeNumber() {
+    void negativeNumber() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().takeLast(-1);
 		});
 	}
 
 	@Test
-	public void takeNone() {
+    void takeNone() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).takeLast(0).subscribe(ts);
@@ -54,7 +54,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeNoneBackpressured() {
+    void takeNoneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).takeLast(0).subscribe(ts);
@@ -65,7 +65,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeOne() {
+    void takeOne() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).takeLast(1).subscribe(ts);
@@ -76,7 +76,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeOneBackpressured() {
+    void takeOneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).takeLast(1).subscribe(ts);
@@ -93,7 +93,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeSome() {
+    void takeSome() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).takeLast(5).subscribe(ts);
@@ -104,7 +104,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeSomeBackpressured() {
+    void takeSomeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).takeLast(5).subscribe(ts);
@@ -133,7 +133,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeAll() {
+    void takeAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).takeLast(20).subscribe(ts);
@@ -144,7 +144,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void takeAllBackpressured() {
+    void takeAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).takeLast(20).subscribe(ts);
@@ -174,7 +174,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1, 2, 3, 4, 5);
 		FluxTakeLast<Integer> test = new FluxTakeLast<>(parent, 3);
 
@@ -183,7 +183,7 @@ public class FluxTakeLastTest {
 	}
 
 	@Test
-    public void scanTakeLastManySubscriber() {
+    void scanTakeLastManySubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeLast.TakeLastManySubscriber<Integer> test = new FluxTakeLast.TakeLastManySubscriber<>(actual, 5);
         Subscription parent = Operators.emptySubscription();
@@ -204,7 +204,7 @@ public class FluxTakeLastTest {
     }
 
 	@Test
-    public void scanTakeLastZeroSubscriber() {
+    void scanTakeLastZeroSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeLast.TakeLastZeroSubscriber<Integer> test = new FluxTakeLast.TakeLastZeroSubscriber<>(actual);
         Subscription parent = Operators.emptySubscription();

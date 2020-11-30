@@ -29,10 +29,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxSampleFirstTest {
+class FluxSampleFirstTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -79,7 +79,7 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -104,7 +104,7 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void throttlerError() {
+    void throttlerError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -129,7 +129,7 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void throttlerThrows() {
+    void throttlerThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -151,7 +151,7 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void throttlerReturnsNull() {
+    void throttlerReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -176,7 +176,7 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void sampleFirstTime(){
+    void sampleFirstTime(){
 		StepVerifier.withVirtualTime(this::scenario_sampleFirstTime)
 		            .thenAwait(Duration.ofSeconds(10))
 	                .expectNext(1, 6)
@@ -184,14 +184,14 @@ public class FluxSampleFirstTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxSampleFirst<Integer, Integer> test = new FluxSampleFirst<>(Flux.just(1), i -> Flux.just(i));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSampleFirst.SampleFirstMain<Integer, Integer> test =
         		new FluxSampleFirst.SampleFirstMain<>(actual, i -> Flux.just(i));
@@ -213,7 +213,7 @@ public class FluxSampleFirstTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSampleFirst.SampleFirstMain<Integer, Integer> main =
         		new FluxSampleFirst.SampleFirstMain<>(actual, i -> Flux.just(i));

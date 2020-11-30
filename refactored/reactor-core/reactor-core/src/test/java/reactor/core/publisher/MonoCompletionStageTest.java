@@ -28,11 +28,11 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class
+class
 MonoCompletionStageTest {
 
 	@Test
-	public void cancelThenFutureFails() {
+    void cancelThenFutureFails() {
 		CompletableFuture<Integer> future = new CompletableFuture<>();
 		AtomicReference<Subscription> subRef = new AtomicReference<>();
 
@@ -53,7 +53,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void cancelFutureImmediatelyCancelledLoop() {
+    void cancelFutureImmediatelyCancelledLoop() {
 		for (int i = 0; i < 10000; i++) {
 			CompletableFuture<Integer> future = new CompletableFuture<>();
 			Mono<Integer> mono = Mono
@@ -73,7 +73,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void cancelFutureDelayedCancelledLoop() {
+    void cancelFutureDelayedCancelledLoop() {
 		for (int i = 0; i < 500; i++) {
 			CompletableFuture<Integer> future = new CompletableFuture<>();
 			Mono<Integer> mono = Mono
@@ -94,7 +94,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void cancelFutureTimeoutCancelledLoop() {
+    void cancelFutureTimeoutCancelledLoop() {
 		for (int i = 0; i < 500; i++) {
 			CompletableFuture<Integer> future = new CompletableFuture<>();
 			Mono<Integer> mono = Mono
@@ -115,7 +115,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void fromCompletableFuture(){
+    void fromCompletableFuture(){
 		CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> "helloFuture");
 
 		assertThat(Mono.fromFuture(f)
@@ -123,7 +123,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void fromCompletionStage() {
+    void fromCompletionStage() {
 		CompletionStage<String> completionStage = CompletableFuture.supplyAsync(() -> "helloFuture");
 
 		assertThat(Mono.fromCompletionStage(completionStage).block())
@@ -131,7 +131,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void stackOverflowGoesToOnErrorDropped() {
+    void stackOverflowGoesToOnErrorDropped() {
 		CompletableFuture<Integer> future = new CompletableFuture<>();
 		future.complete(1);
 		Mono<Integer> simple = Mono.fromFuture(future);
@@ -149,7 +149,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		CompletionStage<String> completionStage = CompletableFuture.supplyAsync(() -> "helloFuture");
 		MonoCompletionStage<String> test = new MonoCompletionStage<>(completionStage);
 
@@ -158,7 +158,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void lateFailureIsPropagatedDirectly() {
+    void lateFailureIsPropagatedDirectly() {
 		Throwable expected = new IllegalStateException("boom");
 		CompletableFuture<Integer> future = new CompletableFuture<>();
 
@@ -169,7 +169,7 @@ MonoCompletionStageTest {
 	}
 
 	@Test
-	public void actionFailureCompletionExceptionIsUnwrapped() {
+    void actionFailureCompletionExceptionIsUnwrapped() {
 		final CompletableFuture<String> future = new CompletableFuture<>();
 
 		Mono.fromCompletionStage(future.whenComplete((s, throwable) -> {

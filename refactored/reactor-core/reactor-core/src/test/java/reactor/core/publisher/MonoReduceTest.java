@@ -37,7 +37,7 @@ import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoReduceTest extends ReduceOperatorTest<String, String>{
+class MonoReduceTest extends ReduceOperatorTest<String, String>{
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -61,7 +61,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	private static final Logger LOG = LoggerFactory.getLogger(MonoReduceTest.class);
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(MonoReduce.class);
 
 		ctb.addRef("source", Mono.never());
@@ -71,7 +71,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 */
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -84,7 +84,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
 
 		Flux.range(1, 10)
@@ -103,7 +103,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void single() {
+    void single() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1)
@@ -116,7 +116,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().reduce((a, b) -> a + b)
@@ -128,7 +128,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).reduce((a, b) -> a + b)
@@ -141,7 +141,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void aggregatorThrows() {
+    void aggregatorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -157,7 +157,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void aggregatorReturnsNull() {
+    void aggregatorReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -171,7 +171,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 
 	/* see issue #230 */
 	@Test
-	public void should_reduce_to_10_events() {
+    void should_reduce_to_10_events() {
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger countNulls = new AtomicInteger();
 		Flux.range(0, 10).flatMap(x ->
@@ -201,7 +201,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void onNextAndCancelRace() {
+    void onNextAndCancelRace() {
 		final AssertSubscriber<Integer> testSubscriber = AssertSubscriber.create();
 
 		MonoReduce.ReduceSubscriber<Integer> sub =
@@ -219,7 +219,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void discardAccumulatedOnCancel() {
+    void discardAccumulatedOnCancel() {
 		final List<Object> discarded = new ArrayList<>();
 		final AssertSubscriber<Object> testSubscriber = new AssertSubscriber<>(
 				Operators.enableOnDiscard(Context.empty(), discarded::add));
@@ -240,7 +240,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		final List<Object> discarded = new ArrayList<>();
 		final AssertSubscriber<Object> testSubscriber = new AssertSubscriber<>(
 				Operators.enableOnDiscard(Context.empty(), discarded::add));
@@ -260,7 +260,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void noRetainValueOnComplete() {
+    void noRetainValueOnComplete() {
 		final AssertSubscriber<Object> testSubscriber = AssertSubscriber.create();
 
 		MonoReduce.ReduceSubscriber<Integer> sub =
@@ -281,7 +281,7 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void noRetainValueOnError() {
+    void noRetainValueOnError() {
 		final AssertSubscriber<Object> testSubscriber = AssertSubscriber.create();
 
 		MonoReduce.ReduceSubscriber<Integer> sub =
@@ -301,14 +301,14 @@ public class MonoReduceTest extends ReduceOperatorTest<String, String>{
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoReduce<Integer> test = new MonoReduce<>(Flux.just(1, 2, 3), (a, b) -> a + b);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoReduce.ReduceSubscriber<String> test = new MonoReduce.ReduceSubscriber<>(actual, (s1, s2) -> s1 + s2);
 		Subscription parent = Operators.emptySubscription();

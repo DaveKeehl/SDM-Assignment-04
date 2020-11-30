@@ -40,10 +40,10 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author Stephane Maldini
  */
-public class DefaultStepVerifierBuilderTests {
+class DefaultStepVerifierBuilderTests {
 
 	@Test
-	public void subscribedTwice() {
+	void subscribedTwice() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		DefaultVerifySubscriber<String> s =
@@ -60,7 +60,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void subscribedTwiceDetectsSpecialSubscription() {
+	void subscribedTwiceDetectsSpecialSubscription() {
 		Flux<String> flux = Flux.never();
 
 		DefaultVerifySubscriber<String> s =
@@ -76,7 +76,7 @@ public class DefaultStepVerifierBuilderTests {
 
 	@Test
 	@Timeout(4)
-	public void manuallyManagedVirtualTime() {
+	void manuallyManagedVirtualTime() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		try {
 			VirtualTimeScheduler.getOrSet(vts);
@@ -107,7 +107,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void suppliedVirtualTimeButNoSourceDoesntEnableScheduler() {
+	void suppliedVirtualTimeButNoSourceDoesntEnableScheduler() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		new DefaultStepVerifierBuilder<String>(StepVerifierOptions.create()
@@ -129,7 +129,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void noSourceSupplierFailsFastWhenAttemptingVerify() {
+	void noSourceSupplierFailsFastWhenAttemptingVerify() {
 		StepVerifier stepVerifier = new DefaultStepVerifierBuilder<String>(StepVerifierOptions.create(), null).expectComplete();
 
 		assertThatIllegalArgumentException().isThrownBy(stepVerifier::verify)
@@ -137,7 +137,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void testConflateOnTaskThenSubscriptionEvents() {
+	void testConflateOnTaskThenSubscriptionEvents() {
 		List<Event<String>> script = Arrays.asList(
 				new TaskEvent<String>(() -> {}, "A"),
 				new TaskEvent<String>(() -> {}, "B"),
@@ -161,7 +161,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void testNoConflateOnSignalThenSubscriptionEvents() {
+	void testNoConflateOnSignalThenSubscriptionEvents() {
 		List<Event<String>> script = Arrays.asList(
 				new TaskEvent<String>(() -> {}, "A"),
 				new WaitEvent<String>(Duration.ofSeconds(5), "B"),
@@ -185,7 +185,7 @@ public class DefaultStepVerifierBuilderTests {
 	}
 
 	@Test
-	public void testConflateChangesDescriptionAndRemoveAs() {
+	void testConflateChangesDescriptionAndRemoveAs() {
 		List<Event<String>> script = Arrays.asList(
 				new SignalEvent<String>((s,v) -> Optional.empty(), "A"),
 				new SignalEvent<String>((s,v) -> Optional.empty(), "B"),

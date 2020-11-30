@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 import reactor.util.function.Tuple2;
 
-public class MonoTimestampTest {
+class MonoTimestampTest {
 
 	Mono<Tuple2<Long, String>> scenario_aMonoCanBeTimestamped(){
 		return Mono.just("test")
@@ -29,7 +29,7 @@ public class MonoTimestampTest {
 	}
 
 	@Test
-	public void aMonoCanBeTimestamped(){
+    void aMonoCanBeTimestamped(){
 		StepVerifier.withVirtualTime(this::scenario_aMonoCanBeTimestamped, 0)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .thenRequest(1)

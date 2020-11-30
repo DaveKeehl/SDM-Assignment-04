@@ -47,7 +47,7 @@ import reactor.util.concurrent.Queues;
 // test count did not regress.
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class OnDiscardShouldNotLeakTest {
+class OnDiscardShouldNotLeakTest {
 
 	// add DiscardScenarios here to test more operators
 	private static final DiscardScenario[] SCENARIOS = new DiscardScenario[] {
@@ -88,7 +88,7 @@ public class OnDiscardShouldNotLeakTest {
 			{ true, true }
 	};
 
-	public static Collection<Object[]> data() {
+	static Collection<Object[]> data() {
 		List<Object[]> parameters = new ArrayList<>(CONDITIONAL_AND_FUSED.length * SCENARIOS.length);
 		for (DiscardScenario scenario : SCENARIOS) {
 			for (boolean[] booleans : CONDITIONAL_AND_FUSED) {
@@ -135,7 +135,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureMultipleSubscribersSupportWithNoLeaksWhenRacingCancelAndOnNextAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureMultipleSubscribersSupportWithNoLeaksWhenRacingCancelAndOnNextAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		installScheduler(conditional, fused, discardScenario);
 
 		int subscriptionsNumber = discardScenario.subscriptionsNumber;
@@ -215,7 +215,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureMultipleSubscribersSupportWithNoLeaksWhenPopulatedQueueRacingCancelAndOnNextAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureMultipleSubscribersSupportWithNoLeaksWhenPopulatedQueueRacingCancelAndOnNextAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isGreaterThan(1);
 
 		installScheduler(conditional, fused, discardScenario);
@@ -293,7 +293,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnNext(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnNext(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isOne();
 
 		installScheduler(conditional, fused, discardScenario);
@@ -347,7 +347,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnComplete(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnComplete(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isOne();
 
 		installScheduler(conditional, fused, discardScenario);
@@ -398,7 +398,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnError(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureNoLeaksPopulatedQueueAndRacingCancelAndOnError(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isOne();
 
 		installScheduler(conditional, fused, discardScenario);
@@ -453,7 +453,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureNoLeaksPopulatedQueueAndRacingCancelAndOverflowError(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureNoLeaksPopulatedQueueAndRacingCancelAndOverflowError(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isOne();
 
 		installScheduler(conditional, fused, discardScenario);
@@ -514,7 +514,7 @@ public class OnDiscardShouldNotLeakTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void ensureNoLeaksPopulatedQueueAndRacingCancelAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
+	void ensureNoLeaksPopulatedQueueAndRacingCancelAndRequest(boolean conditional, boolean fused, DiscardScenario discardScenario) {
 		Assumptions.assumeThat(discardScenario.subscriptionsNumber).isOne();
 
 		installScheduler(conditional, fused, discardScenario);

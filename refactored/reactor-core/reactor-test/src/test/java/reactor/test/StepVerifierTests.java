@@ -62,10 +62,10 @@ import static reactor.test.publisher.TestPublisher.Violation.REQUEST_OVERFLOW;
  * @author Stephane Maldini
  * @author Simon Basle
  */
-public class StepVerifierTests {
+class StepVerifierTests {
 
 	@Test
-	public void expectationErrorWithGenericValueFormatterBypassesExtractor() {
+	void expectationErrorWithGenericValueFormatterBypassesExtractor() {
 		Flux<String> flux = Flux.just("foobar");
 		StepVerifierOptions options = StepVerifierOptions
 				.create()
@@ -79,7 +79,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectationErrorWithSpecificValueFormatterExtractsSignal() {
+	void expectationErrorWithSpecificValueFormatterExtractsSignal() {
 		Flux<String> flux = Flux.just("foobar");
 		StepVerifierOptions options = StepVerifierOptions
 				.create()
@@ -93,7 +93,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectationErrorWithoutValueFormatter() {
+	void expectationErrorWithoutValueFormatter() {
 		Flux<String> flux = Flux.just("foobar");
 		StepVerifierOptions options = StepVerifierOptions.create();
 
@@ -105,7 +105,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectInvalidNextsWithCustomConverter() {
+	void expectInvalidNextsWithCustomConverter() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifierOptions options = StepVerifierOptions.create()
@@ -120,7 +120,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNext() {
+	void expectNext() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux)
@@ -131,7 +131,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectInvalidNext() {
+	void expectInvalidNext() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -144,7 +144,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextAsync() {
+	void expectNextAsync() {
 		Flux<String> flux = Flux.just("foo", "bar")
 		                        .publishOn(Schedulers.parallel());
 
@@ -156,7 +156,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNexts() {
+	void expectNexts() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux)
@@ -166,7 +166,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextsMoreThan6() {
+	void expectNextsMoreThan6() {
 		Flux<Integer> flux = Flux.range(1, 7);
 
 		StepVerifier.create(flux)
@@ -176,7 +176,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectInvalidNexts() {
+	void expectInvalidNexts() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -188,7 +188,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextMatches() {
+	void expectNextMatches() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux)
@@ -199,7 +199,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectInvalidNextMatches() {
+	void expectInvalidNextMatches() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -212,7 +212,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void consumeNextWith() throws Exception {
+	void consumeNextWith() throws Exception {
 		Flux<String> flux = Flux.just("bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -228,7 +228,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void consumeNextWith2() throws Exception {
+	void consumeNextWith2() throws Exception {
 		Flux<String> flux = Flux.just("bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -244,7 +244,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void assertNext() throws Exception {
+	void assertNext() throws Exception {
 		Flux<String> flux = Flux.just("foo");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -256,7 +256,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void missingNext() {
+	void missingNext() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -268,7 +268,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void missingNextAsync() {
+	void missingNextAsync() {
 		Flux<String> flux = Flux.just("foo", "bar")
 		                        .publishOn(Schedulers.parallel());
 
@@ -281,7 +281,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCount() {
+	void expectNextCount() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux, 0)
@@ -294,7 +294,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountLots() {
+	void expectNextCountLots() {
 		Flux<Integer> flux = Flux.range(0, 1_000_000);
 
 		StepVerifier.create(flux, 0)
@@ -309,7 +309,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountZeroBeforeExpectNext() {
+	void expectNextCountZeroBeforeExpectNext() {
 		StepVerifier.create(Flux.just("foo", "bar"))
 				.expectNextCount(0)
 				.expectNext("foo", "bar")
@@ -318,7 +318,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountLotsError() {
+	void expectNextCountLotsError() {
 		Flux<Integer> flux = Flux.range(0, 1_000_000);
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -334,7 +334,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountLotsUnderRequestErrorReportedAtEnd() {
+	void expectNextCountLotsUnderRequestErrorReportedAtEnd() {
 		Flux<Integer> flux = Flux.range(0, 1_000_000);
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -351,7 +351,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCount2() {
+	void expectNextCount2() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -364,7 +364,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCount3() {
+	void expectNextCount3() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux)
@@ -375,7 +375,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountZero() {
+	void expectNextCountZero() {
 		Flux<String> flux = Flux.empty();
 
 		StepVerifier.create(flux)
@@ -385,7 +385,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountError() {
+	void expectNextCountError() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -397,7 +397,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void error() {
+	void error() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -408,7 +408,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorClass() {
+	void errorClass() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -419,7 +419,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorMessage() {
+	void errorMessage() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException(
 				                        "Error message")));
@@ -431,7 +431,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorMatches() {
+	void errorMatches() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -442,7 +442,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorMatchesInvalid() {
+	void errorMatchesInvalid() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -455,7 +455,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorSatisfies() {
+	void errorSatisfies() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -466,7 +466,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void errorSatisfiesInvalid() {
+	void errorSatisfiesInvalid() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -480,7 +480,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void consumeErrorWith() {
+	void consumeErrorWith() {
 		Flux<String> flux = Flux.just("foo")
 		                        .concatWith(Mono.error(new IllegalArgumentException()));
 
@@ -498,7 +498,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void request() {
+	void request() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux, 1)
@@ -511,7 +511,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void cancel() {
+	void cancel() {
 		Flux<String> flux = Flux.just("foo", "bar", "baz");
 
 		StepVerifier.create(flux)
@@ -521,7 +521,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void cancelInvalid() {
+	void cancelInvalid() {
 		Flux<String> flux = Flux.just("bar", "baz");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -533,7 +533,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void thenCancel_cancelsAfterFirst() {
+	void thenCancel_cancelsAfterFirst() {
 		TestPublisher<Long> publisher = TestPublisher.create();
 		AtomicBoolean downStreamCancelled = new AtomicBoolean();
 		AtomicBoolean asserted = new AtomicBoolean();
@@ -581,7 +581,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void thenCancel_cancelsAfterFirst2() {
+	void thenCancel_cancelsAfterFirst2() {
 		TestPublisher<Long> publisher = TestPublisher.create();
 		AtomicBoolean downStreamCancelled = new AtomicBoolean();
 		AtomicBoolean asserted = new AtomicBoolean();
@@ -611,7 +611,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void subscribedTwice() {
+	void subscribedTwice() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier s = StepVerifier.create(flux)
@@ -624,7 +624,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyThenOnCompleteRange() {
+	void verifyThenOnCompleteRange() {
 		Sinks.Empty<Void> p = Sinks.empty();
 
 		Flux<String> flux = Flux.range(0, 3)
@@ -640,7 +640,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyDuration() {
+	void verifyDuration() {
 		long interval = 200;
 		Flux<String> flux = Flux.interval(Duration.ofMillis(interval))
 		                        .map(l -> "foo")
@@ -657,7 +657,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyDurationTimeout() {
+	void verifyDurationTimeout() {
 		Flux<String> flux = Flux.interval(Duration.ofMillis(200))
 		                        .map(l -> "foo")
 		                        .take(2);
@@ -672,7 +672,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNeverWithExpectTimeout() {
+	void verifyNeverWithExpectTimeout() {
 		Flux<String> flux = Flux.never();
 
 		StepVerifier.create(flux)
@@ -681,7 +681,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifySubscription() {
+	void verifySubscription() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -692,7 +692,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNextAs() {
+	void verifyNextAs() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		StepVerifier.create(flux)
@@ -702,7 +702,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNextAsErrorTooFewInIterable() {
+	void verifyNextAsErrorTooFewInIterable() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -714,7 +714,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNextAsErrorTooManyInIterable() {
+	void verifyNextAsErrorTooManyInIterable() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -727,7 +727,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNextAs2() {
+	void verifyNextAs2() {
 		final List<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 		Flux<Integer> flux = Flux.fromStream(source.stream());
@@ -739,7 +739,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNextAsWithEmptyFlux() {
+	void verifyNextAsWithEmptyFlux() {
 	    final List<Integer> source = Arrays.asList(1,2,3);
 		Flux<Integer> flux = Flux.empty();
 
@@ -753,7 +753,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyRecordMatches() {
+	void verifyRecordMatches() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		StepVerifier.create(flux)
@@ -765,7 +765,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyRecordMatchesError() {
+	void verifyRecordMatchesError() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -779,7 +779,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyRecordNullError() {
+	void verifyRecordNullError() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -791,7 +791,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyRecordMatchesError2() {
+	void verifyRecordMatchesError2() {
 		Flux<String> flux = Flux.just("foo", "bar", "foobar");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -804,7 +804,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyRecordWith2() {
+	void verifyRecordWith2() {
 		final List<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 		Flux<Integer> flux = Flux.fromStream(source.stream());
@@ -818,7 +818,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifySubscriptionError() {
+	void verifySubscriptionError() {
 		Mono<String> flux = Mono.just("foo");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -831,7 +831,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyConsumeSubscription() {
+	void verifyConsumeSubscription() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -842,7 +842,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyConsumeSubscriptionAfterFirst() {
+	void verifyConsumeSubscriptionAfterFirst() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -853,7 +853,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyConsumeSubscriptionError() {
+	void verifyConsumeSubscriptionError() {
 		Mono<String> flux = Mono.just("foo");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -866,7 +866,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusion() {
+	void verifyFusion() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -877,7 +877,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionError() {
+	void verifyFusionError() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> Mono.just("foo")
 				                      .hide()
@@ -891,7 +891,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNoFusion() {
+	void verifyNoFusion() {
 		Mono<String> flux = Mono.just("foo")
 		                        .hide();
 
@@ -903,7 +903,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyNoFusionError() {
+	void verifyNoFusionError() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux.hide())
@@ -914,7 +914,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeRequest() {
+	void verifyFusionModeRequest() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -925,7 +925,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeExpected() {
+	void verifyFusionModeExpected() {
 		Mono<String> flux = Mono.just("foo");
 
 		StepVerifier.create(flux)
@@ -936,7 +936,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeExpectedError() {
+	void verifyFusionModeExpectedError() {
 		Mono<String> flux = Mono.just("foo");
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -949,7 +949,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeExpected2() {
+	void verifyFusionModeExpected2() {
 		Flux<String> flux = Flux.just("foo", "bar")
 		                        .publishOn(Schedulers.immediate());
 
@@ -961,7 +961,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeExpectedCancel() {
+	void verifyFusionModeExpectedCancel() {
 		Flux<String> flux = Flux.just("foo", "bar");
 
 		StepVerifier.create(flux)
@@ -972,7 +972,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyFusionModeExpected2Error() {
+	void verifyFusionModeExpected2Error() {
 		Flux<String> flux = Flux.just("foo", "bar")
 		                        .publishOn(Schedulers.immediate());
 
@@ -986,7 +986,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnSubscribe() {
+	void verifyVirtualTimeOnSubscribe() {
 		StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofDays(2))
 		                                       .map(l -> "foo"))
 		            .thenAwait(Duration.ofDays(3))
@@ -996,7 +996,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnError() {
+	void verifyVirtualTimeOnError() {
 		StepVerifier.withVirtualTime(() -> Mono.never()
 		                                       .timeout(Duration.ofDays(2))
 		                                       .map(l -> "foo"))
@@ -1006,7 +1006,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeNoEvent() {
+	void verifyVirtualTimeNoEvent() {
 		StepVerifier.withVirtualTime(() -> Mono.just("foo")
 		                                       .delaySubscription(Duration.ofDays(2)))
 		            .expectSubscription()
@@ -1017,7 +1017,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeNoEventError() {
+	void verifyVirtualTimeNoEventError() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.withVirtualTime(() -> Mono.just("foo")
 		                                       .delaySubscription(Duration.ofDays(2)))
@@ -1031,7 +1031,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeNoEventInterval() {
+	void verifyVirtualTimeNoEventInterval() {
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(3))
 		                                       .take(2))
 		            .expectSubscription()
@@ -1045,7 +1045,7 @@ public class StepVerifierTests {
 
 	@Test
 	//TODO shouldn't there be only one error rather than Multiple exceptions?
-	public void verifyVirtualTimeNoEventIntervalError() {
+	void verifyVirtualTimeNoEventIntervalError() {
 		Throwable thrown = catchThrowable(() ->
 				StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(3))
 				                                       .take(2))
@@ -1066,7 +1066,7 @@ public class StepVerifierTests {
 
 	//see https://github.com/reactor/reactor-core/issues/1913
 	@Test
-	public void verifyExpectTimeoutFailsWhenSomeEvent() {
+	void verifyExpectTimeoutFailsWhenSomeEvent() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Mono.just("foo"))
 				                              .expectTimeout(Duration.ofMillis(1300))
@@ -1076,7 +1076,7 @@ public class StepVerifierTests {
 
 	//see https://github.com/reactor/reactor-core/issues/1913
 	@Test
-	public void verifyVirtualTimeExpectTimeoutFailsWhenSomeEvent() {
+	void verifyVirtualTimeExpectTimeoutFailsWhenSomeEvent() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.withVirtualTime(() -> Mono.just("foo"))
 				                              .expectTimeout(Duration.ofDays(3))
@@ -1085,7 +1085,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyExpectTimeoutNever() {
+	void verifyExpectTimeoutNever() {
 		StepVerifier.create(Mono.never())
 		            .expectSubscription()
 		            .expectTimeout(Duration.ofSeconds(1))
@@ -1093,7 +1093,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeExpectTimeoutNever() {
+	void verifyVirtualTimeExpectTimeoutNever() {
 		StepVerifier.withVirtualTime(Mono::never)
 		            .expectSubscription()
 		            .expectTimeout(Duration.ofDays(10000))
@@ -1101,7 +1101,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyExpectTimeoutDoesntCareAboutSubscription() {
+	void verifyExpectTimeoutDoesntCareAboutSubscription() {
 		StepVerifier.withVirtualTime(Mono::never)
 		            .expectTimeout(Duration.ofDays(10000))
 		            .verify();
@@ -1112,7 +1112,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnNext() {
+	void verifyVirtualTimeOnNext() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo", "bar", "foobar")
 		                                       .delayElements(Duration.ofHours(1))
 		                                       .log())
@@ -1127,7 +1127,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnComplete() {
+	void verifyVirtualTimeOnComplete() {
 		StepVerifier.withVirtualTime(() -> Flux.empty()
 		                                       .delaySubscription(Duration.ofHours(1))
 		                                       .log())
@@ -1137,7 +1137,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnNextInterval() {
+	void verifyVirtualTimeOnNextInterval() {
 		Duration r;
 
 		r = StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(3))
@@ -1155,14 +1155,14 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeNoLookupFails() {
+	void verifyVirtualTimeNoLookupFails() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> StepVerifier.withVirtualTime(Flux::empty, null, 1))
 	            .withMessage("vtsLookup");
 	}
 
 	@Test
-	public void verifyVirtualTimeNoScenarioFails() {
+	void verifyVirtualTimeNoScenarioFails() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> StepVerifier.withVirtualTime(null, 1))
 	            .withMessage("scenarioSupplier");
@@ -1170,7 +1170,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 3000, unit = TimeUnit.MILLISECONDS)
-	public void verifyVirtualTimeOnNextIntervalManual() {
+	void verifyVirtualTimeOnNextIntervalManual() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofMillis(1000), vts)
@@ -1182,7 +1182,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnErrorInterval() {
+	void verifyVirtualTimeOnErrorInterval() {
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(3))
 		                                       .map(d -> "t" + d),
 				0)
@@ -1199,7 +1199,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyVirtualTimeOnErrorAsync() {
+	void verifyVirtualTimeOnErrorAsync() {
 		VirtualTimeScheduler vts = VirtualTimeScheduler.create();
 		StepVerifier.withVirtualTime(() -> Flux.just(123)
 		                                       .subscribeOn(vts),
@@ -1213,7 +1213,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000, unit = TimeUnit.MILLISECONDS)
-	public void verifyCreatedForAllSchedulerUsesVirtualTime() {
+	void verifyCreatedForAllSchedulerUsesVirtualTime() {
 		//a timeout will occur if virtual time isn't used
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofSeconds(3))
 		                                       .map(d -> "t" + d),
@@ -1228,7 +1228,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noSignalRealTime() {
+	void noSignalRealTime() {
 		Duration verifyDuration = StepVerifier.create(Mono.never())
 		                                      .expectSubscription()
 		                                      .expectTimeout(Duration.ofSeconds(1))
@@ -1239,7 +1239,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 500, unit = TimeUnit.MILLISECONDS)
-	public void noSignalVirtualTime() {
+	void noSignalVirtualTime() {
 		StepVerifier.withVirtualTime(Mono::never, 1)
 		            .expectSubscription()
 		            .expectTimeout(Duration.ofSeconds(100))
@@ -1247,7 +1247,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void longDelayAndNoTermination() {
+	void longDelayAndNoTermination() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo", "bar")
 		                                       .delayElements(Duration.ofSeconds(5))
 		                                       .concatWith(Mono.never()),
@@ -1263,7 +1263,7 @@ public class StepVerifierTests {
 
 	//source: https://stackoverflow.com/questions/58486417/how-to-verify-with-stepverifier-that-provided-mono-did-not-completed
 	@Test
-	public void expectTimeoutSmokeTest() {
+	void expectTimeoutSmokeTest() {
 		Mono<String> neverMono = Mono.never();
 		Mono<String> completingMono = Mono.empty();
 
@@ -1279,7 +1279,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyTimeoutSmokeTest() {
+	void verifyTimeoutSmokeTest() {
 		Mono<String> neverMono = Mono.never();
 		Mono<String> completingMono = Mono.empty();
 
@@ -1292,7 +1292,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void thenAwaitThenCancelWaitsForDuration() {
+	void thenAwaitThenCancelWaitsForDuration() {
 		Duration verifyDuration = StepVerifier.create(Flux.just("foo", "bar")
 		                                                  .delayElements(Duration.ofMillis(500)))
 		                                      .expectSubscription()
@@ -1306,7 +1306,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testThenConsumeWhile() {
+	void testThenConsumeWhile() {
 		StepVerifier.create(Flux.range(3, 8))
 		            .expectNextMatches(first -> first == 3)
 		            .thenConsumeWhile(v -> v < 9)
@@ -1318,7 +1318,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testThenConsumeWhileWithConsumer() {
+	void testThenConsumeWhileWithConsumer() {
 		LongAdder count = new LongAdder();
 
 		StepVerifier.create(Flux.range(3, 8))
@@ -1334,7 +1334,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testThenConsumeWhileFails() {
+	void testThenConsumeWhileFails() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.range(3, 8))
 			            .expectNextMatches(first -> first == 3)
@@ -1348,7 +1348,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testExpectRecordedMatches() {
+	void testExpectRecordedMatches() {
 		List<Integer> expected = Arrays.asList(1,2);
 
 		StepVerifier.create(Flux.just(1,2))
@@ -1360,7 +1360,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testExpectRecordedMatchesTwice() {
+	void testExpectRecordedMatchesTwice() {
 		List<Integer> expected1 = Arrays.asList(1,2);
 		List<Integer> expected2 = Arrays.asList(3,4);
 
@@ -1376,7 +1376,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testExpectRecordedMatchesWithoutComplete() {
+	void testExpectRecordedMatchesWithoutComplete() {
 		List<Integer> expected = Arrays.asList(1,2);
 
 		TestPublisher<Integer> publisher = TestPublisher.createCold();
@@ -1392,7 +1392,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testWithDescription() {
+	void testWithDescription() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo", "bar", "baz"), 3)
 			            .expectNext("foo")
@@ -1409,7 +1409,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testWithDescriptionAndScenarioName() {
+	void testWithDescriptionAndScenarioName() {
 		StepVerifierOptions options = StepVerifierOptions.create()
 		                                                 .initialRequest(3)
 		                                                 .scenarioName("some scenario name");
@@ -1431,7 +1431,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void testDurationFailureWithScenarioName() {
+	void testDurationFailureWithScenarioName() {
 		StepVerifierOptions options = StepVerifierOptions.create()
 		                                                 .scenarioName("some scenario name");
 		StepVerifier stepVerifier = StepVerifier
@@ -1445,7 +1445,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnUnexpectedErrorSignal() {
+	void noCancelOnUnexpectedErrorSignal() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.error(new IllegalArgumentException())
@@ -1459,7 +1459,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnUnexpectedCompleteSignal() {
+	void noCancelOnUnexpectedCompleteSignal() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty()
@@ -1473,7 +1473,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnUnexpectedCompleteSignal2() {
+	void noCancelOnUnexpectedCompleteSignal2() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
@@ -1489,7 +1489,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnCompleteWhenSequenceUnexpected() {
+	void noCancelOnCompleteWhenSequenceUnexpected() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
@@ -1504,7 +1504,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnCompleteWhenCountUnexpected() {
+	void noCancelOnCompleteWhenCountUnexpected() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
@@ -1520,7 +1520,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noCancelOnErrorWhenCollectUnexpected() {
+	void noCancelOnErrorWhenCollectUnexpected() {
 		LongAdder cancelled = new LongAdder();
 		LongAdder records = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
@@ -1547,7 +1547,7 @@ public class StepVerifierTests {
 	//TODO records: find a way to test the case where there hasn't been a recorder set, and signal is complete/error
 
 	@Test
-	public void cancelOnUnexpectedNextWithMoreData() {
+	void cancelOnUnexpectedNextWithMoreData() {
 		LongAdder cancelled = new LongAdder();
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo", "bar")
@@ -1563,7 +1563,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void boundedInitialOverflowIsDetected() {
+	void boundedInitialOverflowIsDetected() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(
 				REQUEST_OVERFLOW);
 
@@ -1579,7 +1579,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void boundedRequestOverflowIsDetected() {
+	void boundedRequestOverflowIsDetected() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(
 				REQUEST_OVERFLOW);
 
@@ -1596,7 +1596,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void initialBoundedThenUnboundedRequestDoesntOverflow() {
+	void initialBoundedThenUnboundedRequestDoesntOverflow() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(
 				REQUEST_OVERFLOW);
 
@@ -1609,7 +1609,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorTriggersVerificationFail() {
+	void verifyErrorTriggersVerificationFail() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty())
 				                              .verifyError())
@@ -1617,13 +1617,13 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorTriggersVerificationSuccess() {
+	void verifyErrorTriggersVerificationSuccess() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException()))
 		            .verifyError();
 	}
 
 	@Test
-	public void verifyErrorClassTriggersVerificationFail() {
+	void verifyErrorClassTriggersVerificationFail() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty())
 				                              .verifyError(IllegalArgumentException.class))
@@ -1631,13 +1631,13 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorClassTriggersVerificationSuccess() {
+	void verifyErrorClassTriggersVerificationSuccess() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException()))
 		            .verifyError(IllegalArgumentException.class);
 	}
 
 	@Test
-	public void verifyErrorMessageTriggersVerificationFail() {
+	void verifyErrorMessageTriggersVerificationFail() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty())
 				                              .verifyErrorMessage("boom"))
@@ -1645,13 +1645,13 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorMessageTriggersVerificationSuccess() {
+	void verifyErrorMessageTriggersVerificationSuccess() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException("boom")))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void verifyErrorPredicateTriggersVerificationFailBadSignal() {
+	void verifyErrorPredicateTriggersVerificationFailBadSignal() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty())
 				                              .verifyErrorMatches(e -> e instanceof IllegalArgumentException))
@@ -1659,7 +1659,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorPredicateTriggersVerificationFailNoMatch() {
+	void verifyErrorPredicateTriggersVerificationFailNoMatch() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.error(new IllegalArgumentException("boom")))
 				                              .verifyErrorMatches(e -> e.getMessage() == null))
@@ -1667,13 +1667,13 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorPredicateTriggersVerificationSuccess() {
+	void verifyErrorPredicateTriggersVerificationSuccess() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException("boom")))
 		            .verifyErrorMatches(e -> e instanceof IllegalArgumentException);
 	}
 
 	@Test
-	public void verifyErrorAssertionTriggersVerificationFailBadSignal() {
+	void verifyErrorAssertionTriggersVerificationFailBadSignal() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.empty())
 				                              .verifyErrorSatisfies(e -> assertThat(e).isNotNull()))
@@ -1681,7 +1681,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorAssertionTriggersVerificationFailNoMatch() {
+	void verifyErrorAssertionTriggersVerificationFailNoMatch() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.error(new IllegalArgumentException("boom")))
 				                              .verifyErrorSatisfies(e -> assertThat(e).hasMessage("foo")))
@@ -1690,13 +1690,13 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyErrorAssertionTriggersVerificationSuccess() {
+	void verifyErrorAssertionTriggersVerificationSuccess() {
 		StepVerifier.create(Flux.error(new IllegalArgumentException("boom")))
 		            .verifyErrorSatisfies(e -> assertThat(e).hasMessage("boom"));
 	}
 
 	@Test
-	public void verifyCompleteTriggersVerificationFail() {
+	void verifyCompleteTriggersVerificationFail() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.error(new IllegalArgumentException()))
 				                              .verifyComplete())
@@ -1704,14 +1704,14 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyCompleteTriggersVerificationSuccess() {
+	void verifyCompleteTriggersVerificationSuccess() {
 			StepVerifier.create(Flux.just(1, 2))
 			            .expectNext(1, 2)
 		                .verifyComplete();
 	}
 
 	@Test
-	public void expectNextCountAfterExpectNext() {
+	void expectNextCountAfterExpectNext() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .expectNext(1, 2)
 	                .expectNextCount(3)
@@ -1719,7 +1719,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountAfterThenConsumeWhile() {
+	void expectNextCountAfterThenConsumeWhile() {
 		StepVerifier.create(Flux.range(1, 5).log())
 	                .thenConsumeWhile(i -> i <= 2)
 	                .expectNextCount(3)
@@ -1727,7 +1727,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountAfterExpectNextCount() {
+	void expectNextCountAfterExpectNextCount() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .expectNextCount(2)
 	                .expectNextCount(3)
@@ -1735,7 +1735,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountAfterExpectNextMatches() {
+	void expectNextCountAfterExpectNextMatches() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .expectNextMatches(i -> true)
 	                .expectNextMatches(i -> true)
@@ -1744,7 +1744,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountAfterExpectNextSequence() {
+	void expectNextCountAfterExpectNextSequence() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .expectNextSequence(Arrays.asList(1, 2))
 	                .expectNextCount(3)
@@ -1752,7 +1752,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountAfterConsumeNextWith() {
+	void expectNextCountAfterConsumeNextWith() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .consumeNextWith(i -> {})
 	                .consumeNextWith(i -> {})
@@ -1761,7 +1761,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextSequenceWithPartialMatchingSequence() {
+	void expectNextSequenceWithPartialMatchingSequence() {
 		StepVerifier.create(Flux.range(1, 5))
 	                .expectNextSequence(Arrays.asList(1, 2, 3))
 	                .expectNext(4, 5)
@@ -1769,7 +1769,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextSequenceWithPartialMatchingSequenceNoMoreExpectation() {
+	void expectNextSequenceWithPartialMatchingSequenceNoMoreExpectation() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.range(1, 5))
 	                .expectNextSequence(Arrays.asList(1, 2, 3))
@@ -1778,7 +1778,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextSequenceEmptyListBeforeExpectNext() {
+	void expectNextSequenceEmptyListBeforeExpectNext() {
 		StepVerifier.create(Flux.just("foo", "bar"))
 				.expectNextSequence(emptyList())
 				.expectNext("foo", "bar")
@@ -1787,7 +1787,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextErrorIsSuppressed() {
+	void expectNextErrorIsSuppressed() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
 				                                          .flatMap(r -> { throw new ArrayIndexOutOfBoundsException();}))
@@ -1804,7 +1804,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void consumeNextErrorIsSuppressed() {
+	void consumeNextErrorIsSuppressed() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
 				.flatMap(r -> { throw new ArrayIndexOutOfBoundsException();}))
@@ -1821,7 +1821,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextCountErrorIsSuppressed() {
+	void expectNextCountErrorIsSuppressed() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
 				.flatMap(r -> { throw new ArrayIndexOutOfBoundsException();}))
@@ -1838,7 +1838,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void expectNextSequenceErrorIsSuppressed() {
+	void expectNextSequenceErrorIsSuppressed() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo")
 				.flatMap(r -> { throw new ArrayIndexOutOfBoundsException();}))
@@ -1855,7 +1855,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void consumeWhileErrorIsSuppressed() {
+	void consumeWhileErrorIsSuppressed() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo", "bar", "foobar")
 		                        .map(r -> { if (r.length() > 3) throw new ArrayIndexOutOfBoundsException(); return r;}))
@@ -1872,7 +1872,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void requestBufferDoesntOverflow() {
+	void requestBufferDoesntOverflow() {
 		LongAdder requestCallCount = new LongAdder();
 		LongAdder totalRequest = new LongAdder();
 		Flux<Integer> source = Flux.range(1, 10).hide()
@@ -1899,7 +1899,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void expectCancelDoNotHang() {
+	void expectCancelDoNotHang() {
 		StepVerifier.create(Flux.just("foo", "bar"), 1)
 		            .expectNext("foo")
 		            .thenCancel()
@@ -1908,7 +1908,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void consumeNextWithLowRequestShortcircuits() {
+	void consumeNextWithLowRequestShortcircuits() {
 		StepVerifier.Step<String> validSoFar = StepVerifier.create(Flux.just("foo", "bar"), 1)
 				                         .expectNext("foo");
 
@@ -1920,7 +1920,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void assertNextLowRequestShortcircuits() {
+	void assertNextLowRequestShortcircuits() {
 		StepVerifier.Step<String> validSoFar = StepVerifier.create(Flux.just("foo", "bar"), 1)
 		                                                   .expectNext("foo");
 
@@ -1932,7 +1932,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void expectNextLowRequestShortcircuits() {
+	void expectNextLowRequestShortcircuits() {
 		StepVerifier.Step<String> validSoFar = StepVerifier.create(Flux.just("foo", "bar"), 1)
 		                                                   .expectNext("foo");
 
@@ -1944,7 +1944,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void expectNextCountLowRequestShortcircuits() {
+	void expectNextCountLowRequestShortcircuits() {
 		assertThatExceptionOfType(IllegalArgumentException.class)
 				.isThrownBy(() -> StepVerifier.create(Flux.just("foo", "bar"), 1)
 				                              .expectNextCount(2)
@@ -1955,7 +1955,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void expectNextMatchesLowRequestShortcircuits() {
+	void expectNextMatchesLowRequestShortcircuits() {
 		StepVerifier.Step<String> validSoFar = StepVerifier.create(Flux.just("foo", "bar"), 1)
 		                                                   .expectNext("foo");
 
@@ -1967,7 +1967,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void expectNextSequenceLowRequestShortcircuits() {
+	void expectNextSequenceLowRequestShortcircuits() {
 		StepVerifier.Step<String> validSoFar = StepVerifier.create(Flux.just("foo", "bar"), 1);
 		List<String> expected = Arrays.asList("foo", "bar");
 
@@ -1979,7 +1979,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void thenConsumeWhileLowRequestShortcircuits() {
+	void thenConsumeWhileLowRequestShortcircuits() {
 		StepVerifier.Step<Integer> validSoFar = StepVerifier.create(Flux.just(1, 2), 1)
 		                                                    .expectNext(1);
 
@@ -1991,7 +1991,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(value = 1000L, unit = TimeUnit.MILLISECONDS)
-	public void lowRequestCheckCanBeDisabled() {
+	void lowRequestCheckCanBeDisabled() {
 		StepVerifier.create(Flux.just(1, 2),
 				StepVerifierOptions.create().initialRequest(1).checkUnderRequesting(false))
 		            .expectNext(1)
@@ -1999,7 +1999,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void takeAsyncFusedBackpressured() {
+	void takeAsyncFusedBackpressured() {
 		Sinks.Many<String> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux().take(3), 0)
 		            .expectFusion()
@@ -2014,7 +2014,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void cancelAsyncFusion() {
+	void cancelAsyncFusion() {
 		Sinks.Many<String> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(up.asFlux().take(3), 0)
 		            .expectFusion()
@@ -2028,7 +2028,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void virtualTimeSchedulerUseExactlySupplied() {
+	void virtualTimeSchedulerUseExactlySupplied() {
 		VirtualTimeScheduler vts1 = VirtualTimeScheduler.create();
 		VirtualTimeScheduler vts2 = VirtualTimeScheduler.create();
 		VirtualTimeScheduler.getOrSet(vts1);
@@ -2043,7 +2043,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void virtualTimeSchedulerVeryLong() {
+	void virtualTimeSchedulerVeryLong() {
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ofMillis(1))
 		                                       .map(tick -> new Date())
 		                                       .take(100000)
@@ -2054,7 +2054,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void withInitialContext() {
+	void withInitialContext() {
 		StepVerifier.create(Mono.deferContextual(Mono::just),
 				StepVerifierOptions.create().withInitialContext(Context.of("foo", "bar")))
 		            .assertNext(c -> Assertions.assertThat(c.getOrDefault("foo", "baz"))
@@ -2063,7 +2063,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void withInitialContextButNoPropagation() {
+	void withInitialContextButNoPropagation() {
 		StepVerifier.create(Mono.just(1), //just(1) uses a ScalarSubscription which can't be resolved to a chain of parents
 				StepVerifierOptions.create().withInitialContext(Context.of("foo", "bar")))
 		            .expectNoAccessibleContext()
@@ -2072,7 +2072,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void withInitialContextAndContextAssertionsParents() {
+	void withInitialContextAndContextAssertionsParents() {
 		StepVerifier.create(Mono.just(1).map(i -> i + 10), //this causes the subscription to be resolvable to a chain of parents
 				StepVerifierOptions.create().withInitialContext(Context.of("foo", "bar")))
 		            .expectAccessibleContext()
@@ -2084,7 +2084,7 @@ public class StepVerifierTests {
 
 	//see https://github.com/reactor/reactor-core/issues/959
 	@Test
-	public void assertNextWithSubscribeOnSink() {
+	void assertNextWithSubscribeOnSink() {
 		Scheduler scheduler = Schedulers.newBoundedElastic(1, 100, "test");
 		Sinks.Many<Integer> sink = Sinks.unsafe().many().multicast().directBestEffort();
 		Mono<Integer> doAction = Mono.fromSupplier(() -> 22)
@@ -2102,7 +2102,7 @@ public class StepVerifierTests {
 
 	//see https://github.com/reactor/reactor-core/issues/959
 	@Test
-	public void assertNextWithSubscribeOnJust() {
+	void assertNextWithSubscribeOnJust() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(
 						StepVerifier.create(Flux.just(1)
@@ -2114,7 +2114,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void parallelVerifyWithVtsMutuallyExclusive() {
+	void parallelVerifyWithVtsMutuallyExclusive() {
 		ExecutorService executorService = Executors.newFixedThreadPool(2);
 		for (int i = 0; i < 10; i++) {
 			Future<Duration> ex1 = executorService.submit(() -> StepVerifier
@@ -2149,7 +2149,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(5)
-	public void gh783() {
+	void gh783() {
 		int size = 1;
 		Scheduler parallel = Schedulers.newParallel("gh-783");
 		StepVerifier.withVirtualTime(() -> Flux.just("Oops")
@@ -2169,7 +2169,7 @@ public class StepVerifierTests {
 
 	@Test
 	@Timeout(5)
-	public void gh783_deferredAdvanceTime() {
+	void gh783_deferredAdvanceTime() {
 		int size = 61;
 		Scheduler parallel = Schedulers.newParallel("gh-783");
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 10)
@@ -2191,7 +2191,7 @@ public class StepVerifierTests {
 	@Test
 	@Disabled
 	//FIXME this case of doubly-nested schedules is still not fully fixed
-	public void gh783_withInnerFlatmap() {
+	void gh783_withInnerFlatmap() {
 		int size = 61;
 		Scheduler parallel = Schedulers.newParallel("gh-783");
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 10)
@@ -2214,7 +2214,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void gh783_intervalFullyEmitted() {
+	void gh783_intervalFullyEmitted() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo").flatMap(message -> Flux.interval(Duration.ofMinutes(5)).take(12)))
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofMinutes(5))
@@ -2228,7 +2228,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void gh783_firstSmallAdvance() {
+	void gh783_firstSmallAdvance() {
 		StepVerifier.withVirtualTime(() -> Flux.just("foo").flatMap(message -> Flux.interval(Duration.ofMinutes(5)).take(12)))
 		            .expectSubscription()
 		            .expectNoEvent(Duration.ofMinutes(3))
@@ -2239,7 +2239,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noEventExpectationButComplete() {
+	void noEventExpectationButComplete() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(StepVerifier.create(Flux.empty().hide())
 				                        .expectSubscription()
@@ -2250,7 +2250,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void noEventExpectationButError() {
+	void noEventExpectationButError() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(StepVerifier.create(Flux.error(new IllegalStateException("boom")).hide())
 				                        .expectSubscription()
@@ -2262,7 +2262,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void virtualTimeNoEventExpectationButComplete() {
+	void virtualTimeNoEventExpectationButComplete() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(StepVerifier.withVirtualTime(() -> Flux.empty().hide())
 				                        .expectSubscription()
@@ -2273,7 +2273,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void virtualTimeNoEventExpectationButError() {
+	void virtualTimeNoEventExpectationButError() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(StepVerifier.withVirtualTime(() -> Flux.error(new IllegalStateException("boom")).hide())
 				                        .expectSubscription()
@@ -2285,7 +2285,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyLaterCanVerifyConnectableFlux() {
+	void verifyLaterCanVerifyConnectableFlux() {
 		Flux<Integer> autoconnectableFlux = Flux.just(1, 2, 3).publish().autoConnect(2);
 
 		StepVerifier deferred1 = StepVerifier.create(autoconnectableFlux)
@@ -2310,7 +2310,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyLaterCanVerifyConnectableFlux_withAssertionErrors() {
+	void verifyLaterCanVerifyConnectableFlux_withAssertionErrors() {
 		Flux<Integer> autoconnectableFlux = Flux.just(1, 2, 3).publish().autoConnect(2);
 
 		StepVerifier deferred1 = StepVerifier.create(autoconnectableFlux)
@@ -2333,7 +2333,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyDrainOnRequestInCaseOfFusion() {
+	void verifyDrainOnRequestInCaseOfFusion() {
 		Sinks.One<Integer> processor = Sinks.one();
 		StepVerifier.create(processor.asMono(), 0)
 				.expectFusion(Fuseable.ANY)
@@ -2344,7 +2344,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void verifyDrainOnRequestInCaseOfFusion2() {
+	void verifyDrainOnRequestInCaseOfFusion2() {
 		ArrayList<Long> requests = new ArrayList<>();
 		Sinks.Many<Integer> processor = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(processor.asFlux().doOnRequest(requests::add), 0)
@@ -2364,7 +2364,7 @@ public class StepVerifierTests {
 
 	//see https://github.com/reactor/reactor-core/issues/2060
 	@Test
-	public void externalGetOrSetTakenIntoAccount() {
+	void externalGetOrSetTakenIntoAccount() {
 		Scheduler.Worker subscriptionWorker = VirtualTimeScheduler.getOrSet().createWorker();
 		List<String> source = Stream.of("first", "second", "third").collect(Collectors.toList());
 
@@ -2394,7 +2394,7 @@ public class StepVerifierTests {
 
 	// See https://github.com/reactor/reactor-core/issues/2107
 	@Test
-	public void mutualizedSubscribeErrorHandlingPostOnSubscribe() {
+	void mutualizedSubscribeErrorHandlingPostOnSubscribe() {
 		Flux<Object> errorInSubscribeFlux = new Flux<Object>() {
 			@Override
 			public void subscribe(CoreSubscriber<? super Object> actual) {
@@ -2410,7 +2410,7 @@ public class StepVerifierTests {
 	}
 
 	@Test
-	public void withVirtualTimeResetsCustomFactoryAndOldSharedThreads() {
+	void withVirtualTimeResetsCustomFactoryAndOldSharedThreads() {
 		try {
 			AtomicInteger customFactoryInvoked = new AtomicInteger();
 			Schedulers.Factory customFactory = new Schedulers.Factory() {

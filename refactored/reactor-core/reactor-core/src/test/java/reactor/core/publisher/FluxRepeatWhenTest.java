@@ -37,10 +37,10 @@ import reactor.util.context.ContextView;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxRepeatWhenTest {
+class FluxRepeatWhenTest {
 
 	@Test
-	public void whenFactoryNull() {
+    void whenFactoryNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.repeatWhen(null);
@@ -48,7 +48,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void coldRepeater() {
+    void coldRepeater() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1)
@@ -61,7 +61,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void cancelsOther() {
+    void cancelsOther() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		Flux<Integer> when = Flux.range(1, 10)
 		                         .doOnCancel(() -> cancelled.set(true));
@@ -74,7 +74,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void cancelTwiceCancelsOtherOnce() {
+    void cancelTwiceCancelsOtherOnce() {
 		AtomicInteger cancelled = new AtomicInteger();
 		Flux<Integer> when = Flux.range(1, 10)
 		                         .doOnCancel(cancelled::incrementAndGet);
@@ -94,7 +94,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void directOtherErrorPreventsSubscribe() {
+    void directOtherErrorPreventsSubscribe() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = Flux.just(1)
@@ -112,7 +112,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void lateOtherErrorCancelsSource() {
+    void lateOtherErrorCancelsSource() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		AtomicInteger count = new AtomicInteger();
@@ -135,7 +135,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void directOtherEmptyPreventsSubscribe() {
+    void directOtherEmptyPreventsSubscribe() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = Flux.just(1)
@@ -153,7 +153,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void lateOtherEmptyCancelsSource() {
+    void lateOtherEmptyCancelsSource() {
 		AtomicBoolean sourceSubscribed = new AtomicBoolean();
 		AtomicBoolean sourceCancelled = new AtomicBoolean();
 		Flux<Integer> source = Flux.just(1)
@@ -173,7 +173,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void coldRepeaterBackpressured() {
+    void coldRepeaterBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 2)
@@ -210,7 +210,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void coldEmpty() {
+    void coldEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 2)
@@ -223,7 +223,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void coldError() {
+    void coldError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 2)
@@ -237,7 +237,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void whenFactoryThrows() {
+    void whenFactoryThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 2)
@@ -254,7 +254,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void whenFactoryReturnsNull() {
+    void whenFactoryReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		new FluxRepeatWhen<>(Flux.range(1, 2), v -> null).subscribe(ts);
@@ -266,7 +266,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void repeaterErrorsInResponse() {
+    void repeaterErrorsInResponse() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 2)
@@ -283,7 +283,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void repeatAlways() {
+    void repeatAlways() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 2)
@@ -298,7 +298,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void repeatAlwaysScalar() {
+    void repeatAlwaysScalar() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		AtomicInteger count = new AtomicInteger();
@@ -316,7 +316,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void repeatWithVolumeCondition() {
+    void repeatWithVolumeCondition() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 2)
@@ -331,7 +331,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void exponentialRepeat() {
+    void exponentialRepeat() {
 		StepVerifier.withVirtualTime(this::exponentialRepeatScenario1)
 		            .expectNext(1)
 		            .thenAwait(Duration.ofSeconds(1))
@@ -353,7 +353,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void exponentialRepeat2() {
+    void exponentialRepeat2() {
 		StepVerifier.withVirtualTime(this::exponentialRepeatScenario2)
 		            .thenAwait(Duration.ofSeconds(6))
 		            .expectNext("hey")
@@ -375,7 +375,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxRepeatWhen<Integer> test = new FluxRepeatWhen<>(parent, c -> c.take(3));
 
@@ -384,7 +384,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxRepeatWhen.RepeatWhenMainSubscriber<Integer> test =
         		new FluxRepeatWhen.RepeatWhenMainSubscriber<>(actual, null, Flux.empty());
@@ -403,7 +403,7 @@ public class FluxRepeatWhenTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxRepeatWhen.RepeatWhenMainSubscriber<Integer> main =
         		new FluxRepeatWhen.RepeatWhenMainSubscriber<>(actual, null, Flux.empty());
@@ -416,7 +416,7 @@ public class FluxRepeatWhenTest {
     }
 
 	@Test
-	public void inners() {
+    void inners() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		Sinks.Many<Long> signaller = Sinks.unsafe().many().multicast().directBestEffort();
 		Flux<Integer> when = Flux.empty();
@@ -428,7 +428,7 @@ public class FluxRepeatWhenTest {
 	}
 
 	@Test
-	public void repeatWhenContextTrigger_MergesOriginalContext() {
+    void repeatWhenContextTrigger_MergesOriginalContext() {
 		final int REPEAT_COUNT = 3;
 		List<String> repeats = Collections.synchronizedList(new ArrayList<>(4));
 		List<ContextView> contexts = Collections.synchronizedList(new ArrayList<>(4));

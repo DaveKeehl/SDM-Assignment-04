@@ -31,10 +31,10 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class MonoDoFirstTest {
+class MonoDoFirstTest {
 
 	@Test
-	public void rejectsNullRunnable() {
+    void rejectsNullRunnable() {
 		Mono<Integer> source = Mono.empty();
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
@@ -43,7 +43,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void orderIsReversed_NoFusion() {
+    void orderIsReversed_NoFusion() {
 		List<String> order = new ArrayList<>();
 
 		@SuppressWarnings("divzero")
@@ -64,7 +64,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void orderIsReversed_Fused() {
+    void orderIsReversed_Fused() {
 		List<String> order = new ArrayList<>();
 
 		@SuppressWarnings("divzero")
@@ -84,7 +84,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void mixedWithOnSubscribe_NoFusion() {
+    void mixedWithOnSubscribe_NoFusion() {
 		List<String> order = new ArrayList<>();
 
 		StepVerifier.create(
@@ -105,7 +105,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void mixedWithOnSubscribe_Fused() {
+    void mixedWithOnSubscribe_Fused() {
 		List<String> order = new ArrayList<>();
 
 		StepVerifier.create(
@@ -125,7 +125,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void runnableFailure_NotFuseable() {
+    void runnableFailure_NotFuseable() {
 		Mono<Integer> test = Mono.just(1)
 		                         .hide()
 		                         .doFirst(() -> {
@@ -139,7 +139,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void runnableFailure_Fuseable() {
+    void runnableFailure_Fuseable() {
 		Mono<Integer> test = Mono.just(1)
 		                         .doFirst(() -> {
 			                         throw new IllegalStateException("expected");
@@ -152,7 +152,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void performsDirectSubscriberToSource_NoFusion() {
+    void performsDirectSubscriberToSource_NoFusion() {
 		AtomicReference<Subscription> subRef = new AtomicReference<>();
 		Mono<Integer> test = Mono.just(1)
 		                         .hide()
@@ -164,7 +164,7 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void performsDirectSubscriberToSource_Fused() {
+    void performsDirectSubscriberToSource_Fused() {
 		AtomicReference<Subscription> subRef = new AtomicReference<>();
 		Mono<Integer> test = Mono.just(1)
 		                         .map(Function.identity())
@@ -176,14 +176,14 @@ public class MonoDoFirstTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoDoFirst<String> test = new MonoDoFirst<>(Mono.just("foo"), () -> {});
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		MonoDoFirstFuseable<String> test = new MonoDoFirstFuseable<>(Mono.just("foo"), () -> {});
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

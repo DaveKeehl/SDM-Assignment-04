@@ -38,11 +38,11 @@ import reactor.test.util.RaceTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxRefCountTest {
+class FluxRefCountTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1738
 	@Test
-	public void avoidUnexpectedDoubleCancel() {
+    void avoidUnexpectedDoubleCancel() {
 		AtomicBoolean unexpectedCancellation = new AtomicBoolean();
 
 		Flux<Integer> test = Flux.range(0, 100)
@@ -64,7 +64,7 @@ public class FluxRefCountTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1385
 	@Test
-	public void sizeOneCanRetry() {
+    void sizeOneCanRetry() {
 		AtomicInteger subCount = new AtomicInteger();
 
 		final Flux<Object> flux = Flux.generate(() -> 0, (i, sink) -> {
@@ -89,7 +89,7 @@ public class FluxRefCountTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1385
 	@Test
-	public void sizeOneCanRepeat() {
+    void sizeOneCanRepeat() {
 		AtomicInteger subCount = new AtomicInteger();
 
 		final Flux<Object> flux = Flux.generate(() -> 0, (i, sink) -> {
@@ -116,7 +116,7 @@ public class FluxRefCountTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1260
 	@Test
-	public void raceSubscribeAndCancel() {
+    void raceSubscribeAndCancel() {
 		final Flux<String> testFlux = Flux.<String>create(fluxSink -> fluxSink.next("Test")
 																			  .complete()).replay(1)
 																						  .refCount(1);
@@ -147,7 +147,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void cancelDoesntTriggerDisconnectErrorOnFirstSubscribeNoComplete() {
+    void cancelDoesntTriggerDisconnectErrorOnFirstSubscribeNoComplete() {
 		AtomicInteger nextCount = new AtomicInteger();
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		Flux<String> flux = Flux.<String>create(sink -> {
@@ -164,7 +164,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void cancelDoesntTriggerDisconnectErrorOnFirstSubscribeDoComplete() {
+    void cancelDoesntTriggerDisconnectErrorOnFirstSubscribeDoComplete() {
 		AtomicInteger nextCount = new AtomicInteger();
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		Flux<String> flux = Flux.<String>create(sink -> {
@@ -182,7 +182,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
 
 		Flux<Integer> p = e.asFlux()
@@ -224,7 +224,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void normalTwoSubscribers() {
+    void normalTwoSubscribers() {
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
 
 		Flux<Integer> p = e.asFlux()
@@ -266,7 +266,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void upstreamCompletes() {
+    void upstreamCompletes() {
 
 		Flux<Integer> p = Flux.range(1, 5)
 							  .publish()
@@ -289,7 +289,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void upstreamCompletesTwoSubscribers() {
+    void upstreamCompletesTwoSubscribers() {
 
 		Flux<Integer> p = Flux.range(1, 5)
 							  .publish()
@@ -308,7 +308,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void subscribersComeAndGoBelowThreshold() {
+    void subscribersComeAndGoBelowThreshold() {
 		Flux<Integer> p = Flux.range(1, 5)
 							  .publish()
 							  .refCount(2);
@@ -337,7 +337,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void asyncRetry() {
+    void asyncRetry() {
 		Flux<Integer> p;
 		AtomicBoolean error = new AtomicBoolean();
 		p = Flux.range(1, 5)
@@ -359,7 +359,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void reconnectsAfterRefCountZero() {
+    void reconnectsAfterRefCountZero() {
 		AtomicLong subscriptionCount = new AtomicLong();
 		AtomicReference<SignalType> termination = new AtomicReference<>();
 
@@ -398,7 +398,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void delayElementShouldNotCancelTwice() throws Exception {
+    void delayElementShouldNotCancelTwice() throws Exception {
 		Sinks.Many<Long> p = Sinks.unsafe().many().multicast().directBestEffort();
 		AtomicInteger cancellations = new AtomicInteger();
 
@@ -426,7 +426,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		ConnectableFlux<Integer> parent = Flux.just(10)
 											  .publish();
 		FluxRefCount<Integer> test = new FluxRefCount<>(parent, 17);
@@ -437,7 +437,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, sub -> sub.request(100));
 		FluxRefCount<Integer> main = new FluxRefCount<Integer>(Flux.just(10)
@@ -463,7 +463,7 @@ public class FluxRefCountTest {
 	}
 
 	@Test
-	public void scanInnerCancelled() {
+    void scanInnerCancelled() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, sub -> sub.request(100));
 		FluxRefCount<Integer> main = new FluxRefCount<Integer>(Flux.just(10)

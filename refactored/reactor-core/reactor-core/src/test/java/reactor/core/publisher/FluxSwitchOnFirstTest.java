@@ -58,10 +58,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxSwitchOnFirstTest {
+class FluxSwitchOnFirstTest {
 
     @Test
-    public void shouldNotSubscribeTwice() {
+    void shouldNotSubscribeTwice() {
         Throwable[] throwables = new Throwable[1];
         CountDownLatch latch = new CountDownLatch(1);
         StepVerifier.create(Flux.just(1L)
@@ -90,7 +90,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotSubscribeTwiceConditional() {
+    void shouldNotSubscribeTwiceConditional() {
         Throwable[] throwables = new Throwable[1];
         CountDownLatch latch = new CountDownLatch(1);
         StepVerifier.create(Flux.just(1L)
@@ -121,7 +121,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotSubscribeTwiceWhenCanceled() {
+    void shouldNotSubscribeTwiceWhenCanceled() {
         CountDownLatch latch = new CountDownLatch(1);
         CountDownLatch nextLatch = new CountDownLatch(1);
         StepVerifier.create(Flux.just(1L)
@@ -160,7 +160,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotSubscribeTwiceConditionalWhenCanceled() {
+    void shouldNotSubscribeTwiceConditionalWhenCanceled() {
         CountDownLatch latch = new CountDownLatch(1);
         CountDownLatch nextLatch = new CountDownLatch(1);
         StepVerifier.create(Flux.just(1L)
@@ -200,7 +200,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnErrorSignalConditional() {
+    void shouldSendOnErrorSignalConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -222,7 +222,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnNextSignalConditional() {
+    void shouldSendOnNextSignalConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -244,7 +244,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnErrorSignalWithDelaySubscription() {
+    void shouldSendOnErrorSignalWithDelaySubscription() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -264,7 +264,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnCompleteSignalWithDelaySubscription() {
+    void shouldSendOnCompleteSignalWithDelaySubscription() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -283,7 +283,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnErrorSignal() {
+    void shouldSendOnErrorSignal() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -303,7 +303,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnNextSignal() {
+    void shouldSendOnNextSignal() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -324,7 +324,7 @@ public class FluxSwitchOnFirstTest {
 
 
     @Test
-    public void shouldSendOnNextAsyncSignal() {
+    void shouldSendOnNextAsyncSignal() {
         for (int i = 0; i < 10000; i++) {
             @SuppressWarnings("unchecked") Signal<? extends Long>[] first = new Signal[1];
 
@@ -345,7 +345,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldSendOnNextAsyncSignalConditional() {
+    void shouldSendOnNextAsyncSignalConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -367,7 +367,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNeverSendIncorrectRequestSizeToUpstream() throws InterruptedException {
+    void shouldNeverSendIncorrectRequestSizeToUpstream() throws InterruptedException {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         AtomicLong capture = new AtomicLong();
         ArrayList<Long> requested = new ArrayList<>();
@@ -388,7 +388,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNeverSendIncorrectRequestSizeToUpstreamConditional() throws InterruptedException {
+    void shouldNeverSendIncorrectRequestSizeToUpstreamConditional() throws InterruptedException {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         AtomicLong capture = new AtomicLong();
         ArrayList<Long> requested = new ArrayList<>();
@@ -410,7 +410,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeRequestedOneFromUpstreamTwiceInCaseOfConditional() throws InterruptedException {
+    void shouldBeRequestedOneFromUpstreamTwiceInCaseOfConditional() throws InterruptedException {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         ArrayList<Long> capture = new ArrayList<>();
         ArrayList<Long> requested = new ArrayList<>();
@@ -432,7 +432,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeRequestedExactlyOneAndThenLongMaxValue() throws InterruptedException {
+    void shouldBeRequestedExactlyOneAndThenLongMaxValue() throws InterruptedException {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         ArrayList<Long> capture = new ArrayList<>();
         ArrayList<Long> requested = new ArrayList<>();
@@ -453,7 +453,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeRequestedExactlyOneAndThenLongMaxValueConditional() throws InterruptedException {
+    void shouldBeRequestedExactlyOneAndThenLongMaxValueConditional() throws InterruptedException {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         ArrayList<Long> capture = new ArrayList<>();
         ArrayList<Long> requested = new ArrayList<>();
@@ -474,7 +474,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnCorrectContextOnEmptySource() {
+    void shouldReturnCorrectContextOnEmptySource() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -502,7 +502,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnCorrectContextIfLoosingChain() {
+    void shouldReturnCorrectContextIfLoosingChain() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -528,7 +528,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotFailOnIncorrectPublisherBehavior() {
+    void shouldNotFailOnIncorrectPublisherBehavior() {
         TestPublisher<Long> publisher =
                 TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
         Flux<Long> switchTransformed = publisher.flux()
@@ -562,7 +562,7 @@ public class FluxSwitchOnFirstTest {
     @Test
     // Since context is immutable, with switchOnFirst it should not be mutable as well. Upstream should observe downstream
     // Inner should be able to access downstreamContext but should not modify upstream context after the first element
-    public void shouldNotBeAbleToAccessUpstreamContext() {
+    void shouldNotBeAbleToAccessUpstreamContext() {
         TestPublisher<Long> publisher = TestPublisher.createCold();
 
         Flux<String> switchTransformed = publisher.flux()
@@ -594,7 +594,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotHangWhenOneElementUpstream() {
+    void shouldNotHangWhenOneElementUpstream() {
         TestPublisher<Long> publisher = TestPublisher.createCold();
 
         Flux<String> switchTransformed = publisher.flux()
@@ -619,7 +619,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void backpressureTest() {
+    void backpressureTest() {
         TestPublisher<Long> publisher = TestPublisher.createCold();
         AtomicLong requested = new AtomicLong();
 
@@ -646,7 +646,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void backpressureConditionalTest() {
+    void backpressureConditionalTest() {
         Flux<Integer> publisher = Flux.range(0, 10000);
         AtomicLong requested = new AtomicLong();
 
@@ -664,7 +664,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void backpressureHiddenConditionalTest() {
+    void backpressureHiddenConditionalTest() {
         Flux<Integer> publisher = Flux.range(0, 10000);
         AtomicLong requested = new AtomicLong();
 
@@ -682,7 +682,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void backpressureDrawbackOnConditionalInTransformTest() {
+    void backpressureDrawbackOnConditionalInTransformTest() {
         Flux<Integer> publisher = Flux.range(0, 10000);
         AtomicLong requested = new AtomicLong();
 
@@ -700,7 +700,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldErrorOnOverflowTest() {
+    void shouldErrorOnOverflowTest() {
         TestPublisher<Long> publisher = TestPublisher.createColdNonBuffering();
 
         Flux<String> switchTransformed = publisher.flux()
@@ -723,7 +723,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldPropagateonCompleteCorrectly() {
+    void shouldPropagateonCompleteCorrectly() {
         Flux<String> switchTransformed = Flux.empty()
                                              .switchOnFirst((first, innerFlux) -> innerFlux.map(String::valueOf));
 
@@ -733,7 +733,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldPropagateOnCompleteWithMergedElementsCorrectly() {
+    void shouldPropagateOnCompleteWithMergedElementsCorrectly() {
         Flux<String> switchTransformed = Flux.empty()
                                              .switchOnFirst((first, innerFlux) -> innerFlux.map(String::valueOf)
                                                                                            .mergeWith(Flux.just("1", "2", "3")));
@@ -745,7 +745,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldPropagateErrorCorrectly() {
+    void shouldPropagateErrorCorrectly() {
         Flux<String> switchTransformed = Flux.error(new RuntimeException("hello"))
                                              .transform(flux -> new FluxSwitchOnFirst<>(
                                                      flux,
@@ -758,7 +758,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToBeCancelledProperly() throws InterruptedException {
+    void shouldBeAbleToBeCancelledProperly() throws InterruptedException {
         CountDownLatch latch1 = new CountDownLatch(1);
         CountDownLatch latch2 = new CountDownLatch(1);
         TestPublisher<Integer> publisher = TestPublisher.createCold();
@@ -796,7 +796,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToBeCancelledProperly2() {
+    void shouldBeAbleToBeCancelledProperly2() {
         TestPublisher<Integer> publisher = TestPublisher.createCold();
         Flux<String> switchTransformed = publisher.flux()
                                                   .switchOnFirst((first, innerFlux) ->
@@ -820,7 +820,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToBeCancelledProperly3() {
+    void shouldBeAbleToBeCancelledProperly3() {
         TestPublisher<Integer> publisher = TestPublisher.createCold();
         Flux<String> switchTransformed = publisher.flux()
                                                   .switchOnFirst((first, innerFlux) ->
@@ -844,7 +844,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToCatchDiscardedElement() {
+    void shouldBeAbleToCatchDiscardedElement() {
         TestPublisher<Integer> publisher = TestPublisher.create();
         Integer[] discarded = new Integer[1];
         Flux<String> switchTransformed = publisher.flux()
@@ -864,7 +864,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToCatchDiscardedElementInCaseOfConditional() throws InterruptedException {
+    void shouldBeAbleToCatchDiscardedElementInCaseOfConditional() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         CountDownLatch latch2 = new CountDownLatch(1);
         TestPublisher<Integer> publisher = TestPublisher.create();
@@ -907,7 +907,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldBeAbleToCancelSubscription() throws InterruptedException {
+    void shouldBeAbleToCancelSubscription() throws InterruptedException {
         Flux<Long> publisher = Flux.just(1L);
         ArrayList<Integer> capturedElementsNumber = new ArrayList<>();
         for (int i = 0; i < 10000; i++) {
@@ -934,7 +934,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnNextDuringSwitching() {
+    void shouldReturnNormallyIfExceptionIsThrownOnNextDuringSwitching() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -961,7 +961,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnErrorDuringSwitching() {
+    void shouldReturnNormallyIfExceptionIsThrownOnErrorDuringSwitching() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -980,7 +980,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnCompleteDuringSwitching() {
+    void shouldReturnNormallyIfExceptionIsThrownOnCompleteDuringSwitching() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -1004,7 +1004,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnNextDuringSwitchingConditional() {
+    void shouldReturnNormallyIfExceptionIsThrownOnNextDuringSwitchingConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Integer>[] first = new Signal[1];
         Optional<?> expectedCause = Optional.of(1);
@@ -1034,7 +1034,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnErrorDuringSwitchingConditional() {
+    void shouldReturnNormallyIfExceptionIsThrownOnErrorDuringSwitchingConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -1053,7 +1053,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldReturnNormallyIfExceptionIsThrownOnCompleteDuringSwitchingConditional() {
+    void shouldReturnNormallyIfExceptionIsThrownOnCompleteDuringSwitchingConditional() {
         @SuppressWarnings("unchecked")
         Signal<? extends Long>[] first = new Signal[1];
 
@@ -1077,7 +1077,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void sourceSubscribedOnce() {
+    void sourceSubscribedOnce() {
         AtomicInteger subCount = new AtomicInteger();
         Flux<Integer> source = Flux.range(1, 10)
                                    .hide()
@@ -1092,7 +1092,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void checkHotSource() {
+    void checkHotSource() {
         Sinks.Many<Long> processor = Sinks.many().replay().limit(1);
 
         processor.emitNext(1L, FAIL_FAST);
@@ -1117,7 +1117,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherComplete() {
+    void shouldCancelSourceOnUnrelatedPublisherComplete() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1131,7 +1131,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotCancelSourceOnUnrelatedPublisherComplete() {
+    void shouldNotCancelSourceOnUnrelatedPublisherComplete() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1145,7 +1145,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherError() {
+    void shouldCancelSourceOnUnrelatedPublisherError() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1163,7 +1163,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherCancel() {
+    void shouldCancelSourceOnUnrelatedPublisherCancel() {
         TestPublisher<Long> testPublisher = TestPublisher.create();
 
         StepVerifier.create(testPublisher.flux().switchOnFirst((s, f) -> Flux.error(new RuntimeException("test"))))
@@ -1175,7 +1175,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherCompleteConditional() {
+    void shouldCancelSourceOnUnrelatedPublisherCompleteConditional() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1196,7 +1196,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldNotCancelSourceOnUnrelatedPublisherCompleteConditional() {
+    void shouldNotCancelSourceOnUnrelatedPublisherCompleteConditional() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1217,7 +1217,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelInnerSubscriptionImmediatelyUpOnReceivingIfDownstreamIsAlreadyCancelledConditional() {
+    void shouldCancelInnerSubscriptionImmediatelyUpOnReceivingIfDownstreamIsAlreadyCancelledConditional() {
         VirtualTimeScheduler virtualTimeScheduler = VirtualTimeScheduler.getOrSet();
         TestPublisher<Long> testPublisher = TestPublisher.create();
         TestPublisher<Long> testPublisherInner = TestPublisher.create();
@@ -1255,7 +1255,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelInnerSubscriptionImmediatelyUpOnReceivingIfDownstreamIsAlreadyCancelled() {
+    void shouldCancelInnerSubscriptionImmediatelyUpOnReceivingIfDownstreamIsAlreadyCancelled() {
         VirtualTimeScheduler virtualTimeScheduler = VirtualTimeScheduler.getOrSet();
         TestPublisher<Long> testPublisher = TestPublisher.create();
         TestPublisher<Long> testPublisherInner = TestPublisher.create();
@@ -1292,7 +1292,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherErrorConditional() {
+    void shouldCancelSourceOnUnrelatedPublisherErrorConditional() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1317,7 +1317,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelSourceOnUnrelatedPublisherCancelConditional() {
+    void shouldCancelSourceOnUnrelatedPublisherCancelConditional() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         testPublisher.emitNext(1L, FAIL_FAST);
@@ -1339,7 +1339,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldCancelUpstreamBeforeFirst() {
+    void shouldCancelUpstreamBeforeFirst() {
         Sinks.Many<Long> testPublisher = Sinks.many().multicast().onBackpressureBuffer();
 
         StepVerifier.create(testPublisher.asFlux().switchOnFirst((s, f) -> Flux.error(new RuntimeException("test"))))
@@ -1351,7 +1351,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void shouldContinueWorkingRegardlessTerminalOnDownstream() {
+    void shouldContinueWorkingRegardlessTerminalOnDownstream() {
         TestPublisher<Long> testPublisher = TestPublisher.create();
 
         @SuppressWarnings("unchecked")
@@ -1378,7 +1378,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-     public void shouldCancelSourceOnOnDownstreamTerminal() {
+    void shouldCancelSourceOnOnDownstreamTerminal() {
         TestPublisher<Long> testPublisher = TestPublisher.create();
 
         StepVerifier.create(testPublisher.flux().switchOnFirst((s, f) -> Flux.just(1L), true))
@@ -1392,7 +1392,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void racingTest() throws InterruptedException {
+    void racingTest() throws InterruptedException {
         for (int i = 0; i < 1000; i++) {
             @SuppressWarnings("unchecked")
             CoreSubscriber<? super Integer>[] subscribers = new CoreSubscriber[1];
@@ -1426,7 +1426,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void racingConditionalTest() {
+    void racingConditionalTest() {
         for (int i = 0; i < 1000; i++) {
             @SuppressWarnings("unchecked")
             CoreSubscriber<? super Integer>[] subscribers = new CoreSubscriber[1];
@@ -1487,7 +1487,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void racingInnerSubscribeAndOuterCancelTest() throws InterruptedException {
+    void racingInnerSubscribeAndOuterCancelTest() throws InterruptedException {
         for (int i = 0; i < 1000; i++) {
             @SuppressWarnings("unchecked")
             CoreSubscriber<? super Integer>[] subscribers = new CoreSubscriber[1];
@@ -1542,7 +1542,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void racingInnerSubscribeAndOuterCancelConditionalTest() throws InterruptedException {
+    void racingInnerSubscribeAndOuterCancelConditionalTest() throws InterruptedException {
         for (int i = 0; i < 1000; i++) {
             @SuppressWarnings("unchecked")
             CoreSubscriber<? super Integer>[] subscribers = new CoreSubscriber[1];
@@ -1599,7 +1599,7 @@ public class FluxSwitchOnFirstTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void unitRequestRacingTest() {
+    void unitRequestRacingTest() {
         @SuppressWarnings("unchecked")
         BiFunction<FluxSwitchOnFirst.AbstractSwitchOnFirstMain, CoreSubscriber, InnerOperator>[] factories = new BiFunction[] {
                 (parent, assertSubscriber) -> new FluxSwitchOnFirst.SwitchOnFirstControlSubscriber((FluxSwitchOnFirst.AbstractSwitchOnFirstMain) parent, (CoreSubscriber) assertSubscriber, true),
@@ -1636,7 +1636,7 @@ public class FluxSwitchOnFirstTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void unitRequestsAreSerialTest() {
+    void unitRequestsAreSerialTest() {
         @SuppressWarnings("unchecked")
         BiFunction<FluxSwitchOnFirst.AbstractSwitchOnFirstMain, CoreSubscriber, InnerOperator>[] factories = new BiFunction[] {
                 (parent, assertSubscriber) -> new FluxSwitchOnFirst.SwitchOnFirstControlSubscriber((FluxSwitchOnFirst.AbstractSwitchOnFirstMain) parent, (CoreSubscriber) assertSubscriber, true),
@@ -1674,7 +1674,7 @@ public class FluxSwitchOnFirstTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void unitCancelRacingTest() {
+    void unitCancelRacingTest() {
         @SuppressWarnings("unchecked")
         BiFunction<FluxSwitchOnFirst.AbstractSwitchOnFirstMain, CoreSubscriber, InnerOperator>[] factories = new BiFunction[] {
                 (parent, assertSubscriber) -> new FluxSwitchOnFirst.SwitchOnFirstControlSubscriber((FluxSwitchOnFirst.AbstractSwitchOnFirstMain) parent, (CoreSubscriber) assertSubscriber, true),
@@ -1708,7 +1708,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void onCompleteAndRequestRacingTest() {
+    void onCompleteAndRequestRacingTest() {
         Long signal = 1L;
         @SuppressWarnings("unchecked")
         Function<CoreSubscriber<Object>, FluxSwitchOnFirst.AbstractSwitchOnFirstMain<Object, Object>>[] factories = new Function[2];
@@ -1740,7 +1740,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void onErrorAndRequestRacingTest() {
+    void onErrorAndRequestRacingTest() {
         Long signal = 1L;
         RuntimeException ex = new RuntimeException();
         @SuppressWarnings("unchecked")
@@ -1773,7 +1773,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void cancelAndRequestRacingWithOnCompleteAfterTest() {
+    void cancelAndRequestRacingWithOnCompleteAfterTest() {
         Long signal = 1L;
         @SuppressWarnings("unchecked")
         Function<CoreSubscriber<Object>, FluxSwitchOnFirst.AbstractSwitchOnFirstMain<Object, Object>>[] factories = new Function[2];
@@ -1812,7 +1812,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void cancelAndRequestRacingOnErrorAfterTest() {
+    void cancelAndRequestRacingOnErrorAfterTest() {
         Long signal = 1L;
         @SuppressWarnings("unchecked")
         Function<CoreSubscriber<Object>, FluxSwitchOnFirst.AbstractSwitchOnFirstMain<Object, Object>>[] factories = new Function[2];
@@ -1857,7 +1857,7 @@ public class FluxSwitchOnFirstTest {
 
 
     @Test
-    public void scanOperator(){
+    void scanOperator(){
     	Flux<Integer> parent = Flux.just(1);
         FluxSwitchOnFirst<Integer, Integer> test = new FluxSwitchOnFirst<>(parent, (s, f) -> Flux.empty(), false);
 
@@ -1866,7 +1866,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void scanMain(){
+    void scanMain(){
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSwitchOnFirst.SwitchOnFirstMain<Integer, Integer> test =
                 new FluxSwitchOnFirst.SwitchOnFirstMain<>(actual, (s, f) -> Flux.empty(), false);
@@ -1882,7 +1882,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void scanMainConditional(){
+    void scanMainConditional(){
         @SuppressWarnings("unchecked")
         Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxSwitchOnFirst.SwitchOnFirstConditionalMain<String, String> test =
@@ -1899,7 +1899,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void scanSubscriber(){
+    void scanSubscriber(){
         @SuppressWarnings("unchecked")
         Fuseable.ConditionalSubscriber<String> delegate = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxSwitchOnFirst.SwitchOnFirstConditionalMain<String, String> parent =
@@ -1915,7 +1915,7 @@ public class FluxSwitchOnFirstTest {
     }
 
     @Test
-    public void scanConditionnalSubscriber(){
+    void scanConditionnalSubscriber(){
         @SuppressWarnings("unchecked")
         Fuseable.ConditionalSubscriber<String> delegate = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FluxSwitchOnFirst.SwitchOnFirstConditionalMain<String, String> main =

@@ -155,6 +155,23 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		return new BoundedScheduledExecutorService(this.maxTaskQueuedPerThread, this.factory);
 	}
 
+	private void startHelper(ScheduledExecutorService e, BoundedServices newServices) {
+		if (EVICTOR.compareAndSet(this, null, e)) {
+			try {
+				e.scheduleAtFixedRate(newServices::eviction, ttlMillis, ttlMillis, TimeUnit.MILLISECONDS);
+			}
+			catch (RejectedExecutionException ree) {
+				// the executor was most likely shut down in parallel
+				if (!isDisposed()) {
+					throw ree;
+				} // else swallow
+			}
+		}
+		else {
+			e.shutdownNow();
+		}
+	}
+
 	@Override
 	public boolean isDisposed() {
 		return BOUNDED_SERVICES.get(this) == SHUTDOWN;
@@ -170,20 +187,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 			BoundedServices newServices = new BoundedServices(this);
 			if (BOUNDED_SERVICES.compareAndSet(this, services, newServices)) {
 				ScheduledExecutorService e = Executors.newScheduledThreadPool(1, EVICTOR_FACTORY);
-				if (EVICTOR.compareAndSet(this, null, e)) {
-					try {
-						e.scheduleAtFixedRate(newServices::eviction, ttlMillis, ttlMillis, TimeUnit.MILLISECONDS);
-					}
-					catch (RejectedExecutionException ree) {
-						// the executor was most likely shut down in parallel
-						if (!isDisposed()) {
-							throw ree;
-						} // else swallow
-					}
-				}
-				else {
-					e.shutdownNow();
-				}
+				startHelper(e,newServices);
 				return;
 			}
 		}
@@ -372,6 +376,33 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 			}
 		}
 
+		private BoundedState pickBusyState(){
+			BoundedState s = busyQueue.poll();
+			if (s != null && s.markPicked()) {
+				busyQueue.add(s); //put it back in the queue with updated priority
+				return s;
+			} else return null;
+		}
+
+		private BoundedState pickIdleState(){
+			BoundedState bs = idleQueue.pollLast();
+			if (bs != null && bs.markPicked()) {
+				busyQueue.add(bs);
+				return bs;
+			} else return null;
+		}
+
+		private BoundedState pickNewState(){
+			ScheduledExecutorService s = Schedulers.decorateExecutorService(parent, parent.createBoundedExecutorService());
+			BoundedState newState = new BoundedState(this, s);
+			if (newState.markPicked()) {
+				busyQueue.add(newState);
+				return newState;
+			} else return null;
+		}
+
+
+
 		/**
 		 * Pick a {@link BoundedState}, prioritizing idle ones then spinning up a new one if enough capacity.
 		 * Otherwise, picks an active one by taking from a {@link PriorityQueue}. The picking is
@@ -382,38 +413,26 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		BoundedState pick() {
 			for (;;) {
 				int a = get();
+				BoundedState bs;
+				BoundedState newState;
+				BoundedState s;
+
 				if (a == DISPOSED) {
 					return CREATING; //synonym for shutdown, since the underlying executor is shut down
 				}
-
-				if (!idleQueue.isEmpty()) {
-					//try to find an idle resource
-					BoundedState bs = idleQueue.pollLast();
-					if (bs != null && bs.markPicked()) {
-						busyQueue.add(bs);
-						return bs;
-					}
+				//try to find an idle resource
+				if (!idleQueue.isEmpty() && (bs = pickIdleState()) != null) {
+					return bs;
 					//else optimistically retry (implicit continue here)
 				}
-				else if (a < parent.maxThreads) {
-					//try to build a new resource
-					if (compareAndSet(a, a + 1)) {
-						ScheduledExecutorService s = Schedulers.decorateExecutorService(parent, parent.createBoundedExecutorService());
-						BoundedState newState = new BoundedState(this, s);
-						if (newState.markPicked()) {
-							busyQueue.add(newState);
-							return newState;
-						}
-					}
+				//try to build a new resource
+				else if (a < parent.maxThreads && compareAndSet(a, a + 1) && (newState = pickNewState()) != null) {
+					return newState;
 					//else optimistically retry (implicit continue here)
 				}
-				else {
-					//pick the least busy one
-					BoundedState s = busyQueue.poll();
-					if (s != null && s.markPicked()) {
-						busyQueue.add(s); //put it back in the queue with updated priority
-						return s;
-					}
+				//pick the least busy one
+				else if ((s = pickBusyState()) != null){
+					return s;
 					//else optimistically retry (implicit continue here)
 				}
 			}
@@ -507,11 +526,9 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 			long idleSince = this.idleSinceTimestamp;
 			if (idleSince < 0) return false;
 			long elapsed = evictionTimestamp - idleSince;
-			if (elapsed >= ttlMillis) {
-				if (MARK_COUNT.compareAndSet(this, 0, EVICTED)) {
-					executor.shutdownNow();
-					return true;
-				}
+			if (elapsed >= ttlMillis && MARK_COUNT.compareAndSet(this, 0, EVICTED)) {
+				executor.shutdownNow();
+				return true;
 			}
 			return false;
 		}
@@ -698,7 +715,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public void shutdown() {
+		public final void shutdown() {
 			super.shutdown();
 		}
 
@@ -706,7 +723,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public List<Runnable> shutdownNow() {
+		public final List<Runnable> shutdownNow() {
 			return super.shutdownNow();
 		}
 
@@ -714,7 +731,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean isShutdown() {
+		public final boolean isShutdown() {
 			return super.isShutdown();
 		}
 
@@ -722,7 +739,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean isTerminated() {
+		public final boolean isTerminated() {
 			return super.isTerminated();
 		}
 
@@ -730,7 +747,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public boolean awaitTermination(long timeout, TimeUnit unit)
+		public final boolean awaitTermination(long timeout, TimeUnit unit)
 				throws InterruptedException {
 			return super.awaitTermination(timeout, unit);
 		}

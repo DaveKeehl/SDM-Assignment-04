@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Simon Baslé
  */
-public class CoreContextTest {
+class CoreContextTest {
 
 	@Test
-	public void putAllForeignSmallSize() {
+    void putAllForeignSmallSize() {
 		Context initial = Context.of(1, "A", 2, "B", 3, "C");
 		Context other = new ContextTest.ForeignContext("staticKey", "staticValue");
 
@@ -48,7 +48,7 @@ public class CoreContextTest {
 	}
 
 	@Test
-	public void putAllForeignMiddleSize() {
+    void putAllForeignMiddleSize() {
 		Context initial = Context.of(1, "value1", 2, "value2", 3, "value3", 4, "value4");
 		ContextTest.ForeignContext other = new ContextTest.ForeignContext(1, "replaced")
 				.directPut(5, "value5")
@@ -64,7 +64,7 @@ public class CoreContextTest {
 	}
 
 	@Test
-	public void mergeTwoSmallContextResultInContext4() {
+    void mergeTwoSmallContextResultInContext4() {
 		Context a = Context.of(1, "value1", 2, "value2");
 		CoreContext b = (CoreContext) Context.of(1, "replaced", 3, "value3", 4, "value4");
 

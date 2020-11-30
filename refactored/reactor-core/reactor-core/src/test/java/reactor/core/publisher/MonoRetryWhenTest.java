@@ -35,10 +35,10 @@ import reactor.util.retry.Retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoRetryWhenTest {
+class MonoRetryWhenTest {
 
 	@Test
-	public void twoRetryNormalSupplier() {
+    void twoRetryNormalSupplier() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -61,7 +61,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void twoRetryErrorSupplier() {
+    void twoRetryErrorSupplier() {
 		AtomicInteger i = new AtomicInteger();
 		AtomicBoolean bool = new AtomicBoolean(true);
 
@@ -96,7 +96,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void exponentialRetry() {
+    void exponentialRetry() {
 		StepVerifier.withVirtualTime(this::exponentialRetryScenario)
 		            .thenAwait(Duration.ofSeconds(6))
 		            .expectNext("hey")
@@ -105,7 +105,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryRandomBackoff() {
+    void monoRetryRandomBackoff() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
@@ -142,7 +142,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryRandomBackoffDefaultJitter() {
+    void monoRetryRandomBackoffDefaultJitter() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
@@ -179,7 +179,7 @@ public class MonoRetryWhenTest {
 
 
 	@Test
-	public void monoRetryRandomBackoffDefaultMaxDuration() {
+    void monoRetryRandomBackoffDefaultMaxDuration() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
@@ -213,7 +213,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryRandomBackoff_maxBackoffShaves() {
+    void monoRetryRandomBackoff_maxBackoffShaves() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
@@ -255,7 +255,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryRandomBackoff_minBackoffFloor() {
+    void monoRetryRandomBackoff_minBackoffFloor() {
 		for (int i = 0; i < 50; i++) {
 			AtomicInteger errorCount = new AtomicInteger();
 			Exception exception = new IOException("boom retry loop #" + i);
@@ -288,7 +288,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryRandomBackoff_noRandom() {
+    void monoRetryRandomBackoff_noRandom() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Exception exception = new IOException("boom retry");
 		List<Long> elapsedList = new ArrayList<>();
@@ -319,7 +319,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void monoRetryBackoffWithGivenScheduler() {
+    void monoRetryBackoffWithGivenScheduler() {
 		VirtualTimeScheduler backoffScheduler = VirtualTimeScheduler.create();
 
 		Exception exception = new IOException("boom retry");
@@ -347,7 +347,7 @@ public class MonoRetryWhenTest {
 
 
 	@Test
-	public void monoRetryBackoffRetriesOnGivenScheduler() {
+    void monoRetryBackoffRetriesOnGivenScheduler() {
 		//the monoRetryBackoffWithGivenScheduler above is not suitable to verify the retry scheduler,
 		// as VTS is akin to immediate() and doesn't really change the Thread
 		Scheduler backoffScheduler = Schedulers.newSingle("backoffScheduler");
@@ -378,7 +378,7 @@ public class MonoRetryWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Mono<String> parent = Mono.just("foo");
 		MonoRetryWhen<String> test = new MonoRetryWhen<>(parent, Retry.backoff(5, Duration.ofMinutes(30)));
 

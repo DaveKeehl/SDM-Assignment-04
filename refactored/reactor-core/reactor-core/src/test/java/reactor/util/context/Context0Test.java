@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class Context0Test {
+class Context0Test {
 
 	Context c = Context.empty();
 
 	@Test
-	public void putAnyKeyContext1() throws Exception {
+    void putAnyKeyContext1() throws Exception {
 		Context put = c.put(1, "Abis");
 		assertThat(put)
 				.isInstanceOf(Context1.class);
@@ -41,58 +41,58 @@ public class Context0Test {
 	}
 
 	@Test
-	public void isEmpty() {
+    void isEmpty() {
 		assertThat(Context.empty().isEmpty()).as("empty().isEmpty()").isTrue();
 		assertThat(new Context0().isEmpty()).as("new Context0().isEmpty()").isTrue();
 	}
 
 	@Test
-	public void hasKey() throws Exception {
+    void hasKey() throws Exception {
 		assertThat(c.hasKey(1)).as("hasKey(1)").isFalse();
 	}
 
 	@Test
-	public void removeKeys() {
+    void removeKeys() {
 		assertThat(c.delete(1)).isSameAs(c);
 	}
 
 	@Test
-	public void getThrows() throws Exception {
+    void getThrows() throws Exception {
 		assertThatExceptionOfType(NoSuchElementException.class)
 				.isThrownBy(() -> c.get(1))
 				.withMessage("Context is empty");
 	}
 
 	@Test
-	public void getUnknownWithDefault() throws Exception {
+    void getUnknownWithDefault() throws Exception {
 		assertThat(c.getOrDefault("peeka", "boo")).isEqualTo("boo");
 	}
 
 	@Test
-	public void getUnknownWithDefaultNull() throws Exception {
+    void getUnknownWithDefaultNull() throws Exception {
 		Object def = null;
 		assertThat(c.getOrDefault("peeka", def)).isNull();
 	}
 
 	@Test
-	public void stream() throws Exception {
+    void stream() throws Exception {
 		assertThat(c.stream()).isEmpty();
 	}
 
 	@Test
-	public void string() throws Exception {
+    void string() throws Exception {
 		assertThat(c.toString()).isEqualTo("Context0{}");
 	}
 
 	@Test
-	public void emptyApi() {
+    void emptyApi() {
 		assertThat(Context.empty())
 				.isInstanceOf(Context0.class)
 				.hasToString("Context0{}");
 	}
 
 	@Test
-	public void putAllOf() {
+    void putAllOf() {
 		Context m = Context.of("A", 1, "B", 2, "C", 3);
 		Context put = c.putAll(m.readOnly());
 
@@ -101,7 +101,7 @@ public class Context0Test {
 	}
 
 	@Test
-	public void putAllOfEmpty() {
+    void putAllOfEmpty() {
 		Context m = Context.empty();
 		Context put = c.putAll(m.readOnly());
 
@@ -109,26 +109,26 @@ public class Context0Test {
 	}
 
 	@Test
-	public void putNonNullWithNull() {
+    void putNonNullWithNull() {
 		Context put = c.putNonNull("putNonNull", null);
 
 		assertThat(put).isSameAs(c);
 	}
 
 	@Test
-	public void putNonNullWithValue() {
+    void putNonNullWithValue() {
 		Context put = c.putNonNull("putNonNull", "value");
 
 		assertThat(put.getOrEmpty("putNonNull")).contains("value");
 	}
 
 	@Test
-	public void size() {
+    void size() {
 		assertThat(c.size()).isZero();
 	}
 
 	@Test
-	public void putAllSelfIntoEmptyReturnsSame() {
+    void putAllSelfIntoEmptyReturnsSame() {
 		CoreContext initial = new Context0();
 
 		Context result = ((CoreContext) c).putAllInto(initial);
@@ -137,7 +137,7 @@ public class Context0Test {
 	}
 
 	@Test
-	public void putAllSelfIntoContextNReturnsSame() {
+    void putAllSelfIntoContextNReturnsSame() {
 		CoreContext initial = new ContextN(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6);
 		Context0 self = new Context0();
 		Context result = self.putAllInto(initial);
@@ -146,7 +146,7 @@ public class Context0Test {
 	}
 
 	@Test
-	public void unsafePutAllIntoIsNoOp() {
+    void unsafePutAllIntoIsNoOp() {
 		ContextN ctx = new ContextN(Collections.emptyMap());
 		ctx.accept(1, "SHOULD NOT BE REPLACED");
 

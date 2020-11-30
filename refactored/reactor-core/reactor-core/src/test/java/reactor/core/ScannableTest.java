@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class ScannableTest {
+class ScannableTest {
 
 	static final Scannable scannable = key -> {
 		if (key == Scannable.Attr.BUFFERED) return 1;
@@ -51,7 +51,7 @@ public class ScannableTest {
 	};
 
 	@Test
-	public void unavailableScan() {
+    void unavailableScan() {
 		assertThat(Scannable.from("nothing")).isEqualTo(Scannable.Attr.UNAVAILABLE_SCAN);
 		assertThat(Scannable.from("nothing").isScanAvailable()).isFalse();
 		assertThat(Scannable.from("nothing").inners().count()).isEqualTo(0);
@@ -63,7 +63,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void meaningfulDefaults() {
+    void meaningfulDefaults() {
 		Scannable emptyScannable = key -> null;
 
 		assertThat(emptyScannable.scan(Scannable.Attr.BUFFERED)).isEqualTo(0);
@@ -87,7 +87,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scanOrDefaultOverridesGlobalDefault() {
+    void scanOrDefaultOverridesGlobalDefault() {
 		Scannable emptyScannable = key -> null;
 
 		assertThat(emptyScannable.scanOrDefault(Scannable.Attr.BUFFERED, 123)).isEqualTo(123); //global 0
@@ -112,7 +112,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void availableScan() {
+    void availableScan() {
 		assertThat(Scannable.from(scannable)).isEqualTo(scannable);
 		assertThat(Scannable.from(scannable).isScanAvailable()).isTrue();
 		assertThat(Scannable.from(scannable).inners().count()).isEqualTo(0);
@@ -124,14 +124,14 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void nullScan() {
+    void nullScan() {
 		assertThat(Scannable.from(null))
 				.isNotNull()
 				.isSameAs(Scannable.Attr.NULL_SCAN);
 	}
 
 	@Test
-	public void namedFluxTest() {
+    void namedFluxTest() {
 		Flux<Integer> named1 =
 				Flux.range(1, 10)
 				    .name("100s");
@@ -146,7 +146,7 @@ public class ScannableTest {
 
 
 	@Test
-	public void namedHideFluxTest() {
+    void namedHideFluxTest() {
 		Flux<Integer> named1 =
 				Flux.range(1, 10)
 				    .hide()
@@ -161,7 +161,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedOverridenFluxTest() {
+    void namedOverridenFluxTest() {
 		Flux<Integer> named1 =
 				Flux.range(1, 10)
 				    .name("1s")
@@ -176,7 +176,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedOverridenHideFluxTest() {
+    void namedOverridenHideFluxTest() {
 		Flux<Integer> named1 =
 				Flux.range(1, 10)
 				    .hide()
@@ -192,7 +192,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scannableNameDefaultsToToString() {
+    void scannableNameDefaultsToToString() {
 		final Flux<Integer> flux = Flux.range(1, 10)
 		                               .map(i -> i + 10);
 
@@ -202,7 +202,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedFluxTest() {
+    void taggedFluxTest() {
 		Flux<Integer> tagged1 =
 				Flux.range(1, 10)
 				    .tag("1", "One");
@@ -222,7 +222,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedHideFluxTest() {
+    void taggedHideFluxTest() {
 		Flux<Integer> tagged1 =
 				Flux.range(1, 10)
 				    .hide()
@@ -243,7 +243,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedAppendedFluxTest() {
+    void taggedAppendedFluxTest() {
 		Flux<Integer> tagged1 =
 				Flux.range(1, 10)
 				    .tag("1", "One")
@@ -255,7 +255,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedAppendedHideFluxTest() {
+    void taggedAppendedHideFluxTest() {
 		Flux<Integer> tagged1 =
 				Flux.range(1, 10)
 				    .hide()
@@ -268,7 +268,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedMonoTest() {
+    void namedMonoTest() {
 		Mono<Integer> named1 =
 				Mono.just(1)
 				    .name("100s");
@@ -283,7 +283,7 @@ public class ScannableTest {
 
 
 	@Test
-	public void namedHideMonoTest() {
+    void namedHideMonoTest() {
 		Mono<Integer> named1 =
 				Mono.just(1)
 				    .hide()
@@ -298,7 +298,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedOverridenMonoTest() {
+    void namedOverridenMonoTest() {
 		Mono<Integer> named1 =
 				Mono.just(1)
 				    .name("1s")
@@ -313,7 +313,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedOverridenHideMonoTest() {
+    void namedOverridenHideMonoTest() {
 		Mono<Integer> named1 =
 				Mono.just(1)
 				    .hide()
@@ -329,7 +329,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scannableNameMonoDefaultsToToString() {
+    void scannableNameMonoDefaultsToToString() {
 		final Mono<Integer> flux = Mono.just(1)
 		                               .map(i -> i + 10);
 
@@ -339,7 +339,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedMonoTest() {
+    void taggedMonoTest() {
 		Mono<Integer> tagged1 =
 				Mono.just(1)
 				    .tag("1", "One");
@@ -359,7 +359,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedHideMonoTest() {
+    void taggedHideMonoTest() {
 		Mono<Integer> tagged1 =
 				Mono.just(1)
 				    .hide()
@@ -380,7 +380,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedAppendedMonoTest() {
+    void taggedAppendedMonoTest() {
 		Mono<Integer> tagged1 =
 				Mono.just(1)
 				    .tag("1", "One")
@@ -392,7 +392,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedAppendedHideMonoTest() {
+    void taggedAppendedHideMonoTest() {
 		Mono<Integer> tagged1 = Mono
 					.just(1)
 				    .hide()
@@ -405,7 +405,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedParallelFluxTest() {
+    void namedParallelFluxTest() {
 		ParallelFlux<Integer> named1 =
 				ParallelFlux.from(Mono.just(1))
 				    .name("100s");
@@ -419,7 +419,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void namedOverridenParallelFluxTest() {
+    void namedOverridenParallelFluxTest() {
 		ParallelFlux<Integer> named1 =
 				ParallelFlux.from(Mono.just(1))
 				    .name("1s")
@@ -434,7 +434,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scannableNameParallelFluxDefaultsToToString() {
+    void scannableNameParallelFluxDefaultsToToString() {
 		final ParallelFlux<Integer> flux = ParallelFlux.from(Mono.just(1))
 		                               .map(i -> i + 10);
 
@@ -444,7 +444,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedParallelFluxTest() {
+    void taggedParallelFluxTest() {
 		ParallelFlux<Integer> tagged1 =
 				ParallelFlux.from(Mono.just(1))
 				    .tag("1", "One");
@@ -463,7 +463,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void taggedAppendedParallelFluxTest() {
+    void taggedAppendedParallelFluxTest() {
 		ParallelFlux<Integer> tagged1 =
 				ParallelFlux.from(Mono.just(1))
 				    .tag("1", "One")
@@ -475,7 +475,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scanForParentIsSafe() {
+    void scanForParentIsSafe() {
 		Scannable scannable = key -> "String";
 
 		assertThat(scannable.scan(Scannable.Attr.PARENT))
@@ -483,7 +483,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scanForActualIsSafe() {
+    void scanForActualIsSafe() {
 		Scannable scannable = key -> "String";
 
 		assertThat(scannable.scan(Scannable.Attr.ACTUAL))
@@ -491,7 +491,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void scanForRawParentOrActual() {
+    void scanForRawParentOrActual() {
 		Scannable scannable = key -> "String";
 
 		assertThat(scannable.scanUnsafe(Scannable.Attr.ACTUAL))
@@ -510,7 +510,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void attributeIsConversionSafe() {
+    void attributeIsConversionSafe() {
 		assertThat(Scannable.Attr.ACTUAL.isConversionSafe()).as("ACTUAL").isTrue();
 		assertThat(Scannable.Attr.PARENT.isConversionSafe()).as("PARENT").isTrue();
 
@@ -527,7 +527,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithDebugMode() {
+    void operatorChainWithDebugMode() {
 		Hooks.onOperatorDebug();
 
 		List<String> downstream = new ArrayList<>();
@@ -568,7 +568,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithLastSubscriber() {
+    void operatorChainWithLastSubscriber() {
 		AtomicReference<Subscription> subRef = new AtomicReference<>(null);
 
 		Mono<String> m=
@@ -589,7 +589,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithLastOperator() {
+    void operatorChainWithLastOperator() {
 		Mono<String> m =
 				Flux.concat(Mono.just("foo"), Mono.just("bar"))
 				    .map(a -> a)
@@ -605,7 +605,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithCheckpoint() {
+    void operatorChainWithCheckpoint() {
 		Flux<String> flux  = Flux.just("foo")
 		                         .checkpoint("checkpointHere", true)
 		                         .map(a -> a);
@@ -619,7 +619,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithLightCheckpoint() {
+    void operatorChainWithLightCheckpoint() {
 		Flux<String> flux  = Flux.just("foo")
 		                         .checkpoint("checkpointHere")
 		                         .map(a -> a);
@@ -633,7 +633,7 @@ public class ScannableTest {
 	}
 
 	@Test
-	public void operatorChainWithoutDebugMode() {
+    void operatorChainWithoutDebugMode() {
 		List<String> downstream = new ArrayList<>();
 
 		Mono<?> m=

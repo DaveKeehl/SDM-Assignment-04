@@ -47,10 +47,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
-public class FluxDoOnEachTest {
+class FluxDoOnEachTest {
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDoOnEach<>(null, null);
 		});
@@ -99,7 +99,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sources12Complete")
-	public void normal(Flux<Integer> source) {
+	void normal(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Integer> onNext = new AtomicReference<>();
@@ -131,7 +131,7 @@ public class FluxDoOnEachTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1056
 	@Test
-	public void fusion() {
+    void fusion() {
 		AtomicInteger invocationCount = new AtomicInteger();
 
 		Flux<String> sourceWithFusionAsync = Flux.just("foo")
@@ -149,7 +149,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void fusedSync() {
+    void fusedSync() {
 		AtomicReference<String> onNext = new AtomicReference<>();
 		AtomicReference<Throwable> onError = new AtomicReference<>();
 		AtomicBoolean onComplete = new AtomicBoolean();
@@ -178,7 +178,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void fusedSyncCallbackError() {
+    void fusedSyncCallbackError() {
 		AtomicReference<String> onNext = new AtomicReference<>();
 		AtomicReference<Throwable> onError = new AtomicReference<>();
 		AtomicBoolean onComplete = new AtomicBoolean();
@@ -207,7 +207,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void fusedAsync() {
+    void fusedAsync() {
 		AtomicReference<String> onNext = new AtomicReference<>();
 		AtomicReference<Throwable> onError = new AtomicReference<>();
 		AtomicBoolean onComplete = new AtomicBoolean();
@@ -238,7 +238,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void fusedAsyncCallbackTransientError() {
+    void fusedAsyncCallbackTransientError() {
 		AtomicReference<String> onNext = new AtomicReference<>();
 		AtomicReference<Throwable> onError = new AtomicReference<>();
 		AtomicBoolean onComplete = new AtomicBoolean();
@@ -269,7 +269,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void fusedAsyncCallbackErrorsOnTerminal() {
+    void fusedAsyncCallbackErrorsOnTerminal() {
 		AtomicReference<String> onNext = new AtomicReference<>();
 		AtomicReference<Throwable> onError = new AtomicReference<>();
 		AtomicBoolean onComplete = new AtomicBoolean();
@@ -297,7 +297,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesError")
-	public void error(Flux<Integer> source) {
+	void error(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Integer> onNext = new AtomicReference<>();
@@ -330,7 +330,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesEmpty")
-	public void empty(Flux<Integer> source) {
+	void empty(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Integer> onNext = new AtomicReference<>();
@@ -362,7 +362,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesNever")
-	public void never(Flux<Integer> source) {
+	void never(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Integer> onNext = new AtomicReference<>();
@@ -394,7 +394,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sources12Complete")
-	public void nextCallbackError(Flux<Integer> source) {
+	void nextCallbackError(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		LongAdder state = new LongAdder();
 
@@ -417,7 +417,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sources12Complete")
-	public void nextCallbackBubbleError(Flux<Integer> source) {
+	void nextCallbackBubbleError(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		LongAdder state = new LongAdder();
 
@@ -444,7 +444,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sources12Complete")
-	public void completeCallbackError(Flux<Integer> source) {
+	void completeCallbackError(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		AtomicBoolean completeHandled = new AtomicBoolean();
 		AtomicBoolean errorHandled = new AtomicBoolean();
@@ -473,7 +473,7 @@ public class FluxDoOnEachTest {
 
 	@ParameterizedTest
 	@MethodSource("sourcesError")
-	public void errorCallbackError(Flux<Integer> source) {
+	void errorCallbackError(Flux<Integer> source) {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		LongAdder state = new LongAdder();
 
@@ -498,11 +498,11 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void conditionalTryOnNext() {
+    void conditionalTryOnNext() {
 		ArrayList<Signal<Boolean>> signals = new ArrayList<>();
 		ConditionalSubscriber<Boolean> actual = new FluxPeekFuseableTest.ConditionalAssertSubscriber<Boolean>() {
 			@Override
-			public boolean tryOnNext(Boolean v) {
+            public boolean tryOnNext(Boolean v) {
 				super.tryOnNext(v);
 				return v;
 			}
@@ -528,11 +528,11 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void conditionalFuseableTryOnNext() {
+    void conditionalFuseableTryOnNext() {
 		ArrayList<Signal<Boolean>> signals = new ArrayList<>();
 		FluxPeekFuseableTest.ConditionalAssertSubscriber<Boolean> actual = new FluxPeekFuseableTest.ConditionalAssertSubscriber<Boolean>() {
 			@Override
-			public boolean tryOnNext(Boolean v) {
+            public boolean tryOnNext(Boolean v) {
 				super.tryOnNext(v);
 				return v;
 			}
@@ -558,7 +558,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void nextCompleteAndErrorHaveContext() {
+    void nextCompleteAndErrorHaveContext() {
 		Context context = Context.of("foo", "bar");
 		List<Signal> signals = new ArrayList<>();
 
@@ -575,7 +575,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoOnEach<Integer> test = new FluxDoOnEach<Integer>(parent, s -> {});
 
@@ -584,7 +584,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDoOnEachFuseable<Integer> test = new FluxDoOnEachFuseable<>(parent, s -> {});
 
@@ -593,7 +593,7 @@ public class FluxDoOnEachTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxDoOnEach<Integer> peek =
 				new FluxDoOnEach<>(Flux.just(1), s -> { });
@@ -613,7 +613,7 @@ public class FluxDoOnEachTest {
 
     //https://github.com/reactor/reactor-core/issues/1067
 	@Test
-	public void shallExecuteSideEffectsCallback() {
+    void shallExecuteSideEffectsCallback() {
 
 		Flux<Integer> result = Mono.just(Arrays.asList(1, 2))
 		                           //.doOnEach(sig -> System.out.println("SIGNAL beforeMap " + sig))// <- if enabled than everything is fine

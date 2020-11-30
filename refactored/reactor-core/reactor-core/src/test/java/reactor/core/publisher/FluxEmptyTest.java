@@ -22,16 +22,16 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.from;
 
-public class FluxEmptyTest {
+class FluxEmptyTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.empty())
 	                .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    Flux test = Flux.empty();
 
 	    assertThat(from(test).scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

@@ -19,12 +19,12 @@ package reactor.core.publisher;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
-public class FluxSwitchOnNextTest {
+class FluxSwitchOnNextTest {
 
 
 
 	@Test
-	public void switchOnNext() {
+    void switchOnNext() {
 		StepVerifier.create(Flux.switchOnNext(Flux.just(Flux.just("Three", "Two", "One"),
 				Flux.just("Zero"))))
 		            .expectNext("Three")

@@ -31,10 +31,10 @@ import reactor.util.function.Tuple2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class ParallelMergeOrderedTest {
+class ParallelMergeOrderedTest {
 
 	@Test
-	public void reorderingByIndex() {
+    void reorderingByIndex() {
 		final int LOOPS = 100;
 		final int PARALLELISM = 2;
 		final List<Integer> ordered = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -79,28 +79,28 @@ public class ParallelMergeOrderedTest {
 	}
 
 	@Test
-	public void rejectPrefetchZero() {
+    void rejectPrefetchZero() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new ParallelMergeOrdered<>(null, 0, null, null))
 				.withMessage("prefetch > 0 required but it was 0");
 	}
 
 	@Test
-	public void rejectPrefetchNegative() {
+    void rejectPrefetchNegative() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> new ParallelMergeOrdered<>(null,-1, null, null))
 				.withMessage("prefetch > 0 required but it was -1");
 	}
 
 	@Test
-	public void getPrefetch() {
+    void getPrefetch() {
 		ParallelMergeOrdered<Integer> test = new ParallelMergeOrdered<>(null, 123, null, null);
 
 		assertThat(test.getPrefetch()).isEqualTo(123);
 	}
 
 	@Test
-	public void getPrefetchAPI() {
+    void getPrefetchAPI() {
 		Flux<Integer> test = Flux.range(1, 10)
 		                         .parallel()
 		                         .ordered(Comparator.naturalOrder(), 123);
@@ -109,7 +109,7 @@ public class ParallelMergeOrderedTest {
 	}
 
 	@Test
-	public void scanUnsafe() {
+    void scanUnsafe() {
 		ParallelFlux<Integer> source = Flux.range(1, 10)
 		                                   .parallel(2);
 		ParallelMergeOrdered<Integer> test = new ParallelMergeOrdered<>(source, 123, null, null);

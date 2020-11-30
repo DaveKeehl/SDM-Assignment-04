@@ -33,7 +33,7 @@ import reactor.util.Logger;
 /**
  * @author Stephane Maldini
  */
-public class PopularTagTests extends AbstractReactorTest {
+class PopularTagTests extends AbstractReactorTest {
 
 	private static final Logger LOG = Loggers.getLogger(PopularTagTests.class);
 
@@ -49,7 +49,7 @@ public class PopularTagTests extends AbstractReactorTest {
 
 
 	@Test
-	public void sampleTest() throws Exception {
+    void sampleTest() throws Exception {
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Disposable top10every1second =

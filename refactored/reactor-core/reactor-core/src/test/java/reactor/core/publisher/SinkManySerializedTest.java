@@ -33,10 +33,10 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Timeout(5)
-public class SinkManySerializedTest {
+class SinkManySerializedTest {
 
 	@Test
-	public void shouldNotThrowFromTryEmitNext() {
+    void shouldNotThrowFromTryEmitNext() {
 		SinkManySerialized<Object> sink = new SinkManySerialized<>(
 				new EmptyMany<>(),
 				Context::empty
@@ -54,7 +54,7 @@ public class SinkManySerializedTest {
 	}
 
 	@Test
-	public void shouldSignalErrorOnOverflow() {
+    void shouldSignalErrorOnOverflow() {
 		SinkManySerialized<Object> sink = new SinkManySerialized<>(
 				new EmptyMany<>(),
 				Context::empty
@@ -67,7 +67,7 @@ public class SinkManySerializedTest {
 	}
 
 	@Test
-	public void shouldReturnTheEmission() {
+    void shouldReturnTheEmission() {
 		AtomicReference<SinkManySerialized<Object>> sink = new AtomicReference<>();
 		sink.set(
 				new SinkManySerialized<>(
@@ -88,7 +88,7 @@ public class SinkManySerializedTest {
 	}
 
 	@Test
-	public void sameThreadRecursion() throws Exception {
+    void sameThreadRecursion() throws Exception {
 		Sinks.Many<Object> sink = Sinks.unsafe().many().multicast().directBestEffort();
 		SinkManySerialized<Object> manySink = new SinkManySerialized<>(sink, Context::empty);
 

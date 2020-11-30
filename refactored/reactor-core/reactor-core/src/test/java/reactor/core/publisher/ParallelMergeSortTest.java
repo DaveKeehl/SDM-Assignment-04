@@ -29,10 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.Attr.RUN_STYLE;
 import static reactor.core.Scannable.Attr.RunStyle.SYNC;
 
-public class ParallelMergeSortTest {
+class ParallelMergeSortTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<List<Integer>> source = Flux.just(500, 300).buffer(1).parallel(10);
 		ParallelMergeSort<Integer> test = new ParallelMergeSort<>(source, Integer::compareTo);
 
@@ -42,7 +42,7 @@ public class ParallelMergeSortTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		LambdaSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				s -> s.request(2));
 		MergeSortMain<Integer> test = new MergeSortMain<>(subscriber, 4, Integer::compareTo);
@@ -66,7 +66,7 @@ public class ParallelMergeSortTest {
 	}
 
 	@Test
-	public void scanInnerSubscriber() {
+    void scanInnerSubscriber() {
 		CoreSubscriber<Integer> mainActual = new LambdaSubscriber<>(null, e -> { }, null, null);
 		MergeSortMain<Integer> main = new MergeSortMain<>(mainActual, 2, Integer::compareTo);
 		MergeSortInner<Integer> test = new MergeSortInner<>(main, 1);

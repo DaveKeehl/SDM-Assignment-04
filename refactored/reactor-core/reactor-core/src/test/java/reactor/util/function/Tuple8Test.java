@@ -22,20 +22,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class Tuple8Test {
+class Tuple8Test {
 
 	private Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer> full =
 			new Tuple8<>(1, 2, 3, 4, 5, 6, 7, 8);
 
 	@Test
-	public void nullT8Rejected() {
+    void nullT8Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple8<>(1, 2, 3, 4, 5, 6, 7, null))
 				.withMessage("t8");
 	}
 
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple8<String, Integer, Integer, Integer, Integer, Integer, Integer, Integer> base = 
 				Tuples.of("Foo", 200, 300, 400, 500, 600, 700, 800);
 
@@ -48,7 +48,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple8<Integer, String, Integer, Integer, Integer, Integer, Integer, Integer> base =
 				Tuples.of(100, "Foo", 300, 400, 500, 600, 700, 800);
 
@@ -61,7 +61,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT3() {
+    void mapT3() {
 		Tuple8<Integer, Integer, String, Integer, Integer, Integer, Integer, Integer> base = 
 				Tuples.of(100, 200, "Foo", 400, 500, 600, 700, 800);
 
@@ -74,7 +74,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT4() {
+    void mapT4() {
 		Tuple8<Integer, Integer, Integer, String, Integer, Integer, Integer, Integer> base =
 				Tuples.of(100, 200, 300, "Foo", 500, 600, 700, 800);
 
@@ -87,7 +87,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT5() {
+    void mapT5() {
 		Tuple8<Integer, Integer, Integer, Integer, String, Integer, Integer, Integer> base = 
 				Tuples.of(100, 200, 300, 400, "Foo", 600, 700, 800);
 
@@ -100,7 +100,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT6() {
+    void mapT6() {
 		Tuple8<Integer, Integer, Integer, Integer, Integer, String, Integer, Integer> base = 
 				Tuples.of(100, 200, 300, 400, 500, "Foo", 700, 800);
 
@@ -113,7 +113,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT7() {
+    void mapT7() {
 		Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, String, Integer> base =
 				Tuples.of(100, 200, 300, 400, 500, 600, "Foo", 800);
 
@@ -126,7 +126,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT8() {
+    void mapT8() {
 		Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, String> base = 
 				Tuples.of(100, 200, 300, 400, 500, 600, 700, "Foo");
 
@@ -139,7 +139,7 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void mapT8Null() {
+    void mapT8Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2, 3, 4, 5, 6, 7, 8)
 				      .mapT8(i -> null)
@@ -147,17 +147,17 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -166,25 +166,25 @@ public class Tuple8Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 		                .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void t8Combinations() {
+    void t8Combinations() {
 		assertThat(new Tuple8<>(1, 2, 3, 4, 5, 6, 7, 8))
 				.isNotEqualTo(new Tuple8<>(1, 2, 3, 4, 5, 6, 7, 10))
 				.isEqualTo(new Tuple8<>(1, 2, 3, 4, 5, 6, 7, 8));
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>
 				same = new Tuple8<>(1, 2, 3, 4, 5, 6, 7, 8);
 		Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>

@@ -28,12 +28,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.util.context.ContextTest.key;
 
-public class Context1Test {
+class Context1Test {
 
 	Context1 c = new Context1(1, "A");
 
 	@Test
-	public void replaceKey1NewContext() throws Exception {
+    void replaceKey1NewContext() throws Exception {
 		Context put = c.put(1, "foo");
 
 		assertThat(put)
@@ -46,7 +46,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putDifferentKeyContext2() throws Exception {
+    void putDifferentKeyContext2() throws Exception {
 		Context put = c.put(2, "Abis");
 		assertThat(put)
 				.isInstanceOf(Context2.class);
@@ -57,14 +57,14 @@ public class Context1Test {
 	}
 
 	@Test
-	public void hasKey() throws Exception {
+    void hasKey() throws Exception {
 		assertThat(c.hasKey(1)).as("hasKey(1)").isTrue();
 		assertThat(c.hasKey(2)).as("hasKey(2)").isFalse();
 	}
 
 
 	@Test
-	public void removeKeys() {
+    void removeKeys() {
 		assertThat(c.delete(1))
 				.as("delete(1)")
 				.isInstanceOf(Context0.class)
@@ -74,30 +74,30 @@ public class Context1Test {
 	}
 
 	@Test
-	public void get() {
+    void get() {
 		assertThat((String) c.get(1)).isEqualTo("A");
 	}
 
 	@Test
-	public void getUnknown() throws Exception {
+    void getUnknown() throws Exception {
 		assertThatExceptionOfType(NoSuchElementException.class)
 				.isThrownBy(() -> c.get(2))
 				.withMessage("Context does not contain key: 2");
 	}
 
 	@Test
-	public void getUnknownWithDefault() throws Exception {
+    void getUnknownWithDefault() throws Exception {
 		assertThat(c.getOrDefault("peeka", "boo")).isEqualTo("boo");
 	}
 
 	@Test
-	public void getUnknownWithDefaultNull() throws Exception {
+    void getUnknownWithDefaultNull() throws Exception {
 		Object def = null;
 		assertThat(c.getOrDefault("peeka", def)).isNull();
 	}
 
 	@Test
-	public void stream() throws Exception {
+    void stream() throws Exception {
 		assertThat(c.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
 				.hasSize(1)
 				.containsOnlyKeys(1)
@@ -105,19 +105,19 @@ public class Context1Test {
 	}
 
 	@Test
-	public void string() throws Exception {
+    void string() throws Exception {
 		assertThat(c.toString()).isEqualTo("Context1{1=A}");
 	}
 
 	@Test
-	public void ofApi() {
+    void ofApi() {
 		assertThat(Context.of("test", 12))
 				.isInstanceOf(Context1.class)
 				.hasToString("Context1{test=12}");
 	}
 
 	@Test
-	public void putAllOf() {
+    void putAllOf() {
 		Context m = Context.of("A", 1, "B", 2, "C", 3);
 		Context put = c.putAll(m.readOnly());
 
@@ -126,7 +126,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putAllReplaces() {
+    void putAllReplaces() {
 		Context m = Context.of(c.key, "replaced", "A", 1);
 		Context put = c.putAll(m.readOnly());
 
@@ -135,7 +135,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putAllOfEmpty() {
+    void putAllOfEmpty() {
 		Context m = Context.empty();
 		Context put = c.putAll(m.readOnly());
 
@@ -143,26 +143,26 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putNonNullWithNull() {
+    void putNonNullWithNull() {
 		Context put = c.putNonNull("putNonNull", null);
 
 		assertThat(put).isSameAs(c);
 	}
 
 	@Test
-	public void putNonNullWithValue() {
+    void putNonNullWithValue() {
 		Context put = c.putNonNull("putNonNull", "value");
 
 		assertThat(put.getOrEmpty("putNonNull")).contains("value");
 	}
 
 	@Test
-	public void size() {
+    void size() {
 		assertThat(c.size()).isOne();
 	}
 
 	@Test
-	public void streamHasCleanToString() {
+    void streamHasCleanToString() {
 		Context1 context1 = new Context1("key", "value");
 
 		assertThat(context1.toString()).as("toString").isEqualTo("Context1{key=value}");
@@ -173,7 +173,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putAllSelfIntoEmpty() {
+    void putAllSelfIntoEmpty() {
 		CoreContext initial = new Context0();
 
 		Context result = ((CoreContext) c).putAllInto(initial);
@@ -185,7 +185,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void putAllSelfIntoContextN() {
+    void putAllSelfIntoContextN() {
 		CoreContext initial = new ContextN(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6);
 		Context1 self = new Context1("A", 1);
 		Context result = self.putAllInto(initial);
@@ -198,7 +198,7 @@ public class Context1Test {
 	}
 
 	@Test
-	public void unsafePutAllIntoShouldReplace() {
+    void unsafePutAllIntoShouldReplace() {
 		ContextN ctx = new ContextN(Collections.emptyMap());
 		ctx.accept(1, "VALUE1");
 		ctx.accept("extra", "value");

@@ -29,10 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class ContextTests {
+class ContextTests {
 
 	@Test
-	public void contextPassing() throws InterruptedException {
+    void contextPassing() throws InterruptedException {
 		AtomicReference<Context> innerC = new AtomicReference<>();
 
 		Flux.range(1, 1000)
@@ -57,7 +57,7 @@ public class ContextTests {
 		    .log()
 		    .subscribe(new BaseSubscriber<Integer>() {
 			    @Override
-			    public Context currentContext() {
+				public Context currentContext() {
 				    return Context.empty()
 				                  .put("test", "baseSubscriber");
 			    }
@@ -67,7 +67,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextPassing2() throws InterruptedException {
+    void contextPassing2() throws InterruptedException {
 		AtomicReference<String> innerC = new AtomicReference<>();
 
 		Flux.range(1, 1000)
@@ -92,7 +92,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextGet() throws InterruptedException {
+    void contextGet() throws InterruptedException {
 
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .log()
@@ -110,7 +110,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void currentContext() throws InterruptedException {
+    void currentContext() throws InterruptedException {
 		StepVerifier.create(Mono.just("foo")
 		                        .flatMap(d -> Mono.deferContextual(Mono::just)
 		                                          .map(c -> d + c.get(Integer.class)))
@@ -123,7 +123,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void currentContextWithEmpty() throws InterruptedException {
+    void currentContextWithEmpty() throws InterruptedException {
 		StepVerifier.create(Mono.just("foo")
 		                        .flatMap(d -> Mono.deferContextual(Mono::just)
 		                                          .map(c -> d + c.get(Integer.class))))
@@ -132,7 +132,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextGetHide() throws InterruptedException {
+    void contextGetHide() throws InterruptedException {
 
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .hide()
@@ -152,7 +152,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextGetMono() throws InterruptedException {
+    void contextGetMono() throws InterruptedException {
 
 		StepVerifier.create(Mono.just(1)
 		                        .log()
@@ -166,7 +166,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextGetHideMono() throws InterruptedException {
+    void contextGetHideMono() throws InterruptedException {
 
 		StepVerifier.create(Mono.just(1)
 		                        .hide()
@@ -181,7 +181,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void monoSubscriberContextPutsAll() {
+    void monoSubscriberContextPutsAll() {
 		StepVerifier.create(
 				Mono.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -193,7 +193,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void monoSubscriberContextWithMergedEmpty() {
+    void monoSubscriberContextWithMergedEmpty() {
 		StepVerifier.create(
 				Mono.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -205,7 +205,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void monoSubscriberContextWithBothEmpty() {
+    void monoSubscriberContextWithBothEmpty() {
 		StepVerifier.create(
 				Mono.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -217,7 +217,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void fluxSubscriberContextPutsAll() {
+    void fluxSubscriberContextPutsAll() {
 		StepVerifier.create(
 				Flux.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -229,7 +229,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void fluxSubscriberContextWithMergedEmpty() {
+    void fluxSubscriberContextWithMergedEmpty() {
 		StepVerifier.create(
 				Flux.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -241,7 +241,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void fluxSubscriberContextWithBothEmpty() {
+    void fluxSubscriberContextWithBothEmpty() {
 		StepVerifier.create(
 				Flux.just("foo")
 				    .flatMap(v -> Mono.deferContextual(Mono::just))
@@ -253,7 +253,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void expectAccessibleContextWithInitialContext() {
+    void expectAccessibleContextWithInitialContext() {
 		StepVerifierOptions stepVerifierOptions = StepVerifierOptions.create()
 		                                                             .withInitialContext(Context.of("foo", "bar"));
 
@@ -266,7 +266,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextAccessibleWithEmptySubscriptionAndOperator1() {
+    void contextAccessibleWithEmptySubscriptionAndOperator1() {
 		StepVerifier.create(Flux.empty()
 		                        .contextWrite(Context.of("a", "b")))
 		            .expectAccessibleContext()
@@ -276,7 +276,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextAccessibleWithEmptySubscriptionAndOperator2() {
+    void contextAccessibleWithEmptySubscriptionAndOperator2() {
 		StepVerifier.create(Flux.empty()
 		                        .map(i -> i), StepVerifierOptions.create().withInitialContext(Context.of("a", "b")))
 		            .expectAccessibleContext()
@@ -286,7 +286,7 @@ public class ContextTests {
 	}
 
 	@Test
-	public void contextNotAccessibleWithEmptySubscriptionOnly() {
+    void contextNotAccessibleWithEmptySubscriptionOnly() {
 		StepVerifier.create(Flux.empty(), StepVerifierOptions.create().withInitialContext(Context.of("a", "b")))
 		            .expectNoAccessibleContext()
 		            .verifyComplete();

@@ -35,11 +35,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
-public class LambdaMonoSubscriberTest {
+class LambdaMonoSubscriberTest {
 
 
 	@Test
-	public void initialContextIsVisibleToUpstream() {
+    void initialContextIsVisibleToUpstream() {
 		AtomicReference<ContextView> contextRef = new AtomicReference<>();
 
 		Mono.deferContextual(Mono::just)
@@ -52,7 +52,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void initialContextIsUsedForOnErrorDropped() {
+    void initialContextIsUsedForOnErrorDropped() {
 		AtomicReference<Throwable> droppedRef = new AtomicReference<>();
 		Context ctx = Context.of(Hooks.KEY_ON_ERROR_DROPPED, (Consumer<Throwable>) droppedRef::set);
 		IllegalStateException expectDropped = new IllegalStateException("boom2");
@@ -66,7 +66,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionNotifiesError() {
+    void consumeOnSubscriptionNotifiesError() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaMonoSubscriber<String> tested = new LambdaMonoSubscriber<>(
@@ -86,7 +86,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionThrowsFatal() {
+    void consumeOnSubscriptionThrowsFatal() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaMonoSubscriber<String> tested = new LambdaMonoSubscriber<>(
@@ -114,7 +114,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionReceivesSubscriptionAndRequests32() {
+    void consumeOnSubscriptionReceivesSubscriptionAndRequests32() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 		AtomicReference<Subscription> subscriptionHolder = new AtomicReference<>(null);
 		LambdaMonoSubscriber<String> tested = new LambdaMonoSubscriber<>(
@@ -136,7 +136,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void noSubscriptionConsumerTriggersRequestOfMax() {
+    void noSubscriptionConsumerTriggersRequestOfMax() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 		LambdaMonoSubscriber<String> tested = new LambdaMonoSubscriber<>(
 				value -> {},
@@ -156,7 +156,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void onNextConsumerExceptionTriggersCancellation() {
+    void onNextConsumerExceptionTriggersCancellation() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaMonoSubscriber<String> tested = new LambdaMonoSubscriber<>(
@@ -176,7 +176,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void onNextConsumerExceptionNonFatalTriggersCancellation() {
+    void onNextConsumerExceptionNonFatalTriggersCancellation() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -204,7 +204,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void onNextConsumerFatalDoesntTriggerCancellation() {
+    void onNextConsumerFatalDoesntTriggerCancellation() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -229,7 +229,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void emptyMonoState(){
+    void emptyMonoState(){
 		assertThat(Mono.fromDirect(s -> {
 			assertThat(s).isInstanceOf(LambdaMonoSubscriber.class);
 			LambdaMonoSubscriber<?> bfs = (LambdaMonoSubscriber<?>) s;
@@ -247,7 +247,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void errorMonoState(){
+    void errorMonoState(){
 		Hooks.onErrorDropped(e -> assertThat(e).hasMessage("test2"));
 		Hooks.onNextDropped(d -> assertThat(d).isEqualTo("test2"));
 		Mono.fromDirect(s -> {
@@ -267,7 +267,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void completeHookErrorDropped() {
+    void completeHookErrorDropped() {
 		Hooks.onErrorDropped(e -> assertThat(e).hasMessage("complete"));
 		Mono.just("foo")
 	        .subscribe(v -> {},
@@ -276,7 +276,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void noErrorHookThrowsCallbackNotImplemented() {
+    void noErrorHookThrowsCallbackNotImplemented() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -295,7 +295,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void testCancel() {
+    void testCancel() {
 		AtomicLong cancelCount = new AtomicLong();
 		Mono.delay(Duration.ofMillis(500))
 		    .doOnCancel(cancelCount::incrementAndGet)
@@ -305,7 +305,7 @@ public class LambdaMonoSubscriberTest {
 	}
 
 	@Test
-	public void scan() {
+    void scan() {
 		LambdaMonoSubscriber<String> test = new LambdaMonoSubscriber<>(null, null, null, null);
 		Subscription parent = Operators.emptySubscription();
 		test.onSubscribe(parent);

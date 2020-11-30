@@ -30,10 +30,10 @@ import reactor.core.publisher.Mono;
  * @author nitzanvolman
  * @author Stephane Maldini
  */
-public class FizzBuzzTests extends AbstractReactorTest {
+class FizzBuzzTests extends AbstractReactorTest {
 
 	@Test
-	public void fizzTest() throws Throwable {
+    void fizzTest() throws Throwable {
 		int numOfItems = 1024;
 //		int batchSize = 8;
 		final Timer timer = new Timer();
@@ -64,7 +64,7 @@ public class FizzBuzzTests extends AbstractReactorTest {
 		                           .log("oooo")
 		                           .flatMap((s) -> Flux.create((sub) -> timer.schedule(new TimerTask() {
 			                           @Override
-			                           public void run() {
+									   public void run() {
 				                           sub.next(s);
 				                           sub.complete();
 			                           }

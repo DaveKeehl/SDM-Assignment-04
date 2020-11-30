@@ -25,24 +25,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoAllTest {
+class MonoAllTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoAll<>(null, v -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoAll<>(null, null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).all(v -> true).subscribe(ts);
@@ -53,7 +53,7 @@ public class MonoAllTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).all(v -> true).subscribe(ts);
@@ -70,7 +70,7 @@ public class MonoAllTest {
 	}
 
 	@Test
-	public void someMatch() {
+    void someMatch() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).all(v -> v < 6).subscribe(ts);
@@ -81,7 +81,7 @@ public class MonoAllTest {
 	}
 
 	@Test
-	public void someMatchBackpressured() {
+    void someMatchBackpressured() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).all(v -> v < 6).subscribe(ts);
@@ -98,7 +98,7 @@ public class MonoAllTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Boolean> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).all(v -> {
@@ -112,14 +112,14 @@ public class MonoAllTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoAll<Integer> test = new MonoAll<>(Flux.just(1, 2, 3), v -> true);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Boolean> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoAll.AllSubscriber<String> test = new MonoAll.AllSubscriber<>(actual, String::isEmpty);
 		Subscription parent = Operators.emptySubscription();

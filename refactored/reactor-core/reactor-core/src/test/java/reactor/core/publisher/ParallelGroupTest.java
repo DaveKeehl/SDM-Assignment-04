@@ -24,10 +24,10 @@ import reactor.core.publisher.ParallelGroup.ParallelInnerGroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelGroupTest {
+class ParallelGroupTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelGroup<Integer> test = new ParallelGroup<>(source);
 
@@ -37,7 +37,7 @@ public class ParallelGroupTest {
 	}
 
 	@Test
-	public void scanInnerGroup() {
+    void scanInnerGroup() {
 		ParallelInnerGroup<Integer> test = new ParallelInnerGroup<>(1023);
 
 		CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null,
@@ -60,7 +60,7 @@ public class ParallelGroupTest {
 	}
 
 	@Test
-	public void scanInnerGroupRequestNotTrackedWhenParent() {
+    void scanInnerGroupRequestNotTrackedWhenParent() {
 		ParallelInnerGroup<Integer> test = new ParallelInnerGroup<>(1023);
 
 		CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null,
@@ -75,7 +75,7 @@ public class ParallelGroupTest {
 	}
 
 	@Test
-	public void scanInnerGroupRequestTrackedWhenNoParent() {
+    void scanInnerGroupRequestTrackedWhenNoParent() {
 		ParallelInnerGroup<Integer> test = new ParallelInnerGroup<>(1023);
 
 		CoreSubscriber<Integer> subscriber = new LambdaSubscriber<>(null, e -> {}, null,

@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxPublishTest extends FluxOperatorTest<String, String> {
+class FluxPublishTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -58,7 +58,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.publish(-1);
@@ -66,7 +66,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureOnComplete() {
+    void prematureOnComplete() {
 		Sinks.Many<Flux<String>> sink = Sinks.unsafe().many().multicast().onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);
 
 		Flux.just("ALPHA", "BRAVO", "CHARLIE", "DELTA", "ALPHA", "BRAVO", "CHARLIE", "DELTA", "ALPHA", "BRAVO", "CHARLIE", "DELTA")
@@ -107,7 +107,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(StreamPublish.class);
 
 		ctb.addRef("source", Flux.never());
@@ -118,7 +118,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}*/
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
 
@@ -149,7 +149,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create(0);
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create(0);
 
@@ -204,7 +204,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalAsyncFused() {
+    void normalAsyncFused() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
 
@@ -243,7 +243,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredAsyncFused() {
+    void normalBackpressuredAsyncFused() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create(0);
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create(0);
 
@@ -306,7 +306,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalSyncFused() {
+    void normalSyncFused() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
 
@@ -337,7 +337,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredSyncFused() {
+    void normalBackpressuredSyncFused() {
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create(0);
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create(0);
 
@@ -393,7 +393,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1302
 	@Test
-	public void boundaryFused() {
+    void boundaryFused() {
 		Flux.range(1, 10000)
 		    .publishOn(Schedulers.single())
 		    .map(v -> Thread.currentThread().getName().contains("single-") ? "single" : ("BAD-" + v + Thread.currentThread().getName()))
@@ -408,7 +408,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void disconnect() {
+    void disconnect() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
@@ -432,7 +432,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void disconnectBackpressured() {
+    void disconnectBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
@@ -453,7 +453,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> e = Sinks.many().multicast().onBackpressureBuffer();
@@ -475,7 +475,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void fusedMapInvalid() {
+    void fusedMapInvalid() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		ConnectableFlux<Integer> p = Flux.range(1, 5).map(v -> (Integer)null).publish();
@@ -491,7 +491,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void retry() {
+    void retry() {
 		Sinks.Many<Integer> dp = Sinks.unsafe().many().multicast().directBestEffort();
 		StepVerifier.create(
 				dp.asFlux()
@@ -518,7 +518,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void retryWithPublishOn() {
+    void retryWithPublishOn() {
 		Sinks.Many<Integer> dp = Sinks.unsafe().many().multicast().directBestEffort();
 		StepVerifier.create(
 				dp.asFlux()
@@ -545,7 +545,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanMain() {
+    void scanMain() {
         Flux<Integer> parent = Flux.just(1).map(i -> i);
         FluxPublish<Integer> test = new FluxPublish<>(parent, 123, Queues.unbounded());
 
@@ -555,7 +555,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         FluxPublish<Integer> main = new FluxPublish<>(Flux.just(1), 123, Queues.unbounded());
         FluxPublish.PublishSubscriber<Integer> test = new FluxPublish.PublishSubscriber<>(789, main);
         Subscription parent = Operators.emptySubscription();
@@ -581,7 +581,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanInner() {
+    void scanInner() {
 		FluxPublish<Integer> main = new FluxPublish<>(Flux.just(1), 123, Queues.unbounded());
         FluxPublish.PublishSubscriber<Integer> parent = new FluxPublish.PublishSubscriber<>(789, main);
         Subscription sub = Operators.emptySubscription();
@@ -605,7 +605,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanPubSubInner() {
+    void scanPubSubInner() {
 		FluxPublish<Integer> main = new FluxPublish<>(Flux.just(1), 123, Queues.unbounded());
         FluxPublish.PublishSubscriber<Integer> parent = new FluxPublish.PublishSubscriber<>(789, main);
         Subscription sub = Operators.emptySubscription();
@@ -624,7 +624,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 
     //see https://github.com/reactor/reactor-core/issues/1290
     @Test
-    public void syncFusionSingle() { //single value in the SYNC fusion
+    void syncFusionSingle() { //single value in the SYNC fusion
 	    final ConnectableFlux<String> publish = Flux.just("foo")
 	                                 .publish();
 
@@ -637,7 +637,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 
     //see https://github.com/reactor/reactor-core/issues/1290
 	@Test
-	public void syncFusionMultiple() { //multiple values in the SYNC fusion
+    void syncFusionMultiple() { //multiple values in the SYNC fusion
 		final ConnectableFlux<Integer> publish = Flux.range(1, 5)
 		                                             .publish();
 
@@ -651,7 +651,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	//see https://github.com/reactor/reactor-core/issues/1528
 	@Test
 	@Timeout(4)
-	public void syncFusionFromInfiniteStream() {
+	void syncFusionFromInfiniteStream() {
 		final ConnectableFlux<Integer> publish =
 				Flux.fromStream(Stream.iterate(0, i -> i + 1))
 				    .publish();
@@ -667,7 +667,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	//see https://github.com/reactor/reactor-core/issues/1528
 	@Test
 	@Timeout(4)
-	public void syncFusionFromInfiniteStreamAndTake() {
+	void syncFusionFromInfiniteStreamAndTake() {
 		final Flux<Integer> publish =
 				Flux.fromStream(Stream.iterate(0, i -> i + 1))
 				    .publish()
@@ -681,7 +681,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void dataDroppedIfConnectImmediately() {
+    void dataDroppedIfConnectImmediately() {
 		TestPublisher<Integer> publisher = TestPublisher.create();
 		ConnectableFlux<Integer> connectableFlux = publisher.flux().publish();
 
@@ -700,7 +700,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void dataDroppedIfAutoconnectZero() {
+    void dataDroppedIfAutoconnectZero() {
 		TestPublisher<Integer> publisher = TestPublisher.create();
 		Flux<Integer> flux = publisher.flux().publish().autoConnect(0);
 
@@ -717,7 +717,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void removeUnknownInnerIgnored() {
+    void removeUnknownInnerIgnored() {
 		FluxPublish.PublishSubscriber<Integer> subscriber = new FluxPublish.PublishSubscriber<>(1, null);
 		FluxPublish.PublishInner<Integer> inner = new FluxPublish.PublishInner<>(null);
 		FluxPublish.PublishInner<Integer> notInner = new FluxPublish.PublishInner<>(null);
@@ -733,7 +733,7 @@ public class FluxPublishTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void subscriberContextPropagation() {
+    void subscriberContextPropagation() {
 		String key = "key";
 		int expectedValue = 1;
 

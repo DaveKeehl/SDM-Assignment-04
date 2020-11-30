@@ -34,11 +34,11 @@ import reactor.util.retry.Retry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.with;
 
-public class SerializedSubscriberTest {
+class SerializedSubscriberTest {
 
 	//see https://github.com/reactor/reactor-core/issues/2077
 	@Test
-	public void onNextRaceWithCancelDoesNotLeak() {
+    void onNextRaceWithCancelDoesNotLeak() {
 		int loops = 0;
 		while (loops < 100_000) {
 			CopyOnWriteArrayList<Object> discarded = new CopyOnWriteArrayList<>();
@@ -84,7 +84,7 @@ public class SerializedSubscriberTest {
 
 	//direct transcription of test case exposed in https://github.com/reactor/reactor-core/issues/2077
 	@Test
-	public void testLeakWithRetryWhenImmediatelyCancelled() throws InterruptedException {
+    void testLeakWithRetryWhenImmediatelyCancelled() throws InterruptedException {
 		AtomicInteger counter = new AtomicInteger();
 		AtomicInteger discarded = new AtomicInteger();
 		AtomicInteger seen = new AtomicInteger();
@@ -131,7 +131,7 @@ public class SerializedSubscriberTest {
 	}
 
 	@Test
-	public void scanSerializedSubscriber() {
+    void scanSerializedSubscriber() {
 		LambdaSubscriber<String> actual = new LambdaSubscriber<>(null, e -> { }, null, null);
 		SerializedSubscriber<String> test = new SerializedSubscriber<>(actual);
 		Subscription subscription = Operators.emptySubscription();
@@ -157,7 +157,7 @@ public class SerializedSubscriberTest {
 	}
 
 	@Test
-	public void scanSerializedSubscriberMaxBuffered() {
+    void scanSerializedSubscriberMaxBuffered() {
 		LambdaSubscriber<String> actual = new LambdaSubscriber<>(null, e -> { }, null, null);
 		SerializedSubscriber<String> test = new SerializedSubscriber<>(actual);
 

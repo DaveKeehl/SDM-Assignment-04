@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxZipTest extends FluxOperatorTest<String, String> {
+class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -74,7 +74,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 			"false, true, second",
 			"true, true, first",
 	})
-	public void testTwoErrors(boolean firstIsScalar, boolean secondIsScalar, String expectedMessage) {
+	void testTwoErrors(boolean firstIsScalar, boolean secondIsScalar, String expectedMessage) {
 		Flux<Object> first = Flux.error(new Exception("first")).as(f -> firstIsScalar ? f : f.hide());
 		Flux<Object> second = Flux.error(new Exception("second")).as(f -> secondIsScalar ? f : f.hide());
 		StepVerifier.create(first.zipWith(second)).verifyErrorMessage(expectedMessage);
@@ -87,7 +87,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 			"false, true, first",
 			"true, true, first",
 	})
-	public void testTwoErrorsFusion(boolean firstIsFuseable, boolean secondIsFuseable, String expectedMessage) {
+	void testTwoErrorsFusion(boolean firstIsFuseable, boolean secondIsFuseable, String expectedMessage) {
 		Flux<Object> first = Flux
 				.just(1)
 				.map(i -> {
@@ -106,7 +106,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(FluxZip.class);
 
 		ctb.addRef("sources", new Publisher[0]);
@@ -120,7 +120,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	*/
 
 	@Test
-	public void iterableWithCombinatorHasCorrectLength() {
+    void iterableWithCombinatorHasCorrectLength() {
 		Flux<Integer> flux1 = Flux.just(1);
 		Flux<Integer> flux2 = Flux.just(2);
 		Flux<Integer> flux3 = Flux.just(3);
@@ -138,7 +138,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void publisherOfPublishersUsesCorrectTuple() {
+    void publisherOfPublishersUsesCorrectTuple() {
 		Flux<Flux<Integer>> map = Flux.range(1, 7)
 		                              .map(Flux::just);
 
@@ -158,7 +158,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sameLength() {
+    void sameLength() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -172,7 +172,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sameLengthOptimized() {
+    void sameLengthOptimized() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -186,7 +186,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sameLengthBackpressured() {
+    void sameLengthBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -212,7 +212,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sameLengthOptimizedBackpressured() {
+    void sameLengthOptimizedBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -238,7 +238,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void differentLength() {
+    void differentLength() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -253,7 +253,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void differentLengthOpt() {
+    void differentLengthOpt() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -268,7 +268,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void emptyNonEmpty() {
+    void emptyNonEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.fromIterable(Collections.emptyList());
@@ -282,7 +282,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nonEmptyAndEmpty() {
+    void nonEmptyAndEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.just(1, 2, 3);
@@ -296,7 +296,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scalarNonScalar() {
+    void scalarNonScalar() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.just(1);
@@ -310,7 +310,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scalarNonScalarBackpressured() {
+    void scalarNonScalarBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux<Integer> source1 = Flux.just(1);
@@ -330,7 +330,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scalarNonScalarOpt() {
+    void scalarNonScalarOpt() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.just(1);
@@ -344,7 +344,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scalarScalar() {
+    void scalarScalar() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.just(1);
@@ -358,7 +358,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void emptyScalar() {
+    void emptyScalar() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux<Integer> source1 = Flux.empty();
@@ -372,7 +372,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncFusionMapToNull() {
+    void syncFusionMapToNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
@@ -386,7 +386,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Flux<Tuple2<Tuple2<Integer, String>, String>> f =
 				Flux.zip(Flux.just(1), Flux.just("test"))
 				    .zipWith(Flux.just("test2"));
@@ -407,7 +407,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nonPairWisePairWise() {
+    void nonPairWisePairWise() {
 		Flux<Tuple2<Tuple3<Integer, String, String>, String>> f =
 				Flux.zip(Flux.just(1), Flux.just("test"), Flux.just("test0"))
 				    .zipWith(Flux.just("test2"));
@@ -428,7 +428,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void pairWise3() {
+    void pairWise3() {
 		AtomicLong ref = new AtomicLong();
 		Flux<Tuple2<Tuple2<Integer, String>, String>> f =
 				Flux.zip(Flux.just(1), Flux.just("test"))
@@ -453,7 +453,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void pairWise2() {
+    void pairWise2() {
 		Flux<Tuple2<Tuple2<Integer, String>, String>> f =
 				Flux.zip(Arrays.asList(Flux.just(1), Flux.just("test")),
 						obj -> Tuples.of((int) obj[0], (String) obj[1]))
@@ -475,7 +475,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void multipleStreamValuesCanBeZipped() {
+    void multipleStreamValuesCanBeZipped() {
 //		"Multiple Stream"s values can be zipped"
 //		given: "source composables to merge, buffer and tap"
 		Sinks.Many<Integer> source1 = Sinks.many().multicast().onBackpressureBuffer();
@@ -502,7 +502,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void multipleIterableStreamValuesCanBeZipped() {
+    void multipleIterableStreamValuesCanBeZipped() {
 //		"Multiple iterable Stream"s values can be zipped"
 //		given: "source composables to zip, buffer and tap"
 		Flux<Integer> odds = Flux.just(1, 3, 5, 7, 9);
@@ -533,20 +533,20 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void zip() {
+    void zip() {
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0], Flux.just(1)))
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipEmpty() {
+    void zipEmpty() {
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0]))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipHide() {
+    void zipHide() {
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0],
 				Flux.just(1)
 				    .hide()))
@@ -555,7 +555,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void zip2() {
+    void zip2() {
 		StepVerifier.create(Flux.zip(Flux.just(1), Flux.just(2), (a, b) -> a))
 		            .expectNext(1)
 		            .verifyComplete();
@@ -563,7 +563,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip3() {
+	void zip3() {
 		StepVerifier.create(Flux.zip(Flux.just(1), Flux.just(2), Flux.just(3)))
 		            .expectNext(Tuples.of(1, 2, 3))
 		            .verifyComplete();
@@ -571,7 +571,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip4() {
+	void zip4() {
 		StepVerifier.create(Flux.zip(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -582,7 +582,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip5() {
+	void zip5() {
 		StepVerifier.create(Flux.zip(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -594,7 +594,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip6() {
+	void zip6() {
 		StepVerifier.create(Flux.zip(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -607,7 +607,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip7() {
+	void zip7() {
 		StepVerifier.create(Flux.zip(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -621,7 +621,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zip8() {
+	void zip8() {
 		StepVerifier.create(Flux.zip(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -636,7 +636,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void createZipWithPrefetch() {
+	void createZipWithPrefetch() {
 		Flux<Integer>[] list = new Flux[]{Flux.just(1), Flux.just(2)};
 		Flux<Integer> f = Flux.zip(obj -> 0, 123, list);
 		assertThat(f.getPrefetch()).isEqualTo(123);
@@ -644,34 +644,34 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void createZipWithPrefetchIterable() {
+	void createZipWithPrefetchIterable() {
 		List<Flux<Integer>> list = Arrays.asList(Flux.just(1), Flux.just(2));
 		Flux<Integer> f = Flux.zip(list, 123, obj -> 0);
 		assertThat(f.getPrefetch()).isEqualTo(123);
 	}
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.zip(obj -> 0, -1, Flux.just(1), Flux.just(2));
 		});
 	}
 
 	@Test
-	public void failPrefetchIterable() {
+    void failPrefetchIterable() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.zip(Arrays.asList(Flux.just(1), Flux.just(2)), -1, obj -> 0);
 		});
 	}
 
 	@Test
-	public void failIterableNull() {
+    void failIterableNull() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1), null), obj -> 0))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void failIterableCallable() {
+    void failIterableCallable() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1), Mono.fromCallable(() -> {
 			throw new Exception("test");
 		})), obj -> 0))
@@ -679,20 +679,20 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteIterableCallableNull() {
+    void prematureCompleteIterableCallableNull() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1),
 				Mono.fromCallable(() -> null)), obj -> 0))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureCompleteIterableEmptyScalarSource() {
+    void prematureCompleteIterableEmptyScalarSource() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1), Mono.empty()), obj -> 0))
 		            .verifyComplete();
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleNext() {
+	void failDoubleNext() {
 		Hooks.onNextDropped(c -> {
 		});
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), Flux.just(2), s -> {
@@ -706,7 +706,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void ignoreDoubleComplete() {
+	void ignoreDoubleComplete() {
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), Flux.never(), s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onComplete();
@@ -716,7 +716,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleError() {
+	void failDoubleError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -736,7 +736,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleError3() {
+	void failDoubleError3() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -760,7 +760,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleErrorSilent() {
+	void failDoubleErrorSilent() {
 		Hooks.onErrorDropped(e -> {
 		});
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), Flux.never(), s -> {
@@ -772,7 +772,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleErrorHide() {
+	void failDoubleErrorHide() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -796,7 +796,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failDoubleTerminalPublisher() {
+    void failDoubleTerminalPublisher() {
 		Sinks.Many<Integer> d1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Hooks.onErrorDropped(e -> {
 		});
@@ -811,7 +811,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleError2() {
+	void failDoubleError2() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -835,19 +835,19 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failNull() {
+    void failNull() {
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void failCombinedNull() {
+    void failCombinedNull() {
 		StepVerifier.create(Flux.zip(obj -> null, Flux.just(1), Flux.just(2)))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void failCombinedNullHide() {
+    void failCombinedNullHide() {
 		StepVerifier.create(Flux.zip(obj -> null,
 				Flux.just(1),
 				Flux.just(2)
@@ -856,7 +856,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCombinedNullHideAll() {
+    void failCombinedNullHideAll() {
 		StepVerifier.create(Flux.zip(obj -> null,
 				Flux.just(1)
 				    .hide(),
@@ -866,7 +866,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void ignoreRequestZeroHideAll() {
+    void ignoreRequestZeroHideAll() {
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1],
 				Flux.just(1)
 				    .hide(),
@@ -879,7 +879,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCombinedFusedError() {
+    void failCombinedFusedError() {
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1, null), Flux.just(2, 3)), 0)
 		            .thenRequest(1)
 		            .expectNext(0)
@@ -887,7 +887,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void backpressuredAsyncFusedCancelled() {
+    void backpressuredAsyncFusedCancelled() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1],
 				1,
@@ -904,7 +904,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void backpressuredAsyncFusedCancelled2() {
+    void backpressuredAsyncFusedCancelled2() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1],
 				1,
@@ -921,7 +921,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("rawtypes")
-	public void backpressuredAsyncFusedError() {
+	void backpressuredAsyncFusedError() {
 		Hooks.onErrorDropped(c -> {
 			assertThat(c).hasMessage("test2");
 		});
@@ -946,7 +946,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("rawtypes")
-	public void backpressuredAsyncFusedErrorHideAll() {
+	void backpressuredAsyncFusedErrorHideAll() {
 		Hooks.onErrorDropped(c -> {
 			assertThat(c).hasMessage("test2");
 		});
@@ -975,7 +975,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void backpressuredAsyncFusedComplete() {
+    void backpressuredAsyncFusedComplete() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1],
 				1,
@@ -992,7 +992,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCombinedError() {
+    void failCombinedError() {
 		StepVerifier.create(Flux.zip(obj -> {
 			throw new RuntimeException("test");
 		}, 123, Flux.just(1), Flux.just(2), Flux.just(3)))
@@ -1000,7 +1000,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCombinedErrorHide() {
+    void failCombinedErrorHide() {
 		StepVerifier.create(Flux.zip(obj -> {
 					throw new RuntimeException("test");
 				},
@@ -1014,7 +1014,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCombinedErrorHideAll() {
+    void failCombinedErrorHideAll() {
 		StepVerifier.create(Flux.zip(obj -> {
 					throw new RuntimeException("test");
 				},
@@ -1029,7 +1029,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failCallable() {
+    void failCallable() {
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), Mono.fromCallable(() -> {
 			throw new Exception("test");
 		})))
@@ -1037,7 +1037,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteCallableNull() {
+    void prematureCompleteCallableNull() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1),
 				Mono.fromCallable(() -> null)))
@@ -1045,7 +1045,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteCallableNullHide() {
+    void prematureCompleteCallableNullHide() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1)
 				    .hide(),
@@ -1054,7 +1054,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteCallableNullHideAll() {
+    void prematureCompleteCallableNullHideAll() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1)
 				    .hide(),
@@ -1064,13 +1064,13 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteEmptySource() {
+    void prematureCompleteEmptySource() {
 		StepVerifier.create(Flux.zip(obj -> 0, Flux.just(1), Mono.empty()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureCompleteEmptySourceHide() {
+    void prematureCompleteEmptySourceHide() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1)
 				    .hide(),
@@ -1079,7 +1079,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteSourceEmpty() {
+    void prematureCompleteSourceEmpty() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1),
 				Mono.empty()
@@ -1088,7 +1088,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteSourceEmptyDouble() {
+    void prematureCompleteSourceEmptyDouble() {
 		Sinks.Many<Integer> d = Sinks.unsafe().many().multicast().directBestEffort();
 		StepVerifier.create(Flux.zip(obj -> 0, d.asFlux(), s -> {
 			Scannable directInner = Scannable.from(d).inners().findFirst().get();
@@ -1102,7 +1102,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteSourceError() {
+    void prematureCompleteSourceError() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1),
 				Mono.error(new Exception("test"))))
@@ -1110,7 +1110,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteSourceErrorHide() {
+    void prematureCompleteSourceErrorHide() {
 		StepVerifier.create(Flux.zip(obj -> 0,
 				Flux.just(1)
 				    .hide(),
@@ -1119,19 +1119,19 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void prematureCompleteEmpty() {
+    void prematureCompleteEmpty() {
 		StepVerifier.create(Flux.zip(obj -> 0))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureCompleteIterableEmpty() {
+    void prematureCompleteIterableEmpty() {
 		StepVerifier.create(Flux.zip(Arrays.asList(), obj -> 0))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void moreThan8() {
+    void moreThan8() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -1147,7 +1147,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void size8LikeInternalBuffer() {
+    void size8LikeInternalBuffer() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -1163,7 +1163,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void cancelled() {
+	void cancelled() {
 		AtomicReference<FluxZip.ZipSingleCoordinator> ref = new AtomicReference<>();
 
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1] + (int) obj[2],
@@ -1221,7 +1221,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void cancelledHide() {
+	void cancelledHide() {
 		AtomicReference<FluxZip.ZipCoordinator> ref = new AtomicReference<>();
 
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1] + (int) obj[2],
@@ -1254,7 +1254,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void delayedCancelledHide() {
+	void delayedCancelledHide() {
 		AtomicReference<FluxZip.ZipCoordinator> ref = new AtomicReference<>();
 
 		StepVerifier.create(Flux.zip(obj -> (int) obj[0] + (int) obj[1] + (int) obj[2],
@@ -1315,7 +1315,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void moreThan8Hide() {
+    void moreThan8Hide() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1)
 		                                               .hide(),
 				Flux.just(2)
@@ -1340,7 +1340,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void seven() {
+    void seven() {
 		StepVerifier.create(Flux.zip(Arrays.asList(Flux.just(1),
 				Flux.just(2),
 				Flux.just(3),
@@ -1358,14 +1358,14 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxZip s = new FluxZip<>(Flux.just(1), Flux.just(2), Tuples::of, Queues.small(), 123);
 		assertThat(s.scan(Scannable.Attr.PREFETCH)).isEqualTo(123);
 		assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-    public void scanCoordinator() {
+    void scanCoordinator() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxZip.ZipCoordinator<Integer, Integer> test = new FluxZip.ZipCoordinator<Integer, Integer>(actual,
 				i -> 5, 123, Queues.unbounded(), 345);
@@ -1385,7 +1385,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxZip.ZipCoordinator<Integer, Integer> main = new FluxZip.ZipCoordinator<Integer, Integer>(actual,
 				i -> 5, 123, Queues.unbounded(), 345);
@@ -1410,7 +1410,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-    public void scanSingleCoordinator() {
+    void scanSingleCoordinator() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxZip.ZipSingleCoordinator<Integer, Integer> test =
 				new FluxZip.ZipSingleCoordinator<Integer, Integer>(actual, new Object[1], 1, i -> 5);
@@ -1431,7 +1431,7 @@ public class FluxZipTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanSingleSubscriber() {
+    void scanSingleSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxZip.ZipSingleCoordinator<Integer, Integer> main =
 				new FluxZip.ZipSingleCoordinator<Integer, Integer>(actual, new Object[1], 1, i -> 5);

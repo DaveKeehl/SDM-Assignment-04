@@ -28,10 +28,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSourceTest {
+class MonoSourceTest {
 
 	@Test
-	public void empty() {
+    void empty() {
 		Mono<Integer> m = Mono.from(Flux.empty());
 		assertThat(m == Mono.<Integer>empty()).isTrue();
 		StepVerifier.create(m)
@@ -39,7 +39,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void just() {
+    void just() {
 		Mono<Integer> m = Mono.from(Flux.just(1));
 		assertThat(m).isInstanceOf(MonoJust.class);
 		StepVerifier.create(m)
@@ -48,7 +48,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		Mono<Integer> m = Mono.from(Flux.error(new Exception("test")));
 		assertThat(m).isInstanceOf(MonoError.class);
 		StepVerifier.create(m)
@@ -56,7 +56,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void errorPropagate() {
+    void errorPropagate() {
 		Mono<Integer> m = Mono.from(Flux.error(new Error("test")));
 		assertThat(m).isInstanceOf(MonoError.class);
 		StepVerifier.create(m)
@@ -64,63 +64,63 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void justNext() {
+    void justNext() {
 		StepVerifier.create(Mono.from(Flux.just(1, 2, 3)))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void asJustNext() {
+    void asJustNext() {
 		StepVerifier.create(Flux.just(1, 2, 3).as(Mono::from))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoNext() {
+    void monoNext() {
 		StepVerifier.create(Flux.just(1, 2, 3).next())
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoDirect() {
+    void monoDirect() {
 		StepVerifier.create(Flux.just(1).as(Mono::fromDirect))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoDirectHidden() {
+    void monoDirectHidden() {
 		StepVerifier.create(Flux.just(1).hide().as(Mono::fromDirect))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoDirectIdentity() {
+    void monoDirectIdentity() {
 		StepVerifier.create(Mono.just(1).as(Mono::fromDirect))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoDirectPlainFuseable() {
+    void monoDirectPlainFuseable() {
 		StepVerifier.create(Mono.just(1).as(TestPubFuseable::new))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoDirectPlain() {
+    void monoDirectPlain() {
 		StepVerifier.create(Mono.just(1).as(TestPub::new))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void monoFromFluxThatIsItselfFromMono() {
+    void monoFromFluxThatIsItselfFromMono() {
 		AtomicBoolean emitted = new AtomicBoolean();
 		AtomicBoolean terminated = new AtomicBoolean();
 		AtomicBoolean cancelled = new AtomicBoolean();
@@ -158,7 +158,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void monoFromFluxThatIsItselfFromMonoFuseable() {
+    void monoFromFluxThatIsItselfFromMonoFuseable() {
 		Mono<String> original = Mono.just("foo").map(v -> v + "bar");
 
 		Flux<String> firstConversion = Flux.from(original);
@@ -171,7 +171,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void monoFromFluxThatIsItselfFromMono_scalarCallableNotOptimized() {
+    void monoFromFluxThatIsItselfFromMono_scalarCallableNotOptimized() {
 		Mono<String> original = Mono.just("foo");
 
 		Flux<String> firstConversion = Flux.from(original);
@@ -184,7 +184,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void monoFromFluxItselfMonoToFlux() {
+    void monoFromFluxItselfMonoToFlux() {
 		Mono<String> original = Mono.just("foo").hide();
 
 		Flux<String> firstConversion = original.flux();
@@ -195,7 +195,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void monoFromFluxItselfMonoToFlux_fuseable() {
+    void monoFromFluxItselfMonoToFlux_fuseable() {
 		Mono<String> original = Mono.just("foo").map(v -> v + "bar");
 
 		Flux<String> firstConversion = original.flux();
@@ -208,7 +208,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void monoFromFluxItselfMonoToFlux_scalarCallableNotOptimized() {
+    void monoFromFluxItselfMonoToFlux_scalarCallableNotOptimized() {
 		Mono<String> original = Mono.just("foo");
 
 		Flux<String> firstConversion = original.flux();
@@ -247,20 +247,20 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void transform() {
+    void transform() {
 		StepVerifier.create(Mono.just(1).transform(m -> Flux.just(1, 2, 3)))
 	                .expectNext(1)
 	                .verifyComplete();
 	}
 
 	@Test
-	public void onAssemblyDescription() {
+    void onAssemblyDescription() {
 		String monoOnAssemblyStr = Mono.just(1).checkpoint("onAssemblyDescription").toString();
 		assertThat(monoOnAssemblyStr).as("Description not included").contains("checkpoint(\"onAssemblyDescription\")");
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		Flux<String> source = Flux.just("foo").map(i -> i);
 		MonoSource<String> test = new MonoSource<>(source);
 
@@ -270,7 +270,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void scanFuseableSubscriber(){
+    void scanFuseableSubscriber(){
 		Mono<String> source = Mono.just("foo");
 		MonoSourceFuseable<String> test = new MonoSourceFuseable<>(source);
 
@@ -279,7 +279,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void scanSubscriberHide() {
+    void scanSubscriberHide() {
 		Flux<String> source = Flux.just("foo").hide();
 		MonoSource<String> test = new MonoSource<>(source);
 
@@ -289,7 +289,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void scanSubscriberIgnore() {
+    void scanSubscriberIgnore() {
 		Flux<String> source = Flux.just("foo").map(i -> i);
 		MonoIgnorePublisher<String> test = new MonoIgnorePublisher<>(source);
 
@@ -299,7 +299,7 @@ public class MonoSourceTest {
 	}
 
 	@Test
-	public void scanSubscriberFrom() {
+    void scanSubscriberFrom() {
 		Flux<String> source = Flux.just("foo").map(i -> i);
 		MonoFromPublisher<String> test = new MonoFromPublisher<>(source);
 

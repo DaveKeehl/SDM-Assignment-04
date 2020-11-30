@@ -25,10 +25,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoFlatMapTest {
+class MonoFlatMapTest {
 
 	@Test
-	public void normalHidden() {
+    void normalHidden() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).hide().flatMap(v -> Mono.just(2).hide()).subscribe(ts);
@@ -39,7 +39,7 @@ public class MonoFlatMapTest {
 	}
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		TestPublisher<String> cancelTester = TestPublisher.create();
 
 		StepVerifier.create(cancelTester.mono()
@@ -51,14 +51,14 @@ public class MonoFlatMapTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoFlatMap<String, Integer> test = new MonoFlatMap<>(Mono.just("foo"), s -> Mono.just(1));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<Integer> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFlatMap.FlatMapMain<String, Integer> test = new MonoFlatMap.FlatMapMain<>(
 				actual, s -> Mono.just(s.length()));
@@ -81,7 +81,7 @@ public class MonoFlatMapTest {
 	}
 
 	@Test
-	public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFlatMap.FlatMapMain<String, Integer> main = new MonoFlatMap.FlatMapMain<>(actual, s
 				-> Mono.just(s.length()));
@@ -104,7 +104,7 @@ public class MonoFlatMapTest {
 	}
 
 	@Test
-	public void noWrappingOfCheckedExceptions() {
+    void noWrappingOfCheckedExceptions() {
 		Mono.just("single")
 		    .flatMap(x -> Mono.error(new NoSuchMethodException()))
 		    .as(StepVerifier::create)
@@ -113,7 +113,7 @@ public class MonoFlatMapTest {
 	}
 
 	@Test
-	public void noWrappingOfCheckedExceptions_hide() {
+    void noWrappingOfCheckedExceptions_hide() {
 		Mono.just("single")
 		    .hide()
 		    .flatMap(x -> Mono.error(new NoSuchMethodException()))

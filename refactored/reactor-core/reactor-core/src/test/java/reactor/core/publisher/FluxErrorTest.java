@@ -23,29 +23,29 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxErrorTest {
+class FluxErrorTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.error(new Exception("test")))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void normalOnRequest() {
+    void normalOnRequest() {
 		StepVerifier.create(Flux.error(new Exception("test"), true))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		FluxError test = new FluxError<>(new IllegalStateException("boom"));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
     @Test
-    public void scanSubscription() {
+    void scanSubscription() {
 	    @SuppressWarnings("unchecked") CoreSubscriber<String> subscriber = Mockito.mock(InnerOperator.class);
         FluxErrorOnRequest.ErrorSubscription test =
                 new FluxErrorOnRequest.ErrorSubscription(subscriber, new IllegalStateException("boom"));
@@ -59,7 +59,7 @@ public class FluxErrorTest {
     }
 
     @Test
-    public void scanSubscriptionCancelled() {
+    void scanSubscriptionCancelled() {
 	    @SuppressWarnings("unchecked")
 	    CoreSubscriber<String> subscriber = Mockito.mock(CoreSubscriber.class);
 	    FluxErrorOnRequest.ErrorSubscription test =

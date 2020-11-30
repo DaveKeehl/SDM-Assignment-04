@@ -30,12 +30,12 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class OnNextFailureStrategyTest {
+class OnNextFailureStrategyTest {
 
 	/**
-	 * Helper for other tests to emulate resumeDrop with the public consumer-based API.
+	 * Helper for other tests to emulate resumeDrop with the consumer-based API.
 	 */
-	public static <T> void drop(@Nullable Throwable e, @Nullable T v) {
+	static <T> void drop(@Nullable Throwable e, @Nullable T v) {
 		if (v != null) {
 			Operators.onNextDropped(v, Context.empty());
 		}
@@ -45,7 +45,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDrop() {
+    void resumeDrop() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -65,7 +65,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropWithFatal() {
+    void resumeDropWithFatal() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -87,7 +87,7 @@ public class OnNextFailureStrategyTest {
 
 
 	@Test
-	public void resumeDropIfMatch() {
+    void resumeDropIfMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -108,7 +108,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropIfNoMatch() {
+    void resumeDropIfNoMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -131,7 +131,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropIfWithFatalMatch() {
+    void resumeDropIfWithFatalMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -154,7 +154,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropIfWithFatalNoMatch() {
+    void resumeDropIfWithFatalNoMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -176,7 +176,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropIfPredicateFails() {
+    void resumeDropIfPredicateFails() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -203,7 +203,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropValueHookFails() {
+    void resumeDropValueHookFails() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		UnsupportedOperationException failure = new UnsupportedOperationException("value hook");
 		Hooks.onErrorDropped(error::set);
@@ -223,7 +223,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropErrorHookFails() {
+    void resumeDropErrorHookFails() {
 		AtomicReference<Object> value = new AtomicReference<>();
 		UnsupportedOperationException failure = new UnsupportedOperationException("error hook");
 		Hooks.onNextDropped(value::set);
@@ -243,7 +243,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeDropDoesntSelfSuppressIfHookRethrows() {
+    void resumeDropDoesntSelfSuppressIfHookRethrows() {
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(e -> { throw Exceptions.propagate(e); });
 		Hooks.onNextDropped(value::set);
@@ -264,7 +264,7 @@ public class OnNextFailureStrategyTest {
 
 
 	@Test
-	public void resume() {
+    void resume() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -286,7 +286,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeWithFatal() {
+    void resumeWithFatal() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -309,7 +309,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeErrorConsumerFails() {
+    void resumeErrorConsumerFails() {
 		AtomicReference<Object> value = new AtomicReference<>();
 		IllegalStateException failureError = new IllegalStateException("boomInErrorConsumer");
 
@@ -332,7 +332,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfMatch() {
+    void resumeIfMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -355,7 +355,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfNoMatch() {
+    void resumeIfNoMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -380,7 +380,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfWithFatalMatch() {
+    void resumeIfWithFatalMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -405,7 +405,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfWithFatalNoMatch() {
+    void resumeIfWithFatalNoMatch() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 
@@ -429,7 +429,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfErrorConsumerFails() {
+    void resumeIfErrorConsumerFails() {
 		AtomicReference<Object> value = new AtomicReference<>();
 		IllegalStateException failureError = new IllegalStateException("boomInErrorConsumer");
 
@@ -453,7 +453,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfPredicateFails() {
+    void resumeIfPredicateFails() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		IllegalStateException failurePredicate = new IllegalStateException("boomInPredicate");
@@ -481,7 +481,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void resumeIfDoesntSelfSuppress() {
+    void resumeIfDoesntSelfSuppress() {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<Object> value = new AtomicReference<>();
 		Hooks.onErrorDropped(error::set);
@@ -504,7 +504,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void stopCannotResume() {
+    void stopCannotResume() {
 		OnNextFailureStrategy strategy = OnNextFailureStrategy.stop();
 		assertThat(strategy.test(new IllegalStateException(), null))
 				.isFalse();
@@ -513,7 +513,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void stopProcessReturnsNewException() {
+    void stopProcessReturnsNewException() {
 		OnNextFailureStrategy strategy = OnNextFailureStrategy.stop();
 		Throwable exception = new NullPointerException("foo");
 
@@ -525,7 +525,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void stopProcessWithFatal() {
+    void stopProcessWithFatal() {
 		OnNextFailureStrategy strategy = OnNextFailureStrategy.stop();
 		Throwable exception = new NoSuchMethodError("foo");
 
@@ -537,7 +537,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiErrorContinue() {
+    void fluxApiErrorContinue() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 		Flux<String> test = Flux.just("foo", "", "bar", "baz")
@@ -562,7 +562,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiErrorContinueConditional() {
+    void fluxApiErrorContinueConditional() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 		Flux<String> test = Flux.just("foo", "", "bar", "baz")
@@ -588,7 +588,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiErrorContinueConditionalErrorNotMatch() {
+    void fluxApiErrorContinueConditionalErrorNotMatch() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 		Flux<String> test = Flux.just("foo", "", "bar", "baz")
@@ -612,7 +612,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiErrorContinueConditionalByClass() {
+    void fluxApiErrorContinueConditionalByClass() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 		Flux<String> test = Flux.just("foo", "", "bar", "baz")
@@ -637,7 +637,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiErrorContinueConditionalByClassNotMatch() {
+    void fluxApiErrorContinueConditionalByClassNotMatch() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 		Flux<String> test = Flux.just("foo", "", "bar", "baz")
@@ -660,7 +660,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void fluxApiWithinFlatMap() {
+    void fluxApiWithinFlatMap() {
 		Flux<Integer> test = Flux.just(1, 2, 3)
 		                         .flatMap(i -> Flux.range(0, i + 1)
 		                                           .map(v -> 30 / v))
@@ -678,7 +678,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void monoApiWithinFlatMap() {
+    void monoApiWithinFlatMap() {
 		Flux<Integer> test = Flux.just(0, 1, 2, 3)
 				.flatMap(i -> Mono.just(i).map(v -> 30 / v))
 				.onErrorContinue(OnNextFailureStrategyTest::drop);
@@ -695,7 +695,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void overrideInheritedErrorStrategyInFlatMap() {
+    void overrideInheritedErrorStrategyInFlatMap() {
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		Flux<Integer> test = Flux.just(1, 2, 3)
 				.flatMap(i -> Flux.range(0, i + 1)
@@ -714,7 +714,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void overrideInheritedErrorStrategyInFlatMapMono() {
+    void overrideInheritedErrorStrategyInFlatMapMono() {
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		Mono<Integer> test = Mono.just(1)
 				.flatMap(i -> Mono.just(1 - i)
@@ -733,7 +733,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void errorStrategyConfiguredInFlatMapDoesNotLeak() {
+    void errorStrategyConfiguredInFlatMapDoesNotLeak() {
 		@SuppressWarnings("divzero")
 		Flux<Integer> test = Flux.just(0, 1, 2)
 				.map(i -> i / 0)
@@ -745,7 +745,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void errorStrategySimpleScoping() {
+    void errorStrategySimpleScoping() {
 		Flux<Integer> test = Flux.just(0, 1, 2, 3)
 				.map(i -> {
 					if (i == 3) {
@@ -768,7 +768,7 @@ public class OnNextFailureStrategyTest {
 	}
 
 	@Test
-	public void errorStrategyLocalHandlerWithSimpleMappingScoping() {
+    void errorStrategyLocalHandlerWithSimpleMappingScoping() {
 		List<String> valueDropped = new ArrayList<>();
 		List<Throwable> errorDropped = new ArrayList<>();
 

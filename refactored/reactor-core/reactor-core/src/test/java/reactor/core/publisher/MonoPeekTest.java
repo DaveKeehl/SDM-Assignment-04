@@ -30,10 +30,10 @@ import reactor.test.util.TestLogger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoPeekTest {
+class MonoPeekTest {
 
 	@Test
-	public void onMonoRejectedDoOnSuccessOrError() {
+    void onMonoRejectedDoOnSuccessOrError() {
 		Mono<String> mp = Mono.error(new Exception("test"));
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
@@ -46,7 +46,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoSuccessDoOnSuccessOrError() {
+    void onMonoSuccessDoOnSuccessOrError() {
 		Mono<String> mp = Mono.just("test");
 		AtomicReference<String> ref = new AtomicReference<>();
 
@@ -59,7 +59,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoRejectedDoOnTerminate() {
+    void onMonoRejectedDoOnTerminate() {
 		Mono<String> mp = Mono.error(new Exception("test"));
 		AtomicInteger invoked = new AtomicInteger();
 
@@ -70,7 +70,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoSuccessDoOnTerminate() {
+    void onMonoSuccessDoOnTerminate() {
 		Mono<String> mp = Mono.just("test");
 		AtomicInteger invoked = new AtomicInteger();
 
@@ -81,7 +81,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoSuccessDoOnSuccess() {
+    void onMonoSuccessDoOnSuccess() {
 		Mono<String> mp = Mono.just("test");
 		AtomicReference<String> ref = new AtomicReference<>();
 
@@ -92,7 +92,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoDoOnRequest() {
+    void onMonoDoOnRequest() {
 		Mono<String> mp = Mono.just("test");
 		AtomicReference<Long> ref = new AtomicReference<>();
 
@@ -106,7 +106,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoDoOnSubscribe() {
+    void onMonoDoOnSubscribe() {
 		Mono<String> mp = Mono.just("test");
 		AtomicReference<Subscription> ref = new AtomicReference<>();
 
@@ -118,7 +118,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoRejectedDoOnError() {
+    void onMonoRejectedDoOnError() {
 		Mono<String> mp = Mono.error(new Exception("test"));
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
@@ -133,7 +133,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoRejectedDoOnErrorClazz() {
+    void onMonoRejectedDoOnErrorClazz() {
 		Mono<String> mp = Mono.error(new TestException());
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
@@ -144,7 +144,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoRejectedDoOnErrorClazzNot() {
+    void onMonoRejectedDoOnErrorClazzNot() {
 		Mono<String> mp = Mono.error(new TestException());
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
@@ -155,7 +155,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void onMonoSuccessNullDoOnSuccess() {
+    void onMonoSuccessNullDoOnSuccess() {
 		Mono<String> mp = Mono.just("test");
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			mp.doOnSuccess(null)
@@ -164,7 +164,7 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void testErrorWithDoOnSuccess() {
+    void testErrorWithDoOnSuccess() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -183,14 +183,14 @@ public class MonoPeekTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoPeek<Integer> test = new MonoPeek<>(Mono.just(1), null, null, null, null);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		MonoPeekFuseable<Integer> test = new MonoPeekFuseable<>(Mono.just(1), null, null, null, null);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

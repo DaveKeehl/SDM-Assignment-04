@@ -55,13 +55,13 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxBufferWhenTest {
+class FluxBufferWhenTest {
 
 	private static final Logger LOGGER = Loggers.getLogger(FluxBufferWhenTest.class);
 
 	//see https://github.com/reactor/reactor-core/issues/969
 	@Test
-	public void bufferedCanCompleteIfOpenNeverCompletesDropping() {
+    void bufferedCanCompleteIfOpenNeverCompletesDropping() {
 		//this test ensures that dropping buffers will complete if the source is exhausted before the open publisher finishes
 		Mono<Integer> buffered = Flux.range(1, 200)
 									 .delayElements(Duration.ofMillis(25))
@@ -82,7 +82,7 @@ public class FluxBufferWhenTest {
 
 	//see https://github.com/reactor/reactor-core/issues/969
 	@Test
-	public void bufferedCanCompleteIfOpenNeverCompletesOverlapping() {
+    void bufferedCanCompleteIfOpenNeverCompletesOverlapping() {
 		//this test ensures that overlapping buffers will complete if the source is exhausted before the open publisher finishes
 		Mono<Integer> buffered = Flux.range(1, 200)
 									 .delayElements(Duration.ofMillis(25))
@@ -102,7 +102,7 @@ public class FluxBufferWhenTest {
 
 	//see https://github.com/reactor/reactor-core/issues/969
 	@Test
-	public void timedOutBuffersDontLeak() throws InterruptedException {
+    void timedOutBuffersDontLeak() throws InterruptedException {
 		LongAdder created = new LongAdder();
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		class Wrapper {
@@ -164,7 +164,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -222,7 +222,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void startCompletes() {
+    void startCompletes() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source = Sinks.unsafe().many().multicast().directBestEffort();
@@ -265,7 +265,7 @@ public class FluxBufferWhenTest {
 
 
 	@Test
-	public void bufferWillAcumulateMultipleListsOfValuesOverlap() {
+    void bufferWillAcumulateMultipleListsOfValuesOverlap() {
 		//given: "a source and a collected flux"
 		Sinks.Many<Integer> numbers = Sinks.many().multicast().onBackpressureBuffer();
 		Sinks.Many<Integer> bucketOpening = Sinks.many().multicast().onBackpressureBuffer();
@@ -300,7 +300,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxOverlapTime() {
+    void bufferWillSubdivideAnInputFluxOverlapTime() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxOverlapTime)
 					.thenAwait(Duration.ofSeconds(10))
 					.assertNext(t -> assertThat(t).containsExactly(1, 2, 3))
@@ -317,7 +317,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxOverlapTime2() {
+    void bufferWillSubdivideAnInputFluxOverlapTime2() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxOverlapTime2)
 					.thenAwait(Duration.ofSeconds(10))
 					.assertNext(t -> assertThat(t).containsExactly(1, 2, 3))
@@ -334,7 +334,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxSameTime() {
+    void bufferWillSubdivideAnInputFluxSameTime() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxSameTime)
 					.thenAwait(Duration.ofSeconds(10))
 					.assertNext(t -> assertThat(t).containsExactly(1, 2, 3))
@@ -350,7 +350,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxGapTime() {
+    void bufferWillSubdivideAnInputFluxGapTime() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxGapTime)
 					.thenAwait(Duration.ofSeconds(10))
 					.assertNext(t -> assertThat(t).containsExactly(1, 2))
@@ -360,7 +360,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> source = Flux.just(1);
 		FluxBufferWhen<Integer, ?, ?, List<Integer>> test = new FluxBufferWhen<>(source,
 				Flux.interval(Duration.ZERO, Duration.ofMillis(200)),
@@ -373,7 +373,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void scanStartEndMain() {
+    void scanStartEndMain() {
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 
@@ -396,7 +396,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void scanStartEndMainCancelled() {
+    void scanStartEndMainCancelled() {
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 
@@ -408,7 +408,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void scanStartEndMainCompleted() {
+    void scanStartEndMainCompleted() {
 		CoreSubscriber<List<String>> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 
@@ -423,7 +423,7 @@ public class FluxBufferWhenTest {
 
 
 	@Test
-	public void scanWhenCloseSubscriber() {
+    void scanWhenCloseSubscriber() {
 		CoreSubscriber<Object> actual = new LambdaSubscriber<>(null, null, null, null);
 
 		BufferWhenMainSubscriber<String, Integer, Long, List<String>> main = new BufferWhenMainSubscriber<>(actual, ArrayList::new, Queues.small(), Mono.just(1), u -> Mono.just(1L));
@@ -446,7 +446,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void scanWhenOpenSubscriber() {
+    void scanWhenOpenSubscriber() {
 		CoreSubscriber<Object> actual = new LambdaSubscriber<>(null, null, null, null);
 
 		BufferWhenMainSubscriber<String, Integer, Long, List<String>> main = new BufferWhenMainSubscriber<>(actual, ArrayList::new, Queues.small(), Mono.just(1), u -> Mono.just(1L));
@@ -469,7 +469,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseDisposedOnComplete() {
+    void openCloseDisposedOnComplete() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -495,14 +495,14 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseMainError() {
+    void openCloseMainError() {
 		StepVerifier.create(Flux.error(new IllegalStateException("boom"))
 								.bufferWhen(Flux.never(), a -> Flux.never()))
 					.verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void openCloseBadSource() {
+    void openCloseBadSource() {
 		TestPublisher<Object> badSource = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 		StepVerifier.create(badSource.flux()
 									 .bufferWhen(Flux.never(), a -> Flux.never()))
@@ -519,7 +519,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseOpenCompletes() {
+    void openCloseOpenCompletes() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -544,7 +544,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseOpenCompletesNoBuffers() {
+    void openCloseOpenCompletesNoBuffers() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -569,7 +569,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseTake() {
+    void openCloseTake() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -591,7 +591,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseLimit() {
+    void openCloseLimit() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -613,7 +613,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseEmptyBackpressure() {
+    void openCloseEmptyBackpressure() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -630,7 +630,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseErrorBackpressure() {
+    void openCloseErrorBackpressure() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> open = TestPublisher.create();
 		TestPublisher<Integer> close = TestPublisher.create();
@@ -647,7 +647,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseBadOpen() {
+    void openCloseBadOpen() {
 		TestPublisher<Object> badOpen = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(Flux.never()
@@ -666,7 +666,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void openCloseBadClose() {
+    void openCloseBadClose() {
 		TestPublisher<Object> badClose = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(Flux.never()
@@ -685,7 +685,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void immediateOpen() {
+    void immediateOpen() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 								.bufferWhen(Mono.just("OPEN"), u -> Mono.delay(Duration.ofMillis(100)))
 								.flatMapIterable(Function.identity()))
@@ -695,7 +695,7 @@ public class FluxBufferWhenTest {
 
 	@Test
 	@Timeout(5)
-	public void cancelWinsOverDrain() {
+	void cancelWinsOverDrain() {
 		Queue<List<Integer>> queue = Queues.<List<Integer>>small().get();
 		queue.offer(Arrays.asList(1, 2, 3));
 
@@ -724,7 +724,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 								.concatWith(Mono.never())
 								.bufferWhen(Flux.just(1), u -> Mono.never()))
@@ -735,7 +735,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnCancelPostQueueing() {
+    void discardOnCancelPostQueueing() {
 		List<Object> discarded = new ArrayList<>();
 
 		CoreSubscriber<List<Integer>> actual = new AssertSubscriber<>(Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -750,7 +750,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnNextWhenNoBuffers() {
+    void discardOnNextWhenNoBuffers() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 								//buffer don't open in time
 								.bufferWhen(Mono.delay(Duration.ofSeconds(2)), u -> Mono.never()))
@@ -760,7 +760,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 								.concatWith(Mono.error(new IllegalStateException("boom")))
 								.bufferWhen(Mono.delay(Duration.ofSeconds(2)), u -> Mono.never()))
@@ -770,7 +770,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnDrainCancelled() {
+    void discardOnDrainCancelled() {
 		List<Object> discarded = new ArrayList<>();
 
 		CoreSubscriber<List<Integer>> actual = new AssertSubscriber<>(Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -788,7 +788,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnDrainDoneWithErrors() {
+    void discardOnDrainDoneWithErrors() {
 		List<Object> discarded = new ArrayList<>();
 
 		CoreSubscriber<List<Integer>> actual = new AssertSubscriber<>(Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -804,7 +804,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnDrainEmittedAllCancelled() {
+    void discardOnDrainEmittedAllCancelled() {
 		List<Object> discarded = new ArrayList<>();
 
 		CoreSubscriber<List<Integer>> actual = new AssertSubscriber<>(Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -821,7 +821,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnDrainEmittedAllWithErrors() {
+    void discardOnDrainEmittedAllWithErrors() {
 		List<Object> discarded = new ArrayList<>();
 
 		CoreSubscriber<List<Integer>> actual = new AssertSubscriber<>(Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -836,7 +836,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnOpenError() {
+    void discardOnOpenError() {
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ZERO, Duration.ofMillis(100)) // 0, 1, 2
 											   .map(Long::intValue)
 											   .take(3)
@@ -848,7 +848,7 @@ public class FluxBufferWhenTest {
 	}
 
 	@Test
-	public void discardOnBoundaryError() {
+    void discardOnBoundaryError() {
 		StepVerifier.withVirtualTime(() -> Flux.interval(Duration.ZERO, Duration.ofMillis(100)) // 0, 1, 2
 											   .map(Long::intValue)
 											   .take(3)

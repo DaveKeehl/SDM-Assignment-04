@@ -22,10 +22,10 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxTakeLastOneTest {
+class FluxTakeLastOneTest {
 
 	@Test
-	public void empty() {
+    void empty() {
 		Flux<?> f = Flux.empty()
 		                .takeLast(1);
 
@@ -36,14 +36,14 @@ public class FluxTakeLastOneTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.error(new Exception("test"))
 		                        .takeLast(1))
 	                .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void illegal() {
+    void illegal() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			StepVerifier.create(Flux.empty()
 					.takeLast(-1))
@@ -52,7 +52,7 @@ public class FluxTakeLastOneTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .takeLast(1))
 	                .expectNext(100)
@@ -60,7 +60,7 @@ public class FluxTakeLastOneTest {
 	}
 
 	@Test
-	public void normalHide() {
+    void normalHide() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
 		                        .takeLast(1))
@@ -69,7 +69,7 @@ public class FluxTakeLastOneTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1, 2, 3);
 		FluxTakeLastOne<Integer> test = new FluxTakeLastOne<>(parent);
 

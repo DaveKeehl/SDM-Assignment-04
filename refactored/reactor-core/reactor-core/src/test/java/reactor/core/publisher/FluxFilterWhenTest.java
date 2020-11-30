@@ -31,10 +31,10 @@ import reactor.test.publisher.TestPublisher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxFilterWhenTest {
+class FluxFilterWhenTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 10)
 		                                       .filterWhen(v -> Mono.just(v % 2 == 0)
 		                                                            .delayElement(Duration.ofMillis(100))))
@@ -44,7 +44,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void normalSync() {
+    void normalSync() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0).hide()))
 		            .expectNext(2, 4, 6, 8, 10)
@@ -52,7 +52,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void normalSyncFused() {
+    void normalSyncFused() {
 		StepVerifier.create(Flux.range(1, 10)
 		        .filterWhen(v -> Mono.just(v % 2 == 0)))
 		            .expectNext(2, 4, 6, 8, 10)
@@ -60,49 +60,49 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void allEmpty() {
+    void allEmpty() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .filterWhen(v -> Mono.<Boolean>empty().hide()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void allEmptyFused() {
+    void allEmptyFused() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .filterWhen(v -> Mono.empty()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		StepVerifier.create(Flux.<Integer>empty()
 								.filterWhen(v -> Mono.just(true)))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		StepVerifier.create(Flux.<Integer>empty()
 				.filterWhen(v -> Mono.just(true)), 0L)
 				.verifyComplete();
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.<Integer>error(new IllegalStateException())
 				.filterWhen(v -> Mono.just(true)))
 				.verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void errorBackpressured() {
+    void errorBackpressured() {
 		StepVerifier.create(Flux.<Integer>error(new IllegalStateException())
 				.filterWhen(v -> Mono.just(true)), 0L)
 				.verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void backpressureExactlyOne() {
+    void backpressureExactlyOne() {
 		StepVerifier.create(Flux.just(1)
 		                        .filterWhen(v -> Mono.just(true)), 1L)
 		            .expectNext(1)
@@ -110,7 +110,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void longSourceSingleStep() {
+    void longSourceSingleStep() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .filterWhen(v -> Flux.just(true).limitRate(1)))
 		            .expectNextCount(1000)
@@ -118,7 +118,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void longSource() {
+    void longSource() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .filterWhen(v -> Mono.just(true).hide()))
 		            .expectNextCount(1000)
@@ -126,7 +126,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void longSourceFused() {
+    void longSourceFused() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .filterWhen(v -> Mono.just(true)))
 		            .expectNextCount(1000)
@@ -134,7 +134,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void oneAndErrorInner() {
+    void oneAndErrorInner() {
 		StepVerifier.create(Flux.just(1)
 		                        .filterWhen(v -> s -> {
 			                        s.onSubscribe(Operators.emptySubscription());
@@ -152,20 +152,20 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		StepVerifier.create(Flux.just(1)
 		                        .filterWhen(v -> { throw new IllegalStateException(); }))
 		            .verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		StepVerifier.create(Flux.just(1).filterWhen(v -> null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void predicateError() {
+    void predicateError() {
 		StepVerifier.create(Flux.just(1)
 		                        .filterWhen(v -> Mono.<Boolean>error(new IllegalStateException()).hide()))
 		            .verifyError(IllegalStateException.class);
@@ -173,14 +173,14 @@ public class FluxFilterWhenTest {
 
 
 	@Test
-	public void predicateErrorFused() {
+    void predicateErrorFused() {
 		StepVerifier.create(Flux.just(1)
 		                        .filterWhen(v -> Mono.fromCallable(() -> { throw new IllegalStateException(); })))
 		            .verifyError(IllegalStateException.class);
 	}
 
 	@Test
-	public void take() {
+    void take() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .filterWhen(v -> Mono.just(v % 2 == 0).hide())
 		                        .take(1))
@@ -189,7 +189,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void take1Cancel() {
+    void take1Cancel() {
 		AtomicLong onNextCount = new AtomicLong();
 		AtomicReference<SignalType> endSignal = new AtomicReference<>();
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
@@ -221,7 +221,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void take1CancelBackpressured() {
+    void take1CancelBackpressured() {
 		AtomicLong onNextCount = new AtomicLong();
 		AtomicReference<SignalType> endSignal = new AtomicReference<>();
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
@@ -254,7 +254,7 @@ public class FluxFilterWhenTest {
 
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		TestPublisher<Boolean> assertCompanion = TestPublisher.create();
 
 		StepVerifier.create(Flux.range(1, 5)
@@ -265,7 +265,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void innerFluxCancelled() {
+    void innerFluxCancelled() {
 		AtomicInteger cancelCount = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 3)
@@ -278,14 +278,14 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void innerFluxOnlyConsidersFirstValue() {
+    void innerFluxOnlyConsidersFirstValue() {
 		StepVerifier.create(Flux.range(1, 3)
 		                        .filterWhen(v -> Flux.just(false, true, true)))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void innerMonoNotCancelled() {
+    void innerMonoNotCancelled() {
 		AtomicInteger cancelCount = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(1, 3)
@@ -298,7 +298,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void bufferSizeIsAlsoPrefetch() {
+    void bufferSizeIsAlsoPrefetch() {
 		AtomicLong requested = new AtomicLong();
 
 		Flux.range(1, 10)
@@ -311,7 +311,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void largeBufferSize() {
+    void largeBufferSize() {
 		int bufferSize = 65536; //the buffer size given as example in javadoc
 		AtomicLong requested = new AtomicLong();
 
@@ -335,7 +335,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void introspectionNormal() {
+    void introspectionNormal() {
 		AtomicReference<Scannable> scannable = new AtomicReference<>();
 
 		Flux<Integer> flux = Flux.range(1, 10)
@@ -380,7 +380,7 @@ public class FluxFilterWhenTest {
 
 	//TODO introspect errors (but is difficult due to Exceptions.terminate)
 	@Test
-	public void introspectionCancel() {
+    void introspectionCancel() {
 		AtomicReference<Scannable> scannable = new AtomicReference<>();
 
 		Flux<Integer> flux = Flux.range(1, 10).concatWith(Mono.error(new IllegalStateException("boom")))
@@ -401,7 +401,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxFilterWhen<Integer> test = new FluxFilterWhen<>(parent, v -> Flux.just(true), 123);
 
@@ -410,7 +410,7 @@ public class FluxFilterWhenTest {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFilterWhen.FluxFilterWhenSubscriber<String> test = new FluxFilterWhen.FluxFilterWhenSubscriber<>(actual, t -> Mono.just(true), 789);
         Subscription parent = Operators.emptySubscription();
@@ -432,7 +432,7 @@ public class FluxFilterWhenTest {
     }
 
     @Test
-    public void scanSmallBuffered() {
+    void scanSmallBuffered() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFilterWhen.FluxFilterWhenSubscriber<String> test = new FluxFilterWhen.FluxFilterWhenSubscriber<>(actual, t -> Mono.just(true), 789);
 
@@ -443,7 +443,7 @@ public class FluxFilterWhenTest {
     }
 
     @Test
-    public void scanLargeBuffered() {
+    void scanLargeBuffered() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFilterWhen.FluxFilterWhenSubscriber<String> test = new FluxFilterWhen.FluxFilterWhenSubscriber<>(actual, t -> Mono.just(true), 789);
 
@@ -454,7 +454,7 @@ public class FluxFilterWhenTest {
     }
 
     @Test
-    public void scanInner() {
+    void scanInner() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFilterWhen.FluxFilterWhenSubscriber<String> main = new FluxFilterWhen.FluxFilterWhenSubscriber<>(actual, t -> Mono.just(true), 789);
 
@@ -479,7 +479,7 @@ public class FluxFilterWhenTest {
     }
 
 	@Test
-	public void filterAllOut() {
+    void filterAllOut() {
 		final int[] calls = { 0 };
 
 		StepVerifier.create(
@@ -493,7 +493,7 @@ public class FluxFilterWhenTest {
 	}
 
 	@Test
-	public void filterAllOutHidden() {
+    void filterAllOutHidden() {
 		final int[] calls = { 0 };
 
 		StepVerifier.create(

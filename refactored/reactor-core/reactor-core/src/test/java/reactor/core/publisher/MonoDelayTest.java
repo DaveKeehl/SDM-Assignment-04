@@ -28,14 +28,14 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDelayTest {
+class MonoDelayTest {
 
 	Mono<Long> scenario_delayedSource() {
 		return Mono.delay(Duration.ofSeconds(4));
 	}
 
 	@Test
-	public void delayedSource() {
+    void delayedSource() {
 		StepVerifier.withVirtualTime(this::scenario_delayedSource)
 		            .thenAwait(Duration.ofSeconds(4))
 		            .expectNext(0L)
@@ -47,14 +47,14 @@ public class MonoDelayTest {
 	}
 
 	@Test
-	public void delayedSourceError() {
+    void delayedSourceError() {
 		StepVerifier.withVirtualTime(this::scenario_delayedSourceError, 0L)
 		            .thenAwait(Duration.ofSeconds(5))
 		            .verifyErrorMatches(Exceptions::isOverflow);
 	}
 
 	@Test
-	public void multipleDelaysUsingDefaultScheduler() throws InterruptedException {
+    void multipleDelaysUsingDefaultScheduler() throws InterruptedException {
 		AtomicLong counter = new AtomicLong();
 
 		Mono.delay(Duration.ofMillis(50)).subscribe(v -> counter.incrementAndGet());
@@ -72,7 +72,7 @@ public class MonoDelayTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoDelay test = new MonoDelay(1, TimeUnit.SECONDS, Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -80,7 +80,7 @@ public class MonoDelayTest {
 	}
 
 	@Test
-	public void scanDelayRunnable() {
+    void scanDelayRunnable() {
 		CoreSubscriber<Long> actual = new LambdaMonoSubscriber<>(null, e -> {
 		}, null, null);
 		MonoDelay.MonoDelayRunnable test = new MonoDelay.MonoDelayRunnable(actual);
@@ -99,7 +99,7 @@ public class MonoDelayTest {
 	}
 
 	@Test
-	public void scanDelayRunnableCancelled() {
+    void scanDelayRunnableCancelled() {
 		CoreSubscriber<Long> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoDelay.MonoDelayRunnable test = new MonoDelay.MonoDelayRunnable(actual);
 

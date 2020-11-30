@@ -33,7 +33,7 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String> {
+class ParallelReduceSeedTest extends ParallelOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -57,7 +57,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsyncFused() {
+    void collectAsyncFused() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		Scheduler scheduler = Schedulers.newParallel("test", 3);
 
@@ -77,7 +77,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsync() {
+    void collectAsync() {
 		Scheduler s = Schedulers.newParallel("test", 3);
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
@@ -100,7 +100,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsync2() {
+    void collectAsync2() {
 		Scheduler s = Schedulers.newParallel("test", 3);
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsync3() {
+    void collectAsync3() {
 		Scheduler s = Schedulers.newParallel("test", 3);
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
@@ -152,7 +152,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsync3Fused() {
+    void collectAsync3Fused() {
 		Scheduler s = Schedulers.newParallel("test", 3);
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
@@ -177,7 +177,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void collectAsync3Take() {
+    void collectAsync3Take() {
 		Scheduler s = Schedulers.newParallel("test", 4);
 		Supplier<List<Integer>> as = () -> new ArrayList<>();
 
@@ -201,7 +201,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void failInitial() {
+    void failInitial() {
 		Supplier<Integer> as = () -> {
 			throw new RuntimeException("test");
 		};
@@ -213,7 +213,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void failCombination() {
+    void failCombination() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .parallel(3)
 		                        .reduce(() -> 0, (a, b) -> {
@@ -223,7 +223,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void testPrefetch() {
+    void testPrefetch() {
 		assertThat(Flux.range(1, 10)
 		               .parallel(3)
 		               .reduce(() -> 0, (a, b) -> a + b)
@@ -231,7 +231,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.just(500, 300).parallel(10);
 		ParallelReduceSeed<Integer, String> test = new ParallelReduceSeed<>(source, () -> "", (s, i) -> s + i);
 
@@ -241,7 +241,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.just(500, 300).parallel(10);
 		ParallelReduceSeed<Integer, String> test = new ParallelReduceSeed<>(source, () -> "", (s, i) -> s + i);
 
@@ -251,7 +251,7 @@ public class ParallelReduceSeedTest extends ParallelOperatorTest<String, String>
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		ParallelFlux<Integer> source = Flux.just(500, 300).parallel(10);
 
 		LambdaSubscriber<String> subscriber = new LambdaSubscriber<>(null, e -> {

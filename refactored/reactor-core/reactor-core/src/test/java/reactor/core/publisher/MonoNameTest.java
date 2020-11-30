@@ -27,10 +27,10 @@ import reactor.util.function.Tuples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoNameTest {
+class MonoNameTest {
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		Tuple2<String, String> tag1 = Tuples.of("foo", "oof");
 		Tuple2<String, String> tag2 = Tuples.of("bar", "rab");
 		Set<Tuple2<String, String>> tags = new HashSet<>();
@@ -52,7 +52,7 @@ public class MonoNameTest {
 	}
 
 	@Test
-	public void scanOperatorNullTags() throws Exception {
+    void scanOperatorNullTags() throws Exception {
 		Mono<Integer> source = Mono.just(1);
 		MonoName<Integer> test = new MonoName<>(source, "foo", null);
 

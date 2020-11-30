@@ -27,10 +27,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxJustTest {
+class FluxJustTest {
 
     @Test
-    public void nullValue() {
+    void nullValue() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.just((Integer) null);
 		});
@@ -38,12 +38,12 @@ public class FluxJustTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void valueSame() throws Exception {
+    void valueSame() throws Exception {
         assertThat(((Callable<Integer>)Flux.just(1)).call()).isEqualTo(1);
     }
 
     @Test
-    public void normal() {
+    void normal() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
         Flux.just(1).subscribe(ts);
@@ -54,7 +54,7 @@ public class FluxJustTest {
     }
 
     @Test
-    public void normalBackpressured() {
+    void normalBackpressured() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
         Flux.just(1).subscribe(ts);
@@ -71,7 +71,7 @@ public class FluxJustTest {
     }
 
     @Test
-    public void fused() {
+    void fused() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
         ts.requestedFusionMode(Fuseable.ANY);
 
@@ -83,7 +83,7 @@ public class FluxJustTest {
     }
 
     @Test
-    public void fluxInitialValueAvailableImmediately() {
+    void fluxInitialValueAvailableImmediately() {
         Flux<String> stream = Flux.just("test");
         AtomicReference<String> value = new AtomicReference<>();
         stream.subscribe(value::set);
@@ -91,14 +91,14 @@ public class FluxJustTest {
     }
 
     @Test
-    public void scanOperator() {
+    void scanOperator() {
     	FluxJust<String> s = new FluxJust<>("foo");
     	assertThat(s.scan(Scannable.Attr.BUFFERED)).isEqualTo(1);
     	assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
     }
 
 	@Test
-	public void scanSubscription() {
+    void scanSubscription() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		FluxJust.WeakScalarSubscription<Integer> test = new FluxJust.WeakScalarSubscription<>(1, actual);
 

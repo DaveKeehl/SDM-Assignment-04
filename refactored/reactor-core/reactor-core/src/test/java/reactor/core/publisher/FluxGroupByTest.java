@@ -39,7 +39,7 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class FluxGroupByTest extends
+class FluxGroupByTest extends
                              FluxOperatorTest<String, GroupedFlux<Integer, String>> {
 
 	@Override
@@ -87,7 +87,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -112,7 +112,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void normalValueSelector() {
+    void normalValueSelector() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -137,7 +137,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void takeTwoGroupsOnly() {
+    void takeTwoGroupsOnly() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -163,7 +163,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void keySelectorNull() {
+    void keySelectorNull() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -174,7 +174,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void valueSelectorNull() {
+    void valueSelectorNull() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -185,7 +185,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create();
 
 		Flux.<Integer>error(new RuntimeException("forced failure")).groupBy(k -> k)
@@ -195,7 +195,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void backpressure() {
+    void backpressure() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.range(1, 10)
@@ -224,7 +224,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void flatMapBack() {
+    void flatMapBack() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -236,7 +236,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void flatMapBackHidden() {
+    void flatMapBackHidden() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -248,7 +248,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void concatMapBack() {
+    void concatMapBack() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -260,7 +260,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void concatMapBackHidden() {
+    void concatMapBackHidden() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -273,7 +273,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<GroupedFlux<Integer, Integer>> ts = AssertSubscriber.create(0L);
 
 		Flux.<Integer>empty().groupBy(v -> v)
@@ -283,7 +283,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void oneGroupLongMerge() {
+    void oneGroupLongMerge() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000)
@@ -297,7 +297,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void oneGroupLongMergeHidden() {
+    void oneGroupLongMergeHidden() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000)
@@ -311,7 +311,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsLongMerge() {
+    void twoGroupsLongMerge() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000)
@@ -325,7 +325,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsLongMergeHidden() {
+    void twoGroupsLongMergeHidden() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000)
@@ -339,7 +339,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsLongAsyncMerge() {
+	void twoGroupsLongAsyncMerge() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -357,7 +357,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsLongAsyncMergeHidden() {
+	void twoGroupsLongAsyncMergeHidden() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -375,7 +375,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsConsumeWithSubscribe() {
+    void twoGroupsConsumeWithSubscribe() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
@@ -386,12 +386,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.publishOn(Schedulers.fromExecutorService(forkJoinPool))
 					     .subscribe(ts1);
@@ -403,12 +403,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -432,7 +432,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsConsumeWithSubscribePrefetchSmaller() {
+    void twoGroupsConsumeWithSubscribePrefetchSmaller() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
@@ -443,12 +443,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.publishOn(Schedulers.fromExecutorService(forkJoinPool),
 							    32)
@@ -462,12 +462,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -500,7 +500,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsConsumeWithSubscribePrefetchBigger() {
+    void twoGroupsConsumeWithSubscribePrefetchBigger() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
@@ -511,12 +511,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.publishOn(Schedulers.fromExecutorService(forkJoinPool),
 							    1024)
@@ -530,12 +530,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -568,7 +568,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void twoGroupsConsumeWithSubscribeHide() {
+    void twoGroupsConsumeWithSubscribeHide() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
@@ -579,12 +579,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.hide()
 					     .publishOn(Schedulers.fromExecutorService(forkJoinPool))
@@ -598,12 +598,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -628,7 +628,7 @@ public class FluxGroupByTest extends
 
 	@Test
 	@Disabled("temporarily disabled, see gh-1028")
-	public void twoGroupsFullAsyncFullHide() {
+	void twoGroupsFullAsyncFullHide() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
@@ -642,12 +642,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.hide()
 					     .publishOn(Schedulers.fromExecutorService(forkJoinPool))
@@ -661,12 +661,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -691,7 +691,7 @@ public class FluxGroupByTest extends
 
 	@Test
 	@Disabled("temporarily disabled, see gh-1028")
-	public void twoGroupsFullAsync() {
+	void twoGroupsFullAsync() {
 		ForkJoinPool forkJoinPool = new ForkJoinPool();
 		AssertSubscriber<Integer> ts1 = AssertSubscriber.create();
 		AssertSubscriber<Integer> ts2 = AssertSubscriber.create();
@@ -703,12 +703,12 @@ public class FluxGroupByTest extends
 		    .groupBy(v -> v & 1)
 		    .subscribe(new CoreSubscriber<GroupedFlux<Integer, Integer>>() {
 			    @Override
-			    public void onSubscribe(Subscription s) {
+				public void onSubscribe(Subscription s) {
 				    s.request(Long.MAX_VALUE);
 			    }
 
 			    @Override
-			    public void onNext(GroupedFlux<Integer, Integer> t) {
+				public void onNext(GroupedFlux<Integer, Integer> t) {
 				    if (t.key() == 0) {
 					    t.publishOn(Schedulers.fromExecutorService(forkJoinPool))
 					     .subscribe(ts1);
@@ -720,12 +720,12 @@ public class FluxGroupByTest extends
 			    }
 
 			    @Override
-			    public void onError(Throwable t) {
+				public void onError(Throwable t) {
 				    ts3.onError(t);
 			    }
 
 			    @Override
-			    public void onComplete() {
+				public void onComplete() {
 				    ts3.onComplete();
 			    }
 		    });
@@ -749,7 +749,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void groupsCompleteAsSoonAsMainCompletes() {
+    void groupsCompleteAsSoonAsMainCompletes() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(0, 20)
@@ -782,7 +782,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void groupsCompleteAsSoonAsMainCompletesNoFusion() {
+    void groupsCompleteAsSoonAsMainCompletesNoFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(0, 20)
@@ -816,7 +816,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void prefetchIsUsed() {
+    void prefetchIsUsed() {
 		AtomicLong initialRequest = new AtomicLong();
 
 		StepVerifier.create(Flux.range(1, 10)
@@ -830,7 +830,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void prefetchMaxRequestsUnbounded() {
+    void prefetchMaxRequestsUnbounded() {
 		AtomicLong initialRequest = new AtomicLong();
 
 		StepVerifier.create(Flux.range(1, 10)
@@ -844,7 +844,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxGroupBy<Integer, Integer, Integer> test
 				= new FluxGroupBy<>(parent, k -> k % 2, v -> -v, Queues.unbounded(3), Queues.unbounded(3), 3);
@@ -854,7 +854,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<GroupedFlux<Integer, String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxGroupBy.GroupByMain<Integer, Integer, String> test = new FluxGroupBy.GroupByMain<>(actual,
 				Queues.<GroupedFlux<Integer, String>>one().get(), Queues.one(), 123, i -> i % 5, i -> String.valueOf(i));
@@ -875,7 +875,7 @@ public class FluxGroupByTest extends
 	}
 
 	@Test
-	public void scanUnicastGroupedFlux() {
+    void scanUnicastGroupedFlux() {
 		CoreSubscriber<GroupedFlux<Integer, String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxGroupBy.GroupByMain<Integer, Integer, String> main = new FluxGroupBy.GroupByMain<>(actual,
 				Queues.<GroupedFlux<Integer, String>>one().get(), Queues.one(), 123, i -> i % 5, i -> String.valueOf(i));
@@ -898,7 +898,7 @@ public class FluxGroupByTest extends
 
 	@Test
 	@Timeout(10)
-	public void fusedGroupByParallel() {
+	void fusedGroupByParallel() {
 		int parallelism = 2;
 		Scheduler process = Schedulers.newParallel("process", parallelism, true);
 
@@ -918,5 +918,19 @@ public class FluxGroupByTest extends
 				)
 				.then()
 				.block();
+	}
+
+	@Test
+	void twoGroupsLongAsyncMergeHiddenLoop() {
+		for (int i = 0; i < 100; i++) {
+			this.twoGroupsLongAsyncMergeHidden();
+		}
+	}
+
+	@Test
+	void twoGroupsLongAsyncMergeLoop() {
+		for (int i = 0; i < 100; i++) {
+			this.twoGroupsLongAsyncMerge();
+		}
 	}
 }

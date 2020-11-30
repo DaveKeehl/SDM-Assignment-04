@@ -27,17 +27,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxDeferTest {
+class FluxDeferTest {
 
 	@Test
-	public void supplierNull() {
+    void supplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.<Integer>defer(null);
 		});
 	}
 
 	@Test
-	public void supplierReturnsNull() {
+    void supplierReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>defer(() -> null).subscribe(ts);
@@ -48,7 +48,7 @@ public class FluxDeferTest {
 	}
 
 	@Test
-	public void supplierThrows() {
+    void supplierThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>defer(() -> {
@@ -62,7 +62,7 @@ public class FluxDeferTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.defer(() -> Flux.just(1)).subscribe(ts);
@@ -74,7 +74,7 @@ public class FluxDeferTest {
 
 
 	@Test
-	public void deferStream(){
+    void deferStream(){
 		AtomicInteger i = new AtomicInteger();
 
 		Flux<Integer> source =
@@ -86,7 +86,7 @@ public class FluxDeferTest {
 	}
 
 	@Test
-	public void deferFluxWithContext() {
+    void deferFluxWithContext() {
 		Flux<Integer> source = Flux
 				.deferContextual(ctx -> {
 					AtomicInteger i = ctx.get("i");
@@ -102,7 +102,7 @@ public class FluxDeferTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxDefer<Integer> test = new FluxDefer<>(() -> Flux.just(1));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxUsingTest extends FluxOperatorTest<String, String> {
+class FluxUsingTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -92,7 +92,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void resourceSupplierNull() {
+    void resourceSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.using(null, r -> Flux.empty(), r -> {
 			}, false);
@@ -100,7 +100,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceFactoryNull() {
+    void sourceFactoryNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.using(() -> 1, null, r -> {
 			}, false);
@@ -108,14 +108,14 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void resourceCleanupNull() {
+    void resourceCleanupNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.using(() -> 1, r -> Flux.empty(), null, false);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -131,7 +131,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalEager() {
+    void normalEager() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -189,27 +189,27 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void checkNonEager() {
+    void checkNonEager() {
 		checkCleanupExecutionTime(false, false);
 	}
 
 	@Test
-	public void checkEager() {
+    void checkEager() {
 		checkCleanupExecutionTime(true, false);
 	}
 
 	@Test
-	public void checkErrorNonEager() {
+    void checkErrorNonEager() {
 		checkCleanupExecutionTime(false, true);
 	}
 
 	@Test
-	public void checkErrorEager() {
+    void checkErrorEager() {
 		checkCleanupExecutionTime(true, true);
 	}
 
 	@Test
-	public void resourceThrowsEager() {
+    void resourceThrowsEager() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -228,7 +228,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void factoryThrowsEager() {
+    void factoryThrowsEager() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -247,7 +247,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void factoryReturnsNull() {
+    void factoryReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -265,7 +265,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void subscriberCancels() {
+    void subscriberCancels() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -297,7 +297,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceFactoryAndResourceCleanupThrow() {
+    void sourceFactoryAndResourceCleanupThrow() {
 		RuntimeException sourceEx = new IllegalStateException("sourceFactory");
 		RuntimeException cleanupEx = new IllegalStateException("resourceCleanup");
 
@@ -320,7 +320,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		AtomicInteger cleanup = new AtomicInteger();
 
 		FluxUsing<Integer, Integer> test = new FluxUsing<>(() -> 1, r -> Flux.range(r, 10), cleanup::set, false);
@@ -329,7 +329,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxUsing.UsingSubscriber<Integer, String> test = new FluxUsing.UsingSubscriber<>(actual,
         		s -> {}, "", true);
@@ -348,7 +348,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Integer> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxUsing.UsingConditionalSubscriber<Integer, String> test =
@@ -368,7 +368,7 @@ public class FluxUsingTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxUsing.UsingFuseableSubscriber<Integer, String> test =
 				new FluxUsing.UsingFuseableSubscriber<>(actual, s -> {}, "", true);

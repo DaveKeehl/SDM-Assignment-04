@@ -28,7 +28,7 @@ import reactor.core.scheduler.Schedulers;
 /**
  * @author Stephane Maldini
  */
-public abstract class AbstractReactorTest {
+abstract class AbstractReactorTest {
 
 	protected static Scheduler      asyncGroup;
 	protected static Scheduler      ioGroup;
@@ -36,13 +36,13 @@ public abstract class AbstractReactorTest {
 	protected final Map<Thread, AtomicLong> counters = new ConcurrentHashMap<>();
 
 	@BeforeAll
-	public static void loadEnv() {
+	static void loadEnv() {
 		ioGroup = Schedulers.newBoundedElastic(4, Integer.MAX_VALUE, "work");
 		asyncGroup = Schedulers.newParallel("parallel", 4);
 	}
 
 	@AfterAll
-	public static void closeEnv() {
+	static void closeEnv() {
 		ioGroup.dispose();
 		asyncGroup.dispose();
 	}

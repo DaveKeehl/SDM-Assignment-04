@@ -28,7 +28,7 @@ import reactor.util.function.Tuple2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.from;
 
-public class FluxElapsedTest {
+class FluxElapsedTest {
 
 	Flux<Tuple2<Long, String>> scenario_aFluxCanBeBenchmarked(){
 		return Flux.just("test")
@@ -36,7 +36,7 @@ public class FluxElapsedTest {
 	}
 
 	@Test
-	public void aFluxCanBeBenchmarked(){
+    void aFluxCanBeBenchmarked(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeBenchmarked,0)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .thenRequest(1)
@@ -45,7 +45,7 @@ public class FluxElapsedTest {
 	}
 
 	@Test
-    public void scanOperator() {
+    void scanOperator() {
 		Flux<Tuple2<Long, Integer>> test = Flux.just(1).elapsed(Schedulers.single());
 
 		assertThat(test).isInstanceOf(Scannable.class);
@@ -54,7 +54,7 @@ public class FluxElapsedTest {
     }
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Tuple2<Long, String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxElapsed.ElapsedSubscriber<String> test = new FluxElapsed.ElapsedSubscriber<>(actual, Schedulers.single());
         Subscription parent = Operators.emptySubscription();

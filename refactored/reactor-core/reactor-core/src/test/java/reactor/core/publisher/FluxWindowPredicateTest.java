@@ -52,12 +52,12 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxWindowPredicateTest extends
+class FluxWindowPredicateTest extends
                                      FluxOperatorTest<String, Flux<String>> {
 
 	//see https://github.com/reactor/reactor-core/issues/1452
 	@Test
-	public void windowWhilePropagatingCancelToSource_disposeOuterFirst() {
+    void windowWhilePropagatingCancelToSource_disposeOuterFirst() {
 		final AtomicBoolean beforeWindowWhileStageCancelled = new AtomicBoolean();
 		final AtomicBoolean afterWindowWhileStageCancelled = new AtomicBoolean();
 
@@ -95,7 +95,7 @@ public class FluxWindowPredicateTest extends
 
 	//see https://github.com/reactor/reactor-core/issues/1452
 	@Test
-	public void windowWhileNotPropagatingCancelToSource_disposeInnerFirst() {
+    void windowWhileNotPropagatingCancelToSource_disposeInnerFirst() {
 		final AtomicBoolean beforeWindowWhileStageCancelled = new AtomicBoolean();
 		final AtomicBoolean afterWindowWhileStageCancelled = new AtomicBoolean();
 
@@ -131,7 +131,7 @@ public class FluxWindowPredicateTest extends
 
 	//see https://github.com/reactor/reactor-core/issues/1452
 	@Test
-	public void windowWhileNotPropagatingCancelToSource_withConcat() {
+    void windowWhileNotPropagatingCancelToSource_withConcat() {
 		// Similar to windowWhileNotPropagatingCancelToSource_disposeOuterFirst
 		final AtomicBoolean beforeWindowWhileStageCancelled = new AtomicBoolean();
 		final AtomicBoolean afterWindowWhileStageCancelled = new AtomicBoolean();
@@ -155,7 +155,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowWhileNoEmptyWindows() {
+    void windowWhileNoEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#")
 		    .windowWhile(s -> !"#".equals(s))
 		    .flatMap(Flux::collectList)
@@ -166,7 +166,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowUntilNoEmptyWindows() {
+    void windowUntilNoEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#")
 		    .windowUntil("#"::equals)
 		    .flatMap(Flux::collectList)
@@ -177,7 +177,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowUntilCutBeforeNoEmptyWindows() {
+    void windowUntilCutBeforeNoEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#")
 		    .windowUntil("#"::equals, true)
 		    .flatMap(Flux::collectList)
@@ -189,7 +189,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowWhileIntentionallyEmptyWindows() {
+    void windowWhileIntentionallyEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#", "#")
 		    .windowWhile(s -> !"#".equals(s))
 		    .flatMap(Flux::collectList)
@@ -201,7 +201,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowUntilIntentionallyEmptyWindows() {
+    void windowUntilIntentionallyEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#", "#")
 		    .windowUntil("#"::equals)
 		    .flatMap(Flux::collectList)
@@ -213,7 +213,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowUntilCutBeforeIntentionallyEmptyWindows() {
+    void windowUntilCutBeforeIntentionallyEmptyWindows() {
 		Flux.just("ALPHA", "#", "BETA", "#", "#")
 		    .windowUntil("#"::equals, true)
 		    .flatMap(Flux::collectList)
@@ -226,7 +226,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void untilChangedNoRepetition() {
+    void untilChangedNoRepetition() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 1)
 		.windowUntilChanged()
 		.flatMap(Flux::collectList))
@@ -239,7 +239,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void untilChangedSomeRepetition() {
+    void untilChangedSomeRepetition() {
 		StepVerifier.create(Flux.just(1, 1, 2, 2, 3, 3, 1)
 		                        .windowUntilChanged()
 								.flatMap(Flux::collectList))
@@ -253,7 +253,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnComplete() {
+    void untilChangedDisposesStateOnComplete() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<Flux<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -273,7 +273,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnError() {
+    void untilChangedDisposesStateOnError() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<Flux<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -295,7 +295,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void untilChangedDisposesStateOnCancel() {
+    void untilChangedDisposesStateOnCancel() {
 		MemoryUtils.RetainedDetector retainedDetector = new MemoryUtils.RetainedDetector();
 		Flux<Flux<AtomicInteger>> test =
 				Flux.range(1, 100)
@@ -383,7 +383,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void apiUntil() {
+    void apiUntil() {
 		StepVerifier.create(Flux.just("red", "green", "#", "orange", "blue", "#", "black", "white")
 		                        .windowUntil(color -> color.equals("#"))
 		                        .flatMap(Flux::materialize)
@@ -395,7 +395,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void apiUntilCutAfter() {
+    void apiUntilCutAfter() {
 		StepVerifier.create(Flux.just("red", "green", "#", "orange", "blue", "#", "black", "white")
 		                        .windowUntil(color -> color.equals("#"), false)
 		                        .flatMap(Flux::materialize)
@@ -407,7 +407,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void apiUntilCutBefore() {
+    void apiUntilCutBefore() {
 		StepVerifier.create(Flux.just("red", "green", "#", "orange", "blue", "#", "black", "white")
 		                        .windowUntil(color -> color.equals("#"), true)
 		                        .flatMap(Flux::materialize)
@@ -419,7 +419,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void apiWhile() {
+    void apiWhile() {
 		StepVerifier.create(Flux.just("red", "green", "#", "orange", "blue", "#", "black", "white")
 		                        .windowWhile(color -> !color.equals("#"))
 		                        .flatMap(Flux::materialize)
@@ -431,7 +431,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void normalUntil() {
+    void normalUntil() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntil = new FluxWindowPredicate<>(sp1.asFlux(),
 				Queues.small(),
@@ -466,7 +466,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void onCompletionBeforeLastBoundaryWindowEmitted() {
+    void onCompletionBeforeLastBoundaryWindowEmitted() {
 		Flux<Integer> source = Flux.just(1, 2);
 
 		FluxWindowPredicate<Integer> windowUntil =
@@ -498,7 +498,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mainErrorUntilIsPropagatedToBothWindowAndMain() {
+    void mainErrorUntilIsPropagatedToBothWindowAndMain() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntil = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -524,7 +524,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void predicateErrorUntil() {
+    void predicateErrorUntil() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntil = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -552,7 +552,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void normalUntilCutBefore() {
+    void normalUntilCutBefore() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntilCutBefore = new FluxWindowPredicate<>(sp1.asFlux(),
 				Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -583,7 +583,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mainErrorUntilCutBeforeIsPropagatedToBothWindowAndMain() {
+    void mainErrorUntilCutBeforeIsPropagatedToBothWindowAndMain() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntilCutBefore =
 				new FluxWindowPredicate<>(sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -610,7 +610,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void predicateErrorUntilCutBefore() {
+    void predicateErrorUntilCutBefore() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowUntilCutBefore =
 				new FluxWindowPredicate<>(sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -644,7 +644,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void normalWhile() {
+    void normalWhile() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowWhile = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -675,7 +675,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void normalWhileDoesntInitiallyMatch() {
+    void normalWhileDoesntInitiallyMatch() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowWhile = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -713,7 +713,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void normalWhileDoesntMatch() {
+    void normalWhileDoesntMatch() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowWhile = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -748,7 +748,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mainErrorWhileIsPropagatedToBothWindowAndMain() {
+    void mainErrorWhileIsPropagatedToBothWindowAndMain() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowWhile = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -771,7 +771,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void whileStartingSeveralSeparatorsEachCreateEmptyWindow() {
+    void whileStartingSeveralSeparatorsEachCreateEmptyWindow() {
 		StepVerifier.create(Flux.just("#")
 		                        .repeat(9)
 		                        .concatWith(Flux.just("other", "value"))
@@ -784,7 +784,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void whileOnlySeparatorsGivesSequenceOfWindows() {
+    void whileOnlySeparatorsGivesSequenceOfWindows() {
 		StepVerifier.create(Flux.just("#")
 		                        .repeat(9)
 		                        .windowWhile(s -> !s.equals("#"))
@@ -795,7 +795,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void predicateErrorWhile() {
+    void predicateErrorWhile() {
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
 		FluxWindowPredicate<Integer> windowWhile = new FluxWindowPredicate<>(
 				sp1.asFlux(), Queues.small(), Queues.unbounded(), Queues.SMALL_BUFFER_SIZE,
@@ -824,7 +824,7 @@ public class FluxWindowPredicateTest extends
 
 
 	@Test
-	public void whileRequestOneByOne() {
+    void whileRequestOneByOne() {
 		StepVerifier.create(Flux.just("red", "green", "#", "orange", "blue", "#", "black", "white")
 		                        .hide()
 		                        .windowWhile(color -> !color.equals("#"))
@@ -845,7 +845,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mismatchAtBeginningUntil() {
+    void mismatchAtBeginningUntil() {
 		StepVerifier.create(Flux.just("#", "red", "green")
 		                        .windowUntil(s -> s.equals("#"))
 		                        .flatMap(Flux::materialize)
@@ -856,7 +856,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mismatchAtBeginningUntilCutBefore() {
+    void mismatchAtBeginningUntilCutBefore() {
 		StepVerifier.create(Flux.just("#", "red", "green")
 		                        .windowUntil(s -> s.equals("#"), true)
 		                        .flatMap(Flux::materialize)
@@ -867,7 +867,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void mismatchAtBeginningWhile() {
+    void mismatchAtBeginningWhile() {
 		StepVerifier.create(Flux.just("#", "red", "green")
 		                        .windowWhile(s -> !s.equals("#"))
 		                        .flatMap(Flux::materialize)
@@ -878,7 +878,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void innerCancellationCancelsMainSequence() {
+    void innerCancellationCancelsMainSequence() {
 		StepVerifier.create(Flux.just("red", "green", "#", "black", "white")
 		                        .log()
 		                        .windowWhile(s -> !s.equals("#"))
@@ -889,21 +889,21 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void prefetchIntegerMaxIsRequestUnboundedUntil() {
+    void prefetchIntegerMaxIsRequestUnboundedUntil() {
 		TestPublisher<?> tp = TestPublisher.create();
 		tp.flux().windowUntil(s -> true, true, Integer.MAX_VALUE).subscribe();
 		tp.assertMinRequested(Long.MAX_VALUE);
 	}
 
 	@Test
-	public void prefetchIntegerMaxIsRequestUnboundedWhile() {
+    void prefetchIntegerMaxIsRequestUnboundedWhile() {
 		TestPublisher<?> tp = TestPublisher.create();
 		tp.flux().windowWhile(s -> true, Integer.MAX_VALUE).subscribe();
 		tp.assertMinRequested(Long.MAX_VALUE);
 	}
 
 	@Test
-	public void manualRequestWindowUntilOverRequestingSourceByPrefetch() {
+    void manualRequestWindowUntilOverRequestingSourceByPrefetch() {
 		AtomicLong req = new AtomicLong();
 		int prefetch = 4;
 
@@ -927,7 +927,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void manualRequestWindowWhileOverRequestingSourceByPrefetch() {
+    void manualRequestWindowWhileOverRequestingSourceByPrefetch() {
 		AtomicLong req = new AtomicLong();
 		int prefetch = 4;
 
@@ -953,7 +953,7 @@ public class FluxWindowPredicateTest extends
 
 	// see https://github.com/reactor/reactor-core/issues/477
 	@Test
-	public void windowWhileOneByOneStartingDelimiterReplenishes() {
+    void windowWhileOneByOneStartingDelimiterReplenishes() {
 		AtomicLong req = new AtomicLong();
 		Flux<String> source = Flux.just("#", "1A", "1B", "1C", "#", "2A", "2B", "2C", "2D", "#", "3A").hide();
 
@@ -984,7 +984,7 @@ public class FluxWindowPredicateTest extends
 
 	// see https://github.com/reactor/reactor-core/issues/477
 	@Test
-	public void windowWhileUnboundedStartingDelimiterReplenishes() {
+    void windowWhileUnboundedStartingDelimiterReplenishes() {
 		AtomicLong req = new AtomicLong();
 		Flux<String> source = Flux.just("#", "1A", "1B", "1C", "#", "2A", "2B", "2C", "2D", "#", "3A").hide();
 
@@ -1011,7 +1011,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void windowUntilUnboundedStartingDelimiterReplenishes() {
+    void windowUntilUnboundedStartingDelimiterReplenishes() {
 		AtomicLong req = new AtomicLong();
 		Flux<String> source = Flux.just("#", "1A", "1B", "1C", "#", "2A", "2B", "2C", "2D", "#", "3A").hide();
 
@@ -1038,7 +1038,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void discardOnWindowCancel() {
+    void discardOnWindowCancel() {
 		List<Object> discardMain = new ArrayList<>();
 		List<Object> discardWindow = new ArrayList<>();
 
@@ -1058,7 +1058,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxWindowPredicate<Integer> test = new FluxWindowPredicate<>(parent, Queues.empty(), Queues.empty(), 35, v -> true, Mode.UNTIL);
 
@@ -1067,7 +1067,7 @@ public class FluxWindowPredicateTest extends
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWindowPredicate.WindowPredicateMain<Integer> test = new FluxWindowPredicate.WindowPredicateMain<>(actual,
         		Queues.<Flux<Integer>>unbounded().get(), Queues.unbounded(), 123, i -> true, Mode.WHILE);
@@ -1098,7 +1098,7 @@ public class FluxWindowPredicateTest extends
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWindowPredicate.WindowPredicateMain<Integer> main = new FluxWindowPredicate.WindowPredicateMain<>(actual,
         		Queues.<Flux<Integer>>unbounded().get(), Queues.unbounded(), 123, i -> true, Mode.WHILE);

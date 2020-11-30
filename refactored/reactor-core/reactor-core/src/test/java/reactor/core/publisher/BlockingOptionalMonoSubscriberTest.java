@@ -28,17 +28,17 @@ import reactor.core.Scannable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class BlockingOptionalMonoSubscriberTest {
+class BlockingOptionalMonoSubscriberTest {
 
 	@Test
-	public void optionalValued() {
+    void optionalValued() {
 		Optional<String> result = Mono.just("foo").blockOptional();
 
 		assertThat(result).contains("foo");
 	}
 
 	@Test
-	public void optionalValuedDelayed() {
+    void optionalValuedDelayed() {
 		Optional<String> result = Mono.just("foo")
 		                              .delayElement(Duration.ofMillis(500))
 		                              .blockOptional();
@@ -47,14 +47,14 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void optionalEmpty() {
+    void optionalEmpty() {
 		Optional<String> result = Mono.<String>empty().blockOptional();
 
 		assertThat(result).isEmpty();
 	}
 
 	@Test
-	public void optionalEmptyDelayed() {
+    void optionalEmptyDelayed() {
 		Optional<String> result = Mono.<String>empty()
 				.delayElement(Duration.ofMillis(500))
 				.blockOptional();
@@ -63,7 +63,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void optionalError() {
+    void optionalError() {
 		Mono<String> source = Mono.error(new IllegalStateException("boom"));
 		assertThatExceptionOfType(IllegalStateException.class)
 				.isThrownBy(source::blockOptional)
@@ -71,7 +71,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void timeoutOptionalValued() {
+    void timeoutOptionalValued() {
 		Optional<String> result = Mono.just("foo")
 		                              .blockOptional(Duration.ofMillis(500));
 
@@ -79,7 +79,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void timeoutOptionalEmpty() {
+    void timeoutOptionalEmpty() {
 		Optional<String> result = Mono.<String>empty()
 		                              .blockOptional(Duration.ofMillis(500));
 
@@ -87,7 +87,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void timeoutOptionalError() {
+    void timeoutOptionalError() {
 		Mono<String> source = Mono.error(new IllegalStateException("boom"));
 
 		assertThatExceptionOfType(IllegalStateException.class)
@@ -96,7 +96,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void timeoutOptionalTimingOut() {
+    void timeoutOptionalTimingOut() {
 		Mono<Long> source = Mono.delay(Duration.ofMillis(500));
 
 		// Using sub-millis timeouts after gh-1734
@@ -106,7 +106,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void isDisposedBecauseCancelled() {
+    void isDisposedBecauseCancelled() {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 
 		assertThat(test.isDisposed()).isFalse();
@@ -117,7 +117,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void isDisposedBecauseValued() {
+    void isDisposedBecauseValued() {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 
 		assertThat(test.isDisposed()).isFalse();
@@ -128,7 +128,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void isDisposedBecauseComplete() {
+    void isDisposedBecauseComplete() {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 
 		assertThat(test.isDisposed()).isFalse();
@@ -139,7 +139,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void isDisposedBecauseError() {
+    void isDisposedBecauseError() {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 
 		assertThat(test.isDisposed()).isFalse();
@@ -150,7 +150,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 
 		Subscription parent = Operators.emptySubscription();
@@ -177,7 +177,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void interruptBlock() throws InterruptedException {
+    void interruptBlock() throws InterruptedException {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 		AtomicReference<Throwable> errorHandler = new AtomicReference<>();
 
@@ -196,7 +196,7 @@ public class BlockingOptionalMonoSubscriberTest {
 	}
 
 	@Test
-	public void interruptBlockTimeout() throws InterruptedException {
+    void interruptBlockTimeout() throws InterruptedException {
 		BlockingOptionalMonoSubscriber<String> test = new BlockingOptionalMonoSubscriber<>();
 		AtomicReference<Throwable> errorHandler = new AtomicReference<>();
 

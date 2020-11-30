@@ -30,10 +30,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelMergeReduceTest {
+class ParallelMergeReduceTest {
 
 	@Test
-	public void reduceFull() {
+    void reduceFull() {
 		for (int i = 1;
 		     i <= Runtime.getRuntime()
 		                 .availableProcessors() * 2;
@@ -50,7 +50,7 @@ public class ParallelMergeReduceTest {
 	}
 
 	@Test
-	public void parallelReduceFull() {
+    void parallelReduceFull() {
 		int m = 100_000;
 		for (int n = 1; n <= m; n *= 10) {
 //            System.out.println(n);
@@ -86,7 +86,7 @@ public class ParallelMergeReduceTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel();
 		ParallelMergeReduce<Integer> test = new ParallelMergeReduce<>(source, (a, b) -> a + b);
 
@@ -95,7 +95,7 @@ public class ParallelMergeReduceTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		CoreSubscriber<? super Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				sub -> sub.request(2));
 		MergeReduceMain<Integer> test = new MergeReduceMain<>(subscriber, 2, (a, b) -> a + b);
@@ -119,7 +119,7 @@ public class ParallelMergeReduceTest {
 	}
 
 	@Test
-	public void scanMainSubscriberError() {
+    void scanMainSubscriberError() {
 		CoreSubscriber<? super Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				sub -> sub.request(2));
 		MergeReduceMain<Integer> test = new MergeReduceMain<>(subscriber, 2, (a, b) -> a + b);
@@ -132,7 +132,7 @@ public class ParallelMergeReduceTest {
 	}
 
 	@Test
-	public void scanInnerSubscriber() {
+    void scanInnerSubscriber() {
 		CoreSubscriber<? super Integer> subscriber = new LambdaSubscriber<>(null, e -> { }, null, null);
 		MergeReduceMain<Integer> main = new MergeReduceMain<>(subscriber, 2, (a, b) -> a + b);
 		MergeReduceInner<Integer> test = new MergeReduceInner<>(main, (a, b) -> a + b);

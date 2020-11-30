@@ -31,10 +31,10 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxSampleTimeoutTest {
+class FluxSampleTimeoutTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -75,7 +75,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -98,7 +98,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void throttlerError() {
+    void throttlerError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -121,7 +121,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void throttlerReturnsNull() {
+    void throttlerReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -140,7 +140,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void sampleIncludesLastItem() {
+    void sampleIncludesLastItem() {
 		StepVerifier.withVirtualTime(() ->
 				Flux.concat(
 						Flux.range(1, 5),
@@ -155,7 +155,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void sourceTerminatesBeforeSamplingEmitsLast() {
+    void sourceTerminatesBeforeSamplingEmitsLast() {
 		Flux<Integer> source = Flux.just(1, 2).hide();
 
 		Duration duration = StepVerifier.create(source
@@ -168,7 +168,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void sourceErrorsBeforeSamplingNoEmission() {
+    void sourceErrorsBeforeSamplingNoEmission() {
 		Flux<Integer> source = Flux.just(1, 2).concatWith(Mono.error(new IllegalStateException("boom")));
 
 		Duration duration = StepVerifier.create(source
@@ -186,7 +186,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void sampleTimeoutTime(){
+    void sampleTimeoutTime(){
 		StepVerifier.withVirtualTime(this::scenario_sampleTimeoutTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .expectNext(1, 2, 3, 10)
@@ -199,7 +199,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void sampleTimeoutTime2(){
+    void sampleTimeoutTime2(){
 		StepVerifier.withVirtualTime(this::scenario_sampleTimeoutTime2)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .expectNext(1, 2, 3, 10)
@@ -207,7 +207,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxSampleTimeout<Integer, Integer> test = new FluxSampleTimeout<>(parent, v -> Flux.just(2), Queues.empty());
 
@@ -216,7 +216,7 @@ public class FluxSampleTimeoutTest {
 	}
 
 	@Test
-    public void scanMain() {
+    void scanMain() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSampleTimeout.SampleTimeoutMain<Integer, Integer> test =
         		new FluxSampleTimeout.SampleTimeoutMain<>(actual, i -> Flux.just(i),
@@ -242,7 +242,7 @@ public class FluxSampleTimeoutTest {
     }
 
 	@Test
-    public void scanOther() {
+    void scanOther() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSampleTimeout.SampleTimeoutMain<Integer, Integer> main =
         		new FluxSampleTimeout.SampleTimeoutMain<>(actual, i -> Flux.just(i),

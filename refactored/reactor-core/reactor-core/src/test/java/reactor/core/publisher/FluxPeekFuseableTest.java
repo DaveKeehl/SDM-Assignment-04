@@ -56,17 +56,17 @@ import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.Fuseable.QueueSubscription;
 import static reactor.core.scheduler.Schedulers.parallel;
 
-public class FluxPeekFuseableTest {
+class FluxPeekFuseableTest {
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxPeekFuseable<>(null, null, null, null, null, null, null, null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -89,7 +89,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -112,7 +112,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -135,7 +135,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void never() {
+    void never() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -158,7 +158,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void neverCancel() {
+    void neverCancel() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -185,7 +185,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void callbackError() {
+    void callbackError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Throwable err = new Exception("test");
@@ -216,7 +216,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void completeCallbackError() {
+    void completeCallbackError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Throwable err = new Exception("test");
@@ -247,7 +247,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void errorCallbackError() {
+    void errorCallbackError() {
 		IllegalStateException err = new IllegalStateException("test");
 
 		FluxPeekFuseable<String> flux = new FluxPeekFuseable<>(Flux.error(new IllegalArgumentException("bar")), null, null, e -> {
@@ -265,7 +265,7 @@ public class FluxPeekFuseableTest {
 
 	//See https://github.com/reactor/reactor-core/issues/272
 	@Test
-	public void errorCallbackError2() {
+    void errorCallbackError2() {
 		//test with alternate / wrapped error types
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -303,7 +303,7 @@ public class FluxPeekFuseableTest {
 
 	//See https://github.com/reactor/reactor-core/issues/253
 	@Test
-	public void errorCallbackErrorWithParallel() {
+    void errorCallbackErrorWithParallel() {
 		AssertSubscriber<Integer> assertSubscriber = new AssertSubscriber<>();
 
 		Mono.just(1)
@@ -322,7 +322,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorDoesNotInvokeOnError() {
+    void afterTerminateCallbackErrorDoesNotInvokeOnError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -360,7 +360,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void afterTerminateCallbackFatalIsThrownDirectly() {
+    void afterTerminateCallbackFatalIsThrownDirectly() {
 		AtomicReference<Throwable> errorCallbackCapture = new AtomicReference<>();
 		Error fatal = new LinkageError();
 		FluxPeekFuseable<String> flux = new FluxPeekFuseable<>(Flux.empty(), null, null, errorCallbackCapture::set, null, () -> {
@@ -404,7 +404,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorAndErrorCallbackError() {
+    void afterTerminateCallbackErrorAndErrorCallbackError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -436,7 +436,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorAndErrorCallbackError2() {
+    void afterTerminateCallbackErrorAndErrorCallbackError2() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -475,7 +475,7 @@ public class FluxPeekFuseableTest {
 
 
 	@Test
-	public void syncFusionAvailable() {
+    void syncFusionAvailable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 2)
@@ -488,7 +488,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void asyncFusionAvailable() {
+    void asyncFusionAvailable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.unsafe().many()
@@ -504,7 +504,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void conditionalFusionAvailable() {
+    void conditionalFusionAvailable() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.from(u -> {
@@ -526,7 +526,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void conditionalFusionAvailableWithFuseable() {
+    void conditionalFusionAvailableWithFuseable() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.wrap(u -> {
@@ -549,7 +549,7 @@ public class FluxPeekFuseableTest {
 
 	//TODO was these 2 tests supposed to trigger sync fusion and go through poll() ?
 	@Test
-	public void noFusionCompleteCalled() {
+    void noFusionCompleteCalled() {
 		AtomicBoolean onComplete = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -566,7 +566,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void noFusionAfterTerminateCalled() {
+    void noFusionAfterTerminateCalled() {
 		AtomicBoolean onTerminate = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -583,7 +583,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollCompleteCalled() {
+    void syncPollCompleteCalled() {
 		AtomicBoolean onComplete = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1)
 							  .doOnComplete(() -> onComplete.set(true));
@@ -597,7 +597,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollConditionalCompleteCalled() {
+    void syncPollConditionalCompleteCalled() {
 		AtomicBoolean onComplete = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1)
 							  .doOnComplete(() -> onComplete.set(true))
@@ -612,7 +612,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollAfterTerminateCalledWhenComplete() {
+    void syncPollAfterTerminateCalledWhenComplete() {
 		AtomicBoolean onAfterTerminate = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1)
 							  .doAfterTerminate(() -> onAfterTerminate.set(true));
@@ -626,7 +626,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollConditionalAfterTerminateCalledWhenComplete() {
+    void syncPollConditionalAfterTerminateCalledWhenComplete() {
 		AtomicBoolean onAfterTerminate = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1)
 							  .doAfterTerminate(() -> onAfterTerminate.set(true))
@@ -641,7 +641,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollAfterTerminateCalledWhenError() {
+    void syncPollAfterTerminateCalledWhenError() {
 		AtomicBoolean onAfterTerminate = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1, 0, 3)
 							  .map(i -> 100 / i)
@@ -656,7 +656,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollConditionalAfterTerminateCalledWhenError() {
+    void syncPollConditionalAfterTerminateCalledWhenError() {
 		AtomicBoolean onAfterTerminate = new AtomicBoolean();
 		Flux<Integer> f = Flux.just(1, 0, 3)
 							  .map(i -> 100 / i)
@@ -672,7 +672,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollAfterTerminateFailureWhenError() {
+    void syncPollAfterTerminateFailureWhenError() {
 		Flux<Integer> f = Flux.just(1, 0, 3)
 							  .map(i -> 100 / i)
 							  .doAfterTerminate(() -> {
@@ -687,7 +687,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void syncPollConditionalAfterTerminateFailureWhenError() {
+    void syncPollConditionalAfterTerminateFailureWhenError() {
 		Flux<Integer> f = Flux.just(1, 0, 3)
 							  .map(i -> 100 / i)
 							  .doAfterTerminate(() -> {
@@ -703,7 +703,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void fusedDoOnNextOnErrorBothFailing() {
+    void fusedDoOnNextOnErrorBothFailing() {
 		ConnectableFlux<Integer> f = Flux.just(1)
 										 .doOnNext(i -> {
 											 throw new IllegalArgumentException("fromOnNext");
@@ -720,7 +720,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void fusedDoOnNextOnErrorDoOnErrorAllFailing() {
+    void fusedDoOnNextOnErrorDoOnErrorAllFailing() {
 		ConnectableFlux<Integer> f = Flux.just(1)
 										 .doOnNext(i -> {
 											 throw new IllegalArgumentException("fromOnNext");
@@ -747,7 +747,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void fusedDoOnNextCallsOnErrorWhenFailing() {
+    void fusedDoOnNextCallsOnErrorWhenFailing() {
 		AtomicBoolean passedOnError = new AtomicBoolean();
 
 		ConnectableFlux<Integer> f = Flux.just(1)
@@ -765,7 +765,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void conditionalFusedDoOnNextOnErrorBothFailing() {
+    void conditionalFusedDoOnNextOnErrorBothFailing() {
 		ConnectableFlux<Integer> f = Flux.just(1)
 										 .doOnNext(i -> {
 											 throw new IllegalArgumentException("fromOnNext");
@@ -783,7 +783,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void conditionalFusedDoOnNextOnErrorDoOnErrorAllFailing() {
+    void conditionalFusedDoOnNextOnErrorDoOnErrorAllFailing() {
 		ConnectableFlux<Integer> f = Flux.just(1)
 										 .doOnNext(i -> {
 											 throw new IllegalArgumentException("fromOnNext");
@@ -811,7 +811,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void conditionalFusedDoOnNextCallsOnErrorWhenFailing() {
+    void conditionalFusedDoOnNextCallsOnErrorWhenFailing() {
 		AtomicBoolean passedOnError = new AtomicBoolean();
 
 		ConnectableFlux<Integer> f = Flux.just(1)
@@ -830,7 +830,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void should_reduce_to_10_events() {
+    void should_reduce_to_10_events() {
 		for (int i = 0; i < 20; i++) {
 			int n = i;
 			List<Integer> rs = Collections.synchronizedList(new ArrayList<>());
@@ -851,7 +851,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void should_reduce_to_10_events_conditional() {
+    void should_reduce_to_10_events_conditional() {
 		for (int i = 0; i < 20; i++) {
 			AtomicInteger count = new AtomicInteger();
 			Flux.range(0, 10)
@@ -880,7 +880,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxPeekFuseable<Integer> test = new FluxPeekFuseable<>(parent, s -> {}, s -> {},
 				e -> {}, () -> {}, () -> {}, r -> {}, () -> {});
@@ -890,7 +890,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxPeek<Integer> peek = new FluxPeek<>(Flux.just(1), s -> {
@@ -915,7 +915,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void scanFuseableConditionalSubscriber() {
+    void scanFuseableConditionalSubscriber() {
 		@SuppressWarnings("unchecked") Fuseable.ConditionalSubscriber<Integer> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxPeek<Integer> peek = new FluxPeek<>(Flux.just(1), s -> {
 		}, s -> {
@@ -1052,7 +1052,7 @@ public class FluxPeekFuseableTest {
 
 		private Queue<T> q = Queues.<T>small().get();
 
-		public void setCompleteWithError(boolean completeWithError) {
+		void setCompleteWithError(boolean completeWithError) {
 			this.completeWithError = completeWithError;
 		}
 
@@ -1132,7 +1132,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void resumeConditional() {
+    void resumeConditional() {
 		RuntimeException nextError = new IllegalStateException("next");
 		List<Throwable> resumedErrors = new ArrayList<>();
 		List<Object> resumedValues = new ArrayList<>();
@@ -1168,7 +1168,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void resumeFuseable() {
+    void resumeFuseable() {
 		RuntimeException nextError = new IllegalStateException("next");
 		List<Throwable> resumedErrors = new ArrayList<>();
 		List<Object> resumedValues = new ArrayList<>();
@@ -1205,7 +1205,7 @@ public class FluxPeekFuseableTest {
 	}
 
 	@Test
-	public void resumeFuseableConditional() {
+    void resumeFuseableConditional() {
 		RuntimeException nextError = new IllegalStateException("next");
 		List<Throwable> resumedErrors = new ArrayList<>();
 		List<Object> resumedValues = new ArrayList<>();

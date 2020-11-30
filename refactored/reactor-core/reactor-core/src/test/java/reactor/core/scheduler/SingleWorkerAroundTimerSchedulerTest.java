@@ -18,7 +18,7 @@ package reactor.core.scheduler;
 /**
  * @author Stephane Maldini
  */
-public class SingleWorkerAroundTimerSchedulerTest extends AbstractSchedulerTest {
+class SingleWorkerAroundTimerSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected boolean shouldCheckDisposeTask() {

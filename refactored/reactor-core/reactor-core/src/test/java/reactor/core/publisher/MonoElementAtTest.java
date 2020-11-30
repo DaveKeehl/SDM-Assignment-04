@@ -27,45 +27,45 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoElementAtTest {
+class MonoElementAtTest {
 
 	@Test
-	public void source1Null() {
+    void source1Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoElementAt<>(null, 1);
 		});
 	}
 
 	@Test
-	public void source2Null() {
+    void source2Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoElementAt<>(null, 1, 1);
 		});
 	}
 
 	@Test
-	public void defaultSupplierNull() {
+    void defaultSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().elementAt(1, null);
 		});
 	}
 
 	@Test
-	public void indexNegative1() {
+    void indexNegative1() {
 		assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() -> {
 			Flux.never().elementAt(-1);
 		});
 	}
 
 	@Test
-	public void indexNegative2() {
+    void indexNegative2() {
 		assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() -> {
 			Flux.never().elementAt(-1, 1);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).elementAt(0).subscribe(ts);
@@ -76,7 +76,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).elementAt(0).subscribe(ts);
@@ -93,7 +93,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).elementAt(4).subscribe(ts);
@@ -104,7 +104,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void normal5Backpressured() {
+    void normal5Backpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).elementAt(4).subscribe(ts);
@@ -121,7 +121,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void normal3() {
+    void normal3() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).elementAt(9).subscribe(ts);
@@ -132,7 +132,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void normal3Backpressured() {
+    void normal3Backpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).elementAt(9).subscribe(ts);
@@ -149,7 +149,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().elementAt(0).subscribe(ts);
@@ -160,7 +160,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void emptyDefault() {
+    void emptyDefault() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().elementAt(0, 20).subscribe(ts);
@@ -171,7 +171,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void emptyDefaultBackpressured() {
+    void emptyDefaultBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().elementAt(0, 20).subscribe(ts);
@@ -188,7 +188,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void nonEmptyDefault() {
+    void nonEmptyDefault() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).elementAt(20, 20).subscribe(ts);
@@ -199,7 +199,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void nonEmptyDefaultBackpressured() {
+    void nonEmptyDefaultBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).elementAt(20, 20).subscribe(ts);
@@ -216,7 +216,7 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		TestPublisher<String> cancelTester = TestPublisher.create();
 
 		StepVerifier.create(cancelTester.flux()
@@ -228,14 +228,14 @@ public class MonoElementAtTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoElementAt<Integer> test = new MonoElementAt<>(Flux.just(1, 2, 3), 1);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoElementAt.ElementAtSubscriber<String> test = new MonoElementAt.ElementAtSubscriber<>(actual, 1, "foo");
 		Subscription parent = Operators.emptySubscription();

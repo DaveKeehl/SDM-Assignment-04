@@ -23,23 +23,23 @@ import java.util.Queue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //https://github.com/reactor/reactor-core/pull/1326
-public class QueuesOneQueueTest {
+class QueuesOneQueueTest {
 
 	private static final int TEST_ELEMENT = 2;
 
 	@Test
-	public void emptyOneQueueShouldConvertToArrayWhenPassedZeroLengthArray() {
+    void emptyOneQueueShouldConvertToArrayWhenPassedZeroLengthArray() {
 		assertThat(emptyOneQueue().toArray(new Integer[0])).isEmpty();
 	}
 
 	@Test
-	public void oneQueueWithOneElementShouldConvertToArrayWhenPassedZeroLengthArray() {
+    void oneQueueWithOneElementShouldConvertToArrayWhenPassedZeroLengthArray() {
 		assertThat(oneQueueWithTestElement(TEST_ELEMENT).toArray(new Integer[0]))
 				.containsExactly(TEST_ELEMENT);
 	}
 
 	@Test
-	public void emptyOneQueueShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayOnWhenPassedOneLengthArray() {
+    void emptyOneQueueShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayOnWhenPassedOneLengthArray() {
 		Queue<Integer> q = emptyOneQueue();
 		//and
 		Integer[] passedArray = new Integer[1];
@@ -52,7 +52,7 @@ public class QueuesOneQueueTest {
 	}
 
 	@Test
-	public void oneQueueWithOneElementShouldConvertToArrayAndReuseInputArrayWhenPassedOneLengthArray() {
+    void oneQueueWithOneElementShouldConvertToArrayAndReuseInputArrayWhenPassedOneLengthArray() {
 		Queue<Integer> q = oneQueueWithTestElement(TEST_ELEMENT);
 		//and
 		Integer[] passedArray = new Integer[1];
@@ -65,7 +65,7 @@ public class QueuesOneQueueTest {
 	}
 
 	@Test
-	public void emptyOneQueueShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayWhenPassedLargerArray() {
+    void emptyOneQueueShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayWhenPassedLargerArray() {
 		//given
 		Queue<Integer> q = emptyOneQueue();
 		//and
@@ -80,7 +80,7 @@ public class QueuesOneQueueTest {
 	}
 
 	@Test
-	public void oneQueueWithOneElementShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayWhenPassedLargerArray() {
+    void oneQueueWithOneElementShouldConvertToArrayAndPutNullMarkerAndReuseInputArrayWhenPassedLargerArray() {
 		Queue<Integer> q = oneQueueWithTestElement(TEST_ELEMENT);
 		//and
 		Integer[] passedArray = {1, 2, 3};

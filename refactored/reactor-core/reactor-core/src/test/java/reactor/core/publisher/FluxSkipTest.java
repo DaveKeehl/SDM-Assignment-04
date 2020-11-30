@@ -30,7 +30,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxSkipTest extends FluxOperatorTest<String, String> {
+class FluxSkipTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -52,21 +52,21 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxSkip<>(null, 1);
 		});
 	}
 
 	@Test
-	public void skipInvalid() {
+    void skipInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().skip(-1);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -79,7 +79,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -104,7 +104,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipAll() {
+    void skipAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -117,7 +117,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkipped(){
+    void aFluxCanBeSkipped(){
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .skip(1)
 		)
@@ -126,7 +126,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkippedZero(){
+    void aFluxCanBeSkippedZero(){
 		StepVerifier.create(Flux.just("test", "test2", "test3")
 		                        .skip(0)
 		)
@@ -135,7 +135,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1, 2, 3);
 		FluxSkip<Integer> test = new FluxSkip<>(parent, 1);
 
@@ -144,7 +144,7 @@ public class FluxSkipTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSkip.SkipSubscriber<Integer> test = new FluxSkip.SkipSubscriber<>(actual, 7);
         Subscription parent = Operators.emptySubscription();

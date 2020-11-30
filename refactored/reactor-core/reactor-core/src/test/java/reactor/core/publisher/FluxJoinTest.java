@@ -27,7 +27,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxJoinTest {
+class FluxJoinTest {
 
 	final BiFunction<Integer, Integer, Integer> add = (t1, t2) -> t1 + t2;
 
@@ -36,7 +36,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void normal1() {
+    void normal1() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -64,7 +64,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void normal1WithDuration() {
+    void normal1WithDuration() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -93,7 +93,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -119,7 +119,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void leftThrows() {
+    void leftThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -138,7 +138,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void rightThrows() {
+    void rightThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -157,7 +157,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void leftDurationThrows() {
+    void leftDurationThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -175,7 +175,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void rightDurationThrows() {
+    void rightDurationThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -193,7 +193,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void leftDurationSelectorThrows() {
+    void leftDurationSelectorThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -213,7 +213,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void rightDurationSelectorThrows() {
+    void rightDurationSelectorThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -233,7 +233,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void resultSelectorThrows() {
+    void resultSelectorThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 		Sinks.Many<Integer> source1 = Sinks.unsafe().many().multicast().directBestEffort();
 		Sinks.Many<Integer> source2 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -255,7 +255,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxJoin<Integer, Integer, Integer, Integer, Integer> test = new FluxJoin<>(parent, Flux.just(2), just(Flux.just(3)), just(Flux.just(4)), add);
 
@@ -265,7 +265,7 @@ public class FluxJoinTest {
 	}
 
 	@Test
-	public void scanSubscription() {
+    void scanSubscription() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		FluxJoin.JoinSubscription<String, String, String, String, String> test =
 				new FluxJoin.JoinSubscription<>(actual,

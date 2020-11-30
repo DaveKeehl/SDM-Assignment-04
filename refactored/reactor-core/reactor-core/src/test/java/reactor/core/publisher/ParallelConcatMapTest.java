@@ -23,10 +23,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelConcatMapTest {
+class ParallelConcatMapTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelConcatMap<Integer, Integer> test = new ParallelConcatMap<>(source,
 				i -> Flux.range(1, i), Queues.small(), 123,
@@ -38,7 +38,7 @@ public class ParallelConcatMapTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelConcatMap<Integer, Integer> test = new ParallelConcatMap<>(source,
 				i -> Flux.range(1, i), Queues.small(), 123,
@@ -54,7 +54,7 @@ public class ParallelConcatMapTest {
 	}
 
 	@Test
-	public void scanOperatorErrorModeBoundary() throws Exception {
+    void scanOperatorErrorModeBoundary() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelConcatMap<Integer, Integer> test = new ParallelConcatMap<>(source,
 				i -> Flux.range(1, i), Queues.small(), 123,
@@ -64,7 +64,7 @@ public class ParallelConcatMapTest {
 	}
 
 	@Test
-	public void scanOperatorErrorModeEnd() throws Exception {
+    void scanOperatorErrorModeEnd() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelConcatMap<Integer, Integer> test = new ParallelConcatMap<>(source,
 				i -> Flux.range(1, i), Queues.small(), 123,
@@ -75,7 +75,7 @@ public class ParallelConcatMapTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void concatDelayErrorWithFluxError() {
+    void concatDelayErrorWithFluxError() {
 		StepVerifier.create(
 				Flux.just(
 						Flux.just(1, 2),
@@ -90,7 +90,7 @@ public class ParallelConcatMapTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void concatDelayErrorWithMonoError() {
+    void concatDelayErrorWithMonoError() {
 		StepVerifier.create(
 				Flux.just(
 						Flux.just(1, 2),

@@ -32,17 +32,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoCallableTest {
+class MonoCallableTest {
 
 	@Test
-	public void nullCallable() {
+    void nullCallable() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.<Integer>fromCallable(null);
 		});
 	}
 
 	@Test
-	public void callableReturnsNull() {
+    void callableReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>fromCallable(() -> null).subscribe(ts);
@@ -53,7 +53,7 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void callableReturnsNullShortcircuitsBackpressure() {
+    void callableReturnsNullShortcircuitsBackpressure() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>fromCallable(() -> null).subscribe(ts);
@@ -64,7 +64,7 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.fromCallable(() -> 1).subscribe(ts);
@@ -75,7 +75,7 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.fromCallable(() -> 1).subscribe(ts);
@@ -92,7 +92,7 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void callableThrows() {
+    void callableThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Mono.fromCallable(() -> {
@@ -106,19 +106,19 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void onMonoSuccessCallableOnBlock() {
+    void onMonoSuccessCallableOnBlock() {
 		assertThat(Mono.fromCallable(() -> "test")
 				.block()).isEqualToIgnoringCase("test");
 	}
 
 	@Test
-	public void onMonoEmptyCallableOnBlock() {
+    void onMonoEmptyCallableOnBlock() {
 		assertThat(Mono.fromCallable(() -> null)
 				.block()).isNull();
 	}
 
 	@Test
-	public void onMonoErrorCallableOnBlock() {
+    void onMonoErrorCallableOnBlock() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Mono.fromCallable(() -> {
 				throw new Exception("test");
@@ -127,14 +127,14 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void delegateCall() throws Exception {
+    void delegateCall() throws Exception {
 		MonoCallable<Integer> monoCallable = new MonoCallable<>(() -> 1);
 
 		assertThat(monoCallable.call()).isEqualTo(1);
 	}
 
 	@Test
-	public void delegateCallError() {
+    void delegateCallError() {
 		MonoCallable<Integer> monoCallable = new MonoCallable<>(() -> {
 			throw new IllegalStateException("boom");
 		});
@@ -145,7 +145,7 @@ public class MonoCallableTest {
 	}
 
 	@Test
-	public void delegateCallNull() throws Exception {
+    void delegateCallNull() throws Exception {
 		MonoCallable<Integer> monoCallable = new MonoCallable<>(() -> null);
 
 		assertThat(monoCallable.call()).isNull();
@@ -153,7 +153,7 @@ public class MonoCallableTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1503
 	@Test
-	public void callableCancelledBeforeRun() {
+    void callableCancelledBeforeRun() {
 		AtomicBoolean actual = new AtomicBoolean(true);
 		Mono<?> mono = Mono.fromCallable(() -> actual.getAndSet(false))
 				.doOnSubscribe(Subscription::cancel);
@@ -170,7 +170,7 @@ public class MonoCallableTest {
 	//see https://github.com/reactor/reactor-core/issues/1503
 	//see https://github.com/reactor/reactor-core/issues/1504
 	@Test
-	public void callableSubscribeToCompleteMeasurement() {
+    void callableSubscribeToCompleteMeasurement() {
 		AtomicLong subscribeTs = new AtomicLong();
 		Mono<String> mono = Mono.fromCallable(() -> {
 			try {
@@ -192,7 +192,7 @@ public class MonoCallableTest {
     }
 
     @Test
-    public void scanOperator(){
+    void scanOperator(){
         MonoCallable<Integer> test = new MonoCallable<>(() -> 1);
 
         assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

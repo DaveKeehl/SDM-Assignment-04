@@ -23,10 +23,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConnectableFluxHideTest {
+class ConnectableFluxHideTest {
 
 	@Test
-	public void hideApiPreservesConnectableFlux() {
+    void hideApiPreservesConnectableFlux() {
 		ConnectableFlux<Integer> connectableFlux = Flux.range(1, 4).replay();
 
 		assertThat(connectableFlux).as("original is Fuseable").isInstanceOf(Fuseable.class);
@@ -39,7 +39,7 @@ public class ConnectableFluxHideTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ConnectableFlux<Integer> source = Flux.range(1, 4).publish();
 		ConnectableFluxHide<Integer> test = new ConnectableFluxHide<>(source);
 

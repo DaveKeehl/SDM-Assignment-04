@@ -34,7 +34,7 @@ import reactor.core.scheduler.Schedulers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-public class TailCallSubscribeTest {
+class TailCallSubscribeTest {
 
     private static Function<Flux<Object>, Flux<Object>> manyOperatorsOnFlux = flux -> {
         for (int i = 0; i < 5; i++) {
@@ -53,7 +53,7 @@ public class TailCallSubscribeTest {
     };
 
     @Test
-    public void testStackDepth() throws Exception {
+    void testStackDepth() throws Exception {
         StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
         Mono
                 .from(stackCapturingPublisher)
@@ -76,13 +76,13 @@ public class TailCallSubscribeTest {
     }
 
     @Test
-    public void testDebugHook() throws Exception {
+    void testDebugHook() throws Exception {
         Hooks.onOperatorDebug();
         testStackDepth();
     }
 
     @Test
-    public void interop() throws Exception {
+    void interop() throws Exception {
         class CustomOperator implements Publisher<Object> {
             final Flux<Object> flux;
 
@@ -91,7 +91,7 @@ public class TailCallSubscribeTest {
             }
 
             @Override
-            public void subscribe(Subscriber<? super Object> subscriber) {
+			public void subscribe(Subscriber<? super Object> subscriber) {
                 flux.subscribe(subscriber);
             }
         }
@@ -121,7 +121,7 @@ public class TailCallSubscribeTest {
     }
 
 	@Test
-	public void delaySubscription() throws Exception {
+    void delaySubscription() throws Exception {
 		StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
 
 		Flux.from(stackCapturingPublisher)
@@ -142,7 +142,7 @@ public class TailCallSubscribeTest {
 	}
 
 	@Test
-	public void doFirst() throws Exception {
+    void doFirst() throws Exception {
 		StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
 
 		Flux.from(stackCapturingPublisher)
@@ -163,7 +163,7 @@ public class TailCallSubscribeTest {
 	}
 
 	@Test
-	public void bufferWhen() throws Exception {
+    void bufferWhen() throws Exception {
 		StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
 
 		Flux.from(stackCapturingPublisher)
@@ -185,7 +185,7 @@ public class TailCallSubscribeTest {
 	}
 
 	@Test
-	public void repeat() throws Exception {
+    void repeat() throws Exception {
 		StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
 
 		Flux.from(stackCapturingPublisher)
@@ -210,7 +210,7 @@ public class TailCallSubscribeTest {
 	}
 
 	@Test
-	public void retry() throws Exception {
+    void retry() throws Exception {
 		StackCapturingPublisher stackCapturingPublisher = new StackCapturingPublisher();
 
 		Flux.from(stackCapturingPublisher)
@@ -236,7 +236,7 @@ public class TailCallSubscribeTest {
     private static class StackCapturingPublisher extends CompletableFuture<StackTraceElement[]> implements Publisher<Object> {
 
         @Override
-        public void subscribe(Subscriber<? super Object> subscriber) {
+		public void subscribe(Subscriber<? super Object> subscriber) {
             new Exception().printStackTrace(System.out);
             complete(Thread.currentThread().getStackTrace());
             subscriber.onSubscribe(Operators.emptySubscription());
@@ -259,7 +259,7 @@ public class TailCallSubscribeTest {
 	    }
 
 	    @Override
-        public void onSubscribe(Subscription s) {
+		public void onSubscribe(Subscription s) {
 	    	if (cancellationDelay.isZero()) {
 	    		s.cancel();
 		    } else {
@@ -268,17 +268,17 @@ public class TailCallSubscribeTest {
 	    }
 
         @Override
-        public void onNext(Object s) {
+		public void onNext(Object s) {
         }
 
         @Override
-        public void onError(Throwable throwable) {
+		public void onError(Throwable throwable) {
             throwable.printStackTrace();
 	        cancellation.dispose();
         }
 
         @Override
-        public void onComplete() {
+		public void onComplete() {
 	        cancellation.dispose();
         }
     }

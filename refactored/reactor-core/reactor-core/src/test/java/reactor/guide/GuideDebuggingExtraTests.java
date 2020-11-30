@@ -28,10 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 //this test is here to have a runnable demonstration of a more advanced traceback in
 // debugging mode. it was put outside of reactor.core package so that the traceback shows
 // more details
-public class GuideDebuggingExtraTests {
+class GuideDebuggingExtraTests {
 
 	@Test
-	public void debuggingActivatedWithDeepTraceback() {
+    void debuggingActivatedWithDeepTraceback() {
 		Hooks.onOperatorDebug();
 
 		StringWriter sw = new StringWriter();

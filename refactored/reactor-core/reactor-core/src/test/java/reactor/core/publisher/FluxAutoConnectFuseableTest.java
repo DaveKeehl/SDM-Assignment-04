@@ -23,10 +23,10 @@ import reactor.test.MockUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxAutoConnectFuseableTest {
+class FluxAutoConnectFuseableTest {
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		@SuppressWarnings("unchecked")
 		ConnectableFlux<String> source = Mockito.mock(MockUtils.TestScannableConnectableFlux.class);
 		Mockito.when(source.getPrefetch()).thenReturn(888);

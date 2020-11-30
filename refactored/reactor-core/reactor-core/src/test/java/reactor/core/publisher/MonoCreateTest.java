@@ -34,10 +34,10 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoCreateTest {
+class MonoCreateTest {
 
 	@Test
-	public void createStreamFromMonoCreate() {
+    void createStreamFromMonoCreate() {
 		AtomicInteger onDispose = new AtomicInteger();
 		AtomicInteger onCancel = new AtomicInteger();
 		StepVerifier.create(Mono.create(s -> {
@@ -52,14 +52,14 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void createStreamFromMonoCreateHide() {
+    void createStreamFromMonoCreateHide() {
 		StepVerifier.create(Mono.create(s -> s.success("test1")).hide())
 		            .expectNext("test1")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void createStreamFromMonoCreateError() {
+    void createStreamFromMonoCreateError() {
 		AtomicInteger onDispose = new AtomicInteger();
 		AtomicInteger onCancel = new AtomicInteger();
 		StepVerifier.create(Mono.create(s -> {
@@ -73,7 +73,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void cancellation() {
+    void cancellation() {
 		AtomicInteger onDispose = new AtomicInteger();
 		AtomicInteger onCancel = new AtomicInteger();
 		StepVerifier.create(Mono.create(s -> {
@@ -89,7 +89,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void monoCreateDisposables() {
+    void monoCreateDisposables() {
 		AtomicInteger dispose1 = new AtomicInteger();
 		AtomicInteger dispose2 = new AtomicInteger();
 		AtomicInteger cancel1 = new AtomicInteger();
@@ -117,7 +117,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void monoCreateOnCancel() {
+    void monoCreateOnCancel() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		Mono.create(s -> s.onCancel(() -> cancelled.set(true)).success("test")).block();
 		assertThat(cancelled.get()).isFalse();
@@ -127,7 +127,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void monoCreateCancelOnNext() {
+    void monoCreateCancelOnNext() {
 		AtomicInteger onCancel = new AtomicInteger();
 		AtomicInteger onDispose = new AtomicInteger();
 		AtomicReference<Subscription> subscription = new AtomicReference<>();
@@ -148,7 +148,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void monoFirstCancelThenOnCancel() {
+    void monoFirstCancelThenOnCancel() {
 		AtomicInteger onCancel = new AtomicInteger();
 		AtomicReference<MonoSink<Object>> sink = new AtomicReference<>();
 		StepVerifier.create(Mono.create(sink::set))
@@ -161,7 +161,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void monoFirstCancelThenOnDispose() {
+    void monoFirstCancelThenOnDispose() {
 		AtomicInteger onDispose = new AtomicInteger();
 		AtomicReference<MonoSink<Object>> sink = new AtomicReference<>();
 		StepVerifier.create(Mono.create(sink::set))
@@ -174,14 +174,14 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void createStreamFromMonoCreate2() {
+    void createStreamFromMonoCreate2() {
 		StepVerifier.create(Mono.create(MonoSink::success)
 		                        .publishOn(Schedulers.parallel()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void monoCreateOnRequest() {
+    void monoCreateOnRequest() {
 		Mono<Integer> created = Mono.create(s -> {
 			s.onRequest(n -> s.success(5));
 		});
@@ -196,7 +196,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiEmptySuccessAfterEmptySuccessIsIgnored() {
+    void sinkApiEmptySuccessAfterEmptySuccessIsIgnored() {
 		Mono<String> secondIsEmptySuccess = Mono.create(sink -> {
 			sink.success();
 			sink.success();
@@ -207,7 +207,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiSuccessAfterEmptySuccessIsIgnored() {
+    void sinkApiSuccessAfterEmptySuccessIsIgnored() {
 		Mono<String> secondIsValuedSuccess = Mono.create(sink -> {
 			sink.success();
 			sink.success("foo");
@@ -218,7 +218,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiErrorAfterEmptySuccessBubblesAndDrops() {
+    void sinkApiErrorAfterEmptySuccessBubblesAndDrops() {
 		Mono<String> secondIsError = Mono.create(sink -> {
 			sink.success();
 			sink.error(new IllegalArgumentException("boom"));
@@ -231,7 +231,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiEmptySuccessAfterSuccessIsIgnored() {
+    void sinkApiEmptySuccessAfterSuccessIsIgnored() {
 		Mono<String> secondIsEmptySuccess = Mono.create(sink -> {
 			sink.success("foo");
 			sink.success();
@@ -243,7 +243,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiSuccessAfterSuccessIsIgnored() {
+    void sinkApiSuccessAfterSuccessIsIgnored() {
 		Mono<String> secondIsValuedSuccess = Mono.create(sink -> {
 			sink.success("foo");
 			sink.success("bar");
@@ -255,7 +255,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiErrorAfterSuccessBubblesAndDrops() {
+    void sinkApiErrorAfterSuccessBubblesAndDrops() {
 		Mono<String> secondIsError = Mono.create(sink -> {
 			sink.success("foo");
 			sink.error(new IllegalArgumentException("boom"));
@@ -269,7 +269,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiEmptySuccessAfterErrorIsIgnored() {
+    void sinkApiEmptySuccessAfterErrorIsIgnored() {
 		Mono<String> secondIsEmptySuccess = Mono.create(sink -> {
 			sink.error(new IllegalArgumentException("boom"));
 			sink.success();
@@ -280,7 +280,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiSuccessAfterErrorIsIgnored() {
+    void sinkApiSuccessAfterErrorIsIgnored() {
 		Mono<String> secondIsValuedSuccess = Mono.create(sink -> {
 			sink.error(new IllegalArgumentException("boom"));
 			sink.success("bar");
@@ -291,7 +291,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkApiErrorAfterErrorBubblesAndDrops() {
+    void sinkApiErrorAfterErrorBubblesAndDrops() {
 		Mono<String> secondIsError = Mono.create(sink -> {
 			sink.error(new IllegalArgumentException("boom1"));
 			sink.error(new IllegalArgumentException("boom2"));
@@ -304,7 +304,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void delayUntilTriggerProviderThrows() {
+    void delayUntilTriggerProviderThrows() {
 		Mono<String> triggerProviderThrows = Mono.<String>create(sink ->
 				sink.success("foo")
 		)
@@ -317,7 +317,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoCreate<String> test = new MonoCreate<>(null);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.ASYNC);
@@ -325,7 +325,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void scanDefaultMonoSink() {
+    void scanDefaultMonoSink() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoCreate.DefaultMonoSink<String> test = new MonoCreate.DefaultMonoSink<>(actual);
 
@@ -339,7 +339,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void scanDefaultMonoSinkCancelTerminates() {
+    void scanDefaultMonoSinkCancelTerminates() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoCreate.DefaultMonoSink<String> test = new MonoCreate.DefaultMonoSink<>(actual);
 
@@ -351,7 +351,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void ensuresElementsIsDiscarded() {
+    void ensuresElementsIsDiscarded() {
 		for (int i = 0; i < 10000; i++) {
 			final ArrayList<Object> collector = new ArrayList<>();
 			Hooks.onNextDropped(collector::add);
@@ -377,7 +377,7 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void contextTest() {
+    void contextTest() {
 		StepVerifier.create(Mono.create(s -> s.success(s.currentContext()
 		                                                .get(AtomicInteger.class)
 		                                                .incrementAndGet()))
@@ -388,21 +388,21 @@ public class MonoCreateTest {
 	}
 
 	@Test
-	public void sinkToString() {
+    void sinkToString() {
 		StepVerifier.create(Mono.create(sink -> sink.success(sink.toString())))
 		            .expectNext("MonoSink")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void onRequest() {
+    void onRequest() {
 		StepVerifier.create(Mono.create(sink -> sink.onRequest(sink::success)))
 		            .expectNext(Long.MAX_VALUE)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void onRequestDeferred() {
+    void onRequestDeferred() {
 		StepVerifier.create(Mono.create(sink -> sink.onRequest(sink::success)), 0)
 		            .expectSubscription()
 		            .thenAwait(Duration.ofMillis(1))

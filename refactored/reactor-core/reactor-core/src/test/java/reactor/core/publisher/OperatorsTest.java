@@ -60,7 +60,7 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class OperatorsTest {
+class OperatorsTest {
 
 	volatile long testRequest;
 	static final AtomicLongFieldUpdater<OperatorsTest> TEST_REQUEST =
@@ -68,7 +68,7 @@ public class OperatorsTest {
 
 
 	@Test
-	public void addAndGetAtomicField() {
+    void addAndGetAtomicField() {
 		TEST_REQUEST.set(this, 0L);
 
 		RaceTestUtils.race(0L,
@@ -93,19 +93,19 @@ public class OperatorsTest {
 
 
 	@Test
-	public void addCap() {
+    void addCap() {
 		assertThat(Operators.addCap(1, 2)).isEqualTo(3);
 		assertThat(Operators.addCap(1, Long.MAX_VALUE)).isEqualTo(Long.MAX_VALUE);
 		assertThat(Operators.addCap(0, -1)).isEqualTo(Long.MAX_VALUE);
 	}
 
 	@Test
-	public void constructor(){
+    void constructor(){
 		assertThat(new Operators(){}).isNotNull();
 	}
 
 	@Test
-	public void castAsQueueSubscription() {
+    void castAsQueueSubscription() {
 		Fuseable.QueueSubscription<String> qs = new Fuseable.SynchronousSubscription<String>() {
 			@Override
 			public String poll() {
@@ -145,7 +145,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void cancelledSubscription(){
+    void cancelledSubscription(){
 		Operators.CancelledSubscription es =
 				(Operators.CancelledSubscription)Operators.cancelledSubscription();
 
@@ -157,12 +157,12 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void noopFluxCancelled(){
+    void noopFluxCancelled(){
 		OperatorDisposables.DISPOSED.dispose(); //noop
 	}
 
 	@Test
-	public void drainSubscriber() {
+    void drainSubscriber() {
 		AtomicBoolean requested = new AtomicBoolean();
 		AtomicBoolean errored = new AtomicBoolean();
 		Hooks.onErrorDropped(e -> {
@@ -195,14 +195,14 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void scanCancelledSubscription() {
+    void scanCancelledSubscription() {
 		CancelledSubscription test = CancelledSubscription.INSTANCE;
 		assertThat(test.scan(Scannable.Attr.CANCELLED)).isTrue();
 	}
 
 
 	@Test
-	public void shouldBeSerialIfRacy() {
+    void shouldBeSerialIfRacy() {
 		for (int i = 0; i < 10000; i++) {
 			long[] requested = new long[] { 0 };
 			Subscription mockSubscription = Mockito.mock(Subscription.class);
@@ -225,7 +225,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void scanDeferredSubscription() {
+    void scanDeferredSubscription() {
 		DeferredSubscription test = new DeferredSubscription();
 		test.s = Operators.emptySubscription();
 
@@ -239,13 +239,13 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void scanEmptySubscription() {
+    void scanEmptySubscription() {
 		EmptySubscription test = EmptySubscription.INSTANCE;
 		assertThat(test.scan(Scannable.Attr.TERMINATED)).isTrue();
 	}
 
 	@Test
-	public void scanMonoSubscriber() {
+    void scanMonoSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, null, null, null);
 		MonoSubscriber<Integer, Integer> test = new MonoSubscriber<>(actual);
 
@@ -263,7 +263,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void scanMultiSubscriptionSubscriber() {
+    void scanMultiSubscriptionSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, null, null, null);
 		MultiSubscriptionSubscriber<Integer, Integer> test = new MultiSubscriptionSubscriber<Integer, Integer>(actual) {
 			@Override
@@ -283,7 +283,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void scanScalarSubscription() {
+    void scanScalarSubscription() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, null, null, null);
 		ScalarSubscription<Integer> test = new ScalarSubscription<>(actual, 5);
 
@@ -297,7 +297,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onNextErrorModeLocalStrategy() {
+    void onNextErrorModeLocalStrategy() {
 		List<Object> nextDropped = new ArrayList<>();
 		List<Object> errorDropped = new ArrayList<>();
 		Hooks.onNextDropped(nextDropped::add);
@@ -318,7 +318,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void pollErrorModeLocalStrategy() {
+    void pollErrorModeLocalStrategy() {
 		List<Object> nextDropped = new ArrayList<>();
 		List<Object> errorDropped = new ArrayList<>();
 		Hooks.onNextDropped(nextDropped::add);
@@ -335,7 +335,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onErrorDroppedLocal() {
+    void onErrorDroppedLocal() {
 		AtomicReference<Throwable> hookState = new AtomicReference<>();
 		Consumer<Throwable> localHook = hookState::set;
 		Context c = Context.of(Hooks.KEY_ON_ERROR_DROPPED, localHook);
@@ -347,7 +347,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onNextDroppedLocal() {
+    void onNextDroppedLocal() {
 		AtomicReference<Object> hookState = new AtomicReference<>();
 		Consumer<Object> localHook = hookState::set;
 		Context c = Context.of(Hooks.KEY_ON_NEXT_DROPPED, localHook);
@@ -358,7 +358,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onOperatorErrorLocal() {
+    void onOperatorErrorLocal() {
 		BiFunction<Throwable, Object, Throwable> localHook = (e, v) ->
 				new IllegalStateException("boom_" + v, e);
 		Context c = Context.of(Hooks.KEY_ON_OPERATOR_ERROR, localHook);
@@ -374,7 +374,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onRejectedExecutionWithoutDataSignalDelegatesToErrorLocal() {
+    void onRejectedExecutionWithoutDataSignalDelegatesToErrorLocal() {
 		BiFunction<Throwable, Object, Throwable> localHook = (e, v) ->
 				new IllegalStateException("boom_" + v, e);
 		Context c = Context.of(Hooks.KEY_ON_OPERATOR_ERROR, localHook);
@@ -391,7 +391,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onRejectedExecutionWithDataSignalDelegatesToErrorLocal() {
+    void onRejectedExecutionWithDataSignalDelegatesToErrorLocal() {
 		BiFunction<Throwable, Object, Throwable> localHook = (e, v) ->
 				new IllegalStateException("boom_" + v, e);
 		Context c = Context.of(Hooks.KEY_ON_OPERATOR_ERROR, localHook);
@@ -409,7 +409,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onRejectedExecutionLocalTakesPrecedenceOverOnOperatorError() {
+    void onRejectedExecutionLocalTakesPrecedenceOverOnOperatorError() {
 		BiFunction<Throwable, Object, Throwable> localOperatorErrorHook = (e, v) ->
 				new IllegalStateException("boom_" + v, e);
 
@@ -432,7 +432,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void testOnRejectedWithReactorRee() {
+    void testOnRejectedWithReactorRee() {
 		Exception originalCause = new Exception("boom");
 		RejectedExecutionException original = Exceptions.failWithRejected(originalCause);
 		Exception suppressed = new Exception("suppressed");
@@ -446,7 +446,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void testOnRejectedWithOutsideRee() {
+    void testOnRejectedWithOutsideRee() {
 		RejectedExecutionException original = new RejectedExecutionException("outside");
 		Exception suppressed = new Exception("suppressed");
 
@@ -462,7 +462,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void unboundedOrPrefetch() {
+    void unboundedOrPrefetch() {
 		assertThat(Operators.unboundedOrPrefetch(10))
 				.as("bounded")
 				.isEqualTo(10L);
@@ -472,7 +472,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void unboundedOrLimit() {
+    void unboundedOrLimit() {
 		assertThat(Operators.unboundedOrLimit(100))
 				.as("prefetch - (prefetch >> 2)")
 				.isEqualTo(75);
@@ -483,7 +483,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void unboundedOrLimitLowTide() {
+    void unboundedOrLimitLowTide() {
 		assertThat(Operators.unboundedOrLimit(100, 100))
 				.as("same lowTide")
 				.isEqualTo(75);
@@ -522,7 +522,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onNextFailureWithStrategyMatchingDoesntCancel() {
+    void onNextFailureWithStrategyMatchingDoesntCancel() {
 		Context context = Context.of(OnNextFailureStrategy.KEY_ON_NEXT_ERROR_STRATEGY, new OnNextFailureStrategy() {
 			@Override
 			public boolean test(Throwable error, @Nullable Object value) {
@@ -532,7 +532,7 @@ public class OperatorsTest {
 			@Nullable
 			@Override
 			public Throwable process(Throwable error, @Nullable Object value,
-					Context context) {
+									 Context context) {
 				return null;
 			}
 		});
@@ -545,7 +545,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onNextFailureWithStrategyNotMatchingDoesCancel() {
+    void onNextFailureWithStrategyNotMatchingDoesCancel() {
 		Context context = Context.of(OnNextFailureStrategy.KEY_ON_NEXT_ERROR_STRATEGY, new OnNextFailureStrategy() {
 			@Override
 			public boolean test(Throwable error, @Nullable Object value) {
@@ -554,7 +554,7 @@ public class OperatorsTest {
 
 			@Override
 			public Throwable process(Throwable error, @Nullable Object value,
-					Context context) {
+									 Context context) {
 				return error;
 			}
 		});
@@ -571,7 +571,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onNextFailureWithStrategyMatchingButNotNullDoesCancel() {
+    void onNextFailureWithStrategyMatchingButNotNullDoesCancel() {
 		Context context = Context.of(OnNextFailureStrategy.KEY_ON_NEXT_ERROR_STRATEGY, new OnNextFailureStrategy() {
 			@Override
 			public boolean test(Throwable error, @Nullable Object value) {
@@ -580,7 +580,7 @@ public class OperatorsTest {
 
 			@Override
 			public Throwable process(Throwable error, @Nullable Object value,
-					Context context) {
+									 Context context) {
 				return error;
 			}
 		});
@@ -597,7 +597,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void liftVsLiftPublisher() {
+    void liftVsLiftPublisher() {
 		Publisher<Object> notScannable = new Flux<Object>() {
 			@Override
 			public void subscribe(CoreSubscriber<? super Object> actual) { }
@@ -639,7 +639,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void liftVsLiftRawWithPredicate() {
+    void liftVsLiftRawWithPredicate() {
 		Publisher<Object> notScannable = new Flux<Object>() {
 			@Override
 			public void subscribe(CoreSubscriber<? super Object> actual) { }
@@ -696,7 +696,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardAdapterRejectsNull() {
+    void discardAdapterRejectsNull() {
 		assertThatNullPointerException().isThrownBy(() -> Operators.discardLocalAdapter(null, obj -> {}))
 		                                .as("type null check")
 		                                .withMessage("onDiscard must be based on a type");
@@ -706,7 +706,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardAdapterIsAdditive() {
+    void discardAdapterIsAdditive() {
 		List<String> discardOrder = Collections.synchronizedList(new ArrayList<>(2));
 
 		Function<Context, Context> first = Operators.discardLocalAdapter(Number.class, i -> discardOrder.add("FIRST"));
@@ -722,7 +722,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void convertNonConditionalToConditionalSubscriberTest() {
+    void convertNonConditionalToConditionalSubscriberTest() {
 		Object elementToSend = new Object();
 		ArrayList<Object> captured = new ArrayList<>();
 		BaseSubscriber<Object> actual = new BaseSubscriber<Object>() {
@@ -740,7 +740,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void convertConditionalToConditionalShouldReturnTheSameInstance() {
+    void convertConditionalToConditionalShouldReturnTheSameInstance() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<String> original = Mockito.mock(Fuseable.ConditionalSubscriber.class);
 
@@ -749,7 +749,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardQueueWithClearContinuesOnExtractionError() {
+    void discardQueueWithClearContinuesOnExtractionError() {
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
 			if (i == 3) throw new IllegalStateException("boom");
@@ -773,7 +773,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardQueueWithClearContinuesOnExtractedElementNotDiscarded() {
+    void discardQueueWithClearContinuesOnExtractedElementNotDiscarded() {
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
 			if (i == 3) throw new IllegalStateException("boom");
@@ -793,7 +793,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardQueueWithClearContinuesOnRawQueueElementNotDiscarded() {
+    void discardQueueWithClearContinuesOnRawQueueElementNotDiscarded() {
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
 			if (i == 3) throw new IllegalStateException("boom");
@@ -813,7 +813,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardQueueWithClearStopsOnQueuePollingError() {
+    void discardQueueWithClearStopsOnQueuePollingError() {
 		AtomicInteger discardedCount = new AtomicInteger();
 		@SuppressWarnings("unchecked") Queue<Integer> q = Mockito.mock(Queue.class);
 		Mockito.when(q.poll())
@@ -830,7 +830,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardStreamContinuesWhenElementFailsToBeDiscarded() {
+    void discardStreamContinuesWhenElementFailsToBeDiscarded() {
 		Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5);
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
@@ -844,7 +844,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardStreamStopsOnIterationError() {
+    void discardStreamStopsOnIterationError() {
 		Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5);
 		//noinspection ResultOfMethodCallIgnored
 		stream.count(); //consumes the Stream on purpose
@@ -858,7 +858,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardCollectionContinuesWhenIteratorElementFailsToBeDiscarded() {
+    void discardCollectionContinuesWhenIteratorElementFailsToBeDiscarded() {
 		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5);
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
@@ -872,7 +872,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardCollectionStopsOnIterationError() {
+    void discardCollectionStopsOnIterationError() {
 		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5);
 		Iterator<Integer> trueIterator = elements.iterator();
 		Iterator<Integer> failingIterator = new Iterator<Integer>() {
@@ -904,7 +904,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardCollectionStopsOnIsEmptyError() {
+    void discardCollectionStopsOnIsEmptyError() {
 		@SuppressWarnings("unchecked") List<Integer> mock = Mockito.mock(List.class);
 		Mockito.when(mock.isEmpty()).thenThrow(new IllegalStateException("isEmpty boom"));
 
@@ -918,7 +918,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardIteratorContinuesWhenIteratorElementFailsToBeDiscarded() {
+    void discardIteratorContinuesWhenIteratorElementFailsToBeDiscarded() {
 		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5);
 		AtomicInteger discardedCount = new AtomicInteger();
 		Context hookContext = Operators.discardLocalAdapter(Integer.class, i -> {
@@ -932,7 +932,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void discardIteratorStopsOnIterationError() {
+    void discardIteratorStopsOnIterationError() {
 		List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5);
 		Iterator<Integer> trueIterator = elements.iterator();
 		Iterator<Integer> failingIterator = new Iterator<Integer>() {
@@ -961,7 +961,7 @@ public class OperatorsTest {
 
 	// see https://github.com/reactor/reactor-core/issues/2152
 	@Test
-	public void reportThrowInSubscribeWithFuseableErrorResumed() {
+    void reportThrowInSubscribeWithFuseableErrorResumed() {
 		AssertSubscriber<Integer> assertSubscriber = AssertSubscriber.create();
 		FluxOnErrorResume.ResumeSubscriber<Integer> resumeSubscriber = new FluxOnErrorResume.ResumeSubscriber<>(
 				assertSubscriber, t -> Mono.just(123));
@@ -974,7 +974,7 @@ public class OperatorsTest {
 	}
 
 	@Test
-	public void onDiscardCallbackErrorsLog() {
+    void onDiscardCallbackErrorsLog() {
 		Context context = Operators.enableOnDiscard(Context.empty(), t -> {throw new RuntimeException("Boom");});
 
 		TestLogger testLogger = new TestLogger();

@@ -35,10 +35,10 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class MonoUsingWhenTest {
+class MonoUsingWhenTest {
 
 	@Test
-	public void nullResourcePublisherRejected() {
+    void nullResourcePublisherRejected() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Mono.usingWhen(null,
 						tr -> Mono.empty(),
@@ -50,7 +50,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void emptyResourcePublisherDoesntApplyCallback() {
+    void emptyResourcePublisherDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -68,7 +68,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void emptyResourceCallableDoesntApplyCallback() {
+    void emptyResourceCallableDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -86,7 +86,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourcePublisherDoesntApplyCallback() {
+    void errorResourcePublisherDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -109,7 +109,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourceCallableDoesntApplyCallback() {
+    void errorResourceCallableDoesntApplyCallback() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -132,7 +132,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void errorResourcePublisherAfterEmitIsDropped() {
+    void errorResourcePublisherAfterEmitIsDropped() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -159,7 +159,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void secondResourceInPublisherIsDropped() {
+    void secondResourceInPublisherIsDropped() {
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
 
@@ -186,7 +186,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void fluxResourcePublisherIsCancelled() {
+    void fluxResourcePublisherIsCancelled() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -213,7 +213,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void monoResourcePublisherIsNotCancelled() {
+    void monoResourcePublisherIsNotCancelled() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -241,7 +241,7 @@ public class MonoUsingWhenTest {
 
 
 	@Test
-	public void lateFluxResourcePublisherIsCancelledOnCancel() {
+    void lateFluxResourcePublisherIsCancelledOnCancel() {
 		AtomicBoolean resourceCancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -268,7 +268,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void lateMonoResourcePublisherIsCancelledOnCancel() {
+    void lateMonoResourcePublisherIsCancelledOnCancel() {
 		AtomicBoolean resourceCancelled = new AtomicBoolean();
 		AtomicBoolean commitDone = new AtomicBoolean();
 		AtomicBoolean rollbackDone = new AtomicBoolean();
@@ -297,7 +297,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void blockOnNeverResourceCanBeCancelled() throws InterruptedException {
+    void blockOnNeverResourceCanBeCancelled() throws InterruptedException {
 		CountDownLatch latch = new CountDownLatch(1);
 		Disposable disposable = Mono.usingWhen(Mono.<String>never(),
 				Mono::just,
@@ -317,7 +317,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void failToGenerateClosureAppliesRollback() {
+    void failToGenerateClosureAppliesRollback() {
 		FluxUsingWhenTest.TestResource testResource = new FluxUsingWhenTest.TestResource();
 
 		Mono<String> test = Mono.usingWhen(Mono.just(testResource),
@@ -337,7 +337,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void nullClosureAppliesRollback() {
+    void nullClosureAppliesRollback() {
 		FluxUsingWhenTest.TestResource testResource = new FluxUsingWhenTest.TestResource();
 
 		Mono<String> test = Mono.usingWhen(Mono.just(testResource),
@@ -357,7 +357,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void resourceSupplierCanAccessContext() {
+    void resourceSupplierCanAccessContext() {
 		Mono.usingWhen(Mono.deferContextual(Mono::just)
 		                   .map(ctx -> ctx.get(String.class)),
 				Mono::just,
@@ -371,7 +371,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void errorCallbackReceivesCause() {
+    void errorCallbackReceivesCause() {
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
 		NullPointerException npe = new NullPointerException("original error");
 
@@ -387,7 +387,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void failureInApplyAsyncCompleteDiscardsValue() {
+    void failureInApplyAsyncCompleteDiscardsValue() {
 		Mono.usingWhen(Mono.just("foo"),
 				resource -> Mono.just("resource " + resource),
 				resource -> { throw new IllegalStateException("failure in Function"); },
@@ -400,7 +400,7 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void onErrorAsyncCompleteDiscardsValue() {
+    void onErrorAsyncCompleteDiscardsValue() {
 		Mono.usingWhen(Mono.just("foo"),
 				resource -> Mono.just("resource " + resource),
 				resource -> Mono.error(new IllegalStateException("erroring asyncComplete")),
@@ -415,14 +415,14 @@ public class MonoUsingWhenTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoUsingWhen<Object, Object> op = new MonoUsingWhen<>(Mono.empty(), Mono::just, Mono::just, (res, err) -> Mono.just(res), Mono::just);
 
 		assertThat(op.scan(Attr.RUN_STYLE)).isEqualTo(Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanResourceSubscriber() {
+    void scanResourceSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		ResourceSubscriber<String, Integer> op = new ResourceSubscriber<>(actual, s -> Mono.just(s.length()), Mono::just, (res, err) -> Mono.just(res), Mono::just, true);
 		final Subscription parent = Operators.emptySubscription();

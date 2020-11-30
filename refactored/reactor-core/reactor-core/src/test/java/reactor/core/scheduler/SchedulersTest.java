@@ -55,7 +55,7 @@ import static org.awaitility.Awaitility.await;
 import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class SchedulersTest {
+class SchedulersTest {
 
 	final static class TestSchedulers implements Schedulers.Factory {
 
@@ -106,13 +106,13 @@ public class SchedulersTest {
 	private final AtomicReference<Throwable> exceptionThrown = new AtomicReference<>();
 
 	@AfterEach
-	public void resetSchedulers() {
+	void resetSchedulers() {
 		Schedulers.resetFactory();
 		Schedulers.DECORATORS.clear();
 	}
 
 	@Test
-	public void schedulerDecoratorIsAdditive() throws InterruptedException {
+    void schedulerDecoratorIsAdditive() throws InterruptedException {
 		AtomicInteger tracker = new AtomicInteger();
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator1 = (scheduler, serv) -> {
 			tracker.addAndGet(1);
@@ -138,7 +138,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorIsReplaceable() throws InterruptedException {
+    void schedulerDecoratorIsReplaceable() throws InterruptedException {
 		AtomicInteger tracker = new AtomicInteger();
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator1 = (scheduler, serv) -> {
 			tracker.addAndGet(1);
@@ -164,7 +164,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorAddsSameIfDifferentKeys() {
+    void schedulerDecoratorAddsSameIfDifferentKeys() {
 		AtomicInteger tracker = new AtomicInteger();
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator = (scheduler, serv) -> {
 			tracker.addAndGet(1);
@@ -183,7 +183,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorAddsOnceIfSameKey() {
+    void schedulerDecoratorAddsOnceIfSameKey() {
 		AtomicInteger tracker = new AtomicInteger();
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator1 = (scheduler, serv) -> {
 			tracker.addAndGet(1);
@@ -205,7 +205,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorDisposedWhenRemoved() {
+    void schedulerDecoratorDisposedWhenRemoved() {
 		AtomicBoolean disposeTracker = new AtomicBoolean();
 
 		class DisposableDecorator implements BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService>,
@@ -237,14 +237,14 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorEmptyDecorators() {
+    void schedulerDecoratorEmptyDecorators() {
 		assertThat(Schedulers.DECORATORS).isEmpty();
 		assertThatCode(() -> Schedulers.newSingle("foo").dispose())
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void schedulerDecoratorRemovesKnown() {
+    void schedulerDecoratorRemovesKnown() {
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator1 = (scheduler, serv) -> serv;
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator2 = (scheduler, serv) -> serv;
 		BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator3 = (scheduler, serv) -> serv;
@@ -264,14 +264,14 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void schedulerDecoratorRemoveUnknownIgnored() {
+    void schedulerDecoratorRemoveUnknownIgnored() {
 		assertThat(Schedulers.removeExecutorServiceDecorator("keyfoo"))
 				.as("unknown decorator ignored")
 				.isNull();
 	}
 
 	@Test
-	public void parallelSchedulerDefaultNonBlocking() throws InterruptedException {
+    void parallelSchedulerDefaultNonBlocking() throws InterruptedException {
 		Scheduler scheduler = Schedulers.newParallel("parallelSchedulerDefaultNonBlocking");
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
@@ -301,7 +301,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void singleSchedulerDefaultNonBlocking() throws InterruptedException {
+    void singleSchedulerDefaultNonBlocking() throws InterruptedException {
 		Scheduler scheduler = Schedulers.newSingle("singleSchedulerDefaultNonBlocking");
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
@@ -331,7 +331,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void elasticSchedulerDefaultBlockingOk() throws InterruptedException {
+    void elasticSchedulerDefaultBlockingOk() throws InterruptedException {
 		@SuppressWarnings("deprecation") // to be removed with newElastic() in 3.5
 		Scheduler scheduler = Schedulers.newElastic("elasticSchedulerDefaultNonBlocking");
 		CountDownLatch latch = new CountDownLatch(1);
@@ -360,7 +360,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void boundedElasticSchedulerDefaultBlockingOk() throws InterruptedException {
+    void boundedElasticSchedulerDefaultBlockingOk() throws InterruptedException {
 		Scheduler scheduler = Schedulers.newBoundedElastic(4, Integer.MAX_VALUE, "boundedElasticSchedulerDefaultNonBlocking");
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicReference<Throwable> errorRef = new AtomicReference<>();
@@ -388,14 +388,14 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void isInNonBlockingThreadFalse() {
+    void isInNonBlockingThreadFalse() {
 		assertThat(Thread.currentThread()).isNotInstanceOf(NonBlocking.class);
 
 		assertThat(Schedulers.isInNonBlockingThread()).as("isInNonBlockingThread").isFalse();
 	}
 
 	@Test
-	public void isNonBlockingThreadInstanceOf() {
+    void isNonBlockingThreadInstanceOf() {
 		Thread nonBlocking = new ReactorThreadFactory.NonBlockingThread(() -> {}, "isNonBlockingThreadInstanceOf_nonBlocking");
 		Thread thread = new Thread(() -> {}, "isNonBlockingThreadInstanceOf_blocking");
 
@@ -404,7 +404,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void isInNonBlockingThreadTrue() {
+    void isInNonBlockingThreadTrue() {
 		new ReactorThreadFactory.NonBlockingThread(() -> assertThat(Schedulers.isInNonBlockingThread())
 				.as("isInNonBlockingThread")
 				.isFalse(),
@@ -412,7 +412,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void handleErrorWithJvmFatalForwardsToUncaughtHandlerFusedCallable() {
+    void handleErrorWithJvmFatalForwardsToUncaughtHandlerFusedCallable() {
 		AtomicBoolean handlerCaught = new AtomicBoolean();
 		Scheduler scheduler = Schedulers.fromExecutorService(Executors.newSingleThreadExecutor(r -> {
 			Thread thread = new Thread(r);
@@ -440,7 +440,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void handleErrorWithJvmFatalForwardsToUncaughtHandlerSyncCallable() {
+    void handleErrorWithJvmFatalForwardsToUncaughtHandlerSyncCallable() {
 		AtomicBoolean handlerCaught = new AtomicBoolean();
 		Scheduler scheduler = Schedulers.fromExecutorService(Executors.newSingleThreadExecutor(r -> {
 			Thread thread = new Thread(r);
@@ -469,7 +469,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void handleErrorWithJvmFatalForwardsToUncaughtHandlerSyncInnerCallable() {
+    void handleErrorWithJvmFatalForwardsToUncaughtHandlerSyncInnerCallable() {
 		AtomicBoolean handlerCaught = new AtomicBoolean();
 		Scheduler scheduler = Schedulers.fromExecutorService(Executors.newSingleThreadExecutor(r -> {
 			Thread thread = new Thread(r);
@@ -502,7 +502,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void handleErrorWithJvmFatalForwardsToUncaughtHandlerFusedInnerCallable() {
+    void handleErrorWithJvmFatalForwardsToUncaughtHandlerFusedInnerCallable() {
 		AtomicBoolean handlerCaught = new AtomicBoolean();
 		Scheduler scheduler = Schedulers.fromExecutorService(Executors.newSingleThreadExecutor(r -> {
 			Thread thread = new Thread(r);
@@ -534,7 +534,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testOverride() {
+    void testOverride() {
 
 		TestSchedulers ts = new TestSchedulers(true);
 		Schedulers.setFactory(ts);
@@ -555,7 +555,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testShutdownOldOnSetFactory() {
+    void testShutdownOldOnSetFactory() {
 		Schedulers.Factory ts1 = new Schedulers.Factory() { };
 		Schedulers.Factory ts2 = new TestSchedulers(false);
 		Schedulers.setFactory(ts1);
@@ -581,7 +581,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void shutdownNowClosesAllCachedSchedulers() {
+    void shutdownNowClosesAllCachedSchedulers() {
 		Scheduler oldSingle = Schedulers.single();
 		@SuppressWarnings("deprecation") // to be removed with newElastic() in 3.5
 		Scheduler oldElastic = Schedulers.elastic();
@@ -597,7 +597,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testUncaughtHookCalledWhenOnErrorNotImplemented() {
+    void testUncaughtHookCalledWhenOnErrorNotImplemented() {
 		AtomicBoolean handled = new AtomicBoolean(false);
 		Schedulers.onHandleError((t, e) -> handled.set(true));
 
@@ -610,7 +610,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testUncaughtHookCalledWhenCommonException() {
+    void testUncaughtHookCalledWhenCommonException() {
 		AtomicBoolean handled = new AtomicBoolean(false);
 		Schedulers.onHandleError((t, e) -> handled.set(true));
 
@@ -623,7 +623,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testUncaughtHooksCalledWhenThreadDeath() {
+    void testUncaughtHooksCalledWhenThreadDeath() {
 		AtomicReference<Throwable> onHandleErrorInvoked = new AtomicReference<>();
 		AtomicReference<Throwable> globalUncaughtInvoked = new AtomicReference<>();
 
@@ -647,17 +647,17 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testRejectingSingleScheduler() {
+    void testRejectingSingleScheduler() {
 		assertRejectingScheduler(Schedulers.newSingle("test"));
 	}
 
 	@Test
-	public void testRejectingParallelScheduler() {
+    void testRejectingParallelScheduler() {
 		assertRejectingScheduler(Schedulers.newParallel("test"));
 	}
 
 	@Test
-	public void testRejectingExecutorServiceScheduler() {
+    void testRejectingExecutorServiceScheduler() {
 		assertRejectingScheduler(Schedulers.fromExecutorService(Executors.newSingleThreadExecutor()));
 	}
 
@@ -692,7 +692,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testDispatch() throws Exception {
+    void testDispatch() throws Exception {
 		Scheduler service = Schedulers.newSingle(r -> {
 			Thread t = new Thread(r, "dispatcher");
 			t.setUncaughtExceptionHandler((t1, e) -> exceptionThrown.set(e));
@@ -703,7 +703,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void immediateTaskIsExecuted() throws Exception {
+    void immediateTaskIsExecuted() throws Exception {
 		Scheduler serviceRB = Schedulers.newSingle("rbWork");
 		Scheduler.Worker r = serviceRB.createWorker();
 
@@ -731,7 +731,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void immediateTaskIsSkippedIfDisposeRightAfter() throws Exception {
+    void immediateTaskIsSkippedIfDisposeRightAfter() throws Exception {
 		Scheduler serviceRB = Schedulers.newSingle("rbWork");
 		Scheduler.Worker r = serviceRB.createWorker();
 
@@ -759,7 +759,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void singleSchedulerPipelining() throws Exception {
+    void singleSchedulerPipelining() throws Exception {
 		Scheduler serviceRB = Schedulers.newSingle("rb", true);
 		Scheduler.Worker dispatcher = serviceRB.createWorker();
 
@@ -782,7 +782,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testCachedSchedulerDelegates() {
+    void testCachedSchedulerDelegates() {
 		Scheduler mock = new Scheduler() {
 			@Override
 			public Disposable schedule(Runnable task, long delay, TimeUnit unit) {
@@ -866,7 +866,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void parallelSchedulerThreadCheck() throws Exception{
+	void parallelSchedulerThreadCheck() throws Exception{
 		Scheduler s = Schedulers.newParallel("work", 2);
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -891,7 +891,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void singleSchedulerThreadCheck() throws Exception{
+	void singleSchedulerThreadCheck() throws Exception{
 		Scheduler s = Schedulers.newSingle("work");
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -917,7 +917,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void elasticSchedulerThreadCheck() throws Exception{
+	void elasticSchedulerThreadCheck() throws Exception{
 		@SuppressWarnings("deprecation") // to be removed with newElastic() in 3.5
 		Scheduler s = Schedulers.newElastic("work");
 		try {
@@ -943,7 +943,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void boundedElasticSchedulerThreadCheck() throws Exception {
+	void boundedElasticSchedulerThreadCheck() throws Exception {
 		Scheduler s = Schedulers.newBoundedElastic(4, Integer.MAX_VALUE,"boundedElasticSchedulerThreadCheck");
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -968,7 +968,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void executorThreadCheck() throws Exception{
+	void executorThreadCheck() throws Exception{
 		ExecutorService es = Executors.newSingleThreadExecutor();
 		Scheduler s = Schedulers.fromExecutor(es::execute);
 
@@ -996,7 +996,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void executorThreadCheck2() throws Exception{
+	void executorThreadCheck2() throws Exception{
 		ExecutorService es = Executors.newSingleThreadExecutor();
 		Scheduler s = Schedulers.fromExecutor(es::execute, true);
 
@@ -1024,7 +1024,7 @@ public class SchedulersTest {
 
 	@Test
 	@Timeout(5)
-	public void sharedSingleCheck() throws Exception{
+	void sharedSingleCheck() throws Exception{
 		Scheduler p = Schedulers.newParallel("shared");
 		Scheduler s = Schedulers.single(p);
 
@@ -1060,7 +1060,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void recursiveParallelCall() throws Exception {
+    void recursiveParallelCall() throws Exception {
 		Scheduler s = Schedulers.newParallel("work", 4);
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -1077,7 +1077,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void pingPongParallelCall() throws Exception {
+    void pingPongParallelCall() throws Exception {
 		Scheduler s = Schedulers.newParallel("work", 4);
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -1118,17 +1118,17 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void restartParallel() {
+    void restartParallel() {
 		restart(Schedulers.newParallel("test"));
 	}
 
 	@Test
-	public void restartBoundedElastic() {
+    void restartBoundedElastic() {
 		restart(Schedulers.newBoundedElastic(1, 10, "test"));
 	}
 
 	@Test
-	public void restartSingle(){
+    void restartSingle(){
 		restart(Schedulers.newSingle("test"));
 	}
 
@@ -1149,7 +1149,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testDefaultMethods(){
+    void testDefaultMethods(){
 		EmptyScheduler s = new EmptyScheduler();
 
 		s.dispose();
@@ -1187,7 +1187,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void scanExecutorCapacity() {
+    void scanExecutorCapacity() {
 		Executor plain = Runnable::run;
 		ExecutorService plainService = Executors.newSingleThreadExecutor();
 
@@ -1219,7 +1219,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void scanSupportBuffered() throws InterruptedException {
+    void scanSupportBuffered() throws InterruptedException {
 		Executor plain = Runnable::run;
 		ExecutorService plainService = Executors.newSingleThreadExecutor();
 
@@ -1265,7 +1265,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testDirectSchedulePeriodicallyCancelsSchedulerTask() throws Exception {
+    void testDirectSchedulePeriodicallyCancelsSchedulerTask() throws Exception {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			CountDownLatch latch = new CountDownLatch(2);
 			Disposable disposable = Schedulers.directSchedulePeriodically(executorService, () -> {
@@ -1280,7 +1280,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testDirectScheduleZeroPeriodicallyCancelsSchedulerTask() throws Exception {
+    void testDirectScheduleZeroPeriodicallyCancelsSchedulerTask() throws Exception {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			CountDownLatch latch = new CountDownLatch(2);
 			Disposable disposable = Schedulers.directSchedulePeriodically(executorService,
@@ -1298,7 +1298,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void scheduleInstantTaskTest() throws Exception {
+    void scheduleInstantTaskTest() throws Exception {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			CountDownLatch latch = new CountDownLatch(1);
 
@@ -1309,7 +1309,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void scheduleInstantTaskWithDelayTest() throws Exception {
+    void scheduleInstantTaskWithDelayTest() throws Exception {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			CountDownLatch latch = new CountDownLatch(1);
 
@@ -1320,7 +1320,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testWorkerSchedulePeriodicallyCancelsSchedulerTask() throws Exception {
+    void testWorkerSchedulePeriodicallyCancelsSchedulerTask() throws Exception {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			AtomicInteger zeroDelayZeroPeriod = new AtomicInteger();
 			AtomicInteger zeroPeriod = new AtomicInteger();
@@ -1359,7 +1359,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testWorkerScheduleRejectedWithDisposedParent() {
+    void testWorkerScheduleRejectedWithDisposedParent() {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			Disposable.Composite tasks = Disposables.composite();
 			tasks.dispose();
@@ -1385,7 +1385,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testWorkerScheduleSupportZeroPeriodWithDelayPeriod() {
+    void testWorkerScheduleSupportZeroPeriodWithDelayPeriod() {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			Disposable.Composite tasks = Disposables.composite();
 			Disposable disposable = Schedulers.workerSchedulePeriodically(executorService, tasks,
@@ -1398,7 +1398,7 @@ public class SchedulersTest {
 	}
 
 	@Test
-	public void testWorkerScheduleSupportZeroPeriod() throws InterruptedException {
+    void testWorkerScheduleSupportZeroPeriod() throws InterruptedException {
 		try(TaskCheckingScheduledExecutor executorService = new TaskCheckingScheduledExecutor()) {
 			CountDownLatch latch = new CountDownLatch(2);
 			Disposable.Composite tasks = Disposables.composite();

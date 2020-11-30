@@ -40,9 +40,9 @@ import reactor.util.context.ContextView;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
-public class ContextLossDetectionTest {
+class ContextLossDetectionTest {
 
-	public static List<ContextTestCase> sources() {
+	static List<ContextTestCase> sources() {
 		return Arrays.asList(
 				new ContextTestCase("Flux#transform") {
 					@Override
@@ -97,18 +97,18 @@ public class ContextLossDetectionTest {
 	}
 
 	@BeforeAll
-	public static void beforeClass() {
+	static void beforeClass() {
 		Hooks.enableContextLossTracking();
 	}
 
 	@AfterAll
-	public static void afterClass() {
+	static void afterClass() {
 		Hooks.disableContextLossTracking();
 	}
 
 	@ParameterizedTest
 	@MethodSource("sources")
-	public void transformDeferredDetectsContextLoss(ContextTestCase fn) {
+	void transformDeferredDetectsContextLoss(ContextTestCase fn) {
 		LossyTransformer transformer = new LossyTransformer(fn + "'s badTransformer",
 				Context.of("foo", "baz"));
 
@@ -120,7 +120,7 @@ public class ContextLossDetectionTest {
 
 	@ParameterizedTest
 	@MethodSource("sources")
-	public void transformDeferredDetectsContextLossWithEmptyContext(ContextTestCase fn) {
+	void transformDeferredDetectsContextLossWithEmptyContext(ContextTestCase fn) {
 		LossyTransformer transformer = new LossyTransformer(fn + "'s badTransformer",
 				Context.empty());
 
@@ -132,7 +132,7 @@ public class ContextLossDetectionTest {
 
 	@ParameterizedTest
 	@MethodSource("sources")
-	public void transformDeferredDetectsContextLossWithDefaultContext(ContextTestCase fn) {
+	void transformDeferredDetectsContextLossWithDefaultContext(ContextTestCase fn) {
 		LossyTransformer transformer = new LossyTransformer(fn + "'s badTransformer", true);
 
 		assertThatIllegalStateException()
@@ -143,7 +143,7 @@ public class ContextLossDetectionTest {
 
 	@ParameterizedTest
 	@MethodSource("sources")
-	public void transformDeferredDetectsContextLossWithRSSubscriber(ContextTestCase fn) {
+	void transformDeferredDetectsContextLossWithRSSubscriber(ContextTestCase fn) {
 		LossyTransformer transformer = new LossyTransformer(fn + "'s badTransformer", false);
 
 		assertThatIllegalStateException()

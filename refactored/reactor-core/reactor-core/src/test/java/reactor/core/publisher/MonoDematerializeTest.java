@@ -26,12 +26,12 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDematerializeTest {
+class MonoDematerializeTest {
 
 	Signal<Integer> error = Signal.error(new RuntimeException("Forced failure"));
 
 	@Test
-	public void valueSignal() {
+    void valueSignal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono<Integer> dematerialize = Mono.just(Signal.next(1))
@@ -45,7 +45,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void completionSignal() {
+    void completionSignal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono<Integer> dematerialize = Mono.just(Signal.<Integer>complete())
@@ -59,7 +59,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void errorSignal() {
+    void errorSignal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono<Integer> dematerialize = Mono.just(error)
@@ -74,7 +74,7 @@ public class MonoDematerializeTest {
 
 
 	@Test
-	public void valueNeedsRequestOne() {
+    void valueNeedsRequestOne() {
 		Mono.just(1).materialize().log().block();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
@@ -94,7 +94,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void completionNeedsRequestOne() {
+    void completionNeedsRequestOne() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono<Integer> dematerialize = Mono.just(Signal.<Integer>complete())
@@ -111,7 +111,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void errorNeedsRequestOne() {
+    void errorNeedsRequestOne() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono<Integer> dematerialize = Mono.just(error)
@@ -128,33 +128,33 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void emptyMaterializedMono() {
+    void emptyMaterializedMono() {
 		StepVerifier.create(Mono.empty().dematerialize())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void failingMaterializedMono() {
+    void failingMaterializedMono() {
 		StepVerifier.create(Mono.error(new IllegalStateException("boom")).dematerialize())
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void emptyMaterializedMonoDoesntNeedRequest() {
+    void emptyMaterializedMonoDoesntNeedRequest() {
 		StepVerifier.create(Mono.empty().dematerialize(), 0)
 		            .expectSubscription()
 		            .verifyComplete();
 	}
 
 	@Test
-	public void failingMaterializedMonoDoesntNeedRequest() {
+    void failingMaterializedMonoDoesntNeedRequest() {
 		StepVerifier.create(Mono.error(new IllegalStateException("boom")).dematerialize(), 0)
 		            .expectSubscription()
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void neverSignalSource() {
+    void neverSignalSource() {
 		Mono<Integer> dematerialize = Mono.never()
 		                                  .dematerialize();
 
@@ -168,7 +168,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void sourceWithSignalButNeverCompletes() {
+    void sourceWithSignalButNeverCompletes() {
 		//the noncompliant TestPublisher should result in Mono.fromDirect, preventing it from sending an onComplete
 		TestPublisher<String> testPublisher = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
@@ -184,7 +184,7 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void infiniteEmptyMaterializeDematerializePropagatesCancel() {
+    void infiniteEmptyMaterializeDematerializePropagatesCancel() {
 		final PublisherProbe<Object> of = PublisherProbe.of(Mono.never());
 		StepVerifier.create(of.mono().materialize().dematerialize())
 		            .expectSubscription()
@@ -195,26 +195,26 @@ public class MonoDematerializeTest {
 	}
 
 	@Test
-	public void materializeDematerializeMonoEmpty() {
+    void materializeDematerializeMonoEmpty() {
 		StepVerifier.create(Mono.empty().materialize().dematerialize())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void materializeDematerializeMonoJust() {
+    void materializeDematerializeMonoJust() {
 		StepVerifier.create(Mono.just("foo").materialize().dematerialize())
 		            .expectNext("foo")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void materializeDematerializeMonoError() {
+    void materializeDematerializeMonoError() {
 		StepVerifier.create(Mono.error(new IllegalStateException("boom")).materialize().dematerialize())
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoDematerialize<Integer> test = new MonoDematerialize<>(Mono.just(Signal.next(1)));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReactorDebugAgentTest {
+class ReactorDebugAgentTest {
 
 	static {
 		ReactorDebugAgent.init();
@@ -42,7 +42,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldAddAssemblyInfo() {
+	void shouldAddAssemblyInfo() {
 		int baseline = getBaseline();
 		Flux<Integer> flux = Flux.just(1);
 
@@ -51,7 +51,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldWorkWithMethodChains() {
+	void shouldWorkWithMethodChains() {
 		int baseline = getBaseline();
 		Flux<Integer> flux = Flux.just(1).map(it -> it);
 
@@ -60,7 +60,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldNotAddToCheckpoint() {
+	void shouldNotAddToCheckpoint() {
 		Flux<Integer> flux = Flux.just(1).checkpoint("foo");
 
 		assertThat(Scannable.from(flux).stepName())
@@ -68,7 +68,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldInstrumentReturns() {
+	void shouldInstrumentReturns() {
 		Mono<Integer> mono = methodReturningMono(Mono.just(1));
 
 		assertThat(Scannable.from(mono).stepName())
@@ -76,7 +76,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldWorkWithGroupedFlux() {
+	void shouldWorkWithGroupedFlux() {
 		int baseline = getBaseline();
 		Flux<Integer> flux = Flux.just(1).groupBy(it -> it).blockFirst().map(Function.identity());
 
@@ -85,14 +85,14 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void shouldHandleNullReturnValue() {
+	void shouldHandleNullReturnValue() {
 		Mono<Integer> mono = methodReturningNullMono();
 
 		assertThat(mono).isNull();
 	}
 
 	@Test
-	public void stackTrace() {
+	void stackTrace() {
 		StringWriter sw = new StringWriter();
 		int baseline = getBaseline();
 		Mono.just(5)
@@ -128,7 +128,7 @@ public class ReactorDebugAgentTest {
 	}
 
 	@Test
-	public void cglibProxies() {
+	void cglibProxies() {
 		ProxyMe proxy = (ProxyMe) Enhancer.create(ProxyMe.class, NoOp.INSTANCE);
 
 		assertThat(proxy.doSomething()).isInstanceOf(ProxyMe.MyMono.class);

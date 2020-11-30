@@ -30,11 +30,11 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.from;
 
-public class FluxCancelOnTest {
+class FluxCancelOnTest {
 
 	@Test
 	@Timeout(3)
-	public void cancelOnDedicatedScheduler() throws Exception {
+	void cancelOnDedicatedScheduler() throws Exception {
 
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicReference<Thread> threadHash = new AtomicReference<>(Thread.currentThread());
@@ -57,7 +57,7 @@ public class FluxCancelOnTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Scheduler scheduler = Schedulers.boundedElastic();
 		final Flux<Integer> flux = Flux.just(1).cancelOn(scheduler);
 
@@ -67,7 +67,7 @@ public class FluxCancelOnTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, null, null, null);
 		Scheduler scheduler = Schedulers.single();
 		FluxCancelOn.CancelSubscriber<String> test = new FluxCancelOn.CancelSubscriber<>(actual, scheduler);

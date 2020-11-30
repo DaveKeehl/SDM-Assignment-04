@@ -32,17 +32,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxOnBackpressureDropTest {
+class FluxOnBackpressureDropTest {
 
 	@Test
-	public void source1Null() {
+    void source1Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxOnBackpressureDrop<>(null);
 		});
 	}
 
 	@Test
-	public void source2Null() {
+    void source2Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxOnBackpressureDrop<>(null, v -> {
 			});
@@ -50,14 +50,14 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void onDropNull() {
+    void onDropNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().onBackpressureDrop(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -70,7 +70,7 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void normalError() {
+    void normalError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -83,7 +83,7 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -96,7 +96,7 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void someDrops() {
+    void someDrops() {
 		Sinks.Many<Integer> tp = Sinks.unsafe().many().multicast().directBestEffort();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
@@ -128,7 +128,7 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void onDropThrows() {
+    void onDropThrows() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -145,7 +145,7 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void onBackpressureDrop() {
+    void onBackpressureDrop() {
 		StepVerifier.create(Flux.range(1, 100)
 		                        .onBackpressureDrop(), 0)
 		            .thenRequest(5)
@@ -154,14 +154,14 @@ public class FluxOnBackpressureDropTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxOnBackpressureDrop<Integer> test = new FluxOnBackpressureDrop<>(Flux.just(1));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxOnBackpressureDrop.DropSubscriber<Integer> test =
         		new FluxOnBackpressureDrop.DropSubscriber<>(actual, t -> {});

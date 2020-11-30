@@ -27,18 +27,18 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxWithLatestFromTest {
+class FluxWithLatestFromTest {
 
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxWithLatestFrom<>(null, Flux.never(), (a, b) -> a);
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.withLatestFrom(null, (a, b) -> a);
@@ -46,7 +46,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void combinerNull() {
+    void combinerNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.withLatestFrom(Flux.never(), null);
@@ -54,7 +54,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -68,7 +68,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -100,7 +100,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void otherIsNever() {
+    void otherIsNever() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -113,7 +113,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void otherIsEmpty() {
+    void otherIsEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -126,7 +126,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void combinerReturnsNull() {
+    void combinerReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -139,7 +139,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-	public void combinerThrows() {
+    void combinerThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).<Integer, Integer>withLatestFrom(Flux.just(10),
@@ -155,14 +155,14 @@ public class FluxWithLatestFromTest {
 
 
 	@Test
-	public void combineLatest2Null() {
+    void combineLatest2Null() {
 		StepVerifier.create(Flux.just(1).withLatestFrom(Flux.just(2), (a, b) ->
 				null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxWithLatestFrom<Integer, Integer, Integer> test = new FluxWithLatestFrom<>(parent, Flux.just(2), (v1, v2) -> v1 + v2);
 
@@ -171,7 +171,7 @@ public class FluxWithLatestFromTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWithLatestFrom.WithLatestFromSubscriber<Integer, Integer, Integer> test =
         		new FluxWithLatestFrom.WithLatestFromSubscriber<>(actual, (i, j) -> i + j);
@@ -188,7 +188,7 @@ public class FluxWithLatestFromTest {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWithLatestFrom.WithLatestFromSubscriber<Integer, Integer, Integer> main =
         		new FluxWithLatestFrom.WithLatestFromSubscriber<>(actual, (i, j) -> i + j);

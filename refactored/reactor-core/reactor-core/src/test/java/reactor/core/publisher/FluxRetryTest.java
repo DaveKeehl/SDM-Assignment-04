@@ -28,24 +28,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxRetryTest {
+class FluxRetryTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxRetry<>(null, 1);
 		});
 	}
 
 	@Test
-	public void timesInvalid() {
+    void timesInvalid() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never().retry(-1);
 		});
 	}
 
 	@Test
-	public void zeroRetryNoError() {
+    void zeroRetryNoError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -61,7 +61,7 @@ public class FluxRetryTest {
 			Flux.error(new RuntimeException("forced failure")));
 
 	@Test
-	public void zeroRetry() {
+    void zeroRetry() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		source.retry(0)
@@ -74,7 +74,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void oneRetry() {
+    void oneRetry() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		source.retry(1)
@@ -87,7 +87,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void oneRetryBackpressured() {
+    void oneRetryBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(4);
 
 		source.retry(1)
@@ -99,7 +99,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void retryInfinite() {
+    void retryInfinite() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		source.retry()
@@ -113,7 +113,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void twoRetryNormal() {
+    void twoRetryNormal() {
 		AtomicInteger i = new AtomicInteger();
 
 		StepVerifier.create(Flux.just("test", "test2", "test3")
@@ -129,13 +129,13 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void doOnNextFails() {
+    void doOnNextFails() {
 		Flux.just(1)
 		    .doOnNext(new Consumer<Integer>() {
 			    int i;
 
 			    @Override
-			    public void accept(Integer t) {
+				public void accept(Integer t) {
 				    if (i++ < 2) {
 					    throw new RuntimeException("test");
 				    }
@@ -147,7 +147,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void onLastAssemblyOnce() {
+    void onLastAssemblyOnce() {
 		AtomicInteger onAssemblyCounter = new AtomicInteger();
 		String hookKey = UUID.randomUUID().toString();
 		try {
@@ -170,7 +170,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxRetry<Integer> test = new FluxRetry<>(parent, 3L);
 
@@ -180,7 +180,7 @@ public class FluxRetryTest {
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		FluxRetry<Integer> source = new FluxRetry<>(Flux.just(1), 3L);
 		FluxRetry.RetrySubscriber<Integer> test = new FluxRetry.RetrySubscriber<>(source, ts, 1L);

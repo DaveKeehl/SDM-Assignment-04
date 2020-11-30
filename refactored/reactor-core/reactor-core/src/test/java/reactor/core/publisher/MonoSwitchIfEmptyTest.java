@@ -22,17 +22,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSwitchIfEmptyTest {
+class MonoSwitchIfEmptyTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoSwitchIfEmpty<>(null, Mono.never());
 		});
 	}
 
 	@Test
-	public void otherNull() {
+    void otherNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.never()
 					.switchIfEmpty(null);
@@ -40,7 +40,7 @@ public class MonoSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmpty() {
+    void nonEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -53,7 +53,7 @@ public class MonoSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyBackpressured() {
+    void nonEmptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -72,7 +72,7 @@ public class MonoSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>empty()
@@ -85,7 +85,7 @@ public class MonoSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>empty()
@@ -104,7 +104,7 @@ public class MonoSwitchIfEmptyTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoSwitchIfEmpty<Integer> test = new MonoSwitchIfEmpty<>(Mono.just(1), Mono.empty());
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

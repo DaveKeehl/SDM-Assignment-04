@@ -21,10 +21,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelLiftTest {
+class ParallelLiftTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelLift<Integer, Integer> test = new ParallelLift<>(source, (sc, su) -> su);
 
@@ -34,7 +34,7 @@ public class ParallelLiftTest {
 	}
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		ParallelLift<Integer, Integer> test = new ParallelLift<>(source, (sc, su) -> su);
 

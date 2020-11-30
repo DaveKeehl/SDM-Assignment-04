@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static reactor.core.Scannable.Attr;
 import static reactor.core.Scannable.from;
 
-public class LiftFunctionTest {
+class LiftFunctionTest {
 
 	Publisher<Integer> liftOperator;
 
@@ -163,7 +163,7 @@ public class LiftFunctionTest {
 
 			//see https://github.com/reactor/reactor-core/issues/1860
 			@Test
-			public void liftConnectableFluxWithCancelSupport() {
+    void liftConnectableFluxWithCancelSupport() {
 				AtomicBoolean cancelSupportInvoked = new AtomicBoolean();
 				ConnectableFlux<Integer> source = Flux.just(1)
 						.publish(); //TODO hide if ConnectableFlux gets a hide function
@@ -190,7 +190,7 @@ public class LiftFunctionTest {
 
 		@Disabled("GroupedFlux is always fuseable for now")
 		@Test
-		public void liftGroupedFlux() {
+    void liftGroupedFlux() {
 			Flux<GroupedFlux<String, Integer>> sourceGroups = Flux.just(1)
 					.groupBy(i -> "" + i);
 
@@ -331,7 +331,7 @@ public class LiftFunctionTest {
 				.groupBy(i -> "" + i);
 
 		@Test
-		public void liftGroupedFluxFuseable() {
+    void liftGroupedFluxFuseable() {
 			Operators.LiftFunction<Integer, Integer> liftFunction =
 					Operators.LiftFunction.liftScannable(null, (s, actual) -> actual);
 
@@ -344,7 +344,7 @@ public class LiftFunctionTest {
 		}
 
 		@Test
-		public void scanOperator() {
+    void scanOperator() {
 			Operators.LiftFunction<Integer, Integer> liftFunction =
 					Operators.LiftFunction.liftScannable(null, (s, actual) -> actual);
 

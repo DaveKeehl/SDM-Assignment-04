@@ -32,12 +32,12 @@ import reactor.test.util.RaceTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
-public class WorkerTaskTest {
+class WorkerTaskTest {
 
 	private static final int RACE_DEFAULT_LOOPS = 2500;
 
 	@Test
-	public void dispose() {
+    void dispose() {
 		Disposable.Composite set = Disposables.composite();
 		WorkerTask run = new WorkerTask(() -> {}, set);
 		set.add(run);
@@ -50,7 +50,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void disposeRun() {
+    void disposeRun() {
 		Disposable.Composite set = Disposables.composite();
 		WorkerTask run = new WorkerTask(() -> {}, set);
 		set.add(run);
@@ -64,7 +64,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void setFutureCancelRace() {
+    void setFutureCancelRace() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			Disposable.Composite set = Disposables.composite();
 			final WorkerTask run = new WorkerTask(() -> {}, set);
@@ -84,7 +84,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void setFutureRunRace() {
+    void setFutureRunRace() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			Disposable.Composite set = Disposables.composite();
 			final WorkerTask run = new WorkerTask(() -> {}, set);
@@ -104,7 +104,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void disposeRace() {
+    void disposeRace() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			Disposable.Composite set = Disposables.composite();
 			final WorkerTask run = new WorkerTask(() -> {}, set);
@@ -119,7 +119,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void runDispose() {
+    void runDispose() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			Disposable.Composite set = Disposables.composite();
 			final WorkerTask run = new WorkerTask(() -> {}, set);
@@ -136,7 +136,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void pluginCrash() {
+    void pluginCrash() {
 		Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
 			throw new IllegalStateException("Second");
 		});
@@ -162,7 +162,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void crashReported() {
+    void crashReported() {
 		List<Throwable> errors = Collections.synchronizedList(new ArrayList<>());
 		Schedulers.onHandleError((thread, error) -> errors.add(error));
 		try {
@@ -189,21 +189,21 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void withoutParentDisposed() {
+    void withoutParentDisposed() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		run.dispose();
 		run.call();
 	}
 
 	@Test
-	public void withParentDisposed() {
+    void withParentDisposed() {
 		WorkerTask run = new WorkerTask(() -> {}, Disposables.composite());
 		run.dispose();
 		run.call();
 	}
 
 	@Test
-	public void withFutureDisposed() {
+    void withFutureDisposed() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		run.setFuture(new FutureTask<Void>(() -> {}, null));
 		run.dispose();
@@ -211,7 +211,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void withFutureDisposed2() {
+    void withFutureDisposed2() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		run.dispose();
 		run.setFuture(new FutureTask<Void>(() -> {}, null));
@@ -219,7 +219,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void withFutureDisposed3() {
+    void withFutureDisposed3() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		run.dispose();
 		WorkerTask.THREAD.set(run, Thread.currentThread());
@@ -228,7 +228,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void runFuture() {
+    void runFuture() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			Disposable.Composite set = Disposables.composite();
 			final WorkerTask run = new WorkerTask(() -> {}, set);
@@ -246,7 +246,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void syncWorkerCancelRace() {
+    void syncWorkerCancelRace() {
 		for (int i = 0; i < RACE_DEFAULT_LOOPS; i++) {
 			final Disposable.Composite set = Disposables.composite();
 			final AtomicBoolean interrupted = new AtomicBoolean();
@@ -291,7 +291,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void disposeAfterRun() {
+    void disposeAfterRun() {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
 
 		run.run();
@@ -302,7 +302,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void syncDisposeIdempotent() {
+    void syncDisposeIdempotent() {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
 		WorkerTask.THREAD.set(run, Thread.currentThread());
 
@@ -315,7 +315,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void asyncDisposeIdempotent() {
+    void asyncDisposeIdempotent() {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
 
 		run.dispose();
@@ -333,7 +333,7 @@ public class WorkerTaskTest {
 
 
 	@Test
-	public void noParentIsDisposed() {
+    void noParentIsDisposed() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		assertThat(run.isDisposed()).as("not yet disposed").isFalse();
 		run.run();
@@ -341,7 +341,7 @@ public class WorkerTaskTest {
 	}
 
 	@Test
-	public void withParentIsDisposed() {
+    void withParentIsDisposed() {
 		Disposable.Composite set = Disposables.composite();
 		WorkerTask run = new WorkerTask(() -> {}, set);
 		set.add(run);

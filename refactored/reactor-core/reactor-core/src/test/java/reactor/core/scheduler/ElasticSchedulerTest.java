@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Simon Baslé
  */
 @SuppressWarnings("deprecation") // This is because of #newElastic() calls, to be removed in 3.5. ElasticScheduler class would then also be removed.
-public class ElasticSchedulerTest extends AbstractSchedulerTest {
+class ElasticSchedulerTest extends AbstractSchedulerTest {
 
 	private static final Logger LOGGER = Loggers.getLogger(ElasticSchedulerTest.class);
 
@@ -63,7 +63,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void bothStartAndRestartDoNotThrow() {
+    void bothStartAndRestartDoNotThrow() {
 		Scheduler scheduler = afterTest.autoDispose(scheduler());
 		assertThatCode(scheduler::start).as("start").doesNotThrowAnyException();
 
@@ -72,7 +72,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void negativeTime() throws Exception {
+    void negativeTime() throws Exception {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Schedulers.newElastic("test", -1);
 		});
@@ -80,7 +80,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	public void eviction() throws Exception {
+	void eviction() throws Exception {
 		Scheduler s = Schedulers.newElastic("test-recycle", 2);
 		((ElasticScheduler)s).evictor.shutdownNow();
 
@@ -115,7 +115,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scheduledDoesntReject() {
+    void scheduledDoesntReject() {
 		Scheduler s = scheduler();
 
 		assertThat(s.schedule(() -> {}, 100, TimeUnit.MILLISECONDS))
@@ -135,7 +135,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestDelay() {
+    void smokeTestDelay() {
 		for (int i = 0; i < 20; i++) {
 			Scheduler s = Schedulers.newElastic("test");
 			AtomicLong start = new AtomicLong();
@@ -167,7 +167,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestInterval() {
+    void smokeTestInterval() {
 		Scheduler s = scheduler();
 
 		try {
@@ -187,7 +187,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Scheduler withNamedFactory = Schedulers.newElastic("scanName", 1);
 		Scheduler withBasicFactory = Schedulers.newElastic(1, Thread::new);
 		Scheduler cached = Schedulers.elastic();
@@ -228,7 +228,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanCapacity() {
+    void scanCapacity() {
 		Scheduler scheduler = Schedulers.newElastic(2, Thread::new);
 		Scheduler.Worker worker = scheduler.createWorker();
 		try {
@@ -242,7 +242,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void lifoEviction() throws InterruptedException {
+    void lifoEviction() throws InterruptedException {
 		Scheduler scheduler = Schedulers.newElastic("dequeueEviction", 1);
 		int otherThreads = Thread.activeCount();
 		try {
@@ -299,7 +299,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void doesntRecycleWhileRunningAfterDisposed() throws Exception {
+    void doesntRecycleWhileRunningAfterDisposed() throws Exception {
 		Scheduler s = Schedulers.newElastic("test-recycle");
 		((ElasticScheduler)s).evictor.shutdownNow();
 
@@ -332,7 +332,7 @@ public class ElasticSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void recycleOnce() throws Exception {
+    void recycleOnce() throws Exception {
 		Scheduler s = Schedulers.newElastic("test-recycle");
 		((ElasticScheduler)s).evictor.shutdownNow();
 

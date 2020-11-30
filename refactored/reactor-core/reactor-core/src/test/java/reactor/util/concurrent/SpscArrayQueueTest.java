@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class SpscArrayQueueTest {
+class SpscArrayQueueTest {
 
 	@Test
-	public void spscArrayQueuesAPI() {
+    void spscArrayQueuesAPI() {
 		assertThat(Queues.xs().get()).isInstanceOf(SpscArrayQueue.class);
 	}
 
 	@Test
-	public void shouldRejectNullableValues() {
+    void shouldRejectNullableValues() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			q.offer(null);
@@ -22,7 +22,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowIteratingWithIterator() {
+    void shouldNotAllowIteratingWithIterator() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> {
@@ -31,7 +31,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowElementsRemoving() {
+    void shouldNotAllowElementsRemoving() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 
 		q.offer(1);
@@ -41,7 +41,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowAllElementsRemoving() {
+    void shouldNotAllowAllElementsRemoving() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 
 		q.offer(1);
@@ -52,7 +52,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowAllElementsRetaining() {
+    void shouldNotAllowAllElementsRetaining() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 
 		q.offer(1);
@@ -63,7 +63,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowAdd() {
+    void shouldNotAllowAdd() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> {
 			q.add(1);
@@ -71,7 +71,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotAllowAddAll() {
+    void shouldNotAllowAddAll() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> {
 			q.addAll(Arrays.asList(1, 2, 3));
@@ -79,7 +79,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldClearQueue() {
+    void shouldClearQueue() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 		q.offer(1);
 		q.offer(2);
@@ -94,7 +94,7 @@ public class SpscArrayQueueTest {
 	}
 
 	@Test
-	public void shouldNotRemoveElementOnPeek() {
+    void shouldNotRemoveElementOnPeek() {
 		SpscArrayQueue<Object> q = new SpscArrayQueue<>(32);
 		q.offer(1);
 		q.offer(2);

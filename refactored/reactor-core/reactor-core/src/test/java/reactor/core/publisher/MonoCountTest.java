@@ -25,16 +25,16 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoCountTest {
+class MonoCountTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoCount<>(null);
 		});
 	}
 
-	public void normal() {
+	void normal() {
 		AssertSubscriber<Long> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).count().subscribe(ts);
@@ -44,7 +44,7 @@ public class MonoCountTest {
 		  .assertNoError();
 	}
 
-	public void normalBackpressured() {
+	void normalBackpressured() {
 		AssertSubscriber<Long> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10).count().subscribe(ts);
@@ -61,14 +61,14 @@ public class MonoCountTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoCount<Integer> test = new MonoCount<>(Flux.just(1, 2, 3));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanCountSubscriber() {
+    void scanCountSubscriber() {
 		CoreSubscriber<Long> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoCount.CountSubscriber<String> test = new MonoCount.CountSubscriber<>(actual);
 		Subscription parent = Operators.emptySubscription();

@@ -34,22 +34,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.Scannable.from;
 
-public class FluxIntervalTest {
+class FluxIntervalTest {
 
 	Scheduler exec;
 
 	@BeforeEach
-	public void before() {
+	void before() {
 		exec = Schedulers.newSingle("interval-test");
 	}
 
 	@AfterEach
-	public void after() {
+	void after() {
 		exec.dispose();
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		try {
 			AssertSubscriber<Long> ts = AssertSubscriber.create();
 
@@ -91,7 +91,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void flatMap() throws Exception {
+    void flatMap() throws Exception {
 		StepVerifier.withVirtualTime(this::flatMapScenario)
 		            .thenAwait(Duration.ofSeconds(3))
 		            .expectNext(1)
@@ -105,7 +105,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void normal2() {
+    void normal2() {
 		StepVerifier.withVirtualTime(this::scenario2)
 		            .thenAwait(Duration.ofMillis(5_000))
 		            .expectNextCount(10)
@@ -118,7 +118,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void normal3() {
+    void normal3() {
 		StepVerifier.withVirtualTime(this::scenario3)
 		            .thenAwait(Duration.ofMillis(1500))
 		            .expectNext(0L)
@@ -133,7 +133,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void normal4() {
+    void normal4() {
 		StepVerifier.withVirtualTime(this::scenario4)
 		            .thenAwait(Duration.ofMillis(1500))
 		            .expectNext(0L)
@@ -144,7 +144,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void normal5() {
+    void normal5() {
 		// Prior to gh-1734, sub millis period would round to 0 and this would fail.
 		Duration period = Duration.ofNanos(1_000);
 		Duration timespan = Duration.ofSeconds(1);
@@ -157,7 +157,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		final Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
 
 		assertThat(interval).isInstanceOf(Scannable.class);
@@ -166,7 +166,7 @@ public class FluxIntervalTest {
 	}
 
 	@Test
-    public void scanIntervalRunnable() {
+    void scanIntervalRunnable() {
 		Scheduler.Worker worker = Schedulers.single().createWorker();
 
 		try {
@@ -187,7 +187,7 @@ public class FluxIntervalTest {
 
 
     @Test
-	public void tickOverflow() {
+    void tickOverflow() {
 		StepVerifier.withVirtualTime(() ->
 				Flux.interval(Duration.ofMillis(50))
 				    .delayUntil(i -> Mono.delay(Duration.ofMillis(250))))
@@ -197,7 +197,7 @@ public class FluxIntervalTest {
     }
 
     @Test
-	public void shouldBeAbleToScheduleIntervalsWithLowGranularity() {
+    void shouldBeAbleToScheduleIntervalsWithLowGranularity() {
 		StepVerifier.create(Flux.interval(Duration.ofNanos(1)))
 		            .expectSubscription()
 		            .expectNext(0L)

@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.awaitility.Awaitility.await;
 
-public class MonoUsingTest {
+class MonoUsingTest {
 
 	@Test
-	public void resourceSupplierNull() {
+    void resourceSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.using(null, r -> Mono.empty(), r -> {
 			}, false);
@@ -45,7 +45,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void sourceFactoryNull() {
+    void sourceFactoryNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.using(() -> 1, null, r -> {
 			}, false);
@@ -53,14 +53,14 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void resourceCleanupNull() {
+    void resourceCleanupNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.using(() -> 1, r -> Mono.empty(), null, false);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -77,7 +77,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void normalEager() {
+    void normalEager() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -138,27 +138,27 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void checkNonEager() {
+    void checkNonEager() {
 		checkCleanupExecutionTime(false, false);
 	}
 
 	@Test
-	public void checkEager() {
+    void checkEager() {
 		checkCleanupExecutionTime(true, false);
 	}
 
 	@Test
-	public void checkErrorNonEager() {
+    void checkErrorNonEager() {
 		checkCleanupExecutionTime(false, true);
 	}
 
 	@Test
-	public void checkErrorEager() {
+    void checkErrorEager() {
 		checkCleanupExecutionTime(true, true);
 	}
 
 	@Test
-	public void resourceThrowsEager() {
+    void resourceThrowsEager() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -177,7 +177,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void factoryThrowsEager() {
+    void factoryThrowsEager() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -196,7 +196,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void factoryReturnsNull() {
+    void factoryReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -214,7 +214,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void subscriberCancels() {
+    void subscriberCancels() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger cleanup = new AtomicInteger();
@@ -237,7 +237,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void sourceFactoryAndResourceCleanupThrow() {
+    void sourceFactoryAndResourceCleanupThrow() {
 		RuntimeException sourceEx = new IllegalStateException("sourceFactory");
 		RuntimeException cleanupEx = new IllegalStateException("resourceCleanup");
 
@@ -261,7 +261,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void cleanupIsRunBeforeOnNext_fusedEager() {
+    void cleanupIsRunBeforeOnNext_fusedEager() {
 		Mono.using(() -> "resource", s -> Mono.just(s.length()),
 				res -> { throw new IllegalStateException("boom"); },
 				true)
@@ -275,7 +275,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void cleanupIsRunBeforeOnNext_normalEager() {
+    void cleanupIsRunBeforeOnNext_normalEager() {
 		Mono.using(() -> "resource", s -> Mono.just(s.length()).hide(),
 				res -> { throw new IllegalStateException("boom"); })
 		    .as(StepVerifier::create)
@@ -288,7 +288,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void cleanupDropsThrowable_fusedNotEager() {
+    void cleanupDropsThrowable_fusedNotEager() {
 		Mono.using(() -> "resource", s -> Mono.just(s.length()),
 				res -> { throw new IllegalStateException("boom"); },
 				false)
@@ -303,7 +303,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void cleanupDropsThrowable_normalNotEager() {
+    void cleanupDropsThrowable_normalNotEager() {
 		Mono.using(() -> "resource", s -> Mono.just(s.length()).hide(),
 				res -> { throw new IllegalStateException("boom"); },
 				false)
@@ -318,7 +318,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void smokeTestMapReduceGuardedByCleanup_normalEager() {
+    void smokeTestMapReduceGuardedByCleanup_normalEager() {
 		AtomicBoolean cleaned = new AtomicBoolean();
 		Mono.using(() -> cleaned,
 				ab -> Flux.just("foo", "bar", "baz")
@@ -338,7 +338,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void smokeTestMapReduceGuardedByCleanup_fusedEager() {
+    void smokeTestMapReduceGuardedByCleanup_fusedEager() {
 		AtomicBoolean cleaned = new AtomicBoolean();
 		Mono.using(() -> cleaned,
 				ab -> Flux.just("foo", "bar", "baz")
@@ -357,7 +357,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void smokeTestMapReduceGuardedByCleanup_normalNotEager() {
+    void smokeTestMapReduceGuardedByCleanup_normalNotEager() {
 		AtomicBoolean cleaned = new AtomicBoolean();
 		Mono.using(() -> cleaned,
 				ab -> Flux.just("foo", "bar", "baz")
@@ -380,7 +380,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void smokeTestMapReduceGuardedByCleanup_fusedNotEager() {
+    void smokeTestMapReduceGuardedByCleanup_fusedNotEager() {
 		AtomicBoolean cleaned = new AtomicBoolean();
 		Mono.using(() -> cleaned,
 				ab -> Flux.just("foo", "bar", "baz")
@@ -402,7 +402,7 @@ public class MonoUsingTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoUsing<Integer, Integer> test = new MonoUsing<>(() -> 1, r -> Mono.just(1), c -> {}, false);
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
@@ -411,7 +411,7 @@ public class MonoUsingTest {
 
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		MonoUsing.MonoUsingSubscriber<Integer, ?> test = new MonoUsing.MonoUsingSubscriber<>(actual, rc -> {}, "foo", false, false);
 

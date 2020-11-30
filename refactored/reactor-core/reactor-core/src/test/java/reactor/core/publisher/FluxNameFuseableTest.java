@@ -27,10 +27,10 @@ import reactor.util.function.Tuples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxNameFuseableTest {
+class FluxNameFuseableTest {
 
 	@Test
-	public void scanOperator() throws Exception {
+    void scanOperator() throws Exception {
 		Tuple2<String, String> tag1 = Tuples.of("foo", "oof");
 		Tuple2<String, String> tag2 = Tuples.of("bar", "rab");
 		Set<Tuple2<String, String>> tags = new HashSet<>();
@@ -53,7 +53,7 @@ public class FluxNameFuseableTest {
 	}
 
 	@Test
-	public void scanOperatorNullTags() throws Exception {
+    void scanOperatorNullTags() throws Exception {
 		Flux<Integer> source = Flux.range(1, 4);
 		FluxNameFuseable<Integer> test = new FluxNameFuseable<>(source, "foo", null);
 

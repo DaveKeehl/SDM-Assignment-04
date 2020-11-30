@@ -29,38 +29,38 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 // This is ok as this class tests the deprecated DirectProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class DirectProcessorTest {
+class DirectProcessorTest {
 
 	@Test
-	public void onNextNull() {
+    void onNextNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			DirectProcessor.create().onNext(null);
 		});
 	}
 
 	@Test
-	public void onErrorNull() {
+    void onErrorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			DirectProcessor.create().onError(null);
 		});
 	}
 
 	@Test
-	public void onSubscribeNull() {
+    void onSubscribeNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			DirectProcessor.create().onSubscribe(null);
 		});
 	}
 
 	@Test
-	public void subscribeNull() {
+    void subscribeNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			DirectProcessor.create().subscribe((Subscriber<Object>) null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		DirectProcessor<Integer> tp = DirectProcessor.create();
 
 	    StepVerifier.create(tp)
@@ -90,7 +90,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void normalBackpressured() {
+    void normalBackpressured() {
         DirectProcessor<Integer> tp = DirectProcessor.create();
 
 	    StepVerifier.create(tp, 0L)
@@ -117,7 +117,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void notEnoughRequests() {
+    void notEnoughRequests() {
         DirectProcessor<Integer> tp = DirectProcessor.create();
 
 	    StepVerifier.create(tp, 1L)
@@ -132,7 +132,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void error() {
+    void error() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
         DirectProcessor<Integer> tp = DirectProcessor.create();
@@ -173,7 +173,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void terminatedWithError() {
+    void terminatedWithError() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
         DirectProcessor<Integer> tp = DirectProcessor.create();
@@ -196,7 +196,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void terminatedNormally() {
+    void terminatedNormally() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
         DirectProcessor<Integer> tp = DirectProcessor.create();
@@ -215,7 +215,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void subscriberAlreadyCancelled() {
+    void subscriberAlreadyCancelled() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
         ts.cancel();
 
@@ -234,7 +234,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-    public void subscriberCancels() {
+    void subscriberCancels() {
         AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
         DirectProcessor<Integer> tp = DirectProcessor.create();
@@ -261,7 +261,7 @@ public class DirectProcessorTest {
     }
 
     @Test
-	public void currentContextDelegatesToFirstSubscriber() {
+    void currentContextDelegatesToFirstSubscriber() {
 	    AssertSubscriber<Object> testSubscriber1 = new AssertSubscriber<>(Context.of("key", "value1"));
 	    AssertSubscriber<Object> testSubscriber2 = new AssertSubscriber<>(Context.of("key", "value2"));
 
@@ -275,7 +275,7 @@ public class DirectProcessorTest {
     }
 
 	@Test
-	public void onNextWithNoSubscriberJustDiscardsWithoutTerminatingTheSink() {
+    void onNextWithNoSubscriberJustDiscardsWithoutTerminatingTheSink() {
 		DirectProcessor<Integer> directProcessor = DirectProcessor.create();
 		directProcessor.onNext(1);
 

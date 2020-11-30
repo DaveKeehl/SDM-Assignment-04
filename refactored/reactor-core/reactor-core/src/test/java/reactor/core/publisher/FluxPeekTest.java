@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static reactor.core.Fuseable.QueueSubscription;
 import static reactor.core.scheduler.Schedulers.parallel;
 
-public class FluxPeekTest extends FluxOperatorTest<String, String> {
+class FluxPeekTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -223,14 +223,14 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxPeek<>(null, null, null, null, null, null, null, null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -254,7 +254,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -277,7 +277,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -300,7 +300,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void never() {
+    void never() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -323,7 +323,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void neverCancel() {
+    void neverCancel() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicReference<Subscription> onSubscribe = new AtomicReference<>();
@@ -350,7 +350,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void callbackError() {
+    void callbackError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Throwable err = new Exception("test");
@@ -383,7 +383,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void completeCallbackError() {
+    void completeCallbackError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Throwable err = new Exception("test");
@@ -416,7 +416,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorCallbackError() {
+    void errorCallbackError() {
 		IllegalStateException err = new IllegalStateException("test");
 
 		FluxPeek<String> flux = new FluxPeek<>(Flux.error(new IllegalArgumentException("bar")), null, null, e -> {
@@ -434,7 +434,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 
 	//See https://github.com/reactor/reactor-core/issues/272
 	@Test
-	public void errorCallbackError2() {
+    void errorCallbackError2() {
 		//test with alternate / wrapped error types
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -474,7 +474,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 
 	//See https://github.com/reactor/reactor-core/issues/253
 	@Test
-	public void errorCallbackErrorWithParallel() {
+    void errorCallbackErrorWithParallel() {
 		AssertSubscriber<Integer> assertSubscriber = new AssertSubscriber<>();
 
 		Mono.just(1)
@@ -494,7 +494,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorDoesNotInvokeOnError() {
+    void afterTerminateCallbackErrorDoesNotInvokeOnError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -530,7 +530,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void afterTerminateCallbackFatalIsThrownDirectly() {
+    void afterTerminateCallbackFatalIsThrownDirectly() {
 		AtomicReference<Throwable> errorCallbackCapture = new AtomicReference<>();
 		Error fatal = new LinkageError();
 		FluxPeek<String> flux = new FluxPeek<>(Flux.empty(), null, null, errorCallbackCapture::set, null, () -> {
@@ -573,7 +573,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorAndErrorCallbackError() {
+    void afterTerminateCallbackErrorAndErrorCallbackError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -603,7 +603,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void afterTerminateCallbackErrorAndErrorCallbackError2() {
+    void afterTerminateCallbackErrorAndErrorCallbackError2() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -638,7 +638,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncFusionAvailable() {
+    void syncFusionAvailable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 2)
@@ -651,7 +651,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusionAvailable() {
+    void asyncFusionAvailable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.unsafe().many()
@@ -667,7 +667,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void conditionalFusionAvailable() {
+    void conditionalFusionAvailable() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.wrap(u -> {
@@ -689,7 +689,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void conditionalFusionAvailableWithFuseable() {
+    void conditionalFusionAvailableWithFuseable() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.wrap(u -> {
@@ -711,7 +711,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncCompleteCalled() {
+    void syncCompleteCalled() {
 		AtomicBoolean onComplete = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -729,7 +729,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncdoAfterTerminateCalled() {
+    void syncdoAfterTerminateCalled() {
 		AtomicBoolean onTerminate = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -747,7 +747,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncdoOnTerminateCalled() {
+    void syncdoOnTerminateCalled() {
 		AtomicBoolean onTerminate = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -765,7 +765,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncdoOnTerminateCalled2() {
+    void syncdoOnTerminateCalled2() {
 		AtomicBoolean onTerminate = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -782,7 +782,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncdoOnTerminateCalled3() {
+    void syncdoOnTerminateCalled3() {
 		AtomicBoolean onTerminate = new AtomicBoolean();
 
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
@@ -799,7 +799,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void should_reduce_to_10_events() {
+    void should_reduce_to_10_events() {
 		for (int i = 0; i < 20; i++) {
 			AtomicInteger count = new AtomicInteger();
 			Flux.range(0, 10)
@@ -818,7 +818,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void should_reduce_to_10_events_conditional() {
+    void should_reduce_to_10_events_conditional() {
 		for (int i = 0; i < 20; i++) {
 			AtomicInteger count = new AtomicInteger();
 			Flux.range(0, 10)
@@ -852,7 +852,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doOnErrorPredicate() {
+    void doOnErrorPredicate() {
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
 		StepVerifier.create(Flux.error(new TestException())
@@ -863,7 +863,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doOnErrorPredicateNot() {
+    void doOnErrorPredicateNot() {
 		AtomicReference<Throwable> ref = new AtomicReference<>();
 
 		StepVerifier.create(Flux.error(new TestException())
@@ -874,7 +874,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxPeek<Integer> test = new FluxPeek<>(parent, s -> {}, s -> {},
 				e -> {}, () -> {}, () -> {}, r -> {}, () -> {});
@@ -884,7 +884,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {
 		}, null, null);
 		FluxPeek<Integer> peek = new FluxPeek<>(Flux.just(1), s -> {
@@ -909,7 +909,7 @@ public class FluxPeekTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorStrategyResumeDropsNext() {
+    void errorStrategyResumeDropsNext() {
 		RuntimeException nextError = new IllegalStateException("next");
 
 		List<Throwable> resumedErrors = new ArrayList<>();

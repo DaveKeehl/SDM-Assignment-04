@@ -32,7 +32,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
+class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 
 
 	@Override
@@ -73,14 +73,14 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxSkipUntilOther<>(null, Flux.never());
 		});
 	}
 
 	@Test
-	public void nullOther() {
+    void nullOther() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.skipUntilOther(null);
@@ -88,7 +88,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNone() {
+    void skipNone() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -101,7 +101,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNoneBackpressured() {
+    void skipNoneBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -126,7 +126,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipAll() {
+    void skipAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -139,7 +139,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipAllBackpressured() {
+    void skipAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -158,7 +158,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNoneOtherMany() {
+    void skipNoneOtherMany() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -171,7 +171,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void skipNoneBackpressuredOtherMany() {
+    void skipNoneBackpressuredOtherMany() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -195,7 +195,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void otherSignalsError() {
+    void otherSignalsError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -209,7 +209,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void otherSignalsErrorBackpressured() {
+    void otherSignalsErrorBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10)
@@ -228,7 +228,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkippedByTime(){
+    void aFluxCanBeSkippedByTime(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeSkippedByTime)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .verifyComplete();
@@ -241,7 +241,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkippedByTime2(){
+    void aFluxCanBeSkippedByTime2(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeSkippedByTime2)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .verifyComplete();
@@ -253,7 +253,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void aFluxCanBeSkippedByTimeZero(){
+    void aFluxCanBeSkippedByTimeZero(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeSkippedByTimeZero)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .expectNextCount(1000)
@@ -261,7 +261,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxSkipUntilOther<Integer, Integer> test = new FluxSkipUntilOther<>(parent, Flux.just(2));
 
@@ -270,7 +270,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSkipUntilOther.SkipUntilMainSubscriber<Integer> test =
         		new FluxSkipUntilOther.SkipUntilMainSubscriber<>(actual);
@@ -289,7 +289,7 @@ public class FluxSkipUntilOtherTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanOtherSubscriber() {
+    void scanOtherSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSkipUntilOther.SkipUntilMainSubscriber<Integer> main =
         		new FluxSkipUntilOther.SkipUntilMainSubscriber<>(actual);

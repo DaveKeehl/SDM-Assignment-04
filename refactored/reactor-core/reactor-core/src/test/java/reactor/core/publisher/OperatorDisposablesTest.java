@@ -27,7 +27,7 @@ import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OperatorDisposablesTest {
+class OperatorDisposablesTest {
 
 	static final AtomicReferenceFieldUpdater<TestDisposable, Disposable> DISPOSABLE_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(TestDisposable.class, Disposable.class, "disp");
@@ -35,10 +35,10 @@ public class OperatorDisposablesTest {
 	private static class TestDisposable implements Runnable {
 		volatile Disposable disp;
 
-		public TestDisposable() {
+		TestDisposable() {
 		}
 
-		public TestDisposable(Disposable disp) {
+		TestDisposable(Disposable disp) {
 			this.disp = disp;
 		}
 
@@ -50,7 +50,7 @@ public class OperatorDisposablesTest {
 	
 	
 	@Test
-	public void singletonIsDisposed() {
+    void singletonIsDisposed() {
 		assertThat(OperatorDisposables.DISPOSED.isDisposed()).isTrue();
 		OperatorDisposables.DISPOSED.dispose();
 		assertThat(OperatorDisposables.DISPOSED.isDisposed()).isTrue();
@@ -58,7 +58,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void validationNull() {
+    void validationNull() {
 		Hooks.onErrorDropped(e -> assertThat(e).isInstanceOf(NullPointerException.class)
 		                                       .hasMessage("next is null"));
 		assertThat(OperatorDisposables.validate(null, null,
@@ -66,7 +66,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void disposeRace() {
+    void disposeRace() {
 		for (int i = 0; i < 500; i++) {
 
 			TestDisposable r = new TestDisposable() {
@@ -81,7 +81,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void setReplace() {
+    void setReplace() {
 		for (int i = 0; i < 500; i++) {
 
 			TestDisposable r = new TestDisposable() {
@@ -96,7 +96,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void setRace() {
+    void setRace() {
 		for (int i = 0; i < 500; i++) {
 			TestDisposable r = new TestDisposable() {
 				@Override
@@ -110,7 +110,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void setReplaceNull() {
+    void setReplaceNull() {
 		TestDisposable r = new TestDisposable();
 
 		OperatorDisposables.dispose(DISPOSABLE_UPDATER, r);
@@ -120,7 +120,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void dispose() {
+    void dispose() {
 		Disposable u = Disposables.single();
 		TestDisposable r = new TestDisposable(u);
 
@@ -130,7 +130,7 @@ public class OperatorDisposablesTest {
 	}
 
 	@Test
-	public void trySet() {
+    void trySet() {
 		TestDisposable r = new TestDisposable();
 
 		Disposable d1 = Disposables.single();

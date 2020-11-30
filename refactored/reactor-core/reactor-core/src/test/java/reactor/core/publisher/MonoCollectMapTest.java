@@ -23,7 +23,7 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoCollectMapTest {
+class MonoCollectMapTest {
 
 	static final class Pojo {
 
@@ -56,7 +56,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMap() {
+    void collectMap() {
 		StepVerifier.create(Flux.just(new Pojo("test", 1L),
 				new Pojo("test", 2L),
 				new Pojo("test2", 3L))
@@ -70,7 +70,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMapEmpty() {
+    void collectMapEmpty() {
 		StepVerifier.create(Flux.<Pojo>empty().collectMap(p -> p.id))
 		            .assertNext(d -> assertThat(d).isEmpty())
 		            .verifyComplete();
@@ -78,7 +78,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMapCallable() {
+    void collectMapCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> new Pojo("test", 1L))
 		                        .flux()
 		                        .collectMap(p -> p.id))
@@ -89,7 +89,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMultiMap() {
+    void collectMultiMap() {
 		StepVerifier.create(Flux.just(new Pojo("test", 1L),
 				new Pojo("test", 2L),
 				new Pojo("test2", 3L))
@@ -105,7 +105,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMultiMapEmpty() {
+    void collectMultiMapEmpty() {
 		StepVerifier.create(Flux.<Pojo>empty().collectMultimap(p -> p.id))
 		            .assertNext(d -> assertThat(d).isEmpty())
 		            .verifyComplete();
@@ -113,7 +113,7 @@ public class MonoCollectMapTest {
 	}
 
 	@Test
-	public void collectMultiMapCallable() {
+    void collectMultiMapCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> new Pojo("test", 1L))
 		                        .flux()
 		                        .collectMultimap(p -> p.id))

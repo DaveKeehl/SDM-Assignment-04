@@ -28,17 +28,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxOnBackpressureLatestTest {
+class FluxOnBackpressureLatestTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxOnBackpressureLatest<>(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).onBackpressureLatest().subscribe(ts);
@@ -49,7 +49,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-	public void backpressuredComplex() {
+    void backpressuredComplex() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 10000000)
@@ -71,7 +71,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-	public void backpressured() {
+    void backpressured() {
 		Sinks.Many<Integer> tp = Sinks.unsafe().many().multicast().directBestEffort();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
@@ -110,7 +110,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		Sinks.Many<Integer> tp = Sinks.unsafe().many().multicast().directBestEffort();
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
@@ -126,7 +126,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-	public void backpressureWithDrop() {
+    void backpressureWithDrop() {
 		Sinks.Many<Integer> tp = Sinks.unsafe().many().multicast().directBestEffort();
 
 		AssertSubscriber<Integer> ts = new AssertSubscriber<Integer>(0) {
@@ -155,7 +155,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxOnBackpressureLatest<Integer> test = new FluxOnBackpressureLatest<>(parent);
 
@@ -164,7 +164,7 @@ public class FluxOnBackpressureLatestTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxOnBackpressureLatest.LatestSubscriber<Integer> test =
         		new FluxOnBackpressureLatest.LatestSubscriber<>(actual);

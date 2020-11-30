@@ -23,10 +23,10 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoFlatMapManyTest {
+class MonoFlatMapManyTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).hide().flatMapMany(v -> Flux.just(2).hide())
@@ -38,7 +38,7 @@ public class MonoFlatMapManyTest {
 	}
 
 	@Test
-	public void normalInnerJust() {
+    void normalInnerJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).hide().flatMapMany(v -> Flux.just(2))
@@ -50,7 +50,7 @@ public class MonoFlatMapManyTest {
 	}
 
 	@Test
-	public void normalInnerEmpty() {
+    void normalInnerEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1).hide().flatMapMany(v -> Flux.<Integer>empty())
@@ -62,14 +62,14 @@ public class MonoFlatMapManyTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoFlatMapMany<String, Integer> test = new MonoFlatMapMany<>(Mono.just("foo"), s -> Mono.just(1));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<Integer> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFlatMapMany.FlatMapManyMain<String, Integer> test = new MonoFlatMapMany.FlatMapManyMain<>
 				(actual, s -> Flux.just(1, 2, 3));
@@ -82,7 +82,7 @@ public class MonoFlatMapManyTest {
 	}
 
 	@Test
-	public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> mainActual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		CoreSubscriber<Integer> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoFlatMapMany.FlatMapManyMain<String, Integer> main = new MonoFlatMapMany.FlatMapManyMain<>

@@ -44,18 +44,18 @@ import reactor.util.function.Tuple2;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxReplayTest extends FluxOperatorTest<String, String> {
+class FluxReplayTest extends FluxOperatorTest<String, String> {
 
 	VirtualTimeScheduler vts;
 
 	@BeforeEach
-	public void vtsStart() {
+	void vtsStart() {
 		//delayElements (notably) now uses parallel() so VTS must be enabled everywhere
 		vts = VirtualTimeScheduler.getOrSet();
 	}
 
 	@AfterEach
-	public void vtsStop() {
+	void vtsStop() {
 		VirtualTimeScheduler.reset();
 	}
 
@@ -86,7 +86,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	// === start of tests ===
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.replay(-1);
@@ -94,7 +94,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failTime() {
+    void failTime() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.replay(Duration.ofDays(-1));
@@ -102,7 +102,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFlux() {
+    void cacheFlux() {
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
@@ -130,7 +130,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxFused() {
+    void cacheFluxFused() {
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
@@ -157,7 +157,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxTTL() {
+    void cacheFluxTTL() {
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
 		                                         .replay(Duration.ofMillis(2000))
@@ -183,7 +183,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxTTLFused() {
+    void cacheFluxTTLFused() {
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
@@ -209,7 +209,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxTTLMillis() {
+    void cacheFluxTTLMillis() {
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
 		                                         .replay(Duration.ofMillis(2000), vts)
@@ -235,7 +235,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxTTLNanos() {
+    void cacheFluxTTLNanos() {
 		Flux<Integer> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofNanos(1000), vts)
 		                                         .replay(Duration.ofNanos(2000), vts)
@@ -259,7 +259,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxHistoryTTL() {
+    void cacheFluxHistoryTTL() {
 
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
@@ -286,7 +286,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheFluxHistoryTTLFused() {
+    void cacheFluxHistoryTTLFused() {
 		Flux<Tuple2<Long, Integer>> source = Flux.just(1, 2, 3)
 		                                         .delayElements(Duration.ofMillis(1000))
 		                                         .replay(2, Duration.ofMillis(2000))
@@ -310,7 +310,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void minimalInitialRequestIsHistory() {
+    void minimalInitialRequestIsHistory() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber threeThenEightSubscriber = new TwoRequestsSubscriber(3, 8);
 
@@ -328,7 +328,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void minimalInitialRequestIsMaxOfSubscribersInitialRequests() {
+    void minimalInitialRequestIsMaxOfSubscribersInitialRequests() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber fiveThenEightSubscriber = new TwoRequestsSubscriber(5, 8);
 		TwoRequestsSubscriber sevenThenEightSubscriber = new TwoRequestsSubscriber(7, 8);
@@ -348,7 +348,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void multipleEarlySubscribersPropagateTheirLateRequests() {
+    void multipleEarlySubscribersPropagateTheirLateRequests() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber fiveThenEightSubscriber = new TwoRequestsSubscriber(5, 8);
 		TwoRequestsSubscriber sevenThenEightSubscriber = new TwoRequestsSubscriber(7, 8);
@@ -368,7 +368,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void minimalInitialRequestWithUnboundedSubscriber() {
+    void minimalInitialRequestWithUnboundedSubscriber() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber fiveThenEightSubscriber = new TwoRequestsSubscriber(5, 8);
 
@@ -387,7 +387,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void minimalInitialRequestUnboundedWithFused() {
+    void minimalInitialRequestUnboundedWithFused() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber fiveThenEightSubscriber = new TwoRequestsSubscriber(5, 8);
 
@@ -406,7 +406,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void onlyInitialRequestWithLateUnboundedSubscriber() {
+    void onlyInitialRequestWithLateUnboundedSubscriber() {
 		List<Long> requests = new ArrayList<>();
 		TwoRequestsSubscriber fiveThenEightSubscriber = new TwoRequestsSubscriber(5, 8);
 
@@ -428,7 +428,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cancel() {
+    void cancel() {
 		ConnectableFlux<Integer> replay = Sinks.many().unicast().<Integer>onBackpressureBuffer().asFlux().replay(2);
 
 		replay.subscribe(v -> {}, e -> { throw Exceptions.propagate(e); });
@@ -446,7 +446,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanMain() {
+    void scanMain() {
         Flux<Integer> parent = Flux.just(1).map(i -> i);
         FluxReplay<Integer> test = new FluxReplay<>(parent, 25, 1000, Schedulers.single());
 
@@ -457,7 +457,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanInner() {
+    void scanInner() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxReplay<Integer> main = new FluxReplay<>(Flux.just(1), 2, 1000, Schedulers.single());
         FluxReplay.ReplaySubscriber<Integer> parent = new FluxReplay.ReplaySubscriber<>(new FluxReplay.UnboundedReplayBuffer<>(10), main);
@@ -483,7 +483,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
 		FluxReplay<Integer> parent = new FluxReplay<>(Flux.just(1), 2, 1000, Schedulers.single());
         FluxReplay.ReplaySubscriber<Integer> test = new FluxReplay.ReplaySubscriber<>(new FluxReplay.UnboundedReplayBuffer<>(10), parent);
         Subscription sub = Operators.emptySubscription();
@@ -510,7 +510,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@Timeout(5)
-	public void cacheSingleSubscriberWithMultipleRequestsDoesntHang() {
+	void cacheSingleSubscriberWithMultipleRequestsDoesntHang() {
 		List<Integer> listFromStream = Flux
 				.range(0, 1000)
 				.cache(5)
@@ -521,7 +521,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void cacheNotOverrunByMaxPrefetch() {
+    void cacheNotOverrunByMaxPrefetch() {
 		Flux<Integer> s = Flux.range(1, 30)
 		                      .cache(5);
 
@@ -537,7 +537,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void ifSubscribeBeforeConnectThenTrackFurtherRequests() {
+    void ifSubscribeBeforeConnectThenTrackFurtherRequests() {
 		ConnectableFlux<Long> connectableFlux = Flux.just(1L, 2L, 3L, 4L).replay(2);
 
 		StepVerifier.create(connectableFlux, 1)
@@ -559,7 +559,7 @@ public class FluxReplayTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void ifNoSubscriptionBeforeConnectThenUnbounded() {
+    void ifNoSubscriptionBeforeConnectThenUnbounded() {
 		AtomicLong totalRequested = new AtomicLong();
 		ConnectableFlux<Integer> connectable = Flux.range(1, 10)
 		                                           .doOnRequest(totalRequested::addAndGet)

@@ -25,10 +25,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSubscribeOnCallableTest {
+class MonoSubscribeOnCallableTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		StepVerifier.create(Mono.fromCallable(() -> 1).subscribeOn(Schedulers.single()))
 		            .expectNext(1)
 		            .expectComplete()
@@ -36,7 +36,7 @@ public class MonoSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		StepVerifier.withVirtualTime( () ->
 				Mono.fromCallable(() -> 1).subscribeOn(Schedulers.single()), 0)
 		            .expectSubscription()
@@ -49,7 +49,7 @@ public class MonoSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableThrows() {
+    void callableThrows() {
 		StepVerifier.create(Mono.fromCallable(() -> {
 			throw new IOException("forced failure");
 		}).subscribeOn(Schedulers.single()))
@@ -59,14 +59,14 @@ public class MonoSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void callableNull() {
+    void callableNull() {
 		StepVerifier.create(Mono.fromCallable(() -> null).subscribeOn(Schedulers.single()))
 		            .expectComplete()
 		            .verify();
 	}
 
 	@Test
-	public void callableNullBackpressured() {
+    void callableNullBackpressured() {
 		StepVerifier.create(
 				Mono.fromCallable(() -> null).subscribeOn(Schedulers.single()), 0)
 		            .expectSubscription()
@@ -75,7 +75,7 @@ public class MonoSubscribeOnCallableTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoSubscribeOnCallable<String> test = new MonoSubscribeOnCallable<>(() -> "foo", Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());

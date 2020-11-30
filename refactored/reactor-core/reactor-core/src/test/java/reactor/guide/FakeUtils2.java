@@ -24,7 +24,7 @@ import reactor.util.function.Tuple2;
 /**
  * @author Simon Baslé
  */
-public class FakeUtils2 {
+class FakeUtils2 {
 
 	public static final Function<? super Flux<String>, Flux<Tuple2<Long, String>>> enrichUser =
 			f -> f.elapsed();

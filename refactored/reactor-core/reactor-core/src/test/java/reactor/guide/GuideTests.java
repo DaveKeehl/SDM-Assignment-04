@@ -72,11 +72,11 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
  * @author Stephane Maldini
  * @author Simon Baslé
  */
-public class GuideTests {
+class GuideTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void introFutureHell() {
+	void introFutureHell() {
 		CompletableFuture<List<String>> ids = ifhIds(); // <1>
 
 		CompletableFuture<List<String>> result = ids.thenComposeAsync(l -> { // <2>
@@ -106,7 +106,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void introFutureHellReactorVersion() {
+    void introFutureHellReactorVersion() {
 		Flux<String> ids = ifhrIds(); // <1>
 
 		Flux<String> combinations =
@@ -161,7 +161,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedComposedNow() {
+    void advancedComposedNow() {
 		Function<Flux<String>, Flux<String>> filterAndMap =
 				f -> f.filter(color -> !color.equals("orange"))
 				      .map(String::toUpperCase);
@@ -173,7 +173,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedComposedDefer() {
+    void advancedComposedDefer() {
 		AtomicInteger ai = new AtomicInteger();
 		Function<Flux<String>, Flux<String>> filterAndMap = f -> {
 			if (ai.incrementAndGet() == 1) {
@@ -194,7 +194,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedCold() {
+    void advancedCold() {
 		Flux<String> source = Flux.fromIterable(Arrays.asList("blue", "green", "orange", "purple"))
 		                          .map(String::toUpperCase);
 
@@ -203,7 +203,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedHot() {
+    void advancedHot() {
 		Sinks.Many<String> hotSource = Sinks.unsafe().many().multicast().directBestEffort();
 
 		Flux<String> hotFlux = hotSource.asFlux().map(String::toUpperCase);
@@ -221,7 +221,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedConnectable() throws InterruptedException {
+    void advancedConnectable() throws InterruptedException {
 		Flux<Integer> source = Flux.range(1, 3)
 		                           .doOnSubscribe(s -> System.out.println("subscribed to source"));
 
@@ -238,7 +238,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedConnectableAutoConnect() throws InterruptedException {
+    void advancedConnectableAutoConnect() throws InterruptedException {
 		Flux<Integer> source = Flux.range(1, 3)
 		                           .doOnSubscribe(s -> System.out.println("subscribed to source"));
 
@@ -252,7 +252,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedBatchingGrouping() {
+    void advancedBatchingGrouping() {
 		StepVerifier.create(
 				Flux.just(1, 3, 5, 2, 4, 6, 11, 12, 13)
 				    .groupBy(i -> i % 2 == 0 ? "even" : "odd")
@@ -266,7 +266,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedBatchingWindowingSizeOverlap() {
+    void advancedBatchingWindowingSizeOverlap() {
 		StepVerifier.create(
 				Flux.range(1, 10)
 				    .window(5, 3) //overlapping windows
@@ -280,7 +280,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedBatchingWindowing() {
+    void advancedBatchingWindowing() {
 		StepVerifier.create(
 				Flux.just(1, 3, 5, 2, 4, 6, 11, 12, 13)
 				    .windowWhile(i -> i % 2 == 0)
@@ -294,7 +294,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedBatchingBufferingSizeOverlap() {
+    void advancedBatchingBufferingSizeOverlap() {
 		StepVerifier.create(
 				Flux.range(1, 10)
 				    .buffer(5, 3) //overlapping buffers
@@ -307,7 +307,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedBatchingBuffering() {
+    void advancedBatchingBuffering() {
 		StepVerifier.create(
 				Flux.just(1, 3, 5, 2, 4, 6, 11, 12, 13)
 				    .bufferWhile(i -> i % 2 == 0)
@@ -318,14 +318,14 @@ public class GuideTests {
 	}
 
 	@Test
-	public void advancedParallelJustDivided() {
+    void advancedParallelJustDivided() {
 		Flux.range(1, 10)
 	        .parallel(2) //<1>
 	        .subscribe(i -> System.out.println(Thread.currentThread().getName() + " -> " + i));
 	}
 
 	@Test
-	public void advancedParallelParallelized() {
+    void advancedParallelParallelized() {
 		Flux.range(1, 10)
 	        .parallel(2)
 	        .runOn(Schedulers.parallel())
@@ -337,7 +337,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void baseSubscriberFineTuneBackpressure() {
+    void baseSubscriberFineTuneBackpressure() {
 		Flux<String> source = someStringSource();
 
 		source.map(String::toUpperCase)
@@ -368,7 +368,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingOnError() {
+    void errorHandlingOnError() {
 		Flux<String> s = Flux.range(1, 10)
 		                     .map(v -> doSomethingDangerous(v)) // <1>
 		                     .map(v -> doSecondTransform(v)); // <2>
@@ -385,7 +385,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingTryCatch() {
+    void errorHandlingTryCatch() {
 		try {
 			for (int i = 1; i < 11; i++) {
 				String v1 = doSomethingDangerous(i); // <1>
@@ -398,7 +398,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingReturn() {
+    void errorHandlingReturn() {
 		Flux<String> flux =
 		Flux.just(10)
 		    .map(this::doSomethingDangerous)
@@ -410,7 +410,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingReturnFilter() {
+    void errorHandlingReturnFilter() {
 		Flux<String> flux =
 		Flux.just(10)
 		    .map(this::doSomethingDangerous)
@@ -444,7 +444,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingOnErrorResume() {
+    void errorHandlingOnErrorResume() {
 		Flux<String> flux =
 				Flux.just("key1", "key2")
 				    .flatMap(k ->
@@ -466,7 +466,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingOnErrorResumeDependingOnError() {
+    void errorHandlingOnErrorResumeDependingOnError() {
 		Flux<String> flux =
 		Flux.just("timeout1", "unknown", "key2")
 		    .flatMap(k ->
@@ -495,7 +495,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRethrow1() {
+    void errorHandlingRethrow1() {
 		Flux<String> flux =
 		Flux.just("timeout1")
 		    .flatMap(k -> callExternalService(k)
@@ -511,7 +511,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRethrow2() {
+    void errorHandlingRethrow2() {
 		Flux<String> flux =
 		Flux.just("timeout1")
 		    .flatMap(k -> callExternalService(k)
@@ -529,7 +529,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingSideEffect() {
+    void errorHandlingSideEffect() {
 		LongAdder failureStat = new LongAdder();
 		Flux<String> flux =
 		Flux.just("unknown")
@@ -549,7 +549,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingUsing() {
+    void errorHandlingUsing() {
 		AtomicBoolean isDisposed = new AtomicBoolean();
 		Disposable disposableInstance = new Disposable() {
 			@Override
@@ -578,7 +578,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingDoFinally() {
+    void errorHandlingDoFinally() {
 		LongAdder statsCancel = new LongAdder(); // <1>
 
 		Flux<String> flux =
@@ -597,7 +597,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingIntervalMillisNotContinued() throws InterruptedException {
+    void errorHandlingIntervalMillisNotContinued() throws InterruptedException {
 		VirtualTimeScheduler virtualTimeScheduler = VirtualTimeScheduler.create();
 		VirtualTimeScheduler.set(virtualTimeScheduler);
 
@@ -624,7 +624,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingIntervalMillisRetried() throws InterruptedException {
+    void errorHandlingIntervalMillisRetried() throws InterruptedException {
 		VirtualTimeScheduler virtualTimeScheduler = VirtualTimeScheduler.create();
 		VirtualTimeScheduler.set(virtualTimeScheduler);
 
@@ -655,7 +655,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRetryWhenApproximateRetry() {
+    void errorHandlingRetryWhenApproximateRetry() {
 		Flux<String> flux =
 		Flux.<String>error(new IllegalArgumentException()) // <1>
 				.doOnError(System.out::println) // <2>
@@ -670,7 +670,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRetryWhenEquatesRetry() {
+    void errorHandlingRetryWhenEquatesRetry() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Flux<String> flux =
 				Flux.<String>error(new IllegalArgumentException())
@@ -693,7 +693,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRetryBuilders() {
+    void errorHandlingRetryBuilders() {
 		Throwable exception = new IllegalStateException("boom");
 		Flux<String> errorFlux = Flux.error(exception);
 
@@ -709,7 +709,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRetryWhenExponential() {
+    void errorHandlingRetryWhenExponential() {
 		AtomicInteger errorCount = new AtomicInteger();
 		Flux<String> flux =
 				Flux.<String>error(new IllegalStateException("boom"))
@@ -733,7 +733,7 @@ public class GuideTests {
 	}
 
 	@Test
-	public void errorHandlingRetryWhenTransient() {
+    void errorHandlingRetryWhenTransient() {
 		AtomicInteger errorCount = new AtomicInteger(); // <1>
 		AtomicInteger transientHelper = new AtomicInteger();
 		Flux<Integer> transientFlux = Flux.<Integer>generate(sink -> {
@@ -777,7 +777,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void errorHandlingPropagateUnwrap() {
+    void errorHandlingPropagateUnwrap() {
 		Flux<String> converted = Flux
 				.range(1, 10)
 				.map(i -> {
@@ -804,7 +804,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void producingGenerate() {
+    void producingGenerate() {
 		Flux<String> flux = Flux.generate(
 				() -> 0, // <1>
 				(state, sink) -> {
@@ -830,7 +830,7 @@ assertThat(errorCount).hasValue(6); // <6>
 
 
 	@Test
-	public void producingGenerateMutableState() {
+    void producingGenerateMutableState() {
 		Flux<String> flux = Flux.generate(
 				AtomicLong::new, // <1>
 				(state, sink) -> {
@@ -890,7 +890,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	};
 
 	@Test
-	public void producingCreate() {
+    void producingCreate() {
 		Flux<String> bridge = Flux.create(sink -> {
 			myEventProcessor.register( // <4>
 					new MyEventListener<String>() { // <1>
@@ -926,7 +926,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void producingHandle() {
+    void producingHandle() {
 		Flux<String> alphabet = Flux.just(-1, 30, 13, 9, 20)
             .handle((i, sink) -> {
                 String letter = alphabet(i); // <1>
@@ -949,7 +949,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void testSplitPathIsUsed() {
+    void testSplitPathIsUsed() {
 		StepVerifier.create(processOrFallback(Mono.just("just a  phrase with    tabs!"),
 				Mono.just("EMPTY_PHRASE")))
 		            .expectNext("just", "a", "phrase", "with", "tabs!")
@@ -957,7 +957,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void testEmptyPathIsUsed() {
+    void testEmptyPathIsUsed() {
 		StepVerifier.create(processOrFallback(Mono.empty(), Mono.just("EMPTY_PHRASE")))
 		            .expectNext("EMPTY_PHRASE")
 		            .verifyComplete();
@@ -974,7 +974,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void testCommandEmptyPathIsUsedBoilerplate() {
+    void testCommandEmptyPathIsUsedBoilerplate() {
 		AtomicBoolean wasInvoked = new AtomicBoolean();
 		AtomicBoolean wasRequested = new AtomicBoolean();
 		Mono<Void> testFallback = Mono.<Void>empty()
@@ -988,7 +988,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void testCommandEmptyPathIsUsed() {
+    void testCommandEmptyPathIsUsed() {
 		PublisherProbe<Void> probe = PublisherProbe.empty(); // <1>
 
 		StepVerifier.create(processOrFallback(Mono.empty(), probe.mono())) // <2>
@@ -1034,7 +1034,7 @@ assertThat(errorCount).hasValue(6); // <6>
 		}
 	}
 
-	public Mono<String> toDebug; //please overlook the public class attribute :p
+	public Mono<String> toDebug; //please overlook the class attribute :p
 
 	private void printAndAssert(Throwable t, boolean checkForAssemblySuppressed) {
 		t.printStackTrace();
@@ -1056,19 +1056,19 @@ assertThat(errorCount).hasValue(6); // <6>
 
 	@Test
 	@Tag("debugInit")
-	public void debuggingCommonStacktrace() {
+	void debuggingCommonStacktrace() {
 		toDebug.subscribe(System.out::println, t -> printAndAssert(t, false));
 	}
 
 	@Test
 	@Tag("debugModeOn")
 	@Tag("debugInit")
-	public void debuggingActivated() {
+	void debuggingActivated() {
 		toDebug.subscribe(System.out::println, t -> printAndAssert(t, true));
 	}
 
 	@Test
-	public void debuggingLogging() {
+    void debuggingLogging() {
 		Flux<Integer> flux = Flux.range(1, 10)
 		                         .log()
 		                         .take(3);
@@ -1079,7 +1079,7 @@ assertThat(errorCount).hasValue(6); // <6>
 	}
 
 	@Test
-	public void contextSimple1() {
+    void contextSimple1() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 String key = "message";
 Mono<String> r = Mono.just("Hello")
@@ -1093,7 +1093,7 @@ StepVerifier.create(r)
 	}
 
 	@Test
-	public void contextSimple2() {
+    void contextSimple2() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 String key = "message";
 Mono<String> r = Mono.just("Hello")
@@ -1109,7 +1109,7 @@ StepVerifier.create(r)
 	//contextSimple3 deleted since writes are not exposed anymore with ContextView
 
 	@Test
-	public void contextSimple4() {
+    void contextSimple4() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 String key = "message";
 Mono<String> r = Mono
@@ -1123,7 +1123,7 @@ StepVerifier.create(r)
 	}
 
 	@Test
-	public void contextSimple5() {
+    void contextSimple5() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 String key = "message";
 Mono<String> r = Mono
@@ -1139,7 +1139,7 @@ StepVerifier.create(r)
 	}
 
 	@Test
-	public void contextSimple6() {
+    void contextSimple6() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 String key = "message";
 Mono<String> r = Mono.just("Hello")
@@ -1181,7 +1181,7 @@ Mono<Tuple2<Integer, String>> doPut(String url, Mono<String> data) {
 
 //use of two-space indentation on purpose to maximise readability in refguide
 @Test
-public void contextForLibraryReactivePut() {
+    void contextForLibraryReactivePut() {
   Mono<String> put = doPut("www.example.com", Mono.just("Walter"))
       .contextWrite(Context.of(HTTP_CORRELATION_ID, "2-j3r9afaf92j-afkaf"))
       .filter(t -> t.getT1() < 300)
@@ -1194,7 +1194,7 @@ public void contextForLibraryReactivePut() {
 }
 
 	@Test
-	public void contextForLibraryReactivePutNoContext() {
+    void contextForLibraryReactivePutNoContext() {
 		//use of two-space indentation on purpose to maximise readability in refguide
 Mono<String> put = doPut("www.example.com", Mono.just("Walter"))
     .filter(t -> t.getT1() < 300)

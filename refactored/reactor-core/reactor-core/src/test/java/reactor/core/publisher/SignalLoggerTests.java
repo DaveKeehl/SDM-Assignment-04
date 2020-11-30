@@ -36,10 +36,10 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class SignalLoggerTests {
+class SignalLoggerTests {
 
 	@Test
-	public void safeLogsWhenLoggerThrows() {
+    void safeLogsWhenLoggerThrows() {
 		TestLogger logger = new TestLogger() {
 			@Override
 			public synchronized void info(String format, Object... arguments) {
@@ -61,7 +61,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void safeLogsWhenPassingQueueSubscription() {
+    void safeLogsWhenPassingQueueSubscription() {
 		TestLogger logger = new TestLogger();
 
 		SignalLogger signalLogger = new SignalLogger<>(Flux.empty(), null, Level.INFO, false, it -> logger);
@@ -75,7 +75,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void testLogCollectionSubscription() {
+    void testLogCollectionSubscription() {
 		Flux<Integer> source = Flux.just(1, 2, 3);
 		FluxPeekFuseable<Integer> flux = new FluxPeekFuseable<>(source, null, null, null, null, null, null, null);
 		SignalLogger<Integer> signalLogger = new SignalLogger<>(flux,
@@ -99,7 +99,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void testLogQueueSubscriptionValue() {
+    void testLogQueueSubscriptionValue() {
 		Flux<Flux<Integer>> source = Flux.just(1, 2, 3)
 				.window(2); //windows happen to be UnicastProcessor, which implements QueueSubscription directly :o
 
@@ -124,33 +124,33 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void nullSubscriptionAsString() {
+    void nullSubscriptionAsString() {
 		assertThat(SignalLogger.subscriptionAsString(null)).isEqualTo("null subscription");
 	}
 
 	@Test
-	public void normalSubscriptionAsString() {
+    void normalSubscriptionAsString() {
 		Subscription s = new FluxPeek.PeekSubscriber<>(null, null);
 
 		assertThat(SignalLogger.subscriptionAsString(s)).isEqualTo("FluxPeek.PeekSubscriber");
 	}
 
 	@Test
-	public void synchronousSubscriptionAsString() {
+    void synchronousSubscriptionAsString() {
 		SynchronousSubscription<Object> s = new FluxArray.ArraySubscription<>(null, null);
 
 		assertThat(SignalLogger.subscriptionAsString(s)).isEqualTo("[Synchronous Fuseable] FluxArray.ArraySubscription");
 	}
 
 	@Test
-	public void queueSubscriptionAsString() {
+    void queueSubscriptionAsString() {
 		Fuseable.QueueSubscription<Object> s = Operators.EmptySubscription.INSTANCE;
 
 		assertThat(SignalLogger.subscriptionAsString(s)).isEqualTo("[Fuseable] Operators.EmptySubscription");
 	}
 
 	@Test
-	public void anonymousSubscriptionAsString() {
+    void anonymousSubscriptionAsString() {
 		Subscription s = new Subscription() {
 			@Override
 			public void request(long n) {}
@@ -163,7 +163,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void scanSignalLogger() {
+    void scanSignalLogger() {
 		Mono<String> source = Mono.just("").map(i -> i);
 		SignalLogger<String> sl = new SignalLogger<>(source, null, Level.INFO, false);
 
@@ -171,7 +171,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void logErrorUsesErrorWhenInfo() {
+    void logErrorUsesErrorWhenInfo() {
 		Level level = Level.INFO;
 
 		Mono<String> source = Mono.error(new IllegalStateException("ignored"));
@@ -194,7 +194,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void logErrorUsesErrorWhenWarning() {
+    void logErrorUsesErrorWhenWarning() {
 		Level level = Level.WARNING;
 
 		Mono<String> source = Mono.error(new IllegalStateException("ignored"));
@@ -217,7 +217,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void logErrorUsesErrorWhenSevere() {
+    void logErrorUsesErrorWhenSevere() {
 		Level level = Level.SEVERE;
 
 		Mono<String> source = Mono.error(new IllegalStateException("ignored"));
@@ -240,7 +240,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void logErrorUsesDebugWhenFine() {
+    void logErrorUsesDebugWhenFine() {
 		Level level = Level.FINE;
 
 		Mono<String> source = Mono.error(new IllegalStateException("ignored"));
@@ -263,7 +263,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void logErrorUsesTraceWhenFinest() {
+    void logErrorUsesTraceWhenFinest() {
 		Level level = Level.FINEST;
 		demonstrateLogError(); //added to the test suite so that sanity check can be done
 
@@ -287,7 +287,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void fluxLogWithGivenLogger() {
+    void fluxLogWithGivenLogger() {
 		Level level = Level.WARNING;
 
 		Flux<String> source = Flux.just("foo");
@@ -302,7 +302,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void monoLogWithGivenLogger() {
+    void monoLogWithGivenLogger() {
 		Level level = Level.WARNING;
 
 		Mono<String> source = Mono.just("foo");
@@ -317,7 +317,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void noCurrentContextLogWhenInfo() {
+    void noCurrentContextLogWhenInfo() {
 		SignalLogger<?> signalLogger = new SignalLogger<>(Mono.empty(), null,
 				Level.INFO, false);
 
@@ -326,7 +326,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void currentContextLogWhenDebug() {
+    void currentContextLogWhenDebug() {
 		TestLogger logger = new TestLogger();
 
 		SignalLogger<?> signalLogger = new SignalLogger<>(Mono.empty(), null,
@@ -343,7 +343,7 @@ public class SignalLoggerTests {
 	}
 
 	@Test
-	public void currentContextLogWhenTrace() {
+    void currentContextLogWhenTrace() {
 		TestLogger logger = new TestLogger();
 
 		SignalLogger<?> signalLogger = new SignalLogger<>(Mono.empty(), null,
@@ -382,7 +382,7 @@ public class SignalLoggerTests {
 
 		private final Logger delegate;
 
-		public CollectionSpecialLogger(String name) {
+		CollectionSpecialLogger(String name) {
 			this.delegate = Loggers.getLogger(name);
 		}
 

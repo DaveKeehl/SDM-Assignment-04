@@ -33,53 +33,53 @@ import reactor.util.function.Tuples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoZipTest {
+class MonoZipTest {
 
 	@Test
-	public void allEmpty() {
+    void allEmpty() {
 		assertThat(Mono.zip(Mono.empty(), Mono.empty())
 		                      .block()).isNull();
 	}
 
 	@Test
-	public void allNonEmptyIterable() {
+    void allNonEmptyIterable() {
 		assertThat(Mono.zip(Arrays.asList(Mono.just(1), Mono.just(2)),
 				args -> (int) args[0] + (int) args[1])
 		               .block()).isEqualTo(3);
 	}
 
 	@Test
-	public void noSourcePublisherCombined() {
+    void noSourcePublisherCombined() {
 		assertThat(Mono.zip(args -> (int) args[0] + (int) args[1])
 		               .block()).isNull();
 	}
 
 	@Test
-	public void oneSourcePublisherCombined() {
+    void oneSourcePublisherCombined() {
 		assertThat(Mono.zip(args -> (int) args[0], Mono.just(1))
 		               .block()).isEqualTo(1);
 	}
 
 	@Test
-	public void allEmptyDelay() {
+    void allEmptyDelay() {
 		assertThat(Mono.zipDelayError(Mono.empty(), Mono.empty())
 		                      .block()).isNull();
 	}
 
 	@Test
-	public void noSourcePublisherCombinedDelay() {
+    void noSourcePublisherCombinedDelay() {
 		assertThat(Mono.zipDelayError(args -> (int) args[0] + (int) args[1])
 		               .block()).isNull();
 	}
 
 	@Test
-	public void oneSourcePublisherCombinedDelay() {
+    void oneSourcePublisherCombinedDelay() {
 		assertThat(Mono.zipDelayError(args -> (int) args[0], Mono.just(1))
 		               .block()).isEqualTo(1);
 	}
 
 	@Test
-	public void nonEmptyPublisherCombinedDelay() {
+    void nonEmptyPublisherCombinedDelay() {
 		assertThat(Mono.zipDelayError(args -> (int) args[0] + (int) args[1],
 				Mono.just(1),
 				Mono.just(2))
@@ -88,7 +88,7 @@ public class MonoZipTest {
 
 	@Test
 	@Timeout(5)
-	public void castCheck() {
+	void castCheck() {
 		Mono<String[]> mono = Mono.zip(a -> Arrays.copyOf(a, a.length, String[].class),
 				Mono.just("hello"),
 				Mono.just("world"));
@@ -96,13 +96,13 @@ public class MonoZipTest {
 	}
 
 	@Test//(timeout = 5000)
-	public void all2NonEmpty() {
+	void all2NonEmpty() {
 		assertThat(Mono.zip(Mono.delay(Duration.ofMillis(150)), Mono.delay(Duration.ofMillis(250))).block())
 				.isEqualTo(Tuples.of(0L, 0L));
 	}
 
 	@Test
-	public void allNonEmpty2() {
+    void allNonEmpty2() {
 		assertThat(Mono.zip(args -> (int) args[0] + (int) args[1],
 				Mono.just(1),
 				Mono.just(2))
@@ -110,7 +110,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void someEmpty() {
+    void someEmpty() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.zip(Mono.delay(Duration.ofMillis(150)).then(), Mono.delay(Duration
 						.ofMillis(250))))
@@ -119,7 +119,7 @@ public class MonoZipTest {
 	}
 
 	@Test//(timeout = 5000)
-	public void allNonEmpty() {
+	void allNonEmpty() {
 		for (int i = 2; i < 7; i++) {
 			Long[] result = new Long[i];
 			Arrays.fill(result, 0L);
@@ -137,7 +137,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Mono<Tuple2<Integer, String>> f = Mono.just(1)
 		                                      .zipWith(Mono.just("test2"));
 
@@ -152,7 +152,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void pairWise2() {
+    void pairWise2() {
 		Mono<Tuple2<Tuple2<Integer, String>, String>> f =
 				Mono.zip(Mono.just(1), Mono.just("test"))
 				    .zipWith(Mono.just("test2"));
@@ -173,7 +173,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void pairWise3() {
+    void pairWise3() {
 		Mono<Tuple2<Tuple2<Integer, String>, String>> f =
 				Mono.zip(Arrays.asList(Mono.just(1), Mono.just("test")),
 						obj -> Tuples.of((int) obj[0], (String) obj[1]))
@@ -195,21 +195,21 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoJust() {
+    void zipMonoJust() {
 		StepVerifier.create(Mono.zip(Mono.just(1), Mono.just(2)))
 		            .assertNext(v -> assertThat(v.getT1() == 1 && v.getT2() == 2).isTrue())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipMonoJust3() {
+    void zipMonoJust3() {
 		StepVerifier.create(Mono.zip(Mono.just(1), Mono.just(2), Mono.just(3)))
 		            .assertNext(v -> assertThat(v.getT1() == 1 && v.getT2() == 2 && v.getT3() == 3).isTrue())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipMonoJust4() {
+    void zipMonoJust4() {
 		StepVerifier.create(Mono.zip(
 				Mono.just(1),
 				Mono.just(2),
@@ -220,7 +220,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoJust5() {
+    void zipMonoJust5() {
 		StepVerifier.create(Mono.zip(
 				Mono.just(1),
 				Mono.just(2),
@@ -232,7 +232,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoJust6() {
+    void zipMonoJust6() {
 		StepVerifier.create(Mono.zip(
 				Mono.just(1),
 				Mono.just(2),
@@ -245,7 +245,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoJust7() {
+    void zipMonoJust7() {
 		StepVerifier.create(Mono.zip(
 				Mono.just(1),
 				Mono.just(2),
@@ -259,7 +259,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoJust8() {
+    void zipMonoJust8() {
 		StepVerifier.create(Mono.zip(
 				Mono.just(1),
 				Mono.just(2),
@@ -274,35 +274,35 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipMonoError() {
+    void zipMonoError() {
 		StepVerifier.create(Mono.zip(Mono.<Integer>error(new Exception("test1")),
 				Mono.<Integer>error(new Exception("test2"))))
 		            .verifyErrorSatisfies(e -> assertThat(e).hasMessage("test1"));
 	}
 
 	@Test
-	public void zipMonoCallable() {
+    void zipMonoCallable() {
 		StepVerifier.create(Mono.zip(Mono.fromCallable(() -> 1), Mono.fromCallable(() -> 2)))
 		            .assertNext(v -> assertThat(v.getT1() == 1 && v.getT2() == 2).isTrue())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipDelayErrorJustMono() {
+    void zipDelayErrorJustMono() {
 		StepVerifier.create(Mono.zipDelayError(Mono.just(1), Mono.just(2)))
 		            .assertNext(v -> assertThat(v.getT1() == 1 && v.getT2() == 2).isTrue())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipDelayErrorJustMono3() {
+    void zipDelayErrorJustMono3() {
 		StepVerifier.create(Mono.zipDelayError(Mono.just(1), Mono.just(2), Mono.just(3)))
 		            .assertNext(v -> assertThat(v.getT1() == 1 && v.getT2() == 2 && v.getT3() == 3).isTrue())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void zipDelayErrorMonoJust4() {
+    void zipDelayErrorMonoJust4() {
 		StepVerifier.create(Mono.zipDelayError(
 				Mono.just(1),
 				Mono.just(2),
@@ -313,7 +313,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipDelayErrorMonoJust5() {
+    void zipDelayErrorMonoJust5() {
 		StepVerifier.create(Mono.zipDelayError(
 				Mono.just(1),
 				Mono.just(2),
@@ -325,7 +325,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipDelayErrorMonoJust6() {
+    void zipDelayErrorMonoJust6() {
 		StepVerifier.create(Mono.zipDelayError(
 				Mono.just(1),
 				Mono.just(2),
@@ -338,7 +338,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipDelayErrorMonoJust7() {
+    void zipDelayErrorMonoJust7() {
 		StepVerifier.create(Mono.zipDelayError(
 				Mono.just(1),
 				Mono.just(2),
@@ -352,7 +352,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipDelayErrorMonoJust8() {
+    void zipDelayErrorMonoJust8() {
 		StepVerifier.create(Mono.zipDelayError(
 				Mono.just(1),
 				Mono.just(2),
@@ -367,7 +367,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipIterableDelayErrorCombinesErrors() {
+    void zipIterableDelayErrorCombinesErrors() {
 		Exception boom1 = new NullPointerException("boom1");
 		Exception boom2 = new IllegalArgumentException("boom2");
 
@@ -380,7 +380,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void zipIterableDoesntCombineErrors() {
+    void zipIterableDoesntCombineErrors() {
 		Exception boom1 = new NullPointerException("boom1");
 		Exception boom2 = new IllegalArgumentException("boom2");
 
@@ -391,7 +391,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void delayErrorEmptySourceErrorSource() {
+    void delayErrorEmptySourceErrorSource() {
 		Mono<String> error = Mono.error(new IllegalStateException("boom"));
 		Mono<String> empty = Mono.empty();
 
@@ -401,7 +401,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void delayErrorEmptySourceErrorTwoSource() {
+    void delayErrorEmptySourceErrorTwoSource() {
 		final IllegalStateException e1 = new IllegalStateException("boom1");
 		final IllegalStateException e2 = new IllegalStateException("boom2");
 		Mono<String> error1 = Mono.error(e1);
@@ -417,7 +417,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void delayErrorEmptySources() {
+    void delayErrorEmptySources() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		Mono<String> empty1 = Mono.empty();
 		Mono<String> empty2 = Mono.empty();
@@ -433,7 +433,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void emptySources() {
+    void emptySources() {
 		AtomicBoolean cancelled = new AtomicBoolean();
 		Mono<String> empty1 = Mono.empty();
 		Mono<String> empty2 = Mono.empty();
@@ -448,14 +448,14 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoZip s = new MonoZip<>(true, z -> z);
 		assertThat(s.scan(Scannable.Attr.DELAY_ERROR)).as("delayError").isTrue();
 		assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanCoordinator() {
+    void scanCoordinator() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoZip.ZipCoordinator<String> test = new MonoZip.ZipCoordinator<>(
 				actual, 2, true, a -> String.valueOf(a[0]));
@@ -474,7 +474,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void innerErrorIncrementsParentDone() {
+    void innerErrorIncrementsParentDone() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoZip.ZipCoordinator<String> parent = new MonoZip.ZipCoordinator<>(
 				actual, 2, false, a -> String.valueOf(a[0]));
@@ -489,7 +489,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void scanCoordinatorNotDoneUntilN() {
+    void scanCoordinatorNotDoneUntilN() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoZip.ZipCoordinator<String> test = new MonoZip.ZipCoordinator<>(
 				actual, 10, true, a -> String.valueOf(a[0]));
@@ -502,7 +502,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void scanWhenInner() {
+    void scanWhenInner() {
 		CoreSubscriber<? super String> actual = new LambdaMonoSubscriber<>(null, e ->
 		{}, null, null);
 		MonoZip.ZipCoordinator<String>
@@ -523,7 +523,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void andAliasZipWith() {
+    void andAliasZipWith() {
 		Mono<Tuple2<Integer, String>> and = Mono.just(1)
 		                                        .zipWith(Mono.just("B"));
 
@@ -535,7 +535,7 @@ public class MonoZipTest {
 	}
 
 	@Test
-	public void andCombinatorAliasZipWithCombinator() {
+    void andCombinatorAliasZipWithCombinator() {
 		Mono<String> and = Mono.just(1).zipWith(Mono.just("B"), (i, s) -> i + s);
 
 		Mono<String> zipWith = and.zipWith(Mono.just(3), (s, i) -> s + i);

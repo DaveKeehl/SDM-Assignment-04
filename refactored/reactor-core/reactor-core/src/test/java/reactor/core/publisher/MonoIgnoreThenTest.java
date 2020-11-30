@@ -9,17 +9,17 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoIgnoreThenTest {
+class MonoIgnoreThenTest {
 
     @Test
-    public void scanOperator() {
+    void scanOperator() {
         MonoIgnoreThen<String> test = new MonoIgnoreThen<>(new Publisher[]{Mono.just("foo")}, Mono.just("bar"));
 
         assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
     }
 
     @Test
-    public void scanThenIgnoreMain() {
+    void scanThenIgnoreMain() {
         AssertSubscriber<String> actual = new AssertSubscriber<>();
         MonoIgnoreThen.ThenIgnoreMain<String> test = new MonoIgnoreThen.ThenIgnoreMain<>(actual, new Publisher[]{Mono.just("foo")}, Mono.just("bar"));
 
@@ -27,7 +27,7 @@ public class MonoIgnoreThenTest {
     }
 
     @Test
-    public void scanThenIgnoreInner() {
+    void scanThenIgnoreInner() {
         AssertSubscriber<String> actual = new AssertSubscriber<>();
         MonoIgnoreThen.ThenIgnoreMain<String> main =
                 new MonoIgnoreThen.ThenIgnoreMain<>(actual, new Publisher[]{Mono.just("foo")}, Mono.just("bar"));
@@ -47,7 +47,7 @@ public class MonoIgnoreThenTest {
 
 
     @Test
-    public void scanThenAcceptInner() {
+    void scanThenAcceptInner() {
         AssertSubscriber<String> actual = new AssertSubscriber<>();
         MonoIgnoreThen.ThenIgnoreMain<String> main =
                 new MonoIgnoreThen.ThenIgnoreMain<>(actual, new Publisher[]{Mono.just("foo")}, Mono.just("bar"));

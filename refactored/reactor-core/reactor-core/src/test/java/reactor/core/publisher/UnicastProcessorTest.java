@@ -48,10 +48,10 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
 // This is ok as this class tests the deprecated UnicastProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class UnicastProcessorTest {
+class UnicastProcessorTest {
 
 	@Test
-	public void currentSubscriberCount() {
+    void currentSubscriberCount() {
 		Sinks.Many<Integer> sink = UnicastProcessor.create();
 
 		assertThat(sink.currentSubscriberCount()).isZero();
@@ -62,7 +62,7 @@ public class UnicastProcessorTest {
 	}
 
     @Test
-    public void secondSubscriberRejectedProperly() {
+    void secondSubscriberRejectedProperly() {
 
         UnicastProcessor<Integer> up = UnicastProcessor.create(new ConcurrentLinkedQueue<>());
 
@@ -79,7 +79,7 @@ public class UnicastProcessorTest {
     }
 
 	@Test
-	public void multiThreadedProducer() {
+    void multiThreadedProducer() {
 		Sinks.Many<Integer> sink = Sinks.many().unicast().onBackpressureBuffer();
 		int nThreads = 5;
 		int countPerThread = 10000;
@@ -102,20 +102,20 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void createDefault() {
+    void createDefault() {
 		UnicastProcessor<Integer> processor = UnicastProcessor.create();
 		assertProcessor(processor, null, null, null);
 	}
 
 	@Test
-	public void createOverrideQueue() {
+    void createOverrideQueue() {
 		Queue<Integer> queue = Queues.<Integer>get(10).get();
 		UnicastProcessor<Integer> processor = UnicastProcessor.create(queue);
 		assertProcessor(processor, queue, null, null);
 	}
 
 	@Test
-	public void createOverrideQueueOnTerminate() {
+    void createOverrideQueueOnTerminate() {
 		Disposable onTerminate = () -> {};
 		Queue<Integer> queue = Queues.<Integer>get(10).get();
 		UnicastProcessor<Integer> processor = UnicastProcessor.create(queue, onTerminate);
@@ -123,7 +123,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void createOverrideAll() {
+    void createOverrideAll() {
 		Disposable onTerminate = () -> {};
 		Consumer<? super Integer> onOverflow = t -> {};
 		Queue<Integer> queue = Queues.<Integer>get(10).get();
@@ -131,7 +131,7 @@ public class UnicastProcessorTest {
 		assertProcessor(processor, queue, onOverflow, onTerminate);
 	}
 
-	public void assertProcessor(UnicastProcessor<Integer> processor,
+	void assertProcessor(UnicastProcessor<Integer> processor,
 			@Nullable Queue<Integer> queue,
 			@Nullable Consumer<? super Integer> onOverflow,
 			@Nullable Disposable onTerminate) {
@@ -144,7 +144,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void bufferSizeReactorUnboundedQueue() {
+    void bufferSizeReactorUnboundedQueue() {
     	UnicastProcessor processor = UnicastProcessor.create(
     			Queues.unbounded(2).get());
 
@@ -152,7 +152,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void bufferSizeReactorBoundedQueue() {
+    void bufferSizeReactorBoundedQueue() {
     	//the bounded queue floors at 8 and rounds to the next power of 2
 
 		assertThat(UnicastProcessor.create(Queues.get(2).get())
@@ -169,7 +169,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void bufferSizeBoundedBlockingQueue() {
+    void bufferSizeBoundedBlockingQueue() {
 		UnicastProcessor processor = UnicastProcessor.create(
 				new LinkedBlockingQueue<>(10));
 
@@ -177,7 +177,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void bufferSizeUnboundedBlockingQueue() {
+    void bufferSizeUnboundedBlockingQueue() {
 		UnicastProcessor processor = UnicastProcessor.create(
 				new LinkedBlockingQueue<>());
 
@@ -186,7 +186,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void bufferSizeOtherQueue() {
+    void bufferSizeOtherQueue() {
 		Sinks.Many<?> processor = Sinks.many().unicast().onBackpressureBuffer(
 				new PriorityQueue<>(10));
 
@@ -197,7 +197,7 @@ public class UnicastProcessorTest {
 
 
 	@Test
-	public void contextTest() {
+    void contextTest() {
     	UnicastProcessor<Integer> p = UnicastProcessor.create();
     	p.contextWrite(ctx -> ctx.put("foo", "bar")).subscribe();
 
@@ -205,7 +205,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void subscriptionCancelUpdatesDownstreamCount() {
+    void subscriptionCancelUpdatesDownstreamCount() {
 		UnicastProcessor<String> processor = UnicastProcessor.create();
 
 		assertThat(processor.currentSubscriberCount())
@@ -230,7 +230,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void ensureNoLeaksIfRacingDisposeAndOnNext() {
+    void ensureNoLeaksIfRacingDisposeAndOnNext() {
 		Hooks.onNextDropped(MemoryUtils.Tracked::safeRelease);
 		try {
 			MemoryUtils.OffHeapDetector tracker = new MemoryUtils.OffHeapDetector();
@@ -275,7 +275,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void shouldNotThrowFromTryEmitNext() {
+    void shouldNotThrowFromTryEmitNext() {
 		UnicastProcessor<Object> processor = new UnicastProcessor<>(Queues.empty().get());
 
 		StepVerifier.create(processor, 0)
@@ -290,7 +290,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void shouldSignalErrorOnOverflow() {
+    void shouldSignalErrorOnOverflow() {
 		UnicastProcessor<Object> processor = new UnicastProcessor<>(Queues.empty().get());
 
 		StepVerifier.create(processor, 0)
@@ -300,7 +300,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void tryEmitNextWithNoSubscriberAndBoundedQueueFailsZeroSubscriber() {
+    void tryEmitNextWithNoSubscriberAndBoundedQueueFailsZeroSubscriber() {
 		UnicastProcessor<Integer> unicastProcessor = UnicastProcessor.create(Queues.<Integer>one().get());
 
 		assertThat(unicastProcessor.tryEmitNext(1)).isEqualTo(Sinks.EmitResult.OK);
@@ -313,7 +313,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void tryEmitNextWithBoundedQueueAndNoRequestFailsWithOverflow() {
+    void tryEmitNextWithBoundedQueueAndNoRequestFailsWithOverflow() {
 		UnicastProcessor<Integer> unicastProcessor = UnicastProcessor.create(Queues.<Integer>one().get());
 
 		StepVerifier.create(unicastProcessor, 0) //important to make no initial request
@@ -329,7 +329,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void emitNextWithNoSubscriberAndBoundedQueueIgnoresValueAndKeepsSinkOpen() {
+    void emitNextWithNoSubscriberAndBoundedQueueIgnoresValueAndKeepsSinkOpen() {
 		UnicastProcessor<Integer> unicastProcessor = UnicastProcessor.create(Queues.<Integer>one().get());
 		//fill the buffer
 		unicastProcessor.tryEmitNext(1);
@@ -345,7 +345,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test //TODO that onOverflow API isn't exposed via Sinks. But maybe it should be generalized?
-	public void emitNextWithNoSubscriberAndBoundedQueueAndHandlerHandlesValueAndKeepsSinkOpen() {
+	void emitNextWithNoSubscriberAndBoundedQueueAndHandlerHandlesValueAndKeepsSinkOpen() {
 		Disposable sinkDisposed = Disposables.single();
 		List<Integer> discarded = new CopyOnWriteArrayList<>();
 		UnicastProcessor<Integer> unicastProcessor = UnicastProcessor.create(Queues.<Integer>one().get(),
@@ -367,7 +367,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void scanTerminatedCancelled() {
+    void scanTerminatedCancelled() {
 		Sinks.Many<Integer> sink = UnicastProcessor.create();
 
 		assertThat(sink.scan(Scannable.Attr.TERMINATED)).as("not yet terminated").isFalse();
@@ -385,7 +385,7 @@ public class UnicastProcessorTest {
 	}
 
 	@Test
-	public void inners() {
+    void inners() {
 		Sinks.Many<Integer> sink1 = UnicastProcessor.create();
 		Sinks.Many<Integer> sink2 = UnicastProcessor.create();
 		CoreSubscriber<Integer> notScannable = new BaseSubscriber<Integer>() {};

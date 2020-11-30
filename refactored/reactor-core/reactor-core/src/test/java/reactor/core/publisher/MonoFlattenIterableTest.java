@@ -8,10 +8,10 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoFlattenIterableTest {
+class MonoFlattenIterableTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoFlattenIterable<Integer, Integer> test =
                 new MonoFlattenIterable<>(Mono.just(1), i -> Arrays.asList(i), Integer.MAX_VALUE, Queues.one());
 

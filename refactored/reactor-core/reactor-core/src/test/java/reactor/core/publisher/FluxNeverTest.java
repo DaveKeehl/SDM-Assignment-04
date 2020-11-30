@@ -21,15 +21,15 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxNeverTest {
+class FluxNeverTest {
 
 	@Test
-	public void singleInstance() {
+    void singleInstance() {
 		assertThat(Flux.never()).isSameAs(Flux.never());
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		FluxNever.<Integer>instance().subscribe(ts);
@@ -42,7 +42,7 @@ public class FluxNeverTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    FluxNever test = new FluxNever();
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

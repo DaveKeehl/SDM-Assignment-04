@@ -26,11 +26,11 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoWhenTest {
+class MonoWhenTest {
 
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Mono<Void> f = Mono.just(1)
 		                   .and(Mono.just("test2"));
 
@@ -46,70 +46,70 @@ public class MonoWhenTest {
 
 
 	@Test
-	public void allEmptyPublisherIterable() {
+    void allEmptyPublisherIterable() {
 		Mono<Void> test = Mono.when(Arrays.asList(Mono.empty(), Flux.empty()));
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void allEmptyPublisher() {
+    void allEmptyPublisher() {
 		Mono<Void> test = Mono.when(Mono.empty(), Flux.empty());
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void someEmptyPublisher() {
+    void someEmptyPublisher() {
 		Mono<Void> test = Mono.when(Mono.just(1), Flux.empty());
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void noEmptyPublisher() {
+    void noEmptyPublisher() {
 		Mono<Void> test = Mono.when(Mono.just(1), Flux.just(3));
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void noSourcePublisher() {
+    void noSourcePublisher() {
 		Mono<Void> test = Mono.when();
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void oneSourcePublisher() {
+    void oneSourcePublisher() {
 		Mono<Void> test = Mono.when(Flux.empty());
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void allEmptyPublisherDelay() {
+    void allEmptyPublisherDelay() {
 		Mono<Void> test = Mono.whenDelayError(Mono.empty(), Flux.empty());
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void noSourcePublisherDelay() {
+    void noSourcePublisherDelay() {
 		Mono<Void> test = Mono.whenDelayError();
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void oneSourcePublisherDelay() {
+    void oneSourcePublisherDelay() {
 		Mono<Void> test = Mono.whenDelayError(Flux.empty());
 		StepVerifier.create(test)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void whenIterableDelayErrorPublishersVoidCombinesErrors() {
+    void whenIterableDelayErrorPublishersVoidCombinesErrors() {
 		Exception boom1 = new NullPointerException("boom1");
 		Exception boom2 = new IllegalArgumentException("boom2");
 
@@ -125,7 +125,7 @@ public class MonoWhenTest {
 	}
 
 	@Test
-	public void whenIterablePublishersVoidDoesntCombineErrors() {
+    void whenIterablePublishersVoidDoesntCombineErrors() {
 		Exception boom1 = new NullPointerException("boom1");
 		Exception boom2 = new IllegalArgumentException("boom2");
 
@@ -139,7 +139,7 @@ public class MonoWhenTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoWhen s = new MonoWhen(true);
 		assertThat(s.scan(Scannable.Attr.DELAY_ERROR)).as("delayError").isTrue();
 		assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

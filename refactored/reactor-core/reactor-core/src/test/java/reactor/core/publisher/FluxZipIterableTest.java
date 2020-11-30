@@ -34,7 +34,7 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
+class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected List<Scenario<String, String>> scenarios_operatorError() {
@@ -104,14 +104,14 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxZipIterable<>(null, Collections.emptyList(), (a, b) -> a);
 		});
 	}
 
 	@Test
-	public void iterableNull() {
+    void iterableNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.zipWithIterable(null, (a, b) -> a);
@@ -119,7 +119,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void zipperNull() {
+    void zipperNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.zipWithIterable(Collections.emptyList(), null);
@@ -127,7 +127,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalSameSize() {
+    void normalSameSize() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -140,7 +140,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalSameSizeBackpressured() {
+    void normalSameSizeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -171,7 +171,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalSourceShorter() {
+    void normalSourceShorter() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 4)
@@ -184,7 +184,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalOtherShorter() {
+    void normalOtherShorter() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -197,7 +197,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceEmpty() {
+    void sourceEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 0)
@@ -210,7 +210,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void otherEmpty() {
+    void otherEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -223,7 +223,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void zipperReturnsNull() {
+    void zipperReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -236,7 +236,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void iterableReturnsNull() {
+    void iterableReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -249,7 +249,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void zipperThrowsNull() {
+    void zipperThrowsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -263,7 +263,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void iterableThrowsNull() {
+    void iterableThrowsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -278,14 +278,14 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void zipWithIterable(){
+	void zipWithIterable(){
 		StepVerifier.create(Flux.just(0).zipWithIterable(Arrays.asList(1, 2, 3)))
 	                .expectNext(Tuples.of(0, 1))
 	                .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxZipIterable<Integer, Object, Integer> test = new FluxZipIterable<>(parent, Collections.emptyList(), (a, b) -> a);
 
@@ -294,7 +294,7 @@ public class FluxZipIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-    public void scanSingleSubscriber() {
+    void scanSingleSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxZipIterable.ZipSubscriber<Integer, Integer, Integer> test = new FluxZipIterable.ZipSubscriber<>(actual,
         		new ArrayList<Integer>().iterator(), (i, j) -> i + j);

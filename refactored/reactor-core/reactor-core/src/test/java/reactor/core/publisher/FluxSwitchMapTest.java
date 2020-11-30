@@ -30,10 +30,10 @@ import reactor.util.concurrent.Queues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxSwitchMapTest {
+class FluxSwitchMapTest {
 
 	@Test
-	public void noswitch() {
+    void noswitch() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -64,7 +64,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void noswitchBackpressured() {
+    void noswitchBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -107,7 +107,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void doswitch() {
+    void doswitch() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -146,7 +146,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void switchRegularQueue() {
+    void switchRegularQueue() {
 		Flux<String> source = Flux.just("a", "bb", "ccc");
 		FluxSwitchMap<String, Integer> test = new FluxSwitchMap<>(
 				source, s -> Flux.range(1, s.length()),
@@ -158,7 +158,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void mainCompletesBefore() {
+    void mainCompletesBefore() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -187,7 +187,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -212,7 +212,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void innerError() {
+    void innerError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -239,7 +239,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void mapperThrows() {
+    void mapperThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -259,7 +259,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void mapperReturnsNull() {
+    void mapperReturnsNull() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -276,7 +276,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void switchOnNextDynamically() {
+    void switchOnNextDynamically() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .switchMap(s -> Flux.range(s, 3)))
 		            .expectNext(1, 2, 3, 2, 3, 4, 3, 4, 5)
@@ -284,7 +284,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void switchOnNextDynamicallyOnNext() {
+    void switchOnNextDynamicallyOnNext() {
 		Sinks.Many<Flux<Integer>> up = Sinks.many().unicast().onBackpressureBuffer();
 		up.emitNext(Flux.range(1, 3), FAIL_FAST);
 		up.emitNext(Flux.range(2, 3).concatWith(Mono.never()), FAIL_FAST);
@@ -296,7 +296,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<String> parent = Flux.just("a", "bb", "ccc");
 		FluxSwitchMap<String, Integer> test = new FluxSwitchMap<>(
 				parent, s -> Flux.range(1, s.length()),
@@ -307,7 +307,7 @@ public class FluxSwitchMapTest {
 	}
 
 	@Test
-    public void scanMain() {
+    void scanMain() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSwitchMap.SwitchMapMain<Integer, Integer> test =
         		new FluxSwitchMap.SwitchMapMain<>(actual, i -> Mono.just(i), Queues.unbounded().get(), 234);
@@ -335,7 +335,7 @@ public class FluxSwitchMapTest {
     }
 
 	@Test
-    public void scanInner() {
+    void scanInner() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxSwitchMap.SwitchMapMain<Integer, Integer> main =
         		new FluxSwitchMap.SwitchMapMain<>(actual, i -> Mono.just(i), Queues.unbounded().get(), 234);

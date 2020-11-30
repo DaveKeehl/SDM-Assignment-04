@@ -25,24 +25,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxDefaultIfEmptyTest {
+class FluxDefaultIfEmptyTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDefaultIfEmpty<>(null, 1);
 		});
 	}
 
 	@Test
-	public void valueNull() {
+    void valueNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().defaultIfEmpty(null);
 		});
 	}
 
 	@Test
-	public void nonEmpty() {
+    void nonEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5).defaultIfEmpty(10).subscribe(ts);
@@ -54,7 +54,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyBackpressured() {
+    void nonEmptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5).defaultIfEmpty(10).subscribe(ts);
@@ -78,7 +78,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().defaultIfEmpty(10).subscribe(ts);
@@ -90,7 +90,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressured() {
+    void emptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().defaultIfEmpty(10).subscribe(ts);
@@ -108,7 +108,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyHide() {
+    void nonEmptyHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5).hide().defaultIfEmpty(10).subscribe(ts);
@@ -120,7 +120,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void nonEmptyBackpressuredHide() {
+    void nonEmptyBackpressuredHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5).hide().defaultIfEmpty(10).subscribe(ts);
@@ -144,7 +144,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyHide() {
+    void emptyHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().hide().defaultIfEmpty(10).subscribe(ts);
@@ -156,7 +156,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void emptyBackpressuredHide() {
+    void emptyBackpressuredHide() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().hide().defaultIfEmpty(10).subscribe(ts);
@@ -174,7 +174,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxDefaultIfEmpty<Integer> test = new FluxDefaultIfEmpty<>(parent, 2);
 
@@ -183,7 +183,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> { }, null, null);
 		FluxDefaultIfEmpty.DefaultIfEmptySubscriber<String> test =
 				new FluxDefaultIfEmpty.DefaultIfEmptySubscriber<>(actual, "bar");
@@ -202,7 +202,7 @@ public class FluxDefaultIfEmptyTest {
 	}
 
 	@Test
-	public void scanSubscriberCancelled() {
+    void scanSubscriberCancelled() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxDefaultIfEmpty.DefaultIfEmptySubscriber<String> test =
 				new FluxDefaultIfEmpty.DefaultIfEmptySubscriber<>(actual, "bar");

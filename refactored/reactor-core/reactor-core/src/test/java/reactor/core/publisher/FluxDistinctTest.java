@@ -52,7 +52,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class FluxDistinctTest extends FluxOperatorTest<String, String> {
+class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -90,21 +90,21 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinct<>(null, k -> k, HashSet::new, HashSet::add, HashSet::clear);
 		});
 	}
 
 	@Test
-	public void keyExtractorNull() {
+    void keyExtractorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().distinct(null);
 		});
 	}
 
 	@Test
-	public void collectionSupplierNull() {
+    void collectionSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinct<>(Flux.never(), k -> k, null, (c, k) -> true, c -> {
 			});
@@ -112,7 +112,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void collectionSupplierNullFuseable() {
+    void collectionSupplierNullFuseable() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinctFuseable<>(Flux.never(), k -> k, null, (c, k) -> true, c -> {
 			});
@@ -120,21 +120,21 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctPredicateNull() {
+    void distinctPredicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinct<>(Flux.never(), k -> k, HashSet::new, null, HashSet::clear);
 		});
 	}
 
 	@Test
-	public void cleanupNull() {
+    void cleanupNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxDistinct<>(Flux.never(), k -> k, HashSet::new, HashSet::add, null);
 		});
 	}
 
 	@Test
-	public void distinctCustomCollectionCustomPredicate() {
+    void distinctCustomCollectionCustomPredicate() {
 		Flux.just(1, 3, 5, 4, 5, 2, 4, 5)
 		    .distinct(Function.identity(), () -> new AtomicReference<>(Context.empty()),
 				    (ctxRef, k) -> {
@@ -159,7 +159,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allDistinct() {
+    void allDistinct() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -173,7 +173,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allDistinctBackpressured() {
+    void allDistinctBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -205,7 +205,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allDistinctHide() {
+    void allDistinctHide() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -220,7 +220,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allDistinctBackpressuredHide() {
+    void allDistinctBackpressuredHide() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -253,7 +253,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void someDistinct() {
+    void someDistinct() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -267,7 +267,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void someDistinctBackpressured() {
+    void someDistinctBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -299,7 +299,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allSame() {
+    void allSame() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -313,7 +313,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allSameFusable() {
+    void allSameFusable() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		ts.requestedFusionMode(Fuseable.ANY);
@@ -334,7 +334,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void allSameBackpressured() {
+    void allSameBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -354,7 +354,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void withKeyExtractorSame() {
+    void withKeyExtractorSame() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -366,7 +366,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void withKeyExtractorBackpressured() {
+    void withKeyExtractorBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -390,7 +390,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void keyExtractorThrows() {
+    void keyExtractorThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10).distinct(k -> {
@@ -404,7 +404,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void collectionSupplierThrows() {
+    void collectionSupplierThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		new FluxDistinct<>(Flux.range(1, 10), k -> k, () -> {
@@ -418,7 +418,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctPredicateThrows() {
+    void distinctPredicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		new FluxDistinct<>(Flux.range(1, 10), k -> k, HashSet::new,
@@ -434,7 +434,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void distinctPredicateThrowsConditional() {
+    void distinctPredicateThrowsConditional() {
 		IllegalStateException error = new IllegalStateException("forced failure");
 
 		@SuppressWarnings("unchecked")
@@ -456,7 +456,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctPredicateThrowsConditionalOnNext() {
+    void distinctPredicateThrowsConditionalOnNext() {
 		IllegalStateException error = new IllegalStateException("forced failure");
 
 		@SuppressWarnings("unchecked")
@@ -478,7 +478,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 
 	@Test
-	public void collectionSupplierReturnsNull() {
+    void collectionSupplierReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		new FluxDistinct<>(Flux.range(1, 10), k -> k, () -> null, (c,k) -> true, c -> {}).subscribe(ts);
@@ -490,7 +490,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 	@Test
 	//see https://github.com/reactor/reactor-core/issues/577
-	public void collectionSupplierLimitedFifo() {
+	void collectionSupplierLimitedFifo() {
 		Flux<Integer> flux = Flux.just(1, 2, 3, 4, 5, 6, 1, 3, 4, 1, 1, 1, 1, 2);
 
 		StepVerifier.create(flux.distinct(Flux.identityFunction(), () -> new NaiveFifoQueue<>(5)))
@@ -508,7 +508,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 		int size = 0;
 		Object[] array;
 
-		public NaiveFifoQueue(int limit) {
+		NaiveFifoQueue(int limit) {
 			this.limit = limit;
 			this.array = new Object[limit];
 		}
@@ -553,7 +553,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Flux<Integer> parent = Flux.just(1);
 		FluxDistinct<Integer, Integer, HashSet<Integer>> test = new FluxDistinct<>(parent, k -> k, HashSet::new, HashSet::add, HashSet::clear);
 
@@ -562,7 +562,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanFuseableOperator() {
+    void scanFuseableOperator() {
 		Flux<Integer> parent = Flux.just(1);
 		FluxDistinctFuseable<Integer, Integer, HashSet<Integer>> test
 				= new FluxDistinctFuseable<>(parent, k -> k, HashSet::new, HashSet::add, HashSet::clear);
@@ -572,7 +572,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		DistinctSubscriber<String, Integer, Set<Integer>> test =
 				new DistinctSubscriber<>(actual, new HashSet<>(), String::hashCode, Set::add, Set::clear);
@@ -589,7 +589,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		DistinctConditionalSubscriber<String, Integer, Set<Integer>> test =
@@ -607,7 +607,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanFuseableSubscriber() {
+    void scanFuseableSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxDistinct.DistinctFuseableSubscriber<String, Integer, Set<Integer>> test =
 				new FluxDistinct.DistinctFuseableSubscriber<>(actual, new HashSet<>(), String::hashCode, Set::add, Set::clear);
@@ -624,7 +624,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctDefaultWithHashcodeCollisions() {
+    void distinctDefaultWithHashcodeCollisions() {
 		Object foo = new Object() {
 			@Override
 			public int hashCode() {
@@ -647,7 +647,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctDefaultDoesntRetainObjects() throws InterruptedException {
+    void distinctDefaultDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefault> test = Flux.range(1, 100)
 		                                 .map(i -> retainedDetector.tracked(new DistinctDefault(i)))
@@ -666,7 +666,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctDefaultErrorDoesntRetainObjects() throws InterruptedException {
+    void distinctDefaultErrorDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefaultError> test = Flux.range(1, 100)
 		                     .map(i -> retainedDetector.tracked(new DistinctDefaultError(i)))
@@ -686,7 +686,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void distinctDefaultCancelDoesntRetainObjects() throws InterruptedException {
+    void distinctDefaultCancelDoesntRetainObjects() throws InterruptedException {
 		RetainedDetector retainedDetector = new RetainedDetector();
 		Flux<DistinctDefaultCancel> test = Flux.range(1, 100)
 		                                 .map(i -> retainedDetector.tracked(new DistinctDefaultCancel(i)))
@@ -707,7 +707,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCompleteOnSubscriber() {
+    void doesntRetainObjectsWithForcedCompleteOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctSubscriber<>(
@@ -733,7 +733,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCompleteOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedCompleteOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctConditionalSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctConditionalSubscriber<>(
@@ -759,7 +759,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedErrorOnSubscriber() {
+    void doesntRetainObjectsWithForcedErrorOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctSubscriber<>(
@@ -788,7 +788,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedErrorOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedErrorOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctConditionalSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctConditionalSubscriber<>(
@@ -817,7 +817,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCancelOnSubscriber() {
+    void doesntRetainObjectsWithForcedCancelOnSubscriber() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctSubscriber<>(
@@ -843,7 +843,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void doesntRetainObjectsWithForcedCancelOnSubscriber_conditional() {
+    void doesntRetainObjectsWithForcedCancelOnSubscriber_conditional() {
 		RetainedDetector retainedDetector = new RetainedDetector();
 
 		DistinctConditionalSubscriber<DistinctDefaultCancel, DistinctDefaultCancel, Set<DistinctDefaultCancel>> sub = new DistinctConditionalSubscriber<>(
@@ -872,7 +872,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 		private final int i;
 
-		public DistinctDefault(int i) {
+		DistinctDefault(int i) {
 			this.i = i;
 		}
 
@@ -891,7 +891,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 		private final int i;
 
-		public DistinctDefaultError(int i) {
+		DistinctDefaultError(int i) {
 			this.i = i;
 		}
 
@@ -910,7 +910,7 @@ public class FluxDistinctTest extends FluxOperatorTest<String, String> {
 
 		private final int i;
 
-		public DistinctDefaultCancel(int i) {
+		DistinctDefaultCancel(int i) {
 			this.i = i;
 		}
 

@@ -42,7 +42,7 @@ import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
+class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -140,7 +140,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.never()
 					.flatMapIterable(t -> null, -1);
@@ -148,7 +148,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -161,7 +161,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -186,7 +186,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalNoFusion() {
+    void normalNoFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -200,7 +200,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredNoFusion() {
+    void normalBackpressuredNoFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -226,7 +226,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void longRunning() {
+    void longRunning() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		int n = 1_000_000;
@@ -241,7 +241,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void longRunningNoFusion() {
+    void longRunningNoFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		int n = 1_000_000;
@@ -257,7 +257,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void fullFusion() {
+    void fullFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		int n = 1_000_000;
@@ -273,7 +273,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void just() {
+    void just() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.just(1)
@@ -286,7 +286,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().concatMapIterable(v -> Arrays.asList(v, v + 1))
@@ -301,7 +301,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	 * See https://github.com/reactor/reactor-core/issues/453
 	 */
 	@Test
-	public void testDrainSyncCompletesSeveralBatches() {
+    void testDrainSyncCompletesSeveralBatches() {
 		//both hide and just with 2 elements are necessary to go into SYNC mode
 		StepVerifier.create(Flux.just(1, 2)
 		                        .flatMapIterable(t -> IntStream.rangeClosed(0, 35).boxed().collect(Collectors.toList()))
@@ -316,7 +316,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	 * See https://github.com/reactor/reactor-core/issues/453
 	 */
 	@Test
-	public void testDrainAsyncCompletesSeveralBatches() {
+    void testDrainAsyncCompletesSeveralBatches() {
 		StepVerifier.create(Flux.range(0, 72)
 		                        .collectList()
 		                        .flatMapIterable(Function.identity())
@@ -330,7 +330,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	 * See https://github.com/reactor/reactor-core/issues/508
 	 */
 	@Test
-	public void testPublishingTwice() {
+    void testPublishingTwice() {
 		StepVerifier.create(Flux.just(Flux.range(0, 300).toIterable(), Flux.range(0, 300).toIterable())
 		                        .flatMapIterable(x -> x)
 		                        .share()
@@ -341,7 +341,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		Flux<Integer> source = Flux.range(1, 10).map(i -> i - 1);
 
 		FluxFlattenIterable<Integer, Integer> test = new FluxFlattenIterable<>(source, i -> new ArrayList<>(i), 35, Queues.one());
@@ -352,7 +352,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxFlattenIterable.FlattenIterableSubscriber<Integer, Integer> test =
 				new FluxFlattenIterable.FlattenIterableSubscriber<>(actual, i -> new ArrayList<>(i), 123, Queues.<Integer>one());
@@ -381,7 +381,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	}
 
-	public void asyncDrainWithPollFailure() {
+	void asyncDrainWithPollFailure() {
 		Flux<Integer> p = Flux.range(1, 3)
 		                      .collectList()
 		                      .filter(l -> { throw new IllegalStateException("boom"); })
@@ -393,7 +393,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncDrainWithPollFailure() {
+    void syncDrainWithPollFailure() {
 		Flux<Integer> p = Mono.just(Arrays.asList(1, 2, 3))
 		                      .filter(l -> { throw new IllegalStateException("boom"); })
 		                      .flatMapIterable(Function.identity());
@@ -404,7 +404,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueNullPublisherNotFused() {
+    void errorModeContinueNullPublisherNotFused() {
 		Flux<Integer> test = Flux
 				.just(1, 2)
 				.hide()
@@ -426,7 +426,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueInternalErrorNotFused() {
+    void errorModeContinueInternalErrorNotFused() {
 		Flux<Integer> test = Flux
 				.just(1, 2)
 				.hide()
@@ -448,7 +448,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueSingleElementNotFused() {
+    void errorModeContinueSingleElementNotFused() {
 		Flux<Integer> test = Flux
 				.just(1)
 				.hide()
@@ -469,7 +469,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueNullPublisherFused() {
+    void errorModeContinueNullPublisherFused() {
 		Flux<Integer> test = Flux
 				.just(1, 2)
 				.flatMapIterable(f -> {
@@ -489,7 +489,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueInternalErrorFused() {
+    void errorModeContinueInternalErrorFused() {
 		Flux<Integer> test = Flux
 				.just(1, 2)
 				.flatMapIterable(f -> {
@@ -509,7 +509,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void errorModeContinueSingleElementFused() {
+    void errorModeContinueSingleElementFused() {
 		Flux<Integer> test = Flux
 				.just(1)
 				.flatMapIterable(f -> {
@@ -529,7 +529,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1925
 	@Test
-	public void concatMapIterableDoOnDiscardTestDrainSync() {
+    void concatMapIterableDoOnDiscardTestDrainSync() {
 		ReferenceCounted referenceCounted1 = new ReferenceCounted(1);
 		ReferenceCounted referenceCounted2 = new ReferenceCounted(2);
 		ReferenceCounted referenceCounted3 = new ReferenceCounted(3);
@@ -553,7 +553,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1925
 	@Test
-	public void concatMapIterableDoOnDiscardTestDrainAsync() {
+    void concatMapIterableDoOnDiscardTestDrainAsync() {
 		ReferenceCounted referenceCounted1 = new ReferenceCounted(1);
 		ReferenceCounted referenceCounted2 = new ReferenceCounted(2);
 		ReferenceCounted referenceCounted3 = new ReferenceCounted(3);
@@ -578,7 +578,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1925
 	@Test
-	public void concatMapIterableDoOnDiscardScalarSource() {
+    void concatMapIterableDoOnDiscardScalarSource() {
 		ReferenceCounted referenceCounted1 = new ReferenceCounted(1);
 		ReferenceCounted referenceCounted2 = new ReferenceCounted(2);
 		ReferenceCounted referenceCounted3 = new ReferenceCounted(3);
@@ -602,7 +602,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1925
 	@Test
-	public void concatMapIterableDoOnDiscardMonoSource() {
+    void concatMapIterableDoOnDiscardMonoSource() {
 		ReferenceCounted referenceCounted1 = new ReferenceCounted(1);
 		ReferenceCounted referenceCounted2 = new ReferenceCounted(2);
 		ReferenceCounted referenceCounted3 = new ReferenceCounted(3);
@@ -626,7 +626,7 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 
 	//see https://github.com/reactor/reactor-core/issues/1925
 	@Test
-	public void concatMapIterableDoOnDiscardOnClear() {
+    void concatMapIterableDoOnDiscardOnClear() {
 		ReferenceCounted referenceCounted1 = new ReferenceCounted(1);
 		ReferenceCounted referenceCounted2 = new ReferenceCounted(2);
 		Context context = Operators.discardLocalAdapter(ReferenceCounted.class, ReferenceCounted::release).apply(Context.empty());
@@ -668,11 +668,11 @@ public class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 			this.index = index;
 		}
 
-		public int getRefCount() {
+		int getRefCount() {
 			return this.refCount;
 		}
 
-		public void release() {
+		void release() {
 			this.refCount = 0;
 		}
 	}

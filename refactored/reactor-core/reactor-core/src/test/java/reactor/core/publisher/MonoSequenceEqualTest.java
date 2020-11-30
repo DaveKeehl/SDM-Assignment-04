@@ -32,10 +32,10 @@ import reactor.util.concurrent.Queues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSequenceEqualTest {
+class MonoSequenceEqualTest {
 
 	@Test
-	public void sequenceEquals() {
+    void sequenceEquals() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three"),
 						Flux.just("one", "two", "three")))
@@ -44,7 +44,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceLongerLeft() {
+    void sequenceLongerLeft() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three", "four"),
 						Flux.just("one", "two", "three")))
@@ -53,7 +53,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceLongerRight() {
+    void sequenceLongerRight() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three"),
 						Flux.just("one", "two", "three", "four")))
@@ -62,7 +62,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceErrorsLeft() {
+    void sequenceErrorsLeft() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two").concatWith(Mono.error(new IllegalStateException())),
 						Flux.just("one", "two", "three")))
@@ -70,7 +70,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceErrorsRight() {
+    void sequenceErrorsRight() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three"),
 						Flux.just("one", "two").concatWith(Mono.error(new IllegalStateException()))))
@@ -78,7 +78,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceErrorsBothPropagatesLeftError() {
+    void sequenceErrorsBothPropagatesLeftError() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three", "four").concatWith(Mono.error(new IllegalArgumentException("left"))).hide(),
 						Flux.just("one", "two").concatWith(Mono.error(new IllegalArgumentException("right"))).hide()))
@@ -86,7 +86,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceErrorsBothPropagatesLeftErrorWithSmallRequest() {
+    void sequenceErrorsBothPropagatesLeftErrorWithSmallRequest() {
 		StepVerifier.create(Mono.sequenceEqual(
 						Flux.just("one", "two", "three", "four")
 						    .concatWith(Mono.error(new IllegalArgumentException("left")))
@@ -99,7 +99,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceEmptyLeft() {
+    void sequenceEmptyLeft() {
 		StepVerifier.create(Mono.sequenceEqual(
 				Flux.empty(),
 				Flux.just("one", "two", "three")))
@@ -108,7 +108,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceEmptyRight() {
+    void sequenceEmptyRight() {
 		StepVerifier.create(Mono.sequenceEqual(
 				Flux.just("one", "two", "three"),
 				Flux.empty()))
@@ -117,7 +117,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void sequenceEmptyBoth() {
+    void sequenceEmptyBoth() {
 		StepVerifier.create(Mono.sequenceEqual(
 				Flux.empty(),
 				Flux.empty()))
@@ -126,14 +126,14 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void equalPredicateFailure() {
+    void equalPredicateFailure() {
 		StepVerifier.create(Mono.sequenceEqual(Mono.just("one"), Mono.just("one"),
 						(s1, s2) -> { throw new IllegalStateException("boom"); }))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void largeSequence() {
+    void largeSequence() {
 		Flux<Integer> source = Flux.range(1, Queues.SMALL_BUFFER_SIZE * 4).subscribeOn(Schedulers.boundedElastic());
 
 		StepVerifier.create(Mono.sequenceEqual(source, source))
@@ -143,7 +143,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void syncFusedCrash() {
+    void syncFusedCrash() {
 		Flux<Integer> source = Flux.range(1, 10).map(i -> { throw new IllegalArgumentException("boom"); });
 
 		StepVerifier.create(Mono.sequenceEqual(source, Flux.range(1, 10).hide()))
@@ -155,7 +155,7 @@ public class MonoSequenceEqualTest {
 
 
 	@Test
-	public void differenceCancelsBothSources() {
+    void differenceCancelsBothSources() {
 		AtomicBoolean sub1 = new AtomicBoolean();
 		AtomicBoolean sub2 = new AtomicBoolean();
 
@@ -171,7 +171,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void cancelCancelsBothSources() {
+    void cancelCancelsBothSources() {
 		AtomicReference<Subscription> sub1 = new AtomicReference<>();
 		AtomicReference<Subscription> sub2 = new AtomicReference<>();
 		AtomicBoolean cancel1 = new AtomicBoolean();
@@ -197,7 +197,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void doubleCancelCancelsOnce() {
+    void doubleCancelCancelsOnce() {
 		AtomicReference<Subscription> sub1 = new AtomicReference<>();
 		AtomicReference<Subscription> sub2 = new AtomicReference<>();
 		AtomicLong cancel1 = new AtomicLong();
@@ -223,7 +223,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void cancelCancelsBothSourcesIncludingNever() {
+    void cancelCancelsBothSourcesIncludingNever() {
 		AtomicReference<Subscription> sub1 = new AtomicReference<>();
 		AtomicReference<Subscription> sub2 = new AtomicReference<>();
 		AtomicBoolean cancel1 = new AtomicBoolean();
@@ -248,7 +248,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void subscribeInnerOnce() {
+    void subscribeInnerOnce() {
 		LongAdder innerSub1 = new LongAdder();
 		LongAdder innerSub2 = new LongAdder();
 
@@ -265,14 +265,14 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoSequenceEqual<Integer> s = new MonoSequenceEqual<>(Mono.just(1), Mono.just(2), (a, b) -> true, 123);
 		assertThat(s.scan(Scannable.Attr.PREFETCH)).isEqualTo(123);
 		assertThat(s.scan(Scannable.Attr.RUN_STYLE)).isEqualTo(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanCoordinator() {
+    void scanCoordinator() {
 		CoreSubscriber<Boolean> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoSequenceEqual.EqualCoordinator<String> test = new MonoSequenceEqual.EqualCoordinator<>(actual,
 						123,
@@ -289,7 +289,7 @@ public class MonoSequenceEqualTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<Boolean>
 				actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoSequenceEqual.EqualCoordinator<String> coordinator = new MonoSequenceEqual.EqualCoordinator<>(actual,

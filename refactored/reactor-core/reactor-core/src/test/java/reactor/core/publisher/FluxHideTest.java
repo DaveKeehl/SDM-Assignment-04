@@ -24,10 +24,10 @@ import reactor.test.publisher.TestPublisher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxHideTest {
+class FluxHideTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		Flux<Integer> f = Flux.just(1);
 		assertThat(f).isInstanceOf(Fuseable.ScalarCallable.class);
 		f = f.hide();
@@ -36,7 +36,7 @@ public class FluxHideTest {
 	}
 
 	@Test
-	public void suppressedSubscriber() {
+    void suppressedSubscriber() {
 		CoreSubscriber<Integer> s = new CoreSubscriber<Integer>() {
 			@Override
 			public void onSubscribe(
@@ -79,7 +79,7 @@ public class FluxHideTest {
 	}
 
 	@Test
-	public void suppressedSubscriberError() {
+    void suppressedSubscriberError() {
 		CoreSubscriber<Integer> s = new CoreSubscriber<Integer>() {
 			@Override
 			public void onSubscribe(
@@ -118,7 +118,7 @@ public class FluxHideTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxHide<Integer> test = new FluxHide<>(parent);
 
@@ -127,7 +127,7 @@ public class FluxHideTest {
 	}
 
 	@Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxHide.HideSubscriber<String> test = new FluxHide.HideSubscriber<>(actual);
         Subscription parent = Operators.emptySubscription();
@@ -139,7 +139,7 @@ public class FluxHideTest {
     }
 
 	@Test
-    public void scanSuppressFuseableSubscriber() {
+    void scanSuppressFuseableSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxHide.SuppressFuseableSubscriber<String> test = new FluxHide.SuppressFuseableSubscriber<>(actual);
         Subscription parent = Operators.emptySubscription();

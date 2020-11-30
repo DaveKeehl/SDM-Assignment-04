@@ -45,7 +45,7 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxWindowWhenTest {
+class FluxWindowWhenTest {
 
 	private static final Logger LOGGER = Loggers.getLogger(FluxWindowWhenTest.class);
 
@@ -65,7 +65,7 @@ public class FluxWindowWhenTest {
 
 	//see https://github.com/reactor/reactor-core/issues/975
 	@Test
-	public void noWindowRetained_gh975() throws InterruptedException {
+    void noWindowRetained_gh975() throws InterruptedException {
 		LongAdder created = new LongAdder();
 		class Wrapper {
 
@@ -146,7 +146,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -189,7 +189,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void normalStarterEnds() {
+    void normalStarterEnds() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source = Sinks.unsafe().many().multicast().directBestEffort();
@@ -233,7 +233,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void oneWindowOnly() {
+    void oneWindowOnly() {
 		AssertSubscriber<Flux<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source = Sinks.unsafe().many().multicast().directBestEffort();
@@ -269,7 +269,7 @@ public class FluxWindowWhenTest {
 
 
 	@Test
-	public void windowWillAccumulateMultipleListsOfValuesOverlap() {
+    void windowWillAccumulateMultipleListsOfValuesOverlap() {
 		//given: "a source and a collected flux"
 		Sinks.Many<Integer> numbers = Sinks.many().multicast().onBackpressureBuffer();
 		Sinks.Many<Integer> bucketOpening = Sinks.many().multicast().onBackpressureBuffer();
@@ -308,7 +308,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFluxOverlapTime() {
+    void windowWillSubdivideAnInputFluxOverlapTime() {
 		StepVerifier.withVirtualTime(this::scenario_windowWillSubdivideAnInputFluxOverlapTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2, 3))
@@ -327,7 +327,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFluxSameTime() {
+    void windowWillSubdivideAnInputFluxSameTime() {
 		StepVerifier.withVirtualTime(this::scenario_windowWillSubdivideAnInputFluxSameTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2, 3))
@@ -344,7 +344,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void windowWillSubdivideAnInputFluxGapTime() {
+    void windowWillSubdivideAnInputFluxGapTime() {
 		StepVerifier.withVirtualTime(this::scenario_windowWillSubdivideAnInputFluxGapTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2))
@@ -354,7 +354,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void startError() {
+    void startError() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.create();
 		final TestPublisher<Integer> end = TestPublisher.create();
@@ -373,7 +373,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void startDoneThenError() {
+    void startDoneThenError() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 		final TestPublisher<Integer> end = TestPublisher.create();
@@ -394,7 +394,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void startDoneThenComplete() {
+    void startDoneThenComplete() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 		final TestPublisher<Integer> end = TestPublisher.create();
@@ -415,7 +415,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void startDoneThenNext() {
+    void startDoneThenNext() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 		final TestPublisher<Integer> end = TestPublisher.create();
@@ -437,7 +437,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void endError() {
+    void endError() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.create();
 		TestPublisher<Integer> end = TestPublisher.create();
@@ -457,7 +457,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void endDoneThenError() {
+    void endDoneThenError() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.create();
 		TestPublisher<Integer> end = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
@@ -479,7 +479,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void endDoneThenComplete() {
+    void endDoneThenComplete() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.create();
 		TestPublisher<Integer> end = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
@@ -501,7 +501,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void endDoneThenNext() {
+    void endDoneThenNext() {
 		TestPublisher<Integer> source = TestPublisher.create();
 		TestPublisher<Integer> start = TestPublisher.create();
 		TestPublisher<Integer> end = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
@@ -524,7 +524,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		StepVerifier.create(Flux.error(new IllegalStateException("boom"))
 		                        .windowWhen(Flux.never(), v -> Mono.just(1))
 		                        .flatMap(Flux::count))
@@ -532,7 +532,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void mainDoneThenNext() {
+    void mainDoneThenNext() {
 		TestPublisher<Integer> source = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(source.flux()
@@ -545,7 +545,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void mainDoneThenError() {
+    void mainDoneThenError() {
 		TestPublisher<Integer> source = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(source.flux()
@@ -558,7 +558,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void mainDoneThenComplete() {
+    void mainDoneThenComplete() {
 		TestPublisher<Integer> source = TestPublisher.createNoncompliant(TestPublisher.Violation.CLEANUP_ON_TERMINATE);
 
 		StepVerifier.create(source.flux()
@@ -572,7 +572,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxWindowWhen<Integer, Integer, Object> test = new FluxWindowWhen<>(parent, Flux.just(2), v -> Flux.empty(), Queues.empty());
 
@@ -581,7 +581,7 @@ public class FluxWindowWhenTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null,
 		        sub -> sub.request(1));
         FluxWindowWhen.WindowWhenMainSubscriber<Integer, Integer, Integer> test =
@@ -610,7 +610,7 @@ public class FluxWindowWhenTest {
     }
 
 	@Test
-    public void scanMainSubscriberError() {
+    void scanMainSubscriberError() {
         CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxWindowWhen.WindowWhenMainSubscriber<Integer, Integer, Integer> test =
         		new FluxWindowWhen.WindowWhenMainSubscriber<>(actual,

@@ -38,39 +38,39 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  *
  * @author Simon Baslé
  */
-public class MetricsNoMicrometerTest {
+class MetricsNoMicrometerTest {
 
 	@Test
-	public void isMicrometerAvailable() {
+    void isMicrometerAvailable() {
 		assertThat(Metrics.isInstrumentationAvailable()).isFalse();
 	}
 
 	@Test
-	public void FluxMetricsNoOp() {
+    void FluxMetricsNoOp() {
 		assertThatCode(() -> Flux.just("foo").hide().metrics().blockLast())
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void FluxMetricsFusedNoOp() {
+    void FluxMetricsFusedNoOp() {
 		assertThatCode(() -> Flux.just("foo").metrics().blockLast())
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void MonoMetricsNoOp() {
+    void MonoMetricsNoOp() {
 		assertThatCode(() -> Mono.just("foo").hide().metrics().block())
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void MonoMetricsFusedNoOp() {
+    void MonoMetricsFusedNoOp() {
 		assertThatCode(() -> Mono.just("foo").metrics().block())
 				.doesNotThrowAnyException();
 	}
 
 	@Test
-	public void schedulersInstrumentation() {
+    void schedulersInstrumentation() {
 		try {
 			assertThatCode(() -> {
 				Schedulers.enableMetrics();

@@ -22,10 +22,10 @@ import reactor.core.publisher.FluxOnAssembly.AssemblySnapshot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConnectableFluxOnAssemblyTest {
+class ConnectableFluxOnAssemblyTest {
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		ConnectableFlux<String> source = Flux.just("foo").publish();
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		ConnectableFluxOnAssembly<String> test = new ConnectableFluxOnAssembly<>(source, stacktrace);
@@ -36,7 +36,7 @@ public class ConnectableFluxOnAssemblyTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ConnectableFlux<String> source = Flux.just("foo").publish();
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		ConnectableFluxOnAssembly<String> test = new ConnectableFluxOnAssembly<>(source, stacktrace);
@@ -48,7 +48,7 @@ public class ConnectableFluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stepNameAndToString() {
+    void stepNameAndToString() {
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		ConnectableFluxOnAssembly<?> test = new ConnectableFluxOnAssembly<>(Flux.empty().publish(), stacktrace);
 

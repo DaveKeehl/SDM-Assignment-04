@@ -40,13 +40,13 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoExpandTest {
+class MonoExpandTest {
 	Function<Integer, Publisher<Integer>> countDown =
 			v -> v == 0 ? Flux.empty() : Flux.just(v - 1);
 
 
 	@Test
-	public void recursiveCountdown() {
+    void recursiveCountdown() {
 		StepVerifier.create(Mono.just(10)
 		                        .expand(countDown))
 		            .expectNext(10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
@@ -54,7 +54,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownDepth() {
+    void recursiveCountdownDepth() {
 		StepVerifier.create(Mono.just(10)
 		                        .expandDeep(countDown))
 		            .expectNext(10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
@@ -62,35 +62,35 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.<Integer>error(new IllegalStateException("boom"))
 				.expand(countDown))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void errorDepth() {
+    void errorDepth() {
 		StepVerifier.create(Mono.<Integer>error(new IllegalStateException("boom"))
 				.expandDeep(countDown))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		StepVerifier.create(Mono.<Integer>empty()
 				.expand(countDown))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void emptyDepth() {
+    void emptyDepth() {
 		StepVerifier.create(Mono.<Integer>empty()
 				.expandDeep(countDown))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void recursiveCountdownLoop() {
+    void recursiveCountdownLoop() {
 		for (int i = 0; i < 1000; i = (i < 100 ? i + 1 : i + 50)) {
 			String tag = "i = " + i + ", strategy = breadth";
 
@@ -113,7 +113,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownLoopDepth() {
+    void recursiveCountdownLoopDepth() {
 		for (int i = 0; i < 1000; i = (i < 100 ? i + 1 : i + 50)) {
 			String tag = "i = " + i + ", strategy = depth";
 
@@ -136,7 +136,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownTake() {
+    void recursiveCountdownTake() {
 		StepVerifier.create(Mono.just(10)
 		                        .expand(countDown)
 		                        .take(5)
@@ -146,7 +146,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownTakeDepth() {
+    void recursiveCountdownTakeDepth() {
 		StepVerifier.create(Mono.just(10)
 		                        .expandDeep(countDown)
 		                        .take(5)
@@ -156,7 +156,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownBackpressure() {
+    void recursiveCountdownBackpressure() {
 		StepVerifier.create(Mono.just(10)
 		                        .expand(countDown),
 				StepVerifierOptions.create()
@@ -174,7 +174,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownBackpressureDepth() {
+    void recursiveCountdownBackpressureDepth() {
 		StepVerifier.create(Mono.just(10)
 		                        .expandDeep(countDown),
 				StepVerifierOptions.create()
@@ -192,7 +192,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void expanderThrows() {
+    void expanderThrows() {
 		StepVerifier.create(Mono.just(10)
 		                        .expand(v -> {
 			                        throw new IllegalStateException("boom");
@@ -202,7 +202,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void expanderThrowsDepth() {
+    void expanderThrowsDepth() {
 		StepVerifier.create(Mono.just(10)
 		                        .expandDeep(v -> {
 			                        throw new IllegalStateException("boom");
@@ -212,7 +212,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void expanderReturnsNull() {
+    void expanderReturnsNull() {
 		StepVerifier.create(Mono.just(10)
 		                        .expand(v -> null))
 		            .expectNext(10)
@@ -220,7 +220,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void expanderReturnsNullDepth() {
+    void expanderReturnsNullDepth() {
 		StepVerifier.create(Mono.just(10)
 		                        .expandDeep(v -> null))
 		            .expectNext(10)
@@ -277,7 +277,7 @@ public class MonoExpandTest {
 
 	@Test
 	@Timeout(5)
-	public void depthFirst() {
+	void depthFirst() {
 		FluxExpandTest.Node root = createTest();
 
 		StepVerifier.create(Mono.just(root)
@@ -295,7 +295,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthFirstAsync() {
+    void depthFirstAsync() {
 		FluxExpandTest.Node root = createTest();
 
 		StepVerifier.create(Mono.just(root)
@@ -316,7 +316,7 @@ public class MonoExpandTest {
 
 	@Test
 	@Timeout(5)
-	public void breadthFirst() {
+	void breadthFirst() {
 		FluxExpandTest.Node root = createTest();
 
 		StepVerifier.create(Mono.just(root)
@@ -333,7 +333,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void breadthFirstAsync() {
+    void breadthFirstAsync() {
 		FluxExpandTest.Node root = createTest();
 
 		StepVerifier.create(Mono.just(root)
@@ -351,7 +351,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthFirstCancel() {
+    void depthFirstCancel() {
 		final TestPublisher<Integer> pp = TestPublisher.create();
 		final AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		CoreSubscriber<Integer> s = new CoreSubscriber<Integer>() {
@@ -393,7 +393,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthCancelRace() {
+    void depthCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 			final AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -409,7 +409,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthEmitCancelRace() {
+    void depthEmitCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -428,7 +428,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthCompleteCancelRace() {
+    void depthCompleteCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -446,7 +446,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void depthCancelRace2() throws Exception {
+    void depthCancelRace2() throws Exception {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -491,7 +491,7 @@ public class MonoExpandTest {
 	);
 
 	@Test
-	public void javadocExampleBreadthFirst() {
+    void javadocExampleBreadthFirst() {
 		List<String> breadthFirstExpected = Arrays.asList(
 				"A",
 				"AA",
@@ -509,7 +509,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void javadocExampleDepthFirst() {
+    void javadocExampleDepthFirst() {
 		List<String> depthFirstExpected = Arrays.asList(
 				"A",
 				"AA",
@@ -527,7 +527,7 @@ public class MonoExpandTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoExpand<Integer> test = new MonoExpand<>(Mono.just(10), countDown, false, 10);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

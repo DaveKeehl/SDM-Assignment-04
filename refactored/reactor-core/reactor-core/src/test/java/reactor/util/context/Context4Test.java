@@ -28,12 +28,12 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static reactor.util.context.ContextTest.key;
 import static reactor.util.context.ContextTest.keyValue;
 
-public class Context4Test {
+class Context4Test {
 
 	Context4 c = new Context4(1, "A", 2, "B", 3, "C", 4, "D");
 
 	@Test
-	public void replaceKey1NewContext() throws Exception {
+    void replaceKey1NewContext() throws Exception {
 		Context put = c.put(1, "foo");
 
 		assertThat(put)
@@ -46,7 +46,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void replaceKey2NewContext() {
+    void replaceKey2NewContext() {
 		Context put = c.put(2, "foo");
 
 		assertThat(put)
@@ -59,7 +59,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void replaceKey3NewContext() {
+    void replaceKey3NewContext() {
 		Context put = c.put(3, "foo");
 
 		assertThat(put)
@@ -72,7 +72,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void replaceKey4NewContext() {
+    void replaceKey4NewContext() {
 		Context put = c.put(4, "foo");
 
 		assertThat(put)
@@ -85,7 +85,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void putDifferentKeyContext5() throws Exception {
+    void putDifferentKeyContext5() throws Exception {
 		Context put = c.put(5, "Abis");
 		assertThat(put)
 				.isInstanceOf(Context5.class);
@@ -96,7 +96,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void hasKey() throws Exception {
+    void hasKey() throws Exception {
 		assertThat(c.hasKey(1)).as("hasKey(1)").isTrue();
 		assertThat(c.hasKey(2)).as("hasKey(2)").isTrue();
 		assertThat(c.hasKey(3)).as("hasKey(3)").isTrue();
@@ -105,7 +105,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void removeKeys() {
+    void removeKeys() {
 		assertThat(c.delete(1))
 				.as("delete(1)")
 				.isInstanceOf(Context3.class)
@@ -142,7 +142,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void get() {
+    void get() {
 		assertThat((String) c.get(1)).isEqualTo("A");
 		assertThat((String) c.get(2)).isEqualTo("B");
 		assertThat((String) c.get(3)).isEqualTo("C");
@@ -150,25 +150,25 @@ public class Context4Test {
 	}
 
 	@Test
-	public void getUnknown() throws Exception {
+    void getUnknown() throws Exception {
 		assertThatExceptionOfType(NoSuchElementException.class)
 				.isThrownBy(() -> c.get(5))
 				.withMessage("Context does not contain key: 5");
 	}
 
 	@Test
-	public void getUnknownWithDefault() throws Exception {
+    void getUnknownWithDefault() throws Exception {
 		assertThat(c.getOrDefault("peeka", "boo")).isEqualTo("boo");
 	}
 
 	@Test
-	public void getUnknownWithDefaultNull() throws Exception {
+    void getUnknownWithDefaultNull() throws Exception {
 		Object def = null;
 		assertThat(c.getOrDefault("peeka", def)).isNull();
 	}
 
 	@Test
-	public void stream() throws Exception {
+    void stream() throws Exception {
 		assertThat(c.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
 				.hasSize(4)
 				.containsOnlyKeys(1, 2, 3, 4)
@@ -176,19 +176,19 @@ public class Context4Test {
 	}
 
 	@Test
-	public void string() throws Exception {
+    void string() throws Exception {
 		assertThat(c.toString()).isEqualTo("Context4{1=A, 2=B, 3=C, 4=D}");
 	}
 
 	@Test
-	public void ofApi() {
+    void ofApi() {
 		assertThat(Context.of("test", 12, "value", true, 123, 456L, true, false))
 				.isInstanceOf(Context4.class)
 				.hasToString("Context4{test=12, value=true, 123=456, true=false}");
 	}
 
 	@Test
-	public void putAllOf() {
+    void putAllOf() {
 		Context m = Context.of("A", 1, "B", 2, "C", 3);
 		Context put = c.putAll(m.readOnly());
 
@@ -198,7 +198,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void putAllReplaces() {
+    void putAllReplaces() {
 		Context m = Context.of(c.key1, "replaced", "A", 1);
 		Context put = c.putAll(m.readOnly());
 
@@ -207,7 +207,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void putAllOfEmpty() {
+    void putAllOfEmpty() {
 		Context m = Context.empty();
 		Context put = c.putAll(m.readOnly());
 
@@ -215,52 +215,52 @@ public class Context4Test {
 	}
 
 	@Test
-	public void putNonNullWithNull() {
+    void putNonNullWithNull() {
 		Context put = c.putNonNull("putNonNull", null);
 
 		assertThat(put).isSameAs(c);
 	}
 
 	@Test
-	public void putNonNullWithValue() {
+    void putNonNullWithValue() {
 		Context put = c.putNonNull("putNonNull", "value");
 
 		assertThat(put.getOrEmpty("putNonNull")).contains("value");
 	}
 
 	@Test
-	public void size() {
+    void size() {
 		assertThat(c.size()).isEqualTo(4);
 	}
 
 	@Test
-	public void checkDuplicateKeysZeroOne() {
+    void checkDuplicateKeysZeroOne() {
 		assertThatCode(Context4::checkKeys).as("zero").doesNotThrowAnyException();
 		assertThatCode(() -> Context4.checkKeys("one")).as("one").doesNotThrowAnyException();
 	}
 
 	@Test
-	public void checkNullKeysOne() {
+    void checkNullKeysOne() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Context4.checkKeys((Object) null))
 				.withMessage("key1");
 	}
 
 	@Test
-	public void checkDuplicateKeysTwo() {
+    void checkDuplicateKeysTwo() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> Context4.checkKeys(1, 1))
 				.withMessage("Key #1 (1) is duplicated");
 	}
 
 	@Test
-	public void checkNullKeysTwo() {
+    void checkNullKeysTwo() {
 		assertThatNullPointerException().isThrownBy(() -> Context4.checkKeys("one", null))
 		                                .withMessage("key2");
 	}
 
 	@Test
-	public void checkDuplicateKeysThree() {
+    void checkDuplicateKeysThree() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> Context4.checkKeys(1, 1, 3))
 				.withMessage("Key #1 (1) is duplicated");
@@ -275,14 +275,14 @@ public class Context4Test {
 	}
 
 	@Test
-	public void checkNullKeysThree() {
+    void checkNullKeysThree() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Context4.checkKeys("one", "two", null))
 				.withMessage("key3");
 	}
 
 	@Test
-	public void checkDuplicateKeysFour() {
+    void checkDuplicateKeysFour() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> Context4.checkKeys(1, 1, 3, 4))
 				.withMessage("Key #1 (1) is duplicated");
@@ -309,14 +309,14 @@ public class Context4Test {
 	}
 
 	@Test
-	public void checkNullKeysFour() {
+    void checkNullKeysFour() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Context4.checkKeys("one", "two", "three", null))
 				.withMessage("key4");
 	}
 
 	@Test
-	public void checkDuplicateKeysFive() {
+    void checkDuplicateKeysFive() {
 		assertThatIllegalArgumentException()
 				.isThrownBy(() -> Context4.checkKeys(1, 1, 3, 4, 5))
 				.withMessage("Key #1 (1) is duplicated");
@@ -359,14 +359,14 @@ public class Context4Test {
 	}
 
 	@Test
-	public void checkNullKeysFive() {
+    void checkNullKeysFive() {
 		assertThatNullPointerException()
 				.isThrownBy(() -> Context4.checkKeys("one", "two", "three", "four", null))
 				.withMessage("key5");
 	}
 
 	@Test
-	public void putAllSelfIntoEmpty() {
+    void putAllSelfIntoEmpty() {
 		CoreContext initial = new Context0();
 
 		Context result = ((CoreContext) c).putAllInto(initial);
@@ -378,7 +378,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void putAllSelfIntoContextN() {
+    void putAllSelfIntoContextN() {
 		CoreContext initial = new ContextN(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6);
 		Context4 self = new Context4("A", 1, "B", 2, "C", 3, "D", 4);
 		Context result = self.putAllInto(initial);
@@ -391,7 +391,7 @@ public class Context4Test {
 	}
 
 	@Test
-	public void unsafePutAllIntoShouldReplace() {
+    void unsafePutAllIntoShouldReplace() {
 		ContextN ctx = new ContextN(Collections.emptyMap());
 		ctx.accept(1, "VALUE1");
 		ctx.accept(2, "VALUE2");

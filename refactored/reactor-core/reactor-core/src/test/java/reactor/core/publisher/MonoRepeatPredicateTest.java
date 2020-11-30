@@ -24,11 +24,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class MonoRepeatPredicateTest {
+class MonoRepeatPredicateTest {
 
 	//these tests essentially cover the API and its escape hatches
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.never()
 					.repeat(null);
@@ -36,7 +36,7 @@ public class MonoRepeatPredicateTest {
 	}
 
 	@Test
-	public void nMinusOne() {
+    void nMinusOne() {
 		Mono<Integer> source = Mono.just(3);
 
 		assertThatIllegalArgumentException()
@@ -45,7 +45,7 @@ public class MonoRepeatPredicateTest {
 	}
 
 	@Test
-	public void nZero() {
+    void nZero() {
 		StepVerifier.create(Mono.just(3)
 		                        .repeat(0, () -> true))
 		            .expectNext(3)
@@ -53,7 +53,7 @@ public class MonoRepeatPredicateTest {
 	}
 
 	@Test
-	public void nOne() {
+    void nOne() {
 		StepVerifier.create(Mono.just(3)
 		                        .repeat(1, () -> true))
 		            .expectNext(3)
@@ -62,7 +62,7 @@ public class MonoRepeatPredicateTest {
 	}
 
 	@Test
-	public void nTwo() {
+    void nTwo() {
 		StepVerifier.create(Mono.just(3)
 		                        .repeat(2, () -> true))
 		            .expectNext(3)
@@ -72,7 +72,7 @@ public class MonoRepeatPredicateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoRepeatPredicate<Integer> test = new MonoRepeatPredicate<>(Mono.just(1), () -> true);
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

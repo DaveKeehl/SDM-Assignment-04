@@ -27,17 +27,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class SignalTest {
+class SignalTest {
 
 	Exception e = new Exception("test");
 
 	@Test
-	public void completeWithoutContextIsSingleton() {
+    void completeWithoutContextIsSingleton() {
 		assertThat(Signal.complete()).isSameAs(Signal.complete());
 	}
 
 	@Test
-	public void completeWithContextCreatesNewInstances() {
+    void completeWithContextCreatesNewInstances() {
 		Context context = Context.of("foo", "bar");
 		assertThat(Signal.complete(context))
 				.isNotSameAs(Signal.complete(context))
@@ -47,7 +47,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void completeStateWithContext(){
+    void completeStateWithContext(){
 		Context context = Context.of("foo", "bar");
 		Signal<Integer> s = Signal.complete(context);
 
@@ -81,7 +81,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void errorStateWithContext(){
+    void errorStateWithContext(){
 		Context context = Context.of("foo", "bar");
 		Signal<Integer> s = Signal.error(e, context);
 
@@ -118,7 +118,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void nextStateWithContext(){
+    void nextStateWithContext(){
 		Context context = Context.of("foo", "bar");
 		Signal<Integer> s = Signal.next(1, context);
 
@@ -157,7 +157,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void subscribeStateWithContext(){
+    void subscribeStateWithContext(){
 		Context context = Context.of("foo", "bar");
 		Signal<Integer> s = Signal.subscribe(Operators.emptySubscription(), context);
 
@@ -191,7 +191,7 @@ public class SignalTest {
 		            .verify();
 	}
 	@Test
-	public void completeState(){
+    void completeState(){
 		Signal<Integer> s = Signal.complete();
 
 		assertThat(s.isOnComplete()).isTrue();
@@ -222,7 +222,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void errorState(){
+    void errorState(){
 		Signal<Integer> s = Signal.error(e);
 
 		assertThat(s.isOnComplete()).isFalse();
@@ -256,7 +256,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void nextState(){
+    void nextState(){
 		Signal<Integer> s = Signal.next(1);
 
 		assertThat(s.isOnComplete()).isFalse();
@@ -292,7 +292,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void subscribeState(){
+    void subscribeState(){
 		Signal<Integer> s = Signal.subscribe(Operators.emptySubscription());
 
 		assertThat(s.isOnComplete()).isFalse();
@@ -324,7 +324,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void unmatchingSignal(){
+    void unmatchingSignal(){
 		assertThat(Signal.complete().equals(null)).isFalse();
 		assertThat(Signal.isError(1)).isFalse();
 		assertThat(Signal.complete().equals(Signal.next(1))).isFalse();
@@ -358,7 +358,7 @@ public class SignalTest {
 	}
 
 	@Test
-	public void equalsIgnoresContext() {
+    void equalsIgnoresContext() {
 		Signal<String> next1 = Signal.next("foo");
 		Signal<String> next2 = Signal.next("foo", Context.of("bar", "baz"));
 

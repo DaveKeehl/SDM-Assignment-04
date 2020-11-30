@@ -38,10 +38,10 @@ import reactor.core.publisher.FluxOnAssembly.AssemblySnapshot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxCallableOnAssemblyTest {
+class FluxCallableOnAssemblyTest {
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		FluxCallableOnAssembly<?> test = new FluxCallableOnAssembly<>(Flux.empty(), stacktrace);
 
@@ -50,7 +50,7 @@ public class FluxCallableOnAssemblyTest {
 	}
 
 	@Test
-	public void stepNameAndToString() {
+    void stepNameAndToString() {
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		FluxCallableOnAssembly<?> test = new FluxCallableOnAssembly<>(Flux.empty(), stacktrace);
 

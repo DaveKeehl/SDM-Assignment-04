@@ -29,10 +29,10 @@ import reactor.util.context.ContextView;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class LambdaSubscriberTest {
+class LambdaSubscriberTest {
 
 	@Test
-	public void initialContextIsVisibleToUpstream() {
+    void initialContextIsVisibleToUpstream() {
 		AtomicReference<ContextView> contextRef = new AtomicReference<>();
 
 		Flux.just("foo")
@@ -46,7 +46,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void initialContextIsUsedForOnErrorDropped() {
+    void initialContextIsUsedForOnErrorDropped() {
 		AtomicReference<Throwable> droppedRef = new AtomicReference<>();
 		Context ctx = Context.of(Hooks.KEY_ON_ERROR_DROPPED, (Consumer<Throwable>) droppedRef::set);
 		IllegalStateException expectDropped = new IllegalStateException("boom2");
@@ -60,7 +60,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionNotifiesError() {
+    void consumeOnSubscriptionNotifiesError() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
@@ -80,7 +80,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionThrowsFatal() {
+    void consumeOnSubscriptionThrowsFatal() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
@@ -106,7 +106,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void consumeOnSubscriptionReceivesSubscriptionAndRequests32() {
+    void consumeOnSubscriptionReceivesSubscriptionAndRequests32() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 		AtomicReference<Subscription> subscriptionHolder = new AtomicReference<>(null);
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
@@ -128,7 +128,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void noSubscriptionConsumerTriggersRequestOfMax() {
+    void noSubscriptionConsumerTriggersRequestOfMax() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
 				value -> {},
@@ -145,7 +145,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void onNextConsumerExceptionTriggersCancellation() {
+    void onNextConsumerExceptionTriggersCancellation() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
@@ -165,7 +165,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void onNextConsumerFatalDoesntTriggerCancellation() {
+    void onNextConsumerFatalDoesntTriggerCancellation() {
 		AtomicReference<Throwable> errorHolder = new AtomicReference<>(null);
 
 		LambdaSubscriber<String> tested = new LambdaSubscriber<>(
@@ -191,7 +191,7 @@ public class LambdaSubscriberTest {
 	}
 
 	@Test
-	public void scan() {
+    void scan() {
 		LambdaSubscriber<String> test = new LambdaSubscriber<>(null, null, null, null);
 		Subscription parent = Operators.emptySubscription();
 		test.onSubscribe(parent);

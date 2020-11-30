@@ -26,10 +26,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParallelThenTest {
+class ParallelThenTest {
 
 	@Test
-	public void thenFull() {
+    void thenFull() {
 		for (int i = 1;
 		     i <= Runtime.getRuntime()
 		                 .availableProcessors() * 2;
@@ -44,7 +44,7 @@ public class ParallelThenTest {
 	}
 
 	@Test
-	public void parallelThenFull() {
+    void parallelThenFull() {
 		int m = 100_000;
 		for (int n = 1; n <= m; n *= 10) {
 //            System.out.println(n);
@@ -73,7 +73,7 @@ public class ParallelThenTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel();
 		ParallelThen test = new ParallelThen(source);
 
@@ -82,7 +82,7 @@ public class ParallelThenTest {
 	}
 
 	@Test
-	public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		CoreSubscriber<? super Void> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				sub -> sub.request(2));
 		ParallelThen.ThenMain test = new ParallelThen.ThenMain(subscriber, 2);
@@ -106,7 +106,7 @@ public class ParallelThenTest {
 	}
 
 	@Test
-	public void scanMainSubscriberError() {
+    void scanMainSubscriberError() {
 		CoreSubscriber<? super Void> subscriber = new LambdaSubscriber<>(null, e -> { }, null,
 				sub -> sub.request(2));
 		ParallelThen.ThenMain test = new ParallelThen.ThenMain(subscriber, 2);
@@ -119,7 +119,7 @@ public class ParallelThenTest {
 	}
 
 	@Test
-	public void scanInnerSubscriber() {
+    void scanInnerSubscriber() {
 		CoreSubscriber<? super Void> subscriber = new LambdaSubscriber<>(null, e -> { }, null, null);
 		ParallelThen.ThenMain main = new ParallelThen.ThenMain(subscriber, 2);
 		ParallelThen.ThenInner test = new ParallelThen.ThenInner(main);

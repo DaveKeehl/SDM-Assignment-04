@@ -38,13 +38,13 @@ import reactor.test.util.RaceTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSubscribeOnTest {
+class MonoSubscribeOnTest {
 
 	@RegisterExtension
-	public AutoDisposingExtension afterTest = new AutoDisposingExtension();
+	AutoDisposingExtension afterTest = new AutoDisposingExtension();
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(FluxPublishOn.class);
 		
 		ctb.addRef("source", Flux.never());
@@ -55,7 +55,7 @@ public class MonoSubscribeOnTest {
 	}*/
 
 	@Test
-	public void classic() {
+    void classic() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.fromSupplier(() -> 1)
@@ -70,7 +70,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicBackpressured() throws Exception {
+    void classicBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.fromCallable(() -> 1)
@@ -96,7 +96,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicJust() {
+    void classicJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.just(1)
@@ -111,7 +111,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicJustBackpressured() throws Exception {
+    void classicJustBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -134,7 +134,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicEmpty() {
+    void classicEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Mono.<Integer>empty().subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool()))
@@ -148,7 +148,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicEmptyBackpressured() throws Exception {
+    void classicEmptyBackpressured() throws Exception {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.<Integer>empty().subscribeOn(Schedulers.fromExecutorService(ForkJoinPool.commonPool()))
@@ -162,7 +162,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void classicWithTimeout() {
+    void classicWithTimeout() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 		Mono.fromCallable(() -> {
 			try {
@@ -186,7 +186,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void callableEvaluatedTheRightTime() {
+    void callableEvaluatedTheRightTime() {
 
 		AtomicInteger count = new AtomicInteger();
 
@@ -202,7 +202,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoSubscribeOn<String> test = new MonoSubscribeOn<>(Mono.empty(), Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -210,7 +210,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void scanSubscribeOnSubscriber() {
+    void scanSubscribeOnSubscriber() {
 		Scheduler.Worker worker = Schedulers.single().createWorker();
 
 		try {
@@ -240,14 +240,14 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .subscribeOn(Schedulers.single()))
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Mono.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .subscribeOn(Schedulers.single()))
@@ -255,7 +255,7 @@ public class MonoSubscribeOnTest {
 	}
 
 	@Test
-	public void disposeWorkerIfCancelledBeforeOnSubscribe() {
+    void disposeWorkerIfCancelledBeforeOnSubscribe() {
 		AtomicInteger disposeCount = new AtomicInteger();
 		Scheduler.Worker countingWorker = new Scheduler.Worker() {
 			@Override

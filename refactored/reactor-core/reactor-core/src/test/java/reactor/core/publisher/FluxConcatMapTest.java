@@ -38,7 +38,7 @@ import reactor.util.context.Context;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
+class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 
 	@Override
 	int implicitPrefetchValue() {
@@ -108,7 +108,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void singleSubscriberOnly() {
+    void singleSubscriberOnly() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source = Sinks.unsafe().many().multicast().directBestEffort();
@@ -148,7 +148,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void singleSubscriberOnlyBoundary() {
+    void singleSubscriberOnlyBoundary() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> source = Sinks.unsafe().many().multicast().directBestEffort();
@@ -191,7 +191,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void allEmptyBackpressured() {
+    void allEmptyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(0, 10)
@@ -205,7 +205,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void issue422(){
+    void issue422(){
 		Flux<Integer> source = Flux.create((sink) -> {
 			for (int i = 0; i < 300; i++) {
 				sink.next(i);
@@ -223,7 +223,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void prefetchMaxTranslatesToUnboundedRequest() {
+    void prefetchMaxTranslatesToUnboundedRequest() {
 		AtomicLong requested = new AtomicLong();
 
 		StepVerifier.create(Flux.just(1, 2, 3).hide()
@@ -238,7 +238,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void prefetchMaxTranslatesToUnboundedRequest2() {
+    void prefetchMaxTranslatesToUnboundedRequest2() {
 		AtomicLong requested = new AtomicLong();
 
 		StepVerifier.create(Flux.just(1, 2, 3).hide()
@@ -253,7 +253,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1, 2);
 		FluxConcatMap<Integer, Integer> test = new FluxConcatMap<>(parent, Flux::just, Queues.one(), Integer.MAX_VALUE, FluxConcatMap.ErrorMode.END);
 
@@ -262,7 +262,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanConcatMapDelayed() {
+    void scanConcatMapDelayed() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxConcatMap.ConcatMapDelayed<String, Integer> test = new FluxConcatMap.ConcatMapDelayed<>(
 				actual, s -> Mono.just(s.length()), Queues.one(), 123, true);
@@ -291,7 +291,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanConcatMapImmediate() {
+    void scanConcatMapImmediate() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxConcatMap.ConcatMapImmediate<String, Integer> test = new FluxConcatMap.ConcatMapImmediate<>(
 				actual, s -> Mono.just(s.length()), Queues.one(), 123);
@@ -318,7 +318,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanConcatMapImmediateError() {
+    void scanConcatMapImmediateError() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxConcatMap.ConcatMapImmediate<String, Integer> test = new FluxConcatMap.ConcatMapImmediate<>(
 				actual, s -> Mono.just(s.length()), Queues.one(), 123);
@@ -339,7 +339,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void scanConcatMapInner(){
+    void scanConcatMapInner(){
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxConcatMap.ConcatMapImmediate<String, Integer> parent = new FluxConcatMap.ConcatMapImmediate<>(
 				actual, s -> Mono.just(s.length()), Queues.one(), 123);
@@ -350,7 +350,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void discardOnNextQueueReject() {
+    void discardOnNextQueueReject() {
 		List<Object> discarded = new ArrayList<>();
 		AssertSubscriber<Object> discardSubscriber = new AssertSubscriber<>(
 				Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -369,7 +369,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		//also tests WeakScalar
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
@@ -381,7 +381,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatMap(i -> Mono.just("value" + i), implicitPrefetchValue()),
 				0)
@@ -391,7 +391,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	}
 
 	@Test
-	public void discardDelayedOnNextQueueReject() {
+    void discardDelayedOnNextQueueReject() {
 		List<Object> discarded = new ArrayList<>();
 		AssertSubscriber<Object> testSubscriber = new AssertSubscriber<>(
 				Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -414,7 +414,7 @@ public class  FluxConcatMapTest extends AbstractFluxConcatMapTest {
 	 */
 	@Test
 	@Override
-	public void discardDelayedOnDrainMapperError() {
+	void discardDelayedOnDrainMapperError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatMapDelayError(i -> { throw new IllegalStateException("boom"); }))
 		            .expectErrorMessage("boom")

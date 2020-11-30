@@ -43,7 +43,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static java.util.stream.Collectors.reducing;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoStreamCollectorTest {
+class MonoStreamCollectorTest {
 
 
 	static class TestCollector<T, A, R> implements Collector<T, A, R> {
@@ -85,7 +85,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void collectToList() {
+    void collectToList() {
 		Mono<List<Integer>> source = Flux.range(1, 5).collect(Collectors.toList());
 
 		for (int i = 0; i < 5; i++) {
@@ -99,7 +99,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void collectToSet() {
+    void collectToSet() {
 		Mono<Set<Integer>> source = Flux.just(1).repeat(5).collect(Collectors.toSet());
 
 		for (int i = 0; i < 5; i++) {
@@ -113,7 +113,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    Flux<Integer> source = Flux.just(1);
 		MonoStreamCollector<Integer, ?, Set<Integer>> test = new MonoStreamCollector<>(source, Collectors.toSet());
 
@@ -123,7 +123,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void scanStreamCollectorSubscriber() {
+    void scanStreamCollectorSubscriber() {
 		CoreSubscriber<List<String>>
 				actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		Collector<String, ?, List<String>> collector = Collectors.toList();
@@ -154,7 +154,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardValueAndIntermediateListElementsOnAccumulatorFailure() {
+    void discardValueAndIntermediateListElementsOnAccumulatorFailure() {
 		Collector<Integer, List<Integer>, Set<Integer>> collector = new TestCollector<>(ArrayList::new, (l, i) -> {
 			if (i == 2) throw new IllegalStateException("accumulator: boom");
 			l.add(i);
@@ -169,7 +169,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardValueAndIntermediateMapOnAccumulatorFailure() {
+    void discardValueAndIntermediateMapOnAccumulatorFailure() {
 		Collector<Integer, Map<Integer, String>, Set<Integer>> collector = new TestCollector<>(HashMap::new, (m, i) -> {
 			if (i == 2) throw new IllegalStateException("accumulator: boom");
 			m.put(i, String.valueOf(i));
@@ -184,7 +184,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateListElementsOnError() {
+    void discardIntermediateListElementsOnError() {
 		final Collector<Integer, ?, Collection<Integer>> collector = Collectors.toCollection(ArrayList::new);
 
 		Mono<Collection<Integer>> test =
@@ -205,7 +205,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateListElementsOnCancel() {
+    void discardIntermediateListElementsOnCancel() {
 		final Collector<Long, ?, Collection<Long>> collector = Collectors.toCollection(ArrayList::new);
 
 		StepVerifier.withVirtualTime(() ->
@@ -221,7 +221,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateListElementsOnFinisherFailure() {
+    void discardIntermediateListElementsOnFinisherFailure() {
 		Collector<Integer, List<Integer>, Set<Integer>> collector = new TestCollector<>(ArrayList::new, List::add, m -> { throw new IllegalStateException("finisher: boom"); });
 
 		Mono<Set<Integer>> test =
@@ -236,7 +236,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateMapOnError() {
+    void discardIntermediateMapOnError() {
 		Collector<Integer, ?, Map<Integer, String>> collector = Collectors.toMap(Function.identity(), String::valueOf);
 		List<Object> discarded = new ArrayList<>();
 
@@ -265,7 +265,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateMapOnCancel() {
+    void discardIntermediateMapOnCancel() {
 		Collector<Long, Map<Long, String>, Set<Long>> collector = new TestCollector<>(HashMap::new,
 				(m, i) -> m.put(i, String.valueOf(i)), Map::keySet);
 		List<Object> discarded = new ArrayList<>();
@@ -289,7 +289,7 @@ public class MonoStreamCollectorTest {
 	}
 
 	@Test
-	public void discardIntermediateMapOnFinisherFailure() {
+    void discardIntermediateMapOnFinisherFailure() {
 		Collector<Integer, Map<Integer, String>, Set<Integer>> collector = new TestCollector<>(HashMap::new,
 				(m, i) -> m.put(i, String.valueOf(i)), m -> { throw new IllegalStateException("finisher: boom"); });
 		List<Object> discarded = new ArrayList<>();
@@ -317,7 +317,7 @@ public class MonoStreamCollectorTest {
 	 * @see <a href="https://github.com/reactor/reactor-core/issues/2181" target="_top">issue 2181</a>
 	 */
 	@Test
-	public void collectHandlesNulls() {
+    void collectHandlesNulls() {
 		StepVerifier.create(Flux.empty().collect(reducing(null, (a, b) -> a)))
 				.verifyError(NullPointerException.class);
 	}

@@ -44,24 +44,24 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class MonoDoOnEachTest {
+class MonoDoOnEachTest {
 
 	@Test
-	public void nullSource() {
+    void nullSource() {
 		Assertions.assertThatNullPointerException()
 		          .isThrownBy(() -> new MonoDoOnEach<>(null, s -> {}))
 		          .withMessage(null);
 	}
 
 	@Test
-	public void nullConsumer() {
+    void nullConsumer() {
 		Assertions.assertThatNullPointerException()
 		          .isThrownBy(() -> new MonoDoOnEach<>(Mono.just("foo"), null))
 		          .withMessage("onSignal");
 	}
 
 	@Test
-	public void usesFluxDoOnEachSubscriber() {
+    void usesFluxDoOnEachSubscriber() {
 		@SuppressWarnings("unchecked")
 		ArgumentCaptor<CoreSubscriber<String>> argumentCaptor =
 				ArgumentCaptor.forClass(CoreSubscriber.class);
@@ -78,7 +78,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void usesFluxDoOnEachConditionalSubscriber() {
+    void usesFluxDoOnEachConditionalSubscriber() {
 		AtomicReference<Scannable> ref = new AtomicReference<>();
 		Mono<String> source = Mono.just("foo")
 		                          .doOnSubscribe(sub -> ref.set(Scannable.from(sub)))
@@ -98,7 +98,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger onNext = new AtomicInteger();
@@ -126,7 +126,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger onNext = new AtomicInteger();
@@ -154,7 +154,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger onNext = new AtomicInteger();
@@ -181,7 +181,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void never() {
+    void never() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger onNext = new AtomicInteger();
@@ -208,7 +208,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void consumerError() {
+    void consumerError() {
 		LongAdder state = new LongAdder();
 		Throwable err = new Exception("test");
 
@@ -227,7 +227,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void consumerBubbleError() {
+    void consumerBubbleError() {
 		LongAdder state = new LongAdder();
 		Throwable err = new Exception("test");
 
@@ -249,7 +249,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void nextComplete() {
+    void nextComplete() {
 		List<Tuple2<Signal, ContextView>> signalsAndContext = new ArrayList<>();
 		Mono.just(1)
 		    .hide()
@@ -271,7 +271,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void nextError() {
+    void nextError() {
 		List<Tuple2<Signal, ContextView>> signalsAndContext = new ArrayList<>();
 		Mono.just(0)
 		    .map(i -> 10 / i)
@@ -294,7 +294,7 @@ public class MonoDoOnEachTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1547
 	@Test
-	public void triggersCompleteSignalInMonoOnNext() {
+    void triggersCompleteSignalInMonoOnNext() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.just("parent").hide()
@@ -317,7 +317,7 @@ public class MonoDoOnEachTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1547
 	@Test
-	public void triggersCompleteSignalInMonoOnNextFused() {
+    void triggersCompleteSignalInMonoOnNextFused() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.just("parent")
@@ -341,7 +341,7 @@ public class MonoDoOnEachTest {
 	//see https://github.com/reactor/reactor-core/issues/1547
 	@Test
 	@Disabled("Mono doesn't trigger tryOnNext")
-	public void triggersCompleteSignalInMonoOnNextConditional() {
+	void triggersCompleteSignalInMonoOnNextConditional() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.just("parent").hide()
@@ -368,7 +368,7 @@ public class MonoDoOnEachTest {
 	//see https://github.com/reactor/reactor-core/issues/1547
 	@Test
 	@Disabled("Mono doesn't trigger tryOnNext")
-	public void triggersCompleteSignalInMonoOnNextConditionalFused() {
+	void triggersCompleteSignalInMonoOnNextConditionalFused() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.just("parent")
@@ -392,7 +392,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void errorDuringCompleteSignalInMonoOnNext() {
+    void errorDuringCompleteSignalInMonoOnNext() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.fromSupplier(() -> "parent").hide()
@@ -421,7 +421,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void errorDuringCompleteSignalInMonoOnNextFused() {
+    void errorDuringCompleteSignalInMonoOnNextFused() {
 		CopyOnWriteArrayList<String> eventOrder = new CopyOnWriteArrayList<>();
 
 		Mono.fromSupplier(() -> "parent")
@@ -450,7 +450,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void monoOnNextDoesntTriggerCompleteTwice() {
+    void monoOnNextDoesntTriggerCompleteTwice() {
 		AtomicInteger completeHandlerCount = new AtomicInteger();
 
 		Mono.just("foo")
@@ -466,7 +466,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void monoOnNextDoesntTriggerCompleteTwiceFused() {
+    void monoOnNextDoesntTriggerCompleteTwiceFused() {
 		AtomicInteger completeHandlerCount = new AtomicInteger();
 
 		Mono.just("foo")
@@ -481,7 +481,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void errorInCompleteHandlingTriggersErrorHandling() {
+    void errorInCompleteHandlingTriggersErrorHandling() {
 		AtomicInteger errorHandlerCount = new AtomicInteger();
 
 		StepVerifier.create(
@@ -502,7 +502,7 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void errorInCompleteHandlingTriggersErrorHandlingFused() {
+    void errorInCompleteHandlingTriggersErrorHandlingFused() {
 		AtomicInteger errorHandlerCount = new AtomicInteger();
 
 		StepVerifier.create(
@@ -522,14 +522,14 @@ public class MonoDoOnEachTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		final MonoDoOnEach<String> test = new MonoDoOnEach<>(Mono.just("foo"), s -> { });
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		final MonoDoOnEachFuseable<String> test = new MonoDoOnEachFuseable<>(Mono.just("foo"), s -> { });
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

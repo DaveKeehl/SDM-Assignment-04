@@ -31,10 +31,10 @@ import reactor.test.publisher.FluxOperatorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
+class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxFilterFuseable<Integer> test = new FluxFilterFuseable<>(parent, e -> true);
 
@@ -43,7 +43,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FilterFuseableSubscriber<String> test = new FilterFuseableSubscriber<>(actual, t -> true);
         Subscription parent = Operators.emptySubscription();
@@ -59,7 +59,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
         @SuppressWarnings("unchecked")
         Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FilterFuseableConditionalSubscriber<String> test = new FilterFuseableConditionalSubscriber<>(actual, t -> true);
@@ -76,7 +76,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void failureStrategyResumeSyncFused() {
+    void failureStrategyResumeSyncFused() {
         Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
         try {
             StepVerifier.create(Flux.range(0, 2)
@@ -94,7 +94,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void failureStrategyResumeConditionalSyncFused() {
+    void failureStrategyResumeConditionalSyncFused() {
         Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
         try {
             StepVerifier.create(Flux.range(0, 2)
@@ -113,7 +113,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void discardOnNextPredicateFail() {
+    void discardOnNextPredicateFail() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		)
@@ -124,7 +124,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardOnNextPredicateMiss() {
+    void discardOnNextPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> i % 2 == 0)
 		)
@@ -136,7 +136,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardTryOnNextPredicateFail() {
+    void discardTryOnNextPredicateFail() {
 		StepVerifier.create(Flux.range(1, 10) //range uses tryOnNext
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		)
@@ -147,7 +147,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardTryOnNextPredicateMiss() {
+    void discardTryOnNextPredicateMiss() {
 		StepVerifier.create(Flux.range(1, 10) //range uses tryOnNext
 		                        .filter(i -> i % 2 == 0)
 		)
@@ -159,7 +159,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardPollAsyncPredicateFail() {
+    void discardPollAsyncPredicateFail() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .publishOn(Schedulers.newSingle("discardPollAsync"), 1)
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
@@ -173,7 +173,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardPollAsyncPredicateMiss() {
+    void discardPollAsyncPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .publishOn(Schedulers.newSingle("discardPollAsync"))
 		                        .filter(i -> i % 2 == 0)
@@ -186,7 +186,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardPollSyncPredicateFail() {
+    void discardPollSyncPredicateFail() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		)
@@ -197,7 +197,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardPollSyncPredicateMiss() {
+    void discardPollSyncPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> i % 2 == 0)
 		)
@@ -211,7 +211,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalOnNextPredicateFail() {
+    void discardConditionalOnNextPredicateFail() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		                        .filter(i -> true)
@@ -223,7 +223,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalOnNextPredicateMiss() {
+    void discardConditionalOnNextPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> i % 2 == 0)
 		                        .filter(i -> true)
@@ -238,7 +238,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalTryOnNextPredicateFail() {
+    void discardConditionalTryOnNextPredicateFail() {
 		StepVerifier.create(Flux.range(1, 10) //range uses tryOnNext
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		                        .filter(i -> true)
@@ -250,7 +250,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalTryOnNextPredicateMiss() {
+    void discardConditionalTryOnNextPredicateMiss() {
 		StepVerifier.create(Flux.range(1, 10) //range uses tryOnNext
 		                         .filter(i -> i % 2 == 0)
 		                         .filter(i -> true)
@@ -265,7 +265,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalPollAsyncPredicateFail() {
+    void discardConditionalPollAsyncPredicateFail() {
 		StepVerifier.create(Flux.range(1, 10) //range uses tryOnNext, so let's use just instead
 		                        .publishOn(Schedulers.newSingle("discardPollAsync"))
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
@@ -280,7 +280,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalPollAsyncPredicateMiss() {
+    void discardConditionalPollAsyncPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .publishOn(Schedulers.newSingle("discardPollAsync"))
 		                        .filter(i -> i % 2 == 0)
@@ -296,7 +296,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalPollSyncPredicateFail() {
+    void discardConditionalPollSyncPredicateFail() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
 		                        .filter(i -> true)
@@ -308,7 +308,7 @@ public class FluxFilterFuseableTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalPollSyncPredicateMiss() {
+    void discardConditionalPollSyncPredicateMiss() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //range uses tryOnNext, so let's use just instead
 		                        .filter(i -> i % 2 == 0)
 		                        .filter(i -> true)

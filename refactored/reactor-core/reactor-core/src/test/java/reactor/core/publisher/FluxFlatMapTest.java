@@ -48,11 +48,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxFlatMapTest {
+class FluxFlatMapTest {
 
 
 	@Test
-	public void flatmapInnerShouldntRequestInFusionModeSync() {
+    void flatmapInnerShouldntRequestInFusionModeSync() {
 		/*
 		See original reproduction case in https://github.com/reactor/reactor-core/issues/2318
 		This simplified test directly triggers the fusion/request, reliably reproducing the
@@ -60,7 +60,7 @@ public class FluxFlatMapTest {
 		*/
 		final AssertQueueSubscription<Integer> inner = new AssertQueueSubscription<Integer>() {
 			@Override
-			public int requestFusion(int requestedMode) {
+            public int requestFusion(int requestedMode) {
 				if ((requestedMode & Fuseable.SYNC) != 0) {
 					return Fuseable.SYNC;
 				}
@@ -87,7 +87,7 @@ public class FluxFlatMapTest {
 	}
 
 	/*@Test
-	public void constructors() {
+    void constructors() {
 		ConstructorTestBuilder ctb = new ConstructorTestBuilder(FluxFlatMap.class);
 
 		ctb.addRef("source", Flux.never());
@@ -101,7 +101,7 @@ public class FluxFlatMapTest {
 	}*/
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(v -> Flux.range(v, 2)).subscribe(ts);
@@ -112,7 +112,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(v -> Flux.range(v, 2)).subscribe(ts);
@@ -135,7 +135,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>error(new RuntimeException("forced failure"))
@@ -148,7 +148,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void innerError() {
+    void innerError() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(0);
 
 		Flux.just(1).flatMap(v -> Flux.error(new RuntimeException("forced failure"))).subscribe(ts);
@@ -160,7 +160,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void normalQueueOpt() {
+    void normalQueueOpt() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(v -> Flux.just(v, v + 1)).subscribe(ts);
@@ -171,7 +171,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void normalQueueOptBackpressured() {
+    void normalQueueOptBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(v -> Flux.just(v, v + 1)).subscribe(ts);
@@ -194,7 +194,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void nullValue() {
+    void nullValue() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(v -> Flux.just((Integer)null)).subscribe(ts);
@@ -205,7 +205,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void mainEmpty() {
+    void mainEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().flatMap(v -> Flux.just(v)).subscribe(ts);
@@ -216,7 +216,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void innerEmpty() {
+    void innerEmpty() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(v -> Flux.<Integer>empty()).subscribe(ts);
@@ -227,7 +227,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfJust() {
+    void flatMapOfJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(Flux::just).subscribe(ts);
@@ -238,7 +238,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfMixed() {
+    void flatMapOfMixed() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(
@@ -251,7 +251,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfMixedBackpressured() {
+    void flatMapOfMixedBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(v -> v % 2 == 0 ? Flux.just(v) : Flux.fromIterable(Arrays.asList(v))).subscribe(ts);
@@ -274,7 +274,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfMixedBackpressured1() {
+    void flatMapOfMixedBackpressured1() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(v -> v % 2 == 0 ? Flux.just(v) : Flux.fromIterable(Arrays.asList(v))).subscribe(ts);
@@ -297,7 +297,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfJustBackpressured() {
+    void flatMapOfJustBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(Flux::just).subscribe(ts);
@@ -320,7 +320,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapOfJustBackpressured1() {
+    void flatMapOfJustBackpressured1() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 1000).flatMap(Flux::just).subscribe(ts);
@@ -344,7 +344,7 @@ public class FluxFlatMapTest {
 
 
 	@Test
-	public void testMaxConcurrency1() {
+    void testMaxConcurrency1() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000).flatMap(Flux::just, 1, 32).subscribe(ts);
@@ -355,7 +355,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void testMaxConcurrency2() {
+    void testMaxConcurrency2() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1_000_000).flatMap(Flux::just, 64).subscribe(ts);
@@ -366,7 +366,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void singleSubscriberOnly() {
+    void singleSubscriberOnly() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger emission = new AtomicInteger();
@@ -401,7 +401,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapUnbounded() {
+    void flatMapUnbounded() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		AtomicInteger emission = new AtomicInteger();
@@ -434,7 +434,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void syncFusionIterable() {
+    void syncFusionIterable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		List<Integer> list = new ArrayList<>();
@@ -450,7 +450,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void syncFusionRange() {
+    void syncFusionRange() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(v -> Flux.range(v, 1000)).subscribe(ts);
@@ -461,7 +461,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void syncFusionArray() {
+    void syncFusionArray() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Integer[] array = new Integer[1000];
@@ -475,7 +475,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void innerMapSyncFusion() {
+    void innerMapSyncFusion() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 1000).flatMap(v -> Flux.range(1, 1000).map(w -> w + 1)).subscribe(ts);
@@ -486,14 +486,14 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void defaultPrefetch() {
+    void defaultPrefetch() {
 		assertThat(Flux.just(1, 2, 3)
 		               .flatMap(Flux::just)
 		               .getPrefetch()).isEqualTo(Queues.XS_BUFFER_SIZE);
 	}
 
 	@Test
-	public void failMaxConcurrency() {
+    void failMaxConcurrency() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.just(1, 2, 3)
 					.flatMap(Flux::just, -1);
@@ -501,7 +501,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failPrefetch() {
+    void failPrefetch() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			Flux.just(1, 2, 3)
 					.flatMap(Flux::just, 128, -1);
@@ -509,7 +509,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failCallable() {
+    void failCallable() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(d -> Mono.fromCallable(() -> {
 			                        throw new Exception("test");
@@ -518,7 +518,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failMap() {
+    void failMap() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(d -> {
 			                        throw new RuntimeException("test");
@@ -527,14 +527,14 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failPublisher() {
+    void failPublisher() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(d -> Flux.error(new Exception("test"))))
 		            .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void failPublisherDelay() {
+    void failPublisherDelay() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMapDelayError(d -> Flux.error(new Exception("test")).hide(),
 				                        1,
@@ -543,7 +543,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void completePublisherDelayCancel() {
+    void completePublisherDelayCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMapDelayError(d -> Flux.<Integer>empty().hide(),
 				                        1,
@@ -553,7 +553,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void completePublisherDelay() {
+    void completePublisherDelay() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMapDelayError(d -> Flux.<Integer>empty().hide(),
 				                        1,
@@ -562,14 +562,14 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failNull() {
+    void failNull() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(d -> null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void failScalarCallable() {
+    void failScalarCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> {
 			throw new Exception("test");
 		})
@@ -578,7 +578,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failScalarMap() {
+    void failScalarMap() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> {
 			                        throw new RuntimeException("test");
@@ -587,14 +587,14 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failScalarMapNull() {
+    void failScalarMapNull() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> null))
 		            .verifyError(NullPointerException.class);
 	}
 
 	@Test
-	public void failScalarMapCallableError() {
+    void failScalarMapCallableError() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> Mono.fromCallable(() -> {
 			                        throw new Exception("test");
@@ -603,21 +603,21 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void prematureScalarMapCallableNullComplete() {
+    void prematureScalarMapCallableNullComplete() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> Mono.fromCallable(() -> null)))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureScalarMapCallableEmptyComplete() {
+    void prematureScalarMapCallableEmptyComplete() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> Mono.empty()))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureScalarMapCallableJust() {
+    void prematureScalarMapCallableJust() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMapMany(f -> Mono.fromCallable(() -> 2)))
 		            .expectNext(2)
@@ -625,14 +625,14 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void prematureCompleteMaxPrefetch() {
+    void prematureCompleteMaxPrefetch() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(f -> Flux.empty(), Integer.MAX_VALUE))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void prematureCancel() {
+    void prematureCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(Flux::just))
 		            .expectNext(1, 2, 3)
@@ -641,7 +641,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void prematureCancel2() {
+    void prematureCancel2() {
 		StepVerifier.create(Flux.range(1, 10000)
 		                        .flatMap(Flux::just, 2)
 		                        .cancelOn(Schedulers.single()), 1)
@@ -654,7 +654,7 @@ public class FluxFlatMapTest {
 
 	@Test //TODO TestPublisher.actual cannot be accessed
 	@SuppressWarnings("unchecked")
-	public void failNextOnTerminated() {
+	void failNextOnTerminated() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 
 		Hooks.onNextDropped(c -> {
@@ -674,7 +674,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void ignoreDoubleComplete() {
+    void ignoreDoubleComplete() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onComplete();
@@ -685,7 +685,7 @@ public class FluxFlatMapTest {
 
 
 	@Test
-	public void ignoreConcurrentHiddenComplete() {
+    void ignoreConcurrentHiddenComplete() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext(1);
@@ -695,7 +695,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void ignoreDoubleOnSubscribe() {
+    void ignoreDoubleOnSubscribe() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onSubscribe(Operators.emptySubscription());
@@ -705,7 +705,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void ignoreDoubleOnSubscribeInner() {
+    void ignoreDoubleOnSubscribeInner() {
 		StepVerifier.create(Flux.just(1).hide()
 		                        .flatMap(f -> Flux.from(s -> {
 			                        s.onSubscribe(Operators.emptySubscription());
@@ -716,7 +716,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failDoubleError() {
+    void failDoubleError() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -738,7 +738,7 @@ public class FluxFlatMapTest {
 
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleErrorTerminated() {
+	void failDoubleErrorTerminated() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -760,7 +760,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleErrorTerminatedInner() {
+	void failDoubleErrorTerminatedInner() {
 		TestLogger testLogger = new TestLogger();
 		LoggerUtils.enableCaptureWith(testLogger);
 		try {
@@ -783,7 +783,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failOverflowScalar() {
+    void failOverflowScalar() {
 		TestPublisher<Integer> ts =
 				TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
@@ -794,7 +794,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failOverflow() {
+    void failOverflow() {
 		TestPublisher<Integer> ts =
 				TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
@@ -807,7 +807,7 @@ public class FluxFlatMapTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void failOverflowCancelledWhileActive() {
+	void failOverflowCancelledWhileActive() {
 		TestPublisher<Integer> ts =
 				TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 		AtomicReference<FluxFlatMap.FlatMapMain> ref = new AtomicReference<>();
@@ -824,7 +824,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failOverflowScalarThenError() {
+    void failOverflowScalarThenError() {
 		AtomicBoolean set = new AtomicBoolean();
 		Hooks.onErrorDropped(e -> {
 			assertThat(Exceptions.isOverflow(e)).isTrue();
@@ -844,7 +844,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failOverflowWhileActiveScalar() {
+    void failOverflowWhileActiveScalar() {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext(1);
@@ -857,7 +857,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failOverflowWhileActiveScalarThenError() {
+    void failOverflowWhileActiveScalarThenError() {
 		AtomicBoolean set = new AtomicBoolean();
 		Hooks.onErrorDropped(e -> {
 			assertThat(Exceptions.isOverflow(e)).isTrue();
@@ -881,7 +881,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test //FIXME use Violation.NO_CLEANUP_ON_TERMINATE
-	public void failDoubleErrorSilent() {
+	void failDoubleErrorSilent() {
 		Hooks.onErrorDropped(e -> {
 			assertThat(e).hasMessage("test2");
 		});
@@ -894,7 +894,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void suppressFusionIfExpected() {
+    void suppressFusionIfExpected() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMap(d -> Mono.just(d)
 		                                       .hide()))
@@ -906,7 +906,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void ignoreRequestZeroThenRequestOneByOne() {
+    void ignoreRequestZeroThenRequestOneByOne() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(f -> Flux.just(f * 2)), 0)
 		            .consumeSubscriptionWith(s -> s.request(0))
@@ -920,7 +920,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void suppressFusionIfExpectedError() {
+    void suppressFusionIfExpectedError() {
 		StepVerifier.create(Mono.just(1)
 		                        .flatMap(d -> Mono.error(new Exception("test"))
 		                                       .hide()))
@@ -931,7 +931,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void backpressuredScalarThenCancel(){
+    void backpressuredScalarThenCancel(){
 		StepVerifier.create(Flux.just(1, 2, 3).flatMap(Flux::just), 0)
 	                .thenRequest(2)
 	                .expectNext(1, 2)
@@ -940,7 +940,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void delayedUnboundedScalarThenCancel() {
+    void delayedUnboundedScalarThenCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(Flux::just), 0)
 		            .thenAwait()
@@ -951,7 +951,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void delayedBackpressuredScalar() {
+    void delayedBackpressuredScalar() {
 		StepVerifier.create(Flux.range(1, 1000)
 		                        .flatMap(Flux::just), 0)
 		            .thenAwait()
@@ -972,7 +972,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void backpressuredThenCancel() {
+    void backpressuredThenCancel() {
 		StepVerifier.withVirtualTime(this::scenario_backpressuredThenCancel, 0)
 		            .thenRequest(2)
 		            .thenAwait(Duration.ofSeconds(1))
@@ -1023,7 +1023,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void assertOnSubscribeStateMainAndInner() {
+    void assertOnSubscribeStateMainAndInner() {
 		StepVerifier.create(Flux.from(s -> {
 			assertBeforeOnSubscribeState((FluxFlatMap.FlatMapMain) s);
 			s.onSubscribe(Operators.emptySubscription());
@@ -1054,7 +1054,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void testFairness() {
+    void testFairness() {
 		StepVerifier.create(Flux.merge(1,
 				Flux.range(1, 10)
 				    .delayElements(Duration.ofMillis(10), Schedulers.single())
@@ -1076,7 +1076,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void noInnerReordering() {
+    void noInnerReordering() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 		FluxFlatMap.FlatMapMain<Publisher<Integer>, Integer> fmm =
 				new FluxFlatMap.FlatMapMain<>(ts,
@@ -1105,7 +1105,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void noOuterScalarReordering() {
+    void noOuterScalarReordering() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 		FluxFlatMap.FlatMapMain<Publisher<Integer>, Integer> fmm =
 				new FluxFlatMap.FlatMapMain<>(ts,
@@ -1130,7 +1130,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void assertOnSubscribeStateMainAndInner2() {
+    void assertOnSubscribeStateMainAndInner2() {
 		StepVerifier.create(Flux.from(s -> {
 			assertBeforeOnSubscribeState((FluxFlatMap.FlatMapMain) s);
 			s.onSubscribe(Operators.emptySubscription());
@@ -1158,7 +1158,7 @@ public class FluxFlatMapTest {
 
 
 	@Test
-	public void assertOnSubscribeStateMainAndInner3() {
+    void assertOnSubscribeStateMainAndInner3() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .flatMap(f -> Flux.from(s -> {
@@ -1171,7 +1171,7 @@ public class FluxFlatMapTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void assertOnSubscribeStateMainScalar() {
+	void assertOnSubscribeStateMainScalar() {
 		AtomicReference<FluxFlatMap.FlatMapMain> ref = new AtomicReference<>();
 		StepVerifier.create(Flux.from(s -> {
 			assertBeforeOnSubscribeState((FluxFlatMap.FlatMapMain) s);
@@ -1205,7 +1205,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void ignoreSyncFusedRequest() {
+    void ignoreSyncFusedRequest() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .flatMap(f -> Flux.range(f, 2), 1), 0)
 		            .thenRequest(1)
@@ -1214,7 +1214,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void asyncInnerFusion() {
+    void asyncInnerFusion() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
@@ -1229,7 +1229,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failAsyncInnerFusion() {
+    void failAsyncInnerFusion() {
 		Sinks.Many<Integer> up = Sinks.many().unicast().onBackpressureBuffer();
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
@@ -1242,7 +1242,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void failsyncInnerFusion() {
+    void failsyncInnerFusion() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .flatMap(f -> Flux.just(1, 2, null), 1))
@@ -1251,7 +1251,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void onOperatorError() {
+    void onOperatorError() {
 		AtomicReference<Object> errorValue = new AtomicReference<Object>();
 		Hooks.onOperatorError((error, d) -> {
 			errorValue.set(d);
@@ -1282,7 +1282,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void prematureInnerCancel() {
+    void prematureInnerCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5)
 		                        .hide()
 		                        .flatMap(f -> Flux.from(s -> {
@@ -1300,7 +1300,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void normalInnerArrayMoreThanDefaultArraySize4() {
+    void normalInnerArrayMoreThanDefaultArraySize4() {
 		TestPublisher<Integer> ts = TestPublisher.create();
 		TestPublisher<Integer> ts2 = TestPublisher.create();
 		StepVerifier.create(Flux.just(1, 2, 3, 4, 5, 6, 7, 8)
@@ -1323,7 +1323,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void prematureCancelInnerArrayMoreThanDefaultArraySize4() {
+    void prematureCancelInnerArrayMoreThanDefaultArraySize4() {
 		AtomicReference<Subscription> x = new AtomicReference<>();
 		StepVerifier.create(Flux.just(1, 2, 3, 4)
 		                        .hide()
@@ -1347,7 +1347,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void flatMapDelayErrors() throws Exception {
+    void flatMapDelayErrors() throws Exception {
 		AtomicInteger onNextSignals = new AtomicInteger();
 
 		StepVerifier.create(Flux.range(0, 5).hide()
@@ -1380,7 +1380,7 @@ public class FluxFlatMapTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void delayErrorWithFluxError() {
+    void delayErrorWithFluxError() {
 		StepVerifier.create(
 				Flux.just(
 						Flux.just(1, 2),
@@ -1393,7 +1393,7 @@ public class FluxFlatMapTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void delayErrorWithMonoError() {
+    void delayErrorWithMonoError() {
 		StepVerifier.create(
 				Flux.just(
 						Flux.just(1, 2),
@@ -1405,7 +1405,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxFlatMap<Integer, Integer> test = new FluxFlatMap<>(parent, i -> Flux.just(i), false, 3, Queues.empty(), 123, Queues.empty());
 
@@ -1415,7 +1415,7 @@ public class FluxFlatMapTest {
 	}
 
     @Test
-    public void scanMain() {
+    void scanMain() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFlatMap.FlatMapMain<Integer, Integer> test = new FluxFlatMap.FlatMapMain<>(actual,
                 i -> Mono.just(i), true, 5, Queues.<Integer>unbounded(), 789,  Queues.<Integer>get(789));
@@ -1448,7 +1448,7 @@ public class FluxFlatMapTest {
     }
 
     @Test
-   public void scanMainLargeBuffered() {
+    void scanMainLargeBuffered() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFlatMap.FlatMapMain<Integer, Integer> test = new FluxFlatMap.FlatMapMain<>(actual,
                 i -> Mono.just(i), true, 5, Queues.<Integer>unbounded(), 789,  Queues.<Integer>get(789));
@@ -1465,7 +1465,7 @@ public class FluxFlatMapTest {
     }
 
     @Test
-    public void scanInner() {
+    void scanInner() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxFlatMap.FlatMapMain<Integer, Integer> main = new FluxFlatMap.FlatMapMain<>(actual,
                 i -> Mono.just(i), true, 5, Queues.<Integer>unbounded(), 789,  Queues.<Integer>get(789));
@@ -1494,7 +1494,7 @@ public class FluxFlatMapTest {
 
 	@Test
 	@Disabled
-	public void progressiveRequest() {
+	void progressiveRequest() {
 		TestPublisher<Integer> tp = TestPublisher.create();
 		StepVerifier.create(tp.flux()
 		                      .flatMap(d -> Flux.just(d)
@@ -1510,7 +1510,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueNullPublisher() {
+    void errorModeContinueNullPublisher() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.<Integer>flatMap(f -> null)
@@ -1526,7 +1526,7 @@ public class FluxFlatMapTest {
 
 
 	@Test
-	public void errorModeContinueInternalError() {
+    void errorModeContinueInternalError() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.flatMap(f -> {
@@ -1550,7 +1550,7 @@ public class FluxFlatMapTest {
 
 
 	@Test
-	public void errorModeContinueInternalErrorHidden() {
+    void errorModeContinueInternalErrorHidden() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.flatMap(f -> {
@@ -1574,7 +1574,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueWithCallable() {
+    void errorModeContinueWithCallable() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.flatMap(f -> Mono.<Integer>fromRunnable(() -> {
@@ -1593,7 +1593,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueDelayErrors() {
+    void errorModeContinueDelayErrors() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.flatMapDelayError(f -> {
@@ -1618,7 +1618,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueDelayErrorsWithCallable() {
+    void errorModeContinueDelayErrorsWithCallable() {
 		Flux<Integer> test = Flux.just(1, 2)
 				.hide()
 				.flatMapDelayError(f -> {
@@ -1643,7 +1643,7 @@ public class FluxFlatMapTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void errorModeContinueInternalErrorStopStrategy() {
+	void errorModeContinueInternalErrorStopStrategy() {
 		for (int iterations = 0; iterations < 1000; iterations++) {
 			AtomicInteger i = new AtomicInteger();
 			List<TestPublisher<Integer>> inners = new ArrayList<>();
@@ -1671,7 +1671,7 @@ public class FluxFlatMapTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void errorModeContinueInternalErrorStopStrategyAsync() {
+	void errorModeContinueInternalErrorStopStrategyAsync() {
 		for (int iterations = 0; iterations < 1000; iterations++) {
 			AtomicInteger i = new AtomicInteger();
 			List<TestPublisher<Integer>> inners = new ArrayList<>();
@@ -1699,7 +1699,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueInternalErrorMono() {
+    void errorModeContinueInternalErrorMono() {
 		Flux<Integer> test = Flux.just(0, 1)
 				.hide()
 				.flatMap(f ->  Mono.just(f).map(i -> 1/i))
@@ -1715,7 +1715,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueInternalErrorMonoAsync() {
+    void errorModeContinueInternalErrorMonoAsync() {
 		Flux<Integer> test = Flux.just(0, 1)
 				.hide()
 				.flatMap(f ->  Mono.just(f).publishOn(Schedulers.parallel()).map(i -> 1/i))
@@ -1731,7 +1731,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueScalarSourceFails() {
+    void errorModeContinueScalarSourceFails() {
 		StringBuffer msg = new StringBuffer();
 		Flux.error(new IllegalStateException("boom"))
 				.flatMap(v -> Flux.just("value" + v))
@@ -1746,7 +1746,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueScalarSourceMapperFails() {
+    void errorModeContinueScalarSourceMapperFails() {
 		StringBuffer msg = new StringBuffer();
 		Flux.just(42)
 				.<String>flatMap(v -> {
@@ -1763,7 +1763,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueScalarSourceMappedCallableFails() {
+    void errorModeContinueScalarSourceMappedCallableFails() {
 		StringBuffer msg = new StringBuffer();
 		Flux.just(42)
 		    .flatMap(v -> Flux.error(new IllegalStateException("boom")))
@@ -1778,7 +1778,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void errorModeContinueLargerThanConcurrencySourceMappedCallableFails() {
+    void errorModeContinueLargerThanConcurrencySourceMappedCallableFails() {
 		AtomicInteger continued = new AtomicInteger();
 		Flux.range(1, 500)
 		    .flatMap(v -> Flux.error(new IllegalStateException("boom #" + v)), 203)
@@ -1791,7 +1791,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void noWrappingOfCheckedExceptions() {
+    void noWrappingOfCheckedExceptions() {
 		Flux.just("single")
 		    .flatMap(x -> Mono.error(new NoSuchMethodException()))
 		    .as(StepVerifier::create)
@@ -1806,7 +1806,7 @@ public class FluxFlatMapTest {
 	}
 
 	@Test
-	public void noWrappingOfCheckedExceptions_hide() {
+    void noWrappingOfCheckedExceptions_hide() {
 		Flux.just("single")
 		    .hide()
 		    .flatMap(x -> Mono.error(new NoSuchMethodException()))

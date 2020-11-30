@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Stephane Maldini
  */
-public class ExecutorSchedulerTrampolineTest extends AbstractSchedulerTest {
+class ExecutorSchedulerTrampolineTest extends AbstractSchedulerTest {
 
 	@Override
 	protected boolean shouldCheckDisposeTask() {
@@ -53,7 +53,7 @@ public class ExecutorSchedulerTrampolineTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanParent() {
+    void scanParent() {
 		Executor plainExecutor = new ExecutorSchedulerTest.PlainExecutor();
 		Executor scannableExecutor = new ExecutorSchedulerTest.ScannableExecutor();
 
@@ -78,7 +78,7 @@ public class ExecutorSchedulerTrampolineTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanBuffered() throws InterruptedException {
+    void scanBuffered() throws InterruptedException {
 		ExecutorScheduler.ExecutorSchedulerTrampolineWorker worker =
 				new ExecutorScheduler.ExecutorSchedulerTrampolineWorker(task -> new Thread(task, "scanBuffered_Trampolining").start());
 

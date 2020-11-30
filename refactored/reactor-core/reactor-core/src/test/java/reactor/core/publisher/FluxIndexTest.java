@@ -36,7 +36,7 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Integer>> {
+class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Integer>> {
 
 	@Override
 	protected Scenario<Integer, Tuple2<Long, Integer>> defaultScenarioOptions(
@@ -67,7 +67,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void defaultNormal() {
+    void defaultNormal() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -86,7 +86,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void defaultBackpressured() {
+    void defaultBackpressured() {
 		AtomicLong counter = new AtomicLong(4);
 
 		StepVerifier.create(
@@ -111,7 +111,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void defaultConditional() {
+    void defaultConditional() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -131,7 +131,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void customNormal() {
+    void customNormal() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -150,7 +150,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void customBackpressured() {
+    void customBackpressured() {
 		AtomicLong counter = new AtomicLong(4);
 
 		StepVerifier.create(
@@ -175,7 +175,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void customConditional() {
+    void customConditional() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -195,7 +195,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
 				.isThrownBy(() -> new FluxIndex<>(null, (i, v) -> i))
@@ -203,7 +203,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void indexMapperNull() {
+    void indexMapperNull() {
 		Flux<String> source = Flux.just("foo", "bar");
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
@@ -212,7 +212,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void indexMapperReturnsNull() {
+    void indexMapperReturnsNull() {
 		Flux<String> source = Flux.just("foo", "bar");
 		Flux<Tuple2<Integer, String>> test = new FluxIndex<>(source,
 				(i, v) -> {
@@ -226,7 +226,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void indexMapperThrows() {
+    void indexMapperThrows() {
 		Flux<String> source = Flux.just("foo", "bar");
 		Flux<Tuple2<Integer, String>> test = new FluxIndex<>(source,
 				(i, v) -> {
@@ -242,7 +242,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void doNotCallToString() {
+    void doNotCallToString() {
 		Flux<ThrowsOnToString> source = Flux.just(new ThrowsOnToString());
 		Flux<Tuple2<Long, ThrowsOnToString>> test = new FluxIndex<>(source, Flux.tuple2Function());
 
@@ -259,7 +259,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxIndex<Integer, Tuple2<Long, Integer>> test = new FluxIndex<>(parent, Tuples::of);
 
@@ -268,7 +268,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		CoreSubscriber<Object> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxIndex.IndexSubscriber<Object, Tuple2<Long, Object>> test =
 				new FluxIndex.IndexSubscriber<>(actual, Tuples::of);
@@ -285,7 +285,7 @@ public class FluxIndexTest extends FluxOperatorTest<Integer, Tuple2<Long, Intege
 	}
 
 	@Test
-	public void scanConditionnalSubscriber(){
+    void scanConditionnalSubscriber(){
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Tuple2<Long, String>> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxIndex.IndexConditionalSubscriber<String, Tuple2<Long, String>> test =

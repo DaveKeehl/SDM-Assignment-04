@@ -40,7 +40,7 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RejectedExecutionTest {
+class RejectedExecutionTest {
 
 	private TestInfo testInfo;
 
@@ -110,7 +110,7 @@ public class RejectedExecutionTest {
 	 *
 	 */
 	@Test
-	public void publishOn() throws Exception {
+    void publishOn() throws Exception {
 		Flux<Long> flux = Flux.interval(Duration.ofMillis(2)).take(255)
 		                      .publishOn(scheduler)
 		                      .doOnNext(i -> onNext(i))
@@ -120,7 +120,7 @@ public class RejectedExecutionTest {
 	}
 
 	@Test
-	public void publishOnFilter() throws Exception {
+    void publishOnFilter() throws Exception {
 		Flux<Long> flux = Flux.interval(Duration.ofMillis(2)).take(255)
 		                      .publishOn(scheduler)
 		                      .filter(t -> true)
@@ -155,7 +155,7 @@ public class RejectedExecutionTest {
 	 *			at java.lang.Thread.run(Thread.java:745) [na:1.8.0_77]
 	 */
 	@Test
-	public void parallelRunOn() throws Exception {
+    void parallelRunOn() throws Exception {
 		ParallelFlux<Long> flux = Flux.interval(Duration.ofMillis(2)).take(255)
 				.parallel(1)
 				.runOn(scheduler)
@@ -184,7 +184,7 @@ public class RejectedExecutionTest {
 	 *			at reactor.core.scheduler.RejectedExecutionTest.subscribeOn(RejectedExecutionTest.java:195)
 	 */
 	@Test
-	public void subscribeOn() throws Exception {
+    void subscribeOn() throws Exception {
 		scheduler.tasksRemaining.set(1); //1 subscribe then request
 		Flux<Long> flux = Flux.interval(Duration.ofMillis(2))
 		                      .take(255)
@@ -206,7 +206,7 @@ public class RejectedExecutionTest {
 	}
 
 	@Test
-	public void subscribeOnMono() throws Exception {
+    void subscribeOnMono() throws Exception {
 		//FIXME test with just, empty, callable, interval
 		scheduler.tasksRemaining.set(0); //1 subscribe then request
 		Mono<Long> flux = Mono.just(1L)
@@ -229,7 +229,7 @@ public class RejectedExecutionTest {
 	}
 
 	@Test
-	public void subscribeOnCallable() throws Exception {
+    void subscribeOnCallable() throws Exception {
 		scheduler.tasksRemaining.set(0);
 		Flux<Long> flux = Mono.fromCallable(() -> 1L)
 		                      .flux()
@@ -251,7 +251,7 @@ public class RejectedExecutionTest {
 	}
 
 	@Test
-	public void subscribeOnEmpty() throws Exception {
+    void subscribeOnEmpty() throws Exception {
 		scheduler.tasksRemaining.set(0); //1 subscribe
 		Flux<Long> flux = Flux.<Long>empty()
 		                      .subscribeOn(scheduler);
@@ -271,7 +271,7 @@ public class RejectedExecutionTest {
 	}
 
 	@Test
-	public void subscribeOnJust() throws Exception {
+    void subscribeOnJust() throws Exception {
 		scheduler.tasksRemaining.set(0); //1 subscribe
 		Flux<Long> flux = Flux.just(1L)
 		                      .subscribeOn(scheduler)

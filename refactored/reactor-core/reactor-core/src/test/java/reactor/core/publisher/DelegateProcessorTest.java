@@ -26,10 +26,10 @@ import static org.mockito.Mockito.when;
 
 // This is ok as this class tests the deprecated DelegateProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class DelegateProcessorTest {
+class DelegateProcessorTest {
 
 	@Test
-	public void scanReturnsDownStreamForParentElseDelegates() {
+    void scanReturnsDownStreamForParentElseDelegates() {
 		Publisher<?> downstream = Mockito.mock(FluxOperator.class);
 
 		IllegalStateException boom = new IllegalStateException("boom");

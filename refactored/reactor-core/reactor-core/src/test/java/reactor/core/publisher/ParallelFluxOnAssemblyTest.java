@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.Scannable.Attr.RUN_STYLE;
 import static reactor.core.Scannable.Attr.RunStyle.SYNC;
 
-public class ParallelFluxOnAssemblyTest {
+class ParallelFluxOnAssemblyTest {
 
 	@Test
-	public void parallelism() {
+    void parallelism() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		ParallelFluxOnAssembly<Integer> test = new ParallelFluxOnAssembly<>(source, stacktrace);
@@ -38,7 +38,7 @@ public class ParallelFluxOnAssemblyTest {
 	}
 
 	@Test
-	public void stepNameAndToString() {
+    void stepNameAndToString() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		AssemblySnapshot stacktrace = new AssemblySnapshot("foo", Traces.callSiteSupplierFactory.get());
 		ParallelFluxOnAssembly<Integer> test = new ParallelFluxOnAssembly<>(source, stacktrace);
@@ -49,7 +49,7 @@ public class ParallelFluxOnAssemblyTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		ParallelFlux<Integer> source = Flux.range(1, 4).parallel(3);
 		AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 		ParallelFluxOnAssembly<Integer> test = new ParallelFluxOnAssembly<>(source, stacktrace);

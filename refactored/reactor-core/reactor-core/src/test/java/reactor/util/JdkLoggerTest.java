@@ -26,10 +26,10 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JdkLoggerTest {
+class JdkLoggerTest {
 
 	@Test
-	public void formatNullFormat() {
+    void formatNullFormat() {
 		Loggers.JdkLogger jdkLogger = new Loggers.JdkLogger(Mockito.mock(java.util.logging.Logger.class));
 
 		assertThat(jdkLogger.format(null, (Object[]) null))
@@ -38,7 +38,7 @@ public class JdkLoggerTest {
 	}
 
 	@Test
-	public void nullFormatIsAcceptedByUnderlyingLogger() {
+    void nullFormatIsAcceptedByUnderlyingLogger() {
 		StringBuilder log = new StringBuilder();
 		Logger underlyingLogger = Logger.getAnonymousLogger();
 		underlyingLogger.setLevel(Level.FINEST);
@@ -64,7 +64,7 @@ public class JdkLoggerTest {
 	}
 
 	@Test
-	public void formatNullVararg() {
+    void formatNullVararg() {
 		Loggers.JdkLogger jdkLogger= new Loggers.JdkLogger(Mockito.mock(java.util.logging.Logger.class));
 
 		assertThat(jdkLogger.format("test {} is {}", (Object[]) null))
@@ -73,7 +73,7 @@ public class JdkLoggerTest {
 	}
 
 	@Test
-	public void formatNullParamInVararg() {
+    void formatNullParamInVararg() {
 		Loggers.JdkLogger jdkLogger= new Loggers.JdkLogger(Mockito.mock(java.util.logging.Logger.class));
 
 		assertThat(jdkLogger.format("test {} is {}", null, null))

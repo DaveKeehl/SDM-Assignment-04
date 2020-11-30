@@ -22,19 +22,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class Tuple4Test {
+class Tuple4Test {
 
 	private Tuple4<Integer, Integer, Integer, Integer> full = new Tuple4<>(1, 2, 3, 4);
 
 	@Test
-	public void nullT4Rejected() {
+    void nullT4Rejected() {
 		assertThatExceptionOfType(NullPointerException.class)
 				.isThrownBy(() -> new Tuple4<>(1, 2, 3, null))
 				.withMessage("t4");
 	}
 
 	@Test
-	public void mapT1() {
+    void mapT1() {
 		Tuple4<String, Integer, Integer, Integer> base = Tuples.of("Foo", 200, 300, 400);
 
 		Tuple2<?,?> mapped = base.mapT1(String::length);
@@ -45,7 +45,7 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void mapT2() {
+    void mapT2() {
 		Tuple4<Integer, String, Integer, Integer> base = Tuples.of(100, "Foo", 300, 400);
 
 		Tuple2<?,?> mapped = base.mapT2(String::length);
@@ -56,7 +56,7 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void mapT3() {
+    void mapT3() {
 		Tuple4<Integer, Integer, String, Integer> base = Tuples.of(100, 200, "Foo", 400);
 
 		Tuple2<?,?> mapped = base.mapT3(String::length);
@@ -67,7 +67,7 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void mapT4() {
+    void mapT4() {
 		Tuple4<Integer, Integer, Integer, String> base = Tuples.of(100, 200, 300, "Foo");
 
 		Tuple2<?,?> mapped = base.mapT4(String::length);
@@ -78,7 +78,7 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void mapT4Null() {
+    void mapT4Null() {
 		assertThatNullPointerException().isThrownBy(() ->
 				Tuples.of(1, 2, 3, 4)
 				      .mapT4(i -> null)
@@ -86,17 +86,17 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void getNegativeIndex() {
+    void getNegativeIndex() {
 		assertThat(full.get(-1)).isNull();
 	}
 
 	@Test
-	public void getTooLargeIndex() {
+    void getTooLargeIndex() {
 		assertThat(full.get(10)).isNull();
 	}
 
 	@Test
-	public void getAllValuesCorrespondToArray() {
+    void getAllValuesCorrespondToArray() {
 		Object[] array = full.toArray();
 
 		for (int i = 0; i < array.length; i++) {
@@ -105,25 +105,25 @@ public class Tuple4Test {
 	}
 
 	@Test
-	public void equalityOfSameReference() {
+    void equalityOfSameReference() {
 		assertThat(full).isEqualTo(full);
 	}
 
 	@Test
-	public void equalityOfNullOrWrongClass() {
+    void equalityOfNullOrWrongClass() {
 		assertThat(full).isNotEqualTo(null)
 		                .isNotEqualTo("foo");
 	}
 
 	@Test
-	public void t4Combinations() {
+    void t4Combinations() {
 		assertThat(new Tuple4<>(1, 2, 3, 4))
 				.isNotEqualTo(new Tuple4<>(1, 2, 3, 10))
 				.isEqualTo(new Tuple4<>(1, 2, 3, 4));
 	}
 
 	@Test
-	public void sanityTestHashcode() {
+    void sanityTestHashcode() {
 		Tuple4<Integer, Integer, Integer, Integer> same = new Tuple4<>(1, 2, 3, 4);
 		Tuple4<Integer, Integer, Integer, Integer> different = new Tuple4<>(1, 2, 3, 1);
 

@@ -30,10 +30,10 @@ import reactor.test.publisher.TestPublisher.Violation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class DefaultTestPublisherTests {
+class DefaultTestPublisherTests {
 
 	@Test
-	public void normalDisallowsNull() {
+	void normalDisallowsNull() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -42,7 +42,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingAllowsNull() {
+	void misbehavingAllowsNull() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.ALLOW_NULL);
 
 		StepVerifier.create(publisher)
@@ -53,7 +53,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void normalDisallowsOverflow() {
+	void normalDisallowsOverflow() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		StepVerifier.create(publisher, 1)
@@ -68,7 +68,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingAllowsOverflow() {
+	void misbehavingAllowsOverflow() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.REQUEST_OVERFLOW);
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -83,7 +83,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void normalIgnoresMultipleTerminations() {
+	void normalIgnoresMultipleTerminations() {
 		TestPublisher<String> publisher = TestPublisher.create();
 		AtomicLong count = new AtomicLong();
 
@@ -137,7 +137,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingAllowsMultipleTerminations() {
+	void misbehavingAllowsMultipleTerminations() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.CLEANUP_ON_TERMINATE);
 		AtomicLong count = new AtomicLong();
 		Subscriber<String> subscriber = countingSubscriber(count);
@@ -154,7 +154,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingMonoAllowsMultipleTerminations() {
+	void misbehavingMonoAllowsMultipleTerminations() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.CLEANUP_ON_TERMINATE);
 		AtomicLong count = new AtomicLong();
 		Subscriber<String> subscriber = countingSubscriber(count);
@@ -171,7 +171,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingFluxAllowsMultipleTerminations() {
+	void misbehavingFluxAllowsMultipleTerminations() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.CLEANUP_ON_TERMINATE);
 		AtomicLong count = new AtomicLong();
 
@@ -189,7 +189,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingFluxIgnoresCancellation() {
+	void misbehavingFluxIgnoresCancellation() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.DEFER_CANCELLATION);
 		AtomicLong emitCount = new AtomicLong();
 
@@ -213,7 +213,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void misbehavingMonoCanAvoidCompleteAfterOnNext() {
+	void misbehavingMonoCanAvoidCompleteAfterOnNext() {
 		TestPublisher<String> publisher = TestPublisher.createNoncompliant(Violation.CLEANUP_ON_TERMINATE);
 		AtomicLong terminalCount = new AtomicLong();
 
@@ -228,7 +228,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectSubscribers() {
+	void expectSubscribers() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -243,7 +243,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectAssertSubscribersN() {
+	void expectAssertSubscribersN() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -261,7 +261,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectSubscribersCountN() {
+	void expectSubscribersCountN() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -282,7 +282,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectCancelled() {
+	void expectCancelled() {
 		TestPublisher<Object> publisher = TestPublisher.create();
 		StepVerifier.create(publisher)
 	                .then(publisher::assertNotCancelled)
@@ -298,7 +298,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectMinRequestedNormal() {
+	void expectMinRequestedNormal() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		StepVerifier.create(Flux.from(publisher).limitRate(5))
@@ -312,7 +312,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectMinRequestedFailure() {
+	void expectMinRequestedFailure() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -329,7 +329,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedNormal() {
+	void expectMaxRequestedNormal() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		Flux.from(publisher).limitRequest(5).subscribe();
@@ -341,7 +341,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedWithUnbounded() {
+	void expectMaxRequestedWithUnbounded() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		Flux.from(publisher).limitRequest(5).subscribe();
@@ -353,7 +353,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void expectMaxRequestedFailure() {
+	void expectMaxRequestedFailure() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		Flux.from(publisher).limitRequest(7).subscribe();
@@ -364,7 +364,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void emitCompletes() {
+	void emitCompletes() {
 		TestPublisher<String> publisher = TestPublisher.create();
 		StepVerifier.create(publisher)
 	                .then(() -> publisher.emit("foo", "bar"))
@@ -374,7 +374,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void nextVarargNull() {
+	void nextVarargNull() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -383,7 +383,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void emitVarargNull() {
+	void emitVarargNull() {
 		TestPublisher<String> publisher = TestPublisher.create();
 
 		assertThatExceptionOfType(NullPointerException.class)
@@ -392,7 +392,7 @@ public class DefaultTestPublisherTests {
 	}
 
 	@Test
-	public void testError() {
+	void testError() {
 		TestPublisher<String> publisher = TestPublisher.create();
 		StepVerifier.create(publisher)
 	                .then(() -> publisher.next("foo", "bar").error(new IllegalArgumentException("boom")))
@@ -404,7 +404,7 @@ public class DefaultTestPublisherTests {
 
 
 	@Test
-	public void conditionalSupport() {
+	void conditionalSupport() {
 		TestPublisher<String> up = TestPublisher.create();
 		StepVerifier.create(up.flux().filter("test"::equals), 2)
 		            .then(() -> up.next("test"))

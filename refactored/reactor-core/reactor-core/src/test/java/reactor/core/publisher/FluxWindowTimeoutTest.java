@@ -34,10 +34,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxWindowTimeoutTest {
+class FluxWindowTimeoutTest {
 
 	@Test
-	public void windowWithTimeoutAccumulateOnSize() {
+    void windowWithTimeoutAccumulateOnSize() {
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 6)
 						   .delayElements(Duration.ofMillis(300))
 						   .windowTimeout(5, Duration.ofMillis(2000))
@@ -50,7 +50,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void windowWithTimeoutAccumulateOnTime() {
+    void windowWithTimeoutAccumulateOnTime() {
 		StepVerifier.withVirtualTime(() -> Flux.range(1, 8)
 						   .delayElements(Duration.ofNanos(300))
 						   .windowTimeout(14, Duration.ofNanos(2000))
@@ -63,7 +63,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void longEmptyEmitsEmptyWindowsRegularly() {
+    void longEmptyEmitsEmptyWindowsRegularly() {
 		StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofMillis(350))
 		                                       .ignoreElement()
 		                                       .as(Flux::from)
@@ -79,7 +79,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void longDelaysStartEndEmitEmptyWindows() {
+    void longDelaysStartEndEmitEmptyWindows() {
 		StepVerifier.withVirtualTime(() ->
 			Mono.just("foo")
 			    .delayElement(Duration.ofMillis(400 + 400 + 300))
@@ -97,7 +97,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void windowWithTimeoutStartsTimerOnSubscription() {
+    void windowWithTimeoutStartsTimerOnSubscription() {
 		StepVerifier.withVirtualTime(() ->
 				Mono.delay(Duration.ofMillis(300))
 				    .thenMany(Flux.range(1, 3))
@@ -116,7 +116,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void noDelayMultipleOfSize() {
+    void noDelayMultipleOfSize() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .windowTimeout(5, Duration.ofSeconds(1))
 		                        .concatMap(Flux::collectList)
@@ -128,7 +128,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void noDelayGreaterThanSize() {
+    void noDelayGreaterThanSize() {
 		StepVerifier.create(Flux.range(1, 12)
 		                        .windowTimeout(5, Duration.ofHours(1))
 		                        .concatMap(Flux::collectList)
@@ -140,7 +140,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void rejectedOnSubscription() {
+    void rejectedOnSubscription() {
 		Scheduler testScheduler = new Scheduler() {
 			@Override
 			public Disposable schedule(Runnable task) {
@@ -170,7 +170,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void testIssue912() {
+    void testIssue912() {
 		StepVerifier.withVirtualTime(() -> Flux.concat(
 				Flux.just("#").delayElements(Duration.ofMillis(20)),
 				Flux.range(1, 10),
@@ -183,7 +183,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void rejectedDuringLifecycle() {
+    void rejectedDuringLifecycle() {
 		AtomicBoolean reject = new AtomicBoolean();
 		Scheduler testScheduler = new Scheduler() {
 			@Override
@@ -228,7 +228,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		FluxWindowTimeout<Integer> test = new FluxWindowTimeout<>(Flux.just(1), 123, 100, TimeUnit.MILLISECONDS, Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());
@@ -269,7 +269,7 @@ public class FluxWindowTimeoutTest {
 	}
 
 	@Test
-    public void scanMainSubscriber() {
+    void scanMainSubscriber() {
 		Scheduler scheduler = new MyScheduler();
 		CoreSubscriber<Flux<Integer>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxWindowTimeout.WindowTimeoutSubscriber<Integer> test = new FluxWindowTimeout.WindowTimeoutSubscriber<>(actual,

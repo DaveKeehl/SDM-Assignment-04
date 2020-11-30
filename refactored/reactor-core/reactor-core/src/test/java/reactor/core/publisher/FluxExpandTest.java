@@ -44,13 +44,13 @@ import reactor.util.context.Context;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxExpandTest {
+class FluxExpandTest {
 
 	Function<Integer, Publisher<Integer>> countDown =
 			v -> v == 0 ? Flux.empty() : Flux.just(v - 1);
 
 	@Test
-	public void recursiveCountdownDepth() {
+    void recursiveCountdownDepth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expandDeep(countDown))
 		            .expectNext(10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
@@ -58,7 +58,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownBreadth() {
+    void recursiveCountdownBreadth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expand(countDown))
 		            .expectNext(10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
@@ -66,35 +66,35 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.<Integer>error(new IllegalStateException("boom"))
 				.expand(countDown))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void errorDepth() {
+    void errorDepth() {
 		StepVerifier.create(Flux.<Integer>error(new IllegalStateException("boom"))
 				.expandDeep(countDown))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		StepVerifier.create(Flux.<Integer>empty()
 				.expand(countDown))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void emptyDepth() {
+    void emptyDepth() {
 		StepVerifier.create(Flux.<Integer>empty()
 				.expandDeep(countDown))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void recursiveCountdownLoop() {
+    void recursiveCountdownLoop() {
 		for (int i = 0; i < 1000; i = (i < 100 ? i + 1 : i + 50)) {
 			String tag = "i = " + i + ", strategy = breadth";
 
@@ -117,7 +117,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownLoopDepth() {
+    void recursiveCountdownLoopDepth() {
 		for (int i = 0; i < 1000; i = (i < 100 ? i + 1 : i + 50)) {
 			String tag = "i = " + i + ", strategy = depth";
 
@@ -140,7 +140,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownTake() {
+    void recursiveCountdownTake() {
 		StepVerifier.create(Flux.just(10)
 		                        .expand(countDown)
 		                        .take(5)
@@ -150,7 +150,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownTakeDepth() {
+    void recursiveCountdownTakeDepth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expandDeep(countDown)
 		                        .take(5)
@@ -160,7 +160,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownBackpressure() {
+    void recursiveCountdownBackpressure() {
 		StepVerifier.create(Flux.just(10)
 		                        .expand(countDown),
 				StepVerifierOptions.create()
@@ -178,7 +178,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void recursiveCountdownBackpressureDepth() {
+    void recursiveCountdownBackpressureDepth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expandDeep(countDown),
 				StepVerifierOptions.create()
@@ -196,7 +196,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void expanderThrows() {
+    void expanderThrows() {
 		StepVerifier.create(Flux.just(10)
 		                        .expand(v -> {
 			                        throw new IllegalStateException("boom");
@@ -206,7 +206,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void expanderThrowsDepth() {
+    void expanderThrowsDepth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expandDeep(v -> {
 			                        throw new IllegalStateException("boom");
@@ -216,7 +216,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void expanderReturnsNull() {
+    void expanderReturnsNull() {
 		StepVerifier.create(Flux.just(10)
 		                        .expand(v -> null))
 		            .expectNext(10)
@@ -224,7 +224,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void expanderReturnsNullDepth() {
+    void expanderReturnsNullDepth() {
 		StepVerifier.create(Flux.just(10)
 		                        .expandDeep(v -> null))
 		            .expectNext(10)
@@ -297,7 +297,7 @@ public class FluxExpandTest {
 
 	@Test
 	@Timeout(5)
-	public void depthFirst() {
+	void depthFirst() {
 		Node root = createTest();
 
 		StepVerifier.create(Flux.just(root)
@@ -315,7 +315,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthFirstAsync() {
+    void depthFirstAsync() {
 		Node root = createTest();
 
 		StepVerifier.create(Flux.just(root)
@@ -336,7 +336,7 @@ public class FluxExpandTest {
 
 	@Test
 	@Timeout(5)
-	public void breadthFirst() {
+	void breadthFirst() {
 		Node root = createTest();
 
 		StepVerifier.create(Flux.just(root)
@@ -353,7 +353,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void breadthFirstAsync() {
+    void breadthFirstAsync() {
 		Node root = createTest();
 
 		StepVerifier.create(Flux.just(root)
@@ -371,7 +371,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthFirstCancel() {
+    void depthFirstCancel() {
 		final TestPublisher<Integer> pp = TestPublisher.create();
 		final AssertSubscriber<Integer> ts = AssertSubscriber.create();
 		CoreSubscriber<Integer> s = new CoreSubscriber<Integer>() {
@@ -413,7 +413,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthCancelRace() {
+    void depthCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 			final AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -429,7 +429,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthEmitCancelRace() {
+    void depthEmitCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -448,7 +448,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthCompleteCancelRace() {
+    void depthCompleteCancelRace() {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -466,7 +466,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void depthCancelRace2() throws Exception {
+    void depthCancelRace2() throws Exception {
 		for (int i = 0; i < 1000; i++) {
 
 			final TestPublisher<Integer> pp = TestPublisher.create();
@@ -511,7 +511,7 @@ public class FluxExpandTest {
 					new Node("bb1")));
 
 	@Test
-	public void javadocExampleBreadthFirst() {
+    void javadocExampleBreadthFirst() {
 		List<String> breadthFirstExpected = Arrays.asList(
 				"A",
 				"B",
@@ -529,7 +529,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void javadocExampleDepthFirst() {
+    void javadocExampleDepthFirst() {
 		List<String> depthFirstExpected = Arrays.asList(
 				"A",
 				"AA",
@@ -547,7 +547,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Node> parent = Flux.just(ROOT_A, ROOT_B);
 		FluxExpand<Node> test = new FluxExpand<>(parent, v -> Flux.fromIterable(v.children), false, 5);
 
@@ -556,7 +556,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void scanExpandBreathSubscriber() {
+    void scanExpandBreathSubscriber() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null,
 				Throwable::printStackTrace, null,null);
 		ExpandBreathSubscriber<Integer> test = new ExpandBreathSubscriber<>(actual,
@@ -582,7 +582,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void scanExpandDepthSubscriber() {
+    void scanExpandDepthSubscriber() {
 		CoreSubscriber<Integer> parentActual = new LambdaSubscriber<>(null,
 				Throwable::printStackTrace, null,null);
 		ExpandDepthSubscription<Integer> eds = new ExpandDepthSubscription<>(
@@ -602,7 +602,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void scanExpandDepthSubscriberError() {
+    void scanExpandDepthSubscriberError() {
 		CoreSubscriber<Integer> parentActual = new LambdaSubscriber<>(null,
 				Throwable::printStackTrace, null,null);
 		ExpandDepthSubscription<Integer> eds = new ExpandDepthSubscription<>(
@@ -615,7 +615,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void currentContextForExpandDepthSubscriber() {
+    void currentContextForExpandDepthSubscriber() {
 		final Context context = Context.of("foo", "bar");
 		CoreSubscriber<Integer> parentActual = new BaseSubscriber<Integer>() {
 			@Override
@@ -631,7 +631,7 @@ public class FluxExpandTest {
 	}
 
 	@Test
-	public void scanExpandDepthSubscription() {
+    void scanExpandDepthSubscription() {
 		CoreSubscriber<Integer> parentActual = new LambdaSubscriber<>(null,
 				Throwable::printStackTrace, null,null);
 		ExpandDepthSubscription<Integer> test = new ExpandDepthSubscription<>(

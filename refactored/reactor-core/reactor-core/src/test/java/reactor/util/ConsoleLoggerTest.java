@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConsoleLoggerTest {
+class ConsoleLoggerTest {
 
 	private static final RuntimeException CAUSE = new IllegalStateException("cause");
 
@@ -46,12 +46,12 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void isTraceEnabled() throws Exception {
+    void isTraceEnabled() throws Exception {
 		assertThat(logger.isTraceEnabled()).isTrue();
 	}
 
 	@Test
-	public void trace() throws Exception {
+    void trace() throws Exception {
 		logger.trace("message");
 
 		assertThat(errContent.size()).isZero();
@@ -59,7 +59,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void trace1() throws Exception {
+    void trace1() throws Exception {
 		logger.trace("message {} {} format", "with", 1);
 
 		assertThat(errContent.size()).isZero();
@@ -67,7 +67,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void trace2() throws Exception {
+    void trace2() throws Exception {
 		logger.trace("with cause", CAUSE);
 
 		assertThat(errContent.size()).isZero();
@@ -78,7 +78,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void traceNulls() {
+    void traceNulls() {
 		logger.trace("vararg {} is {}", (Object[]) null);
 		logger.trace("param {} is {}", null, null);
 
@@ -89,7 +89,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void traceDismissedInNonVerboseMode() {
+    void traceDismissedInNonVerboseMode() {
 		Logger log = new Loggers.ConsoleLogger("test", new PrintStream(outContent), new PrintStream(errContent), false);
 		log.trace("foo");
 		log.trace("foo", new IllegalArgumentException("foo"));
@@ -102,12 +102,12 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void isDebugEnabled() throws Exception {
+    void isDebugEnabled() throws Exception {
 		assertThat(logger.isDebugEnabled()).isTrue();
 	}
 
 	@Test
-	public void debug() throws Exception {
+    void debug() throws Exception {
 		logger.debug("message");
 
 		assertThat(errContent.size()).isZero();
@@ -115,7 +115,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void debug1() throws Exception {
+    void debug1() throws Exception {
 		logger.debug("message {} {} format", "with", 1);
 
 		assertThat(errContent.size()).isZero();
@@ -123,7 +123,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void debug2() throws Exception {
+    void debug2() throws Exception {
 		logger.debug("with cause", CAUSE);
 
 		assertThat(errContent.size()).isZero();
@@ -134,7 +134,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void debugNulls() {
+    void debugNulls() {
 		logger.debug("vararg {} is {}", (Object[]) null);
 		logger.debug("param {} is {}", null, null);
 
@@ -145,7 +145,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void debugDismissedInNonVerboseMode() {
+    void debugDismissedInNonVerboseMode() {
 		Logger log = new Loggers.ConsoleLogger("test", new PrintStream(outContent), new PrintStream(errContent), false);
 		log.debug("foo");
 		log.debug("foo", new IllegalArgumentException("foo"));
@@ -158,12 +158,12 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void isInfoEnabled() throws Exception {
+    void isInfoEnabled() throws Exception {
 		assertThat(logger.isInfoEnabled()).isTrue();
 	}
 
 	@Test
-	public void info() throws Exception {
+    void info() throws Exception {
 		logger.info("message");
 
 		assertThat(errContent.size()).isZero();
@@ -171,7 +171,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void info1() throws Exception {
+    void info1() throws Exception {
 		logger.info("message {} {} format", "with", 1);
 
 		assertThat(errContent.size()).isZero();
@@ -179,7 +179,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void info2() throws Exception {
+    void info2() throws Exception {
 		logger.info("with cause", CAUSE);
 
 		assertThat(errContent.size()).isZero();
@@ -190,7 +190,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void infoNulls() {
+    void infoNulls() {
 		logger.info("vararg {} is {}", (Object[]) null);
 		logger.info("param {} is {}", null, null);
 
@@ -201,12 +201,12 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void isWarnEnabled() throws Exception {
+    void isWarnEnabled() throws Exception {
 		assertThat(logger.isWarnEnabled()).isTrue();
 	}
 
 	@Test
-	public void warn() throws Exception {
+    void warn() throws Exception {
 		logger.warn("message");
 
 		assertThat(outContent.size()).isZero();
@@ -214,7 +214,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void warn1() throws Exception {
+    void warn1() throws Exception {
 		logger.warn("message {} {} format", "with", 1);
 
 		assertThat(outContent.size()).isZero();
@@ -222,7 +222,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void warn2() throws Exception {
+    void warn2() throws Exception {
 		logger.warn("with cause", CAUSE);
 
 
@@ -234,7 +234,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void warnNulls() {
+    void warnNulls() {
 		logger.warn("vararg {} is {}", (Object[]) null);
 		logger.warn("param {} is {}", null, null);
 
@@ -245,12 +245,12 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void isErrorEnabled() throws Exception {
+    void isErrorEnabled() throws Exception {
 		assertThat(logger.isErrorEnabled()).isTrue();
 	}
 
 	@Test
-	public void error() throws Exception {
+    void error() throws Exception {
 		logger.error("message");
 
 		assertThat(outContent.size()).isZero();
@@ -258,7 +258,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void error1() throws Exception {
+    void error1() throws Exception {
 		logger.error("message {} {} format", "with", 1);
 
 		assertThat(outContent.size()).isZero();
@@ -266,7 +266,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void error2() throws Exception {
+    void error2() throws Exception {
 		logger.error("with cause", CAUSE);
 
 		assertThat(outContent.size()).isZero();
@@ -277,7 +277,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void errorNulls() {
+    void errorNulls() {
 		logger.error("vararg {} is {}", (Object[]) null);
 		logger.error("param {} is {}", null, null);
 
@@ -288,7 +288,7 @@ public class ConsoleLoggerTest {
 	}
 
 	@Test
-	public void formatNull() {
+    void formatNull() {
 		logger.info(null, null, null);
 
 		assertThat(errContent.size()).isZero();

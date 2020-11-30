@@ -28,12 +28,12 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDetachTest {
+class MonoDetachTest {
 
 	Object o;
 
 	@Test
-	public void just() throws Exception {
+    void just() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -59,7 +59,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		AssertSubscriber<Object> ts = new AssertSubscriber<>();
 
 		Mono.error(new RuntimeException("forced failure"))
@@ -72,7 +72,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		AssertSubscriber<Object> ts = new AssertSubscriber<>();
 
 		Mono.empty()
@@ -85,7 +85,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void backpressured() throws Exception {
+    void backpressured() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -114,7 +114,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void justUnsubscribed() throws Exception {
+    void justUnsubscribed() throws Exception {
 		o = new Object();
 
 		WeakReference<Object> wr = new WeakReference<>(o);
@@ -140,7 +140,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void deferredUpstreamProducer() {
+    void deferredUpstreamProducer() {
 		final AtomicReference<Subscriber<? super Object>> subscriber =
 				new AtomicReference<>();
 
@@ -160,7 +160,7 @@ public class MonoDetachTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoDetach<Integer> test = new MonoDetach<>(Mono.just(1));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

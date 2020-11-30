@@ -5,10 +5,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoSourceFluxTest {
+class MonoSourceFluxTest {
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<String> source = Flux.just("foo", "bar");
 		MonoSourceFlux<String> test = new MonoSourceFlux<>(source);
 
@@ -18,7 +18,7 @@ public class MonoSourceFluxTest {
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		Flux<String> source = Flux.just("foo", "bar");
 		MonoSourceFluxFuseable<String> test = new MonoSourceFluxFuseable<>(source);
 

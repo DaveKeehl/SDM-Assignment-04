@@ -31,13 +31,13 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxStreamTest {
+class FluxStreamTest {
 
 	final List<Integer> source = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 	@SuppressWarnings("ConstantConditions")
 	@Test
-	public void nullStream() {
+    void nullStream() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.fromStream((Stream<?>) null);
 		});
@@ -45,14 +45,14 @@ public class FluxStreamTest {
 
 	@SuppressWarnings("ConstantConditions")
 	@Test
-	public void nullSupplier() {
+    void nullSupplier() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.fromStream((Supplier<Stream<?>>) null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.fromStream(source.stream())
@@ -64,7 +64,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.fromStream(source.stream())
@@ -88,7 +88,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void normalBackpressuredExact() {
+    void normalBackpressuredExact() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(10);
 
 		Flux.fromStream(source.stream())
@@ -100,7 +100,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void iteratorReturnsNull() {
+    void iteratorReturnsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.fromStream(Arrays.asList(1, 2, 3, 4, 5, null, 7, 8, 9, 10)
@@ -113,7 +113,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamAlreadyConsumed() {
+    void streamAlreadyConsumed() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Stream<Integer> s = source.stream();
@@ -129,7 +129,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamConsumedBySubscription() {
+    void streamConsumedBySubscription() {
 		Stream<Integer> stream = source.stream();
 		Flux<Integer> flux = Flux.fromStream(stream);
 
@@ -142,7 +142,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamGeneratedPerSubscription() {
+    void streamGeneratedPerSubscription() {
 		Flux<Integer> flux = Flux.fromStream(source::stream);
 
 		StepVerifier.create(flux)
@@ -155,7 +155,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void nullSupplierErrorsAtSubscription() {
+    void nullSupplierErrorsAtSubscription() {
 		Flux<String> flux = new FluxStream<>(() -> null);
 
 		StepVerifier.create(flux)
@@ -164,7 +164,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCancelNormal() {
+    void streamClosedOnCancelNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -178,7 +178,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCancelSlowPathNormal() {
+    void streamClosedOnCancelSlowPathNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -192,7 +192,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCompletionNormal() {
+    void streamClosedOnCompletionNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -205,7 +205,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCompletionSlowPathNormal() {
+    void streamClosedOnCompletionSlowPathNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -218,7 +218,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnErrorNormal() {
+    void streamClosedOnErrorNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -232,7 +232,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnErrorSlowPathNormal() {
+    void streamClosedOnErrorSlowPathNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -247,7 +247,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnNullContentNormal() {
+    void streamClosedOnNullContentNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", null, "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -260,7 +260,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnNullContentSlowPathNormal() {
+    void streamClosedOnNullContentSlowPathNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", null, "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -273,7 +273,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnPollCompletionNormal() {
+    void streamClosedOnPollCompletionNormal() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar")
 		                              .onClose(closed::incrementAndGet);
@@ -287,7 +287,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamCloseFailureDroppedNormal() {
+    void streamCloseFailureDroppedNormal() {
 		Stream<String> source = Stream.of("foo", "bar")
 		                              .onClose(() -> { throw new IllegalStateException("boom"); });
 
@@ -299,7 +299,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCancelConditional() {
+    void streamClosedOnCancelConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -314,7 +314,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCancelSlowPathConditional() {
+    void streamClosedOnCancelSlowPathConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -329,7 +329,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCompletionConditional() {
+    void streamClosedOnCompletionConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -342,7 +342,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnCompletionSlowPathConditional() {
+    void streamClosedOnCompletionSlowPathConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -355,7 +355,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnErrorConditional() {
+    void streamClosedOnErrorConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -370,7 +370,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnErrorSlowPathConditional() {
+    void streamClosedOnErrorSlowPathConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -385,7 +385,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnNullContentConditional() {
+    void streamClosedOnNullContentConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", null, "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -398,7 +398,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnNullContentSlowPathConditional() {
+    void streamClosedOnNullContentSlowPathConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar", null, "baz")
 		                              .onClose(closed::incrementAndGet);
@@ -411,7 +411,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamClosedOnPollCompletionConditional() {
+    void streamClosedOnPollCompletionConditional() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar")
 		                              .onClose(closed::incrementAndGet);
@@ -427,7 +427,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void streamCloseFailureDroppedConditional() {
+    void streamCloseFailureDroppedConditional() {
 		Stream<String> source = Stream.of("foo", "bar")
 		                              .onClose(() -> { throw new IllegalStateException("boom"); });
 
@@ -439,7 +439,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void intermediateCloseIdempotent() {
+    void intermediateCloseIdempotent() {
 		AtomicInteger closed = new AtomicInteger();
 		Stream<String> source = Stream.of("foo", "bar")
 		                              .onClose(closed::incrementAndGet);
@@ -456,7 +456,7 @@ public class FluxStreamTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		FluxStream<Integer> test = new FluxStream<>(() -> source.stream());
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

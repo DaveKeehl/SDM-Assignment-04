@@ -22,10 +22,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoHandleTest {
+class MonoHandleTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		Mono.just(1)
 		    .handle((v, s) -> s.next(v * 2))
 		    .subscribeWith(AssertSubscriber.create())
@@ -34,7 +34,7 @@ public class MonoHandleTest {
 		    .assertComplete();
 	}
 	@Test
-	public void normalHide() {
+    void normalHide() {
 		Mono.just(1)
 		    .hide()
 		    .handle((v, s) -> s.next(v * 2))
@@ -45,7 +45,7 @@ public class MonoHandleTest {
 	}
 
 	@Test
-	public void filterNullMapResult() {
+    void filterNullMapResult() {
 		Mono.just(1)
 		    .handle((v, s) -> { /*ignore*/ })
 		    .subscribeWith(AssertSubscriber.create())
@@ -55,14 +55,14 @@ public class MonoHandleTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoHandle<Integer, Integer> test = new MonoHandle<>(Mono.just(1), (v, s) -> {});
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator(){
+    void scanFuseableOperator(){
 		MonoHandleFuseable<Integer, Integer> test = new MonoHandleFuseable<>(Mono.just(1), (v, s) -> {});
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

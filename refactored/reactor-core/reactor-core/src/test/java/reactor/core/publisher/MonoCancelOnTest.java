@@ -26,11 +26,11 @@ import reactor.test.subscriber.AssertSubscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoCancelOnTest {
+class MonoCancelOnTest {
 
 	@Test
 	@Timeout(3)
-	public void cancelOnDedicatedScheduler() throws Exception {
+	void cancelOnDedicatedScheduler() throws Exception {
 
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicReference<Thread> threadHash = new AtomicReference<>(Thread.currentThread());
@@ -53,7 +53,7 @@ public class MonoCancelOnTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoCancelOn<String> test = new MonoCancelOn<>(Mono.empty(), Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());

@@ -26,24 +26,24 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoFilterTest {
+class MonoFilterTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoFilter<Integer>(null, e -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Mono.never().filter(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		Mono.just(1)
 		    .filter(v -> v % 2 == 0)
 		    .subscribeWith(AssertSubscriber.create())
@@ -60,7 +60,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void normalBackpressuredJust() {
+    void normalBackpressuredJust() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.just(1)
@@ -79,7 +79,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void normalBackpressuredCallable() {
+    void normalBackpressuredCallable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Mono.fromCallable(() -> 2)
@@ -98,7 +98,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(2);
 
 		Mono.create(s -> s.success(1))
@@ -114,7 +114,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void syncFusion() {
+    void syncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Mono.just(2)
@@ -127,7 +127,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void asyncFusion() {
+    void asyncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		//TODO find a suitable source that can be async fused (MonoProcessor was never fuseable)
@@ -144,7 +144,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void asyncFusionBackpressured() {
+    void asyncFusionBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(1);
 
 		//TODO find a suitable source that can be async fused (MonoProcessor was never fuseable)
@@ -174,7 +174,7 @@ public class MonoFilterTest {
 	}
 
 	@Test
-	public void filterMono() {
+    void filterMono() {
 		StepVerifier.create(Mono.just(2).filter(s -> s % 2 == 0))
 		            .expectNext(2)
 		            .verifyComplete();
@@ -182,20 +182,20 @@ public class MonoFilterTest {
 
 
 	@Test
-	public void filterMonoNot() {
+    void filterMonoNot() {
 		StepVerifier.create(Mono.just(1).filter(s -> s % 2 == 0))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoFilter<Integer> test = new MonoFilter<>(Mono.just(1), (v -> v % 2 != 0));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanFuseableOperator() {
+    void scanFuseableOperator() {
 		MonoFilterFuseable<Integer> test = new MonoFilterFuseable<>(Mono.just(1), (v -> v % 2 != 0));
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoToCompletableFutureTest {
+class MonoToCompletableFutureTest {
 
 	@Test
-	public void normal() throws Exception {
+    void normal() throws Exception {
 		CompletableFuture<Integer> f = Mono.just(1)
 		                                   .toFuture();
 
@@ -35,7 +35,7 @@ public class MonoToCompletableFutureTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		CompletableFuture<Integer> f =
 				Mono.<Integer>error(new IllegalStateException("test")).toFuture();
 
@@ -49,14 +49,14 @@ public class MonoToCompletableFutureTest {
 	}
 
 	@Test
-	public void empty() throws Exception {
+    void empty() throws Exception {
 		CompletableFuture<Integer> f = Mono.<Integer>empty().toFuture();
 
 		assertThat(f.get()).isNull();
 	}
 
 	@Test
-	public void monoSourceIsntCancelled() {
+    void monoSourceIsntCancelled() {
 		AtomicBoolean flag = new AtomicBoolean();
 
 		assertThat(Mono.just("value")
@@ -68,7 +68,7 @@ public class MonoToCompletableFutureTest {
 	}
 
 	@Test
-	public void sourceCanBeCancelledExplicitlyByOnNext() {
+    void sourceCanBeCancelledExplicitlyByOnNext() {
 		AtomicBoolean flag = new AtomicBoolean();
 
 		assertThat(Flux.just("value")

@@ -29,10 +29,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class FluxConcatArrayTest {
+class FluxConcatArrayTest {
 
 	@Test
-	public void arrayNull() {
+    void arrayNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.concat((Publisher<Object>[]) null);
 		});
@@ -41,7 +41,7 @@ public class FluxConcatArrayTest {
 	final Publisher<Integer> source = Flux.range(1, 3);
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat(source, source, source)
@@ -53,7 +53,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.concat(source, source, source)
@@ -83,7 +83,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void oneSourceIsNull() {
+    void oneSourceIsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat(source, null, source)
@@ -95,7 +95,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void singleSourceIsNull() {
+    void singleSourceIsNull() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concat((Publisher<Integer>) null)
@@ -107,7 +107,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void scalarAndRangeBackpressured() {
+    void scalarAndRangeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.just(1)
@@ -125,7 +125,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void errorDelayed() {
+    void errorDelayed() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concatDelayError(
@@ -141,7 +141,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void errorManyDelayed() {
+    void errorManyDelayed() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.concatDelayError(
@@ -159,7 +159,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void veryLongTake() {
+    void veryLongTake() {
 		Flux.range(1, 1_000_000_000)
 		    .concatWith(Flux.empty())
 		    .take(10)
@@ -169,7 +169,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void pairWise() {
+    void pairWise() {
 		Flux<String> f = Flux.concat(Flux.just("test"), Flux.just("test2"))
 		                     .concatWith(Flux.just("test3"));
 
@@ -184,7 +184,7 @@ public class FluxConcatArrayTest {
 
 
 	@Test
-	public void pairWise2() {
+    void pairWise2() {
 		Flux<String> f = Mono.just("test")
 		                     .concatWith(Flux.just("test2"));
 
@@ -198,7 +198,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void thenMany(){
+    void thenMany(){
 		StepVerifier.create(Flux.just(1, 2, 3).thenMany(Flux.just("test", "test2")))
 	                .expectNext("test", "test2")
 	                .verifyComplete();
@@ -206,7 +206,7 @@ public class FluxConcatArrayTest {
 
 
 	@Test
-	public void thenManyThenMany(){
+    void thenManyThenMany(){
 		StepVerifier.create(Flux.just(1, 2, 3).thenMany(Flux.just("test", "test2"))
 		                        .thenMany(Flux.just(1L, 2L)))
 	                .expectNext(1L, 2L)
@@ -214,20 +214,20 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void thenManySupplier(){
+    void thenManySupplier(){
 		StepVerifier.create(Flux.just(1, 2, 3).thenMany(Flux.defer(() -> Flux.just("test", "test2"))))
 		            .expectNext("test", "test2")
 		            .verifyComplete();
 	}
 
 	@Test
-	public void thenManyError(){
+    void thenManyError(){
 		StepVerifier.create(Flux.error(new Exception("test")).thenMany(Flux.just(4, 5, 6)))
 	                .verifyErrorMessage("test");
 	}
 
 	@Test
-	public void startWith(){
+    void startWith(){
 		StepVerifier.create(Flux.just(1, 2, 3).startWith(Arrays.asList(-1, 0)))
 		            .expectNext(-1, 0, 1, 2, 3)
 		            .verifyComplete();
@@ -235,7 +235,7 @@ public class FluxConcatArrayTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void concatArrayDelayErrorWithFluxError() {
+    void concatArrayDelayErrorWithFluxError() {
 		StepVerifier.create(
 				Flux.concatDelayError(
 						Flux.just(1, 2),
@@ -248,7 +248,7 @@ public class FluxConcatArrayTest {
 
 	//see https://github.com/reactor/reactor-core/issues/936
 	@Test
-	public void concatArrayDelayErrorWithMonoError() {
+    void concatArrayDelayErrorWithMonoError() {
 		StepVerifier.create(
 				Flux.concatDelayError(
 								Flux.just(1, 2),
@@ -260,7 +260,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		@SuppressWarnings("unchecked") //vararg of Publisher<String>
 		FluxConcatArray<String> s = new FluxConcatArray<>(true, Flux.empty());
 		assertThat(s.scan(Scannable.Attr.DELAY_ERROR)).as("delayError").isTrue();
@@ -268,7 +268,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		@SuppressWarnings("unchecked")
 		Publisher<String>[] publishers = (Publisher<String>[]) new Publisher[0];
@@ -289,7 +289,7 @@ public class FluxConcatArrayTest {
 	}
 
 	@Test
-	public void scanDelayErrorSubscriber() {
+    void scanDelayErrorSubscriber() {
 		CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		@SuppressWarnings("unchecked")
 		Publisher<String>[] emptyPub = (Publisher<String>[]) new Publisher[0];

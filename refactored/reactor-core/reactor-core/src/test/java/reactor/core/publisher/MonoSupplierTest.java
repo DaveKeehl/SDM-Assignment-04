@@ -26,10 +26,10 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoSupplierTest {
+class MonoSupplierTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		AtomicInteger n = new AtomicInteger();
 		Mono<Integer> m = Mono.fromSupplier(n::incrementAndGet);
 
@@ -43,27 +43,27 @@ public class MonoSupplierTest {
 	}
 
 	@Test
-	public void normalSupplyingNull() {
+    void normalSupplyingNull() {
 		StepVerifier.create(Mono.fromSupplier(() -> null))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void normalSupplyingNullBackpressuredShortcuts() {
+    void normalSupplyingNullBackpressuredShortcuts() {
 		StepVerifier.create(Mono.fromSupplier(() -> null), 0)
 		            .expectSubscription()
 		            .verifyComplete();
 	}
 
 	@Test
-	public void asyncSupplyingNull() {
+    void asyncSupplyingNull() {
 		StepVerifier.create(Mono.fromSupplier(() -> null)
 		                        .subscribeOn(Schedulers.single()), 1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void asyncSupplyingNullBackpressuredShortcuts() {
+    void asyncSupplyingNullBackpressuredShortcuts() {
 		StepVerifier.create(Mono.fromSupplier(() -> null)
 		                        .subscribeOn(Schedulers.single()), 0)
 		            .expectSubscription()
@@ -71,14 +71,14 @@ public class MonoSupplierTest {
 	}
 
 	@Test
-	public void supplierCancel(){
+    void supplierCancel(){
 		StepVerifier.create(Mono.fromSupplier(() -> "test"))
 	                .thenCancel()
 	                .verify();
 	}
 
 	@Test
-	public void supplierThrows() {
+    void supplierThrows() {
 		StepVerifier.create(Mono.fromSupplier(() -> {
 			throw new RuntimeException("forced failure");
 		}))
@@ -86,13 +86,13 @@ public class MonoSupplierTest {
 	}
 
 	@Test
-	public void onMonoSuccessSupplierOnBlock() {
+    void onMonoSuccessSupplierOnBlock() {
 		assertThat(Mono.fromSupplier(() -> "test")
 		               .block()).isEqualToIgnoringCase("test");
 	}
 
 	@Test
-	public void onMonoErrorSupplierOnBlock() {
+    void onMonoErrorSupplierOnBlock() {
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
 			Mono.fromSupplier(() -> {
 				throw new RuntimeException("test");
@@ -101,7 +101,7 @@ public class MonoSupplierTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoSupplier<String> test = new MonoSupplier<>(() -> "test");
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

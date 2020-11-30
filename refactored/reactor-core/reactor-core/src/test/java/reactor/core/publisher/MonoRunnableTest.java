@@ -34,17 +34,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoRunnableTest {
+class MonoRunnableTest {
 
 	@Test
-	public void nullValue() {
+    void nullValue() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoRunnable<>(null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Void> ts = AssertSubscriber.create();
 
 		Mono.<Void>fromRunnable(() -> {
@@ -57,7 +57,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Void> ts = AssertSubscriber.create(0);
 
 		Mono.<Void>fromRunnable(() -> {
@@ -72,7 +72,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void asyncRunnable() {
+    void asyncRunnable() {
 		AtomicReference<Thread> t = new AtomicReference<>();
 		StepVerifier.create(Mono.fromRunnable(() -> t.set(Thread.currentThread()))
 		                        .subscribeOn(Schedulers.single()))
@@ -83,7 +83,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void asyncRunnableBackpressured() {
+    void asyncRunnableBackpressured() {
 		AtomicReference<Thread> t = new AtomicReference<>();
 		StepVerifier.create(Mono.fromRunnable(() -> t.set(Thread.currentThread()))
 		                        .subscribeOn(Schedulers.single()), 0)
@@ -94,7 +94,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void runnableThrows() {
+    void runnableThrows() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Mono.fromRunnable(() -> {
@@ -109,7 +109,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void nonFused() {
+    void nonFused() {
 		AssertSubscriber<Void> ts = AssertSubscriber.create();
 
 		Mono.<Void>fromRunnable(() -> {
@@ -121,7 +121,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void test() {
+    void test() {
 		int c[] = { 0 };
 		Flux.range(1, 1000)
 		    .flatMap(v -> Mono.fromRunnable(() -> { c[0]++; }))
@@ -133,7 +133,7 @@ public class MonoRunnableTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1503
 	@Test
-	public void runnableCancelledBeforeRun() {
+    void runnableCancelledBeforeRun() {
 		AtomicBoolean actual = new AtomicBoolean(true);
 		Mono<?> mono = Mono.fromRunnable(() -> actual.set(false))
 		                   .doOnSubscribe(Subscription::cancel);
@@ -150,7 +150,7 @@ public class MonoRunnableTest {
 	//see https://github.com/reactor/reactor-core/issues/1503
 	//see https://github.com/reactor/reactor-core/issues/1504
 	@Test
-	public void runnableSubscribeToCompleteMeasurement() {
+    void runnableSubscribeToCompleteMeasurement() {
 		AtomicLong subscribeTs = new AtomicLong();
 		Mono<Object> mono = Mono.fromRunnable(() -> {
 			try {
@@ -170,7 +170,7 @@ public class MonoRunnableTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		MonoRunnable<String> test = new MonoRunnable<>(() -> {});
 
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

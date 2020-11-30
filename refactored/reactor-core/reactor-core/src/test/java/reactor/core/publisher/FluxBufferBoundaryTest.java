@@ -37,7 +37,7 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxBufferBoundaryTest
+class FluxBufferBoundaryTest
 		extends FluxOperatorTest<String, List<String>> {
 
 	@Override
@@ -74,7 +74,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -126,7 +126,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void mainError() {
+    void mainError() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -173,7 +173,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void otherError() {
+    void otherError() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -220,7 +220,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferSupplierThrows() {
+    void bufferSupplierThrows() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -242,7 +242,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferSupplierThrowsLater() {
+    void bufferSupplierThrowsLater() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -274,7 +274,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferSupplierReturnsNUll() {
+    void bufferSupplierReturnsNUll() {
 		AssertSubscriber<List<Integer>> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> sp1 = Sinks.unsafe().many().multicast().directBestEffort();
@@ -299,7 +299,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxTime() {
+    void bufferWillSubdivideAnInputFluxTime() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxTime)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2))
@@ -316,7 +316,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferWillSubdivideAnInputFluxTime2() {
+    void bufferWillSubdivideAnInputFluxTime2() {
 		StepVerifier.withVirtualTime(this::scenario_bufferWillSubdivideAnInputFluxTime2)
 		            .thenAwait(Duration.ofSeconds(10))
 		            .assertNext(t -> assertThat(t).containsExactly(1, 2))
@@ -327,7 +327,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void bufferWillAccumulateMultipleListsOfValues() {
+    void bufferWillAccumulateMultipleListsOfValues() {
 		//given: "a source and a collected flux"
 		Sinks.Many<Integer> numbers = Sinks.many().multicast().onBackpressureBuffer();
 
@@ -352,7 +352,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void fluxEmptyBufferJust() {
+    void fluxEmptyBufferJust() {
 //	    "flux empty buffer just"() {
 //		when:
 		List<List<Object>> ranges = Flux.empty()
@@ -365,7 +365,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void fluxEmptyBuffer() {
+    void fluxEmptyBuffer() {
 //		"flux empty buffer"
 //		when:
 		List<List<Object>> ranges = Flux.empty()
@@ -378,7 +378,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxBufferBoundary<Integer, Object, ArrayList<Integer>> test = new FluxBufferBoundary<>(parent, Flux.empty(), ArrayList::new);
 
@@ -387,7 +387,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		CoreSubscriber<? super List> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		List<String> initialBuffer = Arrays.asList("foo", "bar");
 		FluxBufferBoundary.BufferBoundaryMain<String, Integer, List<String>> test = new FluxBufferBoundary.BufferBoundaryMain<>(
@@ -410,7 +410,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void scanOther() {
+    void scanOther() {
 		CoreSubscriber<Object> actual = new LambdaSubscriber<>(null, null, null, null);
 
 		FluxBufferBoundary.BufferBoundaryMain<String, Integer, List<String>> main = new FluxBufferBoundary.BufferBoundaryMain<>(
@@ -433,7 +433,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void scanOtherRequestWhenNoParent() {
+    void scanOtherRequestWhenNoParent() {
 		CoreSubscriber<Object> actual = new LambdaSubscriber<>(null, null, null, null);
 
 		FluxBufferBoundary.BufferBoundaryMain<String, Integer, List<String>> main = new FluxBufferBoundary.BufferBoundaryMain<>(
@@ -446,7 +446,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void discardOnCancel() {
+    void discardOnCancel() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.never())
 		                        .buffer(Mono.never()))
@@ -457,7 +457,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void discardOnError() {
+    void discardOnError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .concatWith(Mono.error(new IllegalStateException("boom")))
 		                        .buffer(Mono.never()))
@@ -467,7 +467,7 @@ public class FluxBufferBoundaryTest
 	}
 
 	@Test
-	public void discardOnEmitOverflow() {
+    void discardOnEmitOverflow() {
 		final TestPublisher<Integer> publisher = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
 		StepVerifier.create(publisher.flux()

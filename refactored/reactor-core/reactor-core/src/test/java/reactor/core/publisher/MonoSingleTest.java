@@ -28,16 +28,16 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class MonoSingleTest {
+class MonoSingleTest {
 	@Test
-	public void source1Null() {
+    void source1Null() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new MonoSingle<>(null, 1, false);
 		});
 	}
 
 	@Test
-	public void defaultSupplierNull() {
+    void defaultSupplierNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never().single(null);
 		});
@@ -45,7 +45,7 @@ public class MonoSingleTest {
 
 
 	@Test
-	public void normal() {
+    void normal() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -57,7 +57,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.just(1).single().subscribe(ts);
@@ -74,7 +74,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -86,14 +86,14 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .single())
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHide() {
+    void errorHide() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .single())
@@ -101,14 +101,14 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void errorDefault() {
+    void errorDefault() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .single("bla"))
 		            .verifyErrorMessage("forced failure");
 	}
 
 	@Test
-	public void errorHideDefault() {
+    void errorHideDefault() {
 		StepVerifier.create(Flux.error(new RuntimeException("forced failure"))
 		                        .hide()
 		                        .single("bla"))
@@ -116,7 +116,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void emptyDefault() {
+    void emptyDefault() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.<Integer>empty().single(1).subscribe(ts);
@@ -127,7 +127,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void emptyDefaultBackpressured() {
+    void emptyDefaultBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.<Integer>empty().single(1).subscribe(ts);
@@ -144,7 +144,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void multi() {
+    void multi() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
@@ -156,7 +156,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void multiBackpressured() {
+    void multiBackpressured() {
 
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
@@ -174,7 +174,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleCallable() {
+    void singleCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .single())
@@ -183,7 +183,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleFallbackEmpty() {
+    void singleFallbackEmpty() {
 		StepVerifier.create(Flux.empty()
 		                        .single(1))
 		            .expectNext(1)
@@ -191,7 +191,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleFallbackJust() {
+    void singleFallbackJust() {
 		StepVerifier.create(Flux.just(1)
 		                        .single(2))
 		            .expectNext(1)
@@ -199,7 +199,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleFallbackCallable() {
+    void singleFallbackCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .single(2))
@@ -208,14 +208,14 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleJustHide() {
+    void singleJustHide() {
 		StepVerifier.create(Flux.empty()
 		                        .single())
 		            .verifyError(NoSuchElementException.class);
 	}
 
 	@Test
-	public void singleFallbackJustHide() {
+    void singleFallbackJustHide() {
 		StepVerifier.create(Flux.just(1)
 		                        .hide()
 		                        .single(2))
@@ -224,7 +224,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleEmptyFallbackCallable() {
+    void singleEmptyFallbackCallable() {
 		StepVerifier.create(Mono.fromCallable(() -> 1)
 		                        .flux()
 		                        .singleOrEmpty())
@@ -234,7 +234,7 @@ public class MonoSingleTest {
 
 
 	@Test
-	public void singleEmptyFallbackJustHide() {
+    void singleEmptyFallbackJustHide() {
 		StepVerifier.create(Flux.empty()
 		                        .hide()
 		                        .singleOrEmpty())
@@ -242,7 +242,7 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void singleEmptyFallbackJustHideError() {
+    void singleEmptyFallbackJustHideError() {
 		StepVerifier.create(Flux.just(1, 2, 3)
 		                        .hide()
 		                        .singleOrEmpty())
@@ -250,14 +250,14 @@ public class MonoSingleTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    MonoSingle<String> test = new MonoSingle<>(Flux.just("foo"));
 
 	    assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);
 	}
 
 	@Test
-	public void scanSubscriber() {
+    void scanSubscriber() {
 		CoreSubscriber<String>
 				actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		MonoSingle.SingleSubscriber<String> test = new MonoSingle.SingleSubscriber<>(

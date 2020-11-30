@@ -34,7 +34,7 @@ import reactor.test.StepVerifier;
 /**
  * @author Stephane Maldini
  */
-public class SingleSchedulerTest extends AbstractSchedulerTest {
+class SingleSchedulerTest extends AbstractSchedulerTest {
 
 	@Override
 	protected Scheduler scheduler() {
@@ -47,7 +47,7 @@ public class SingleSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestDelay() {
+    void smokeTestDelay() {
 		for (int i = 0; i < 20; i++) {
 			Scheduler s = Schedulers.newSingle("test");
 			AtomicLong start = new AtomicLong();
@@ -80,7 +80,7 @@ public class SingleSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void smokeTestInterval() {
+    void smokeTestInterval() {
 		Scheduler s = Schedulers.newSingle("test");
 
 		try {
@@ -100,7 +100,7 @@ public class SingleSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void lotsOfTasks() throws Exception {
+    void lotsOfTasks() throws Exception {
 	    System.gc();
 	    Thread.sleep(200);
 	    long before = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
@@ -132,7 +132,7 @@ public class SingleSchedulerTest extends AbstractSchedulerTest {
 
 
 	@Test
-	public void scanName() {
+    void scanName() {
 		Scheduler withNamedFactory = Schedulers.newSingle("scanName");
 		Scheduler withBasicFactory = Schedulers.newSingle(Thread::new);
 		Scheduler cached = Schedulers.single();
@@ -173,7 +173,7 @@ public class SingleSchedulerTest extends AbstractSchedulerTest {
 	}
 
 	@Test
-	public void scanCapacity() {
+    void scanCapacity() {
 		Scheduler scheduler = Schedulers.newSingle(Thread::new);
 
 		try {

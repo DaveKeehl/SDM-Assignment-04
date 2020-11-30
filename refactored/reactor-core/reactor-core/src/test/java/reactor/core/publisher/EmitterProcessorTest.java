@@ -62,10 +62,10 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
  */
 // This is ok as this class tests the deprecated EmitterProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class EmitterProcessorTest {
+class EmitterProcessorTest {
 
 	@Test
-	public void currentSubscriberCount() {
+    void currentSubscriberCount() {
 		Sinks.Many<Integer> sink = EmitterProcessor.create();
 
 		assertThat(sink.currentSubscriberCount()).isZero();
@@ -81,7 +81,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1364
 	@Test
-	public void subscribeWithSyncFusionUpstreamFirst() {
+    void subscribeWithSyncFusionUpstreamFirst() {
 		EmitterProcessor<String> processor = EmitterProcessor.create(16);
 
 		StepVerifier.create(
@@ -98,7 +98,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1290
 	@Test
-	public void subscribeWithSyncFusionSingle() {
+    void subscribeWithSyncFusionSingle() {
 		Processor<Integer, Integer> processor = EmitterProcessor.create(16);
 
 		StepVerifier.create(processor)
@@ -110,7 +110,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1290
 	@Test
-	public void subscribeWithSyncFusionMultiple() {
+    void subscribeWithSyncFusionMultiple() {
 		Processor<Integer, Integer> processor = EmitterProcessor.create(16);
 
 		StepVerifier.create(processor)
@@ -122,7 +122,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1290
 	@Test
-	public void subscribeWithAsyncFusion() {
+    void subscribeWithAsyncFusion() {
 		Processor<Integer, Integer> processor = EmitterProcessor.create(16);
 
 		StepVerifier.create(processor)
@@ -133,7 +133,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void emitNextNullWithAsyncFusion() {
+    void emitNextNullWithAsyncFusion() {
 		EmitterProcessor<Integer> processor = EmitterProcessor.create();
 
 		// Any `QueueSubscription` capable of doing ASYNC fusion
@@ -148,7 +148,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testColdIdentityProcessor() throws InterruptedException {
+    void testColdIdentityProcessor() throws InterruptedException {
 		final int elements = 10;
 		CountDownLatch latch = new CountDownLatch(elements + 1);
 
@@ -204,14 +204,14 @@ public class EmitterProcessorTest {
 	}
 
 	/*@Test
-	public void test100Hot() throws InterruptedException {
+    void test100Hot() throws InterruptedException {
 		for (int i = 0; i < 10000; i++) {
 			testHotIdentityProcessor();
 		}
 	}
 */
 	@Test
-	public void testHotIdentityProcessor() throws InterruptedException {
+    void testHotIdentityProcessor() throws InterruptedException {
 		final int elements = 10000;
 		CountDownLatch latch = new CountDownLatch(elements);
 
@@ -259,35 +259,35 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void onNextNull() {
+    void onNextNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().onNext(null);
 		});
 	}
 
 	@Test
-	public void onErrorNull() {
+    void onErrorNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().onError(null);
 		});
 	}
 
 	@Test
-	public void onSubscribeNull() {
+    void onSubscribeNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().onSubscribe(null);
 		});
 	}
 
 	@Test
-	public void subscribeNull() {
+    void subscribeNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().subscribe((Subscriber<Object>) null);
 		});
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		EmitterProcessor<Integer> tp = EmitterProcessor.create();
 		StepVerifier.create(tp)
 		            .then(() -> {
@@ -314,7 +314,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void normalBackpressured() {
+    void normalBackpressured() {
 		EmitterProcessor<Integer> tp = EmitterProcessor.create();
 		StepVerifier.create(tp, 0L)
 		            .then(() -> {
@@ -338,7 +338,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void normalAtomicRingBufferBackpressured() {
+    void normalAtomicRingBufferBackpressured() {
 		EmitterProcessor<Integer> tp = EmitterProcessor.create(100);
 		StepVerifier.create(tp, 0L)
 		            .then(() -> {
@@ -362,7 +362,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void state(){
+    void state(){
 		EmitterProcessor<Integer> tp = EmitterProcessor.create();
 		assertThat(tp.getPending()).isEqualTo(0);
 		assertThat(tp.getBufferSize()).isEqualTo(Queues.SMALL_BUFFER_SIZE);
@@ -426,28 +426,28 @@ public class EmitterProcessorTest {
 
 
 	@Test
-	public void failNullBufferSize() {
+    void failNullBufferSize() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			EmitterProcessor.create(0);
 		});
 	}
 
 	@Test
-	public void failNullNext() {
+    void failNullNext() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().onNext(null);
 		});
 	}
 
 	@Test
-	public void failNullError() {
+    void failNullError() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			EmitterProcessor.create().onError(null);
 		});
 	}
 
 	@Test
-	public void failDoubleError() {
+    void failDoubleError() {
 		EmitterProcessor<Integer> ep = EmitterProcessor.create();
 		StepVerifier.create(ep)
 	                .then(() -> {
@@ -462,7 +462,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void failCompleteThenError() {
+    void failCompleteThenError() {
 		EmitterProcessor<Integer> ep = EmitterProcessor.create();
 		StepVerifier.create(ep)
 	                .then(() -> {
@@ -476,14 +476,14 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void ignoreDoubleOnSubscribe() {
+    void ignoreDoubleOnSubscribe() {
 		EmitterProcessor<Integer> ep = EmitterProcessor.create();
 		ep.sink();
 		assertThat(ep.sink().isCancelled()).isTrue();
 	}
 
 	@Test
-	public void failNegativeBufferSize() {
+    void failNegativeBufferSize() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			EmitterProcessor.create(-1);
 		});
@@ -499,7 +499,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testRed() {
+    void testRed() {
 		EmitterProcessor<String> processor = EmitterProcessor.create();
 		AssertSubscriber<String> subscriber = AssertSubscriber.create(1);
 		processor.subscribe(subscriber);
@@ -512,7 +512,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testGreen() {
+    void testGreen() {
 		EmitterProcessor<String> processor = EmitterProcessor.create();
 		AssertSubscriber<String> subscriber = AssertSubscriber.create(1);
 		processor.subscribe(subscriber);
@@ -526,7 +526,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testHanging() {
+    void testHanging() {
 		EmitterProcessor<String> processor = EmitterProcessor.create(2);
 
 		AssertSubscriber<String> first = AssertSubscriber.create(0);
@@ -554,7 +554,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testNPE() {
+    void testNPE() {
 		EmitterProcessor<String> processor = EmitterProcessor.create(8);
 		AssertSubscriber<String> first = AssertSubscriber.create(1);
 		processor.log().take(1).subscribe(first);
@@ -592,7 +592,7 @@ public class EmitterProcessorTest {
 
 		}
 
-		public MyThread(EmitterProcessor<String> processor, CyclicBarrier barrier, int n, int index) {
+		MyThread(EmitterProcessor<String> processor, CyclicBarrier barrier, int n, int index) {
 			this.processor = processor.log("consuming."+index);
 			this.barrier = barrier;
 			this.n = n;
@@ -608,7 +608,7 @@ public class EmitterProcessorTest {
 			}
 		}
 
-		public void doRun() throws Exception {
+		void doRun() throws Exception {
 			AssertSubscriber<String> subscriber = AssertSubscriber.create(5);
 			processor.subscribe(subscriber);
 			barrier.await();
@@ -624,7 +624,7 @@ public class EmitterProcessorTest {
 		}
 
 		@Nullable
-		public Throwable getLastException() {
+		Throwable getLastException() {
 			return lastException;
 		}
 
@@ -632,7 +632,7 @@ public class EmitterProcessorTest {
 
 	@Test
 	@Disabled
-	public void testRacing() throws Exception {
+	void testRacing() throws Exception {
 		int N_THREADS = 3;
 		int N_ITEMS = 8;
 
@@ -666,7 +666,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void testThreadAffinity() throws InterruptedException {
+    void testThreadAffinity() throws InterruptedException {
 		int count = 10;
 		Scheduler[] schedulers = new Scheduler[4];
 		CountDownLatch[] latches = new CountDownLatch[schedulers.length];
@@ -707,34 +707,34 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void createDefault() {
+    void createDefault() {
 		EmitterProcessor<Integer> processor = EmitterProcessor.create();
 		assertProcessor(processor, null, null);
 	}
 
 	@Test
-	public void createOverrideBufferSize() {
+    void createOverrideBufferSize() {
 		int bufferSize = 1024;
 		EmitterProcessor<Integer> processor = EmitterProcessor.create(bufferSize);
 		assertProcessor(processor, bufferSize, null);
 	}
 
 	@Test
-	public void createOverrideAutoCancel() {
+    void createOverrideAutoCancel() {
 		boolean autoCancel = false;
 		EmitterProcessor<Integer> processor = EmitterProcessor.create(autoCancel);
 		assertProcessor(processor, null, autoCancel);
 	}
 
 	@Test
-	public void createOverrideAll() {
+    void createOverrideAll() {
 		int bufferSize = 1024;
 		boolean autoCancel = false;
 		EmitterProcessor<Integer> processor = EmitterProcessor.create(bufferSize, autoCancel);
 		assertProcessor(processor, bufferSize, autoCancel);
 	}
 
-	public void assertProcessor(EmitterProcessor<Integer> processor,
+	void assertProcessor(EmitterProcessor<Integer> processor,
 			@Nullable Integer bufferSize,
 			@Nullable Boolean autoCancel) {
 		int expectedBufferSize = bufferSize != null ? bufferSize : Queues.SMALL_BUFFER_SIZE;
@@ -752,7 +752,7 @@ public class EmitterProcessorTest {
 	 * @param toSub    delta to sub
 	 * @return value before subscription, 0 or Long.MAX_VALUE
 	 */
-	public static long getAndSub(AtomicLong sequence, long toSub) {
+	static long getAndSub(AtomicLong sequence, long toSub) {
 		long r, u;
 		do {
 			r = sequence.get();
@@ -766,7 +766,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void scanMain() {
+    void scanMain() {
 		EmitterProcessor<Integer> test = EmitterProcessor.create(123);
 		assertThat(test.scan(BUFFERED)).isEqualTo(0);
 		assertThat(test.scan(CANCELLED)).isFalse();
@@ -825,7 +825,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void scanMainCancelled() {
+    void scanMainCancelled() {
 		EmitterProcessor<?> test = EmitterProcessor.create(true);
 		test.subscribe().dispose();
 
@@ -834,7 +834,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void scanMainError() {
+    void scanMainError() {
 		EmitterProcessor<?> test = EmitterProcessor.create();
 		test.sink().error(new IllegalStateException("boom"));
 
@@ -843,7 +843,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void inners() {
+    void inners() {
 		Sinks.Many<Integer> sink = EmitterProcessor.create();
 		CoreSubscriber<Integer> notScannable = new BaseSubscriber<Integer>() {};
 		InnerConsumer<Integer> scannable = new LambdaSubscriber<>(null, null, null, null);
@@ -863,7 +863,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1528
 	@Test
-	public void syncFusionFromInfiniteStream() {
+    void syncFusionFromInfiniteStream() {
 		final Flux<Integer> flux = Flux.fromStream(Stream.iterate(0, i -> i + 1));
 		final EmitterProcessor<Integer> processor = EmitterProcessor.create();
 
@@ -877,7 +877,7 @@ public class EmitterProcessorTest {
 
 	//see https://github.com/reactor/reactor-core/issues/1528
 	@Test
-	public void syncFusionFromInfiniteStreamAndTake() {
+    void syncFusionFromInfiniteStreamAndTake() {
 		final Flux<Integer> flux = Flux.fromStream(Stream.iterate(0, i -> i + 1))
 				.take(10);
 		final EmitterProcessor<Integer> processor = EmitterProcessor.create();
@@ -890,7 +890,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void removeUnknownInnerIgnored() {
+    void removeUnknownInnerIgnored() {
 		EmitterProcessor<Integer> processor = EmitterProcessor.create();
 		EmitterProcessor.EmitterInner<Integer> inner = new EmitterProcessor.EmitterInner<>(null, processor);
 		EmitterProcessor.EmitterInner<Integer> notInner = new EmitterProcessor.EmitterInner<>(null, processor);
@@ -906,7 +906,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void currentContextDelegatesToFirstSubscriber() {
+    void currentContextDelegatesToFirstSubscriber() {
 		AssertSubscriber<Object> testSubscriber1 = new AssertSubscriber<>(Context.of("key", "value1"));
 		AssertSubscriber<Object> testSubscriber2 = new AssertSubscriber<>(Context.of("key", "value2"));
 
@@ -920,7 +920,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void tryEmitNextWithNoSubscriberFailsOnlyIfNoCapacity() {
+    void tryEmitNextWithNoSubscriberFailsOnlyIfNoCapacity() {
 		EmitterProcessor<Integer> emitterProcessor = EmitterProcessor.create(1);
 
 		assertThat(emitterProcessor.tryEmitNext(1)).isEqualTo(Sinks.EmitResult.OK);
@@ -933,7 +933,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void tryEmitNextWithNoSubscriberFailsIfNoCapacityAndAllSubscribersCancelledAndNoAutoTermination() {
+    void tryEmitNextWithNoSubscriberFailsIfNoCapacityAndAllSubscribersCancelledAndNoAutoTermination() {
 		//in case of autoCancel, removing all subscribers results in TERMINATED rather than EMPTY
 		EmitterProcessor<Integer> emitterProcessor = EmitterProcessor.create(1, false);
 		AssertSubscriber<Integer> testSubscriber = AssertSubscriber.create();
@@ -956,7 +956,7 @@ public class EmitterProcessorTest {
 	}
 
 	@Test
-	public void emitNextWithNoSubscriberNoCapacityKeepsSinkOpenWithBuffer() {
+    void emitNextWithNoSubscriberNoCapacityKeepsSinkOpenWithBuffer() {
 		EmitterProcessor<Integer> emitterProcessor = EmitterProcessor.create(1, false);
 		//fill the buffer
 		assertThat(emitterProcessor.tryEmitNext(1)).as("filling buffer").isEqualTo(Sinks.EmitResult.OK);

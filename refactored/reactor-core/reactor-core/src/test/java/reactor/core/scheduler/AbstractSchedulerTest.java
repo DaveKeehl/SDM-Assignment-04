@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * @author Stephane Maldini
  */
-public abstract class AbstractSchedulerTest {
+abstract class AbstractSchedulerTest {
 
 	@RegisterExtension
 	public AutoDisposingExtension afterTest = new AutoDisposingExtension();
@@ -72,7 +72,7 @@ public abstract class AbstractSchedulerTest {
 	}
 
 	@Test
-	public void restartSupport() {
+    void restartSupport() {
 		boolean supportsRestart = shouldCheckSupportRestart();
 		Scheduler s = scheduler();
 		s.dispose();
@@ -87,7 +87,7 @@ public abstract class AbstractSchedulerTest {
 	}
 
 	@Test
-	public void acceptTaskAfterStartStopStart() {
+    void acceptTaskAfterStartStopStart() {
 		Assumptions.assumeThat(shouldCheckSupportRestart()).as("scheduler supports restart").isTrue();
 
 		Scheduler scheduler = scheduler();
@@ -99,7 +99,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void directScheduleAndDispose() throws Exception {
+	final void directScheduleAndDispose() throws Exception {
 		Scheduler s = schedulerNotCached();
 
 		try {
@@ -174,7 +174,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void workerScheduleAndDispose() throws Exception {
+	final void workerScheduleAndDispose() throws Exception {
 		Scheduler s = schedulerNotCached();
 		try {
 			Scheduler.Worker w = s.createWorker();
@@ -265,7 +265,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void directScheduleAndDisposeDelay() throws Exception {
+	final void directScheduleAndDisposeDelay() throws Exception {
 		Scheduler s = schedulerNotCached();
 
 		try {
@@ -311,7 +311,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void workerScheduleAndDisposeDelay() throws Exception {
+	final void workerScheduleAndDisposeDelay() throws Exception {
 		Scheduler s = schedulerNotCached();
 		Scheduler.Worker w = s.createWorker();
 
@@ -361,7 +361,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void directScheduleAndDisposePeriod() throws Exception {
+	final void directScheduleAndDisposePeriod() throws Exception {
 		Scheduler s = schedulerNotCached();
 
 		try {
@@ -410,7 +410,7 @@ public abstract class AbstractSchedulerTest {
 
 	@Test
 	@Timeout(10)
-	final public void workerScheduleAndDisposePeriod() throws Exception {
+	final void workerScheduleAndDisposePeriod() throws Exception {
 		Scheduler s = schedulerNotCached();
 		Scheduler.Worker w = s.createWorker();
 

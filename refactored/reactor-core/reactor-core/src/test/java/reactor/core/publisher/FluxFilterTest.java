@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.FAIL_FAST;
 
-public class FluxFilterTest extends FluxOperatorTest<String, String> {
+class FluxFilterTest extends FluxOperatorTest<String, String> {
 
 	@Override
 	protected Scenario<String, String> defaultScenarioOptions(Scenario<String, String> defaultOptions) {
@@ -76,14 +76,14 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxFilter<Integer>(null, e -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.filter(null);
@@ -91,7 +91,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normal() {
+    void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -104,7 +104,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredRange() {
+    void normalBackpressuredRange() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(2);
 
 		Flux.range(1, 10)
@@ -123,7 +123,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredArray() {
+    void normalBackpressuredArray() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(2);
 
 		Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -142,7 +142,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void normalBackpressuredIterable() {
+    void normalBackpressuredIterable() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(2);
 
 		Flux.fromIterable(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
@@ -161,7 +161,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(2);
 
 		Flux.range(1, 10)
@@ -177,7 +177,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void syncFusion() {
+    void syncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Flux.range(1, 10)
@@ -190,7 +190,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusion() {
+    void asyncFusion() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create();
 
 		Sinks.Many<Integer> up =
@@ -211,7 +211,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusionBackpressured() {
+    void asyncFusionBackpressured() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(1);
 
 		Sinks.Many<Integer> up =
@@ -237,7 +237,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void asyncFusionBackpressured2() {
+    void asyncFusionBackpressured2() {
 		AssertSubscriber<Object> ts = AssertSubscriber.create(1);
 
 		Sinks.Many<Integer> up =
@@ -263,7 +263,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxFilter<Integer> test = new FluxFilter<>(parent, e -> true);
 
@@ -272,7 +272,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
     @Test
-    public void scanSubscriber() {
+    void scanSubscriber() {
         CoreSubscriber<String> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FilterSubscriber<String> test = new FilterSubscriber<>(actual, t -> true);
         Subscription parent = Operators.emptySubscription();
@@ -288,7 +288,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
     }
 
     @Test
-    public void scanConditionalSubscriber() {
+    void scanConditionalSubscriber() {
 	    @SuppressWarnings("unchecked")
 	    Fuseable.ConditionalSubscriber<String> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
         FilterConditionalSubscriber<String> test = new FilterConditionalSubscriber<>(actual, t -> true);
@@ -305,7 +305,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
     }
 
 	@Test
-	public void failureStrategyResume() {
+    void failureStrategyResume() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			AtomicLong r = new AtomicLong();
@@ -328,7 +328,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeTryOnNext() {
+    void failureStrategyResumeTryOnNext() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -347,7 +347,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditional() {
+    void failureStrategyResumeConditional() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			AtomicLong r = new AtomicLong();
@@ -371,7 +371,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void failureStrategyResumeConditionalTryOnNext() {
+    void failureStrategyResumeConditionalTryOnNext() {
 		Hooks.onNextError(OnNextFailureStrategy.RESUME_DROP);
 		try {
 			StepVerifier.create(Flux.range(0, 2)
@@ -391,7 +391,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardOnNextPredicateFail() {
+    void discardOnNextPredicateFail() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide() //hide both avoid the fuseable AND tryOnNext usage
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
@@ -402,7 +402,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardOnNextPredicateMiss() {
+    void discardOnNextPredicateMiss() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide() //hide both avoid the fuseable AND tryOnNext usage
 		                        .filter(i -> i % 2 == 0)
@@ -414,7 +414,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardTryOnNextPredicateFail() {
+    void discardTryOnNextPredicateFail() {
 		List<Object> discarded = new ArrayList<>();
 		CoreSubscriber<Integer> actual = new AssertSubscriber<>(
 				Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -428,7 +428,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardTryOnNextPredicateMiss() {
+    void discardTryOnNextPredicateMiss() {
 		List<Object> discarded = new ArrayList<>();
 		CoreSubscriber<Integer> actual = new AssertSubscriber<>(
 				Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -443,7 +443,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalOnNextPredicateFail() {
+    void discardConditionalOnNextPredicateFail() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide()
 		                        .filter(i -> { throw new IllegalStateException("boom"); })
@@ -455,7 +455,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalOnNextPredicateMiss() {
+    void discardConditionalOnNextPredicateMiss() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .hide()
 		                        .filter(i -> i % 2 == 0)
@@ -468,7 +468,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalTryOnNextPredicateFail() {
+    void discardConditionalTryOnNextPredicateFail() {
 		List<Object> discarded = new ArrayList<>();
 		Fuseable.ConditionalSubscriber<Integer> actual = new FluxPeekFuseableTest.ConditionalAssertSubscriber<>(
 						Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));
@@ -485,7 +485,7 @@ public class FluxFilterTest extends FluxOperatorTest<String, String> {
 	}
 
 	@Test
-	public void discardConditionalTryOnNextPredicateMiss() {
+    void discardConditionalTryOnNextPredicateMiss() {
 		List<Object> discarded = new ArrayList<>();
 		Fuseable.ConditionalSubscriber<Integer> actual = new FluxPeekFuseableTest.ConditionalAssertSubscriber<>(
 				Context.of(Hooks.KEY_ON_DISCARD, (Consumer<?>) discarded::add));

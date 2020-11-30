@@ -30,7 +30,7 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class PublisherProbeTest {
+class PublisherProbeTest {
 
 	private static class TestControlFlow {
 
@@ -59,7 +59,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void emptyProbeFlowA() {
+	void emptyProbeFlowA() {
 		PublisherProbe<Void> a = PublisherProbe.empty();
 		PublisherProbe<String> b = PublisherProbe.empty();
 
@@ -76,7 +76,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void emptyProbeFlowB() {
+	void emptyProbeFlowB() {
 		PublisherProbe<Void> a = PublisherProbe.empty();
 		PublisherProbe<String> b = PublisherProbe.empty();
 
@@ -93,7 +93,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void monoProbeFlowA() {
+	void monoProbeFlowA() {
 		PublisherProbe<Void> a = PublisherProbe.empty();
 		PublisherProbe<String> b = PublisherProbe.of(Mono.just("b"));
 
@@ -110,7 +110,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void monoProbeFlowB() {
+	void monoProbeFlowB() {
 		PublisherProbe<Void> a = PublisherProbe.empty();
 		PublisherProbe<String> b = PublisherProbe.of(Mono.just("b"));
 
@@ -127,7 +127,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasSubscribedMono() {
+	void wasSubscribedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		assertThat(probe.wasSubscribed()).isFalse();
@@ -138,7 +138,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasSubscribedNumberMono() {
+	void wasSubscribedNumberMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		Mono<Void> mono = probe.mono();
 
@@ -152,7 +152,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasSubscribedMono() {
+	void assertWasSubscribedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -165,7 +165,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotSubscribedMono() {
+	void assertWasNotSubscribedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		probe.assertWasNotSubscribed();
@@ -178,7 +178,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasCancelledMono() {
+	void wasCancelledMono() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Mono.never());
 		Disposable d = probe.mono().subscribe();
 
@@ -190,7 +190,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasCancelledMono() {
+	void assertWasCancelledMono() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Mono.never());
 		Disposable d = probe.mono().subscribe();
 
@@ -204,7 +204,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotCancelledMono() {
+	void assertWasNotCancelledMono() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Mono.never());
 		Disposable d = probe.mono().subscribe();
 
@@ -218,7 +218,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasRequestedMono() {
+	void wasRequestedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Mono.never());
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.mono().subscribe(null, null, null, sub::set);
@@ -231,7 +231,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasRequestedMono() {
+	void assertWasRequestedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.mono().subscribe(null, null, null, sub::set);
@@ -246,7 +246,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotRequestedMono() {
+	void assertWasNotRequestedMono() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.mono().subscribe(null, null, null, sub::set);
@@ -261,7 +261,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasSubscribedFlux() {
+	void wasSubscribedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		assertThat(probe.wasSubscribed()).isFalse();
@@ -272,7 +272,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasSubscribedNumberFlux() {
+	void wasSubscribedNumberFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		Flux<Void> mono = probe.flux();
 
@@ -286,7 +286,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasSubscribedFlux() {
+	void assertWasSubscribedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		assertThatExceptionOfType(AssertionError.class)
@@ -299,7 +299,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotSubscribedFlux() {
+	void assertWasNotSubscribedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 
 		probe.assertWasNotSubscribed();
@@ -312,7 +312,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasCancelledFlux() {
+	void wasCancelledFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Flux.never());
 		Disposable d = probe.flux().subscribe();
 
@@ -324,7 +324,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasCancelledFlux() {
+	void assertWasCancelledFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Flux.never());
 		Disposable d = probe.flux().subscribe();
 
@@ -338,7 +338,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotCancelledFlux() {
+	void assertWasNotCancelledFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Flux.never());
 		Disposable d = probe.flux().subscribe();
 
@@ -352,7 +352,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void wasRequestedFlux() {
+	void wasRequestedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.of(Flux.never());
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.flux().subscribeWith(subscriptionCaptorVia(sub));
@@ -365,7 +365,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasRequestedFlux() {
+	void assertWasRequestedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.flux().subscribeWith(subscriptionCaptorVia(sub));
@@ -380,7 +380,7 @@ public class PublisherProbeTest {
 	}
 
 	@Test
-	public void assertWasNotRequestedFlux() {
+	void assertWasNotRequestedFlux() {
 		PublisherProbe<Void> probe = PublisherProbe.empty();
 		AtomicReference<Subscription> sub = new AtomicReference<>();
 		probe.flux().subscribeWith(subscriptionCaptorVia(sub));

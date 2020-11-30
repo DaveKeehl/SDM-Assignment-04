@@ -30,10 +30,10 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoDelayUntilTest {
+class MonoDelayUntilTest {
 
 	@Test
-	public void testMonoValuedAndPublisherVoid() {
+    void testMonoValuedAndPublisherVoid() {
 		Publisher<Void> voidPublisher = Mono.fromRunnable(() -> { });
 
 		StepVerifier.create(Mono.just("foo").delayUntil(a -> voidPublisher))
@@ -42,14 +42,14 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void testMonoEmptyAndPublisherVoid() {
+    void testMonoEmptyAndPublisherVoid() {
 		Publisher<Void> voidPublisher = Mono.fromRunnable(() -> { });
 		StepVerifier.create(Mono.<String>empty().delayUntil(a -> voidPublisher))
 		            .verifyComplete();
 	}
 
 	@Test
-	public void triggerSequenceWithDelays() {
+    void triggerSequenceWithDelays() {
 		StepVerifier.withVirtualTime(() -> Mono.just("foo")
 		                                       .delayUntil(a -> Flux.just(1, 2, 3)
 		                                                            .hide()
@@ -62,7 +62,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceHasMultipleValuesNotCancelled() {
+    void triggerSequenceHasMultipleValuesNotCancelled() {
 		AtomicBoolean triggerCancelled = new AtomicBoolean();
 		StepVerifier.create(Mono.just("foo")
 		                        .delayUntil(
@@ -74,7 +74,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceHasSingleValueNotCancelled() {
+    void triggerSequenceHasSingleValueNotCancelled() {
 		AtomicBoolean triggerCancelled = new AtomicBoolean();
 		StepVerifier.create(Mono.just("foo")
 		                        .delayUntil(
@@ -86,7 +86,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void triggerSequenceDoneFirst() {
+    void triggerSequenceDoneFirst() {
 		StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofSeconds(2))
 		                                       .delayUntil(a -> Mono.just("foo")))
 		            .expectSubscription()
@@ -96,35 +96,35 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void sourceHasError() {
+    void sourceHasError() {
 		StepVerifier.create(Mono.<String>error(new IllegalStateException("boom"))
 				.delayUntil(a -> Mono.just("foo")))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void triggerHasError() {
+    void triggerHasError() {
 		StepVerifier.create(Mono.just("foo")
 		                        .delayUntil(a -> Mono.<String>error(new IllegalStateException("boom"))))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void triggerThrows() {
+    void triggerThrows() {
 		StepVerifier.create(Mono.just("foo")
 		                        .delayUntil(a -> {throw new IllegalStateException("boom");}))
 		            .verifyErrorMessage("boom");
 	}
 
 	@Test
-	public void sourceAndTriggerHaveErrorsNotDelayed() {
+    void sourceAndTriggerHaveErrorsNotDelayed() {
 		StepVerifier.create(Mono.<String>error(new IllegalStateException("boom1"))
 				.delayUntil(a -> Mono.<Integer>error(new IllegalStateException("boom2"))))
 		            .verifyErrorMessage("boom1");
 	}
 
 	@Test
-	public void testAPIDelayUntil() {
+    void testAPIDelayUntil() {
 		StepVerifier.withVirtualTime(() -> Mono.just("foo")
 		                                       .delayUntil(a -> Mono.delay(Duration.ofSeconds(2))))
 		            .expectSubscription()
@@ -134,7 +134,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void testAPIDelayUntilErrorsImmediately() {
+    void testAPIDelayUntilErrorsImmediately() {
 		IllegalArgumentException boom = new IllegalArgumentException("boom");
 		StepVerifier.create(Mono.error(boom)
 		                        .delayUntil(a -> Mono.delay(Duration.ofSeconds(2))))
@@ -144,7 +144,7 @@ public class MonoDelayUntilTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testAPIchainingCombines() {
+    void testAPIchainingCombines() {
 		Mono<String> source = Mono.just("foo");
 
 		Function<String, Flux<Integer>> generator1 = a -> Flux.just(1, 2, 3);
@@ -171,7 +171,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void testAPIchainingCumulatesDelaysAfterValueGenerated() {
+    void testAPIchainingCumulatesDelaysAfterValueGenerated() {
 		AtomicInteger generator1Used = new AtomicInteger();
 		AtomicInteger generator2Used = new AtomicInteger();
 
@@ -203,7 +203,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 	    Mono<Integer> source = Mono.just(1);
 		MonoDelayUntil<Integer> test = new MonoDelayUntil<>(source, i -> Mono.just(1));
 
@@ -211,7 +211,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void scanCoordinator() {
+    void scanCoordinator() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		@SuppressWarnings("unchecked")
 		Function<? super String, ? extends Publisher<?>>[] otherGenerators = new Function[3];
@@ -236,7 +236,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void scanTrigger() {
+    void scanTrigger() {
 		CoreSubscriber<String> actual = new LambdaMonoSubscriber<>(null, e -> {}, null, null);
 		@SuppressWarnings("unchecked")
 		Function<? super String, ? extends Publisher<?>>[] otherGenerators = new Function[3];
@@ -263,7 +263,7 @@ public class MonoDelayUntilTest {
 	}
 
 	@Test
-	public void testNullPublisherFromMapper() {
+    void testNullPublisherFromMapper() {
 		StepVerifier.create(Mono.just("foo").delayUntil(a -> null))
 		            .expectErrorMessage("mapper returned null value")
 					.verify();

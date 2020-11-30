@@ -21,10 +21,10 @@ import reactor.core.Scannable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoHideTest {
+class MonoHideTest {
 
 	@Test
-	public void normal() {
+    void normal() {
 		Mono<Integer> f = Mono.just(1);
 		assertThat(f).isInstanceOf(Fuseable.ScalarCallable.class);
 		f = f.hide();
@@ -33,7 +33,7 @@ public class MonoHideTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Mono<Integer> parent = Mono.just(1);
 		MonoHide<Integer> test = new MonoHide<>(parent);
 

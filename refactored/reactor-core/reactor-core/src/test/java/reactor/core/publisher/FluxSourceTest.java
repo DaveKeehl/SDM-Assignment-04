@@ -24,10 +24,10 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FluxSourceTest {
+class FluxSourceTest {
 
 	@Test
-	public void monoProcessor() {
+    void monoProcessor() {
 		NextProcessor<String> mp = new NextProcessor<>(null);
 		mp.onNext("test");
 
@@ -40,7 +40,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void empty() {
+    void empty() {
 		Flux<Integer> m = Flux.from(Mono.empty());
 		assertThat(m).isSameAs(Flux.<Integer>empty());
 		StepVerifier.create(m)
@@ -48,7 +48,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void just() {
+    void just() {
 		Flux<Integer> m = Flux.from(Mono.just(1));
 		assertThat(m).isInstanceOf(FluxJust.class);
 		StepVerifier.create(m)
@@ -57,7 +57,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void error() {
+    void error() {
 		Flux<Integer> m = Flux.from(Mono.error(new Exception("test")));
 		assertThat(m).isInstanceOf(FluxError.class);
 		StepVerifier.create(m)
@@ -65,7 +65,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void errorPropagate() {
+    void errorPropagate() {
 		Flux<Integer> m = Flux.from(Mono.error(new Error("test")));
 		assertThat(m).isInstanceOf(FluxError.class);
 		StepVerifier.create(m)
@@ -74,7 +74,7 @@ public class FluxSourceTest {
 
 
 	@Test
-	public void wrap() {
+    void wrap() {
 		Flux<Integer> m = Flux.wrap(Flux.just(1));
 		StepVerifier.create(m)
 		            .expectNext(1)
@@ -87,34 +87,34 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void asJust() {
+    void asJust() {
 		StepVerifier.create(Mono.just(1).as(Flux::from))
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void fluxJust() {
+    void fluxJust() {
 		StepVerifier.create(Mono.just(1).flux())
 		            .expectNext(1)
 		            .verifyComplete();
 	}
 
 	@Test
-	public void fluxError() {
+    void fluxError() {
 		StepVerifier.create(Mono.error(new Exception("test")).flux())
 		            .verifyErrorMessage("test");
 	}
 
 
 	@Test
-	public void fluxEmpty() {
+    void fluxEmpty() {
 		StepVerifier.create(Mono.empty().flux())
 		            .verifyComplete();
 	}
 
 	@Test
-	public void scanOperatorWithSyncSource() {
+    void scanOperatorWithSyncSource() {
 		Flux<Integer> parent = Flux.range(1,  10).map(i -> i);
 		FluxSource<Integer> test = new FluxSource<>(parent);
 
@@ -124,7 +124,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void scanOperatorWithAsyncSource(){
+    void scanOperatorWithAsyncSource(){
 		FluxDelaySequence<Integer> source = new FluxDelaySequence<>(Flux.just(1), Duration.ofMillis(50), Schedulers.immediate());
 		FluxSource<Integer> test = new FluxSource<>(source);
 
@@ -134,7 +134,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void scanOperatorHide() {
+    void scanOperatorHide() {
 		Flux<Integer> parent = Flux.range(1,  10).hide();
 		FluxSource<Integer> test = new FluxSource<>(parent);
 
@@ -144,7 +144,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void scanFuseableOperatorWithSyncSource(){
+    void scanFuseableOperatorWithSyncSource(){
 		Flux<Integer> source = Flux.just(1);
 		FluxSourceFuseable<Integer> test = new FluxSourceFuseable<>(source);
 
@@ -154,7 +154,7 @@ public class FluxSourceTest {
 	}
 
 	@Test
-	public void scanFuseableOperatorWithAsyncSource(){
+    void scanFuseableOperatorWithAsyncSource(){
 		FluxDelaySequence<Integer> source = new FluxDelaySequence<>(Flux.just(1), Duration.ofMillis(50), Schedulers.immediate());
 		FluxSourceFuseable<Integer> test = new FluxSourceFuseable<>(source);
 

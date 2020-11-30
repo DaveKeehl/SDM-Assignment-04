@@ -25,7 +25,7 @@ import reactor.util.function.Tuple2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MonoElapsedTest {
+class MonoElapsedTest {
 
 
 	Mono<Tuple2<Long, String>> scenario_aFluxCanBeBenchmarked(){
@@ -34,7 +34,7 @@ public class MonoElapsedTest {
 	}
 
 	@Test
-	public void aFluxCanBeBenchmarked(){
+    void aFluxCanBeBenchmarked(){
 		StepVerifier.withVirtualTime(this::scenario_aFluxCanBeBenchmarked,0)
 		            .thenAwait(Duration.ofSeconds(2))
 		            .thenRequest(1)
@@ -43,7 +43,7 @@ public class MonoElapsedTest {
 	}
 
 	@Test
-	public void scanOperator() {
+    void scanOperator() {
 		MonoElapsed<String> test = new MonoElapsed<>(Mono.empty(), Schedulers.immediate());
 
 		assertThat(test.scan(Scannable.Attr.RUN_ON)).isSameAs(Schedulers.immediate());

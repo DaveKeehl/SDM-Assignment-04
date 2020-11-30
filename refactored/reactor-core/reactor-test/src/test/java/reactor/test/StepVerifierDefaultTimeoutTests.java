@@ -25,20 +25,20 @@ import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class StepVerifierDefaultTimeoutTests {
+class StepVerifierDefaultTimeoutTests {
 
 	@BeforeAll
-	public static void init() {
+	static void init() {
 		StepVerifier.setDefaultTimeout(Duration.ofMillis(100));
 	}
 
 	@AfterAll
-	public static void clean() {
+	static void clean() {
 		StepVerifier.resetDefaultTimeout();
 	}
 
 	@Test
-	public void verifyUsesDefaultTimeout() {
+	void verifyUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -48,7 +48,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyThenAssertUsesDefaultTimeout() {
+	void verifyThenAssertUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -58,7 +58,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyCompleteUsesDefaultTimeout() {
+	void verifyCompleteUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -67,7 +67,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyErrorUsesDefaultTimeout() {
+	void verifyErrorUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -76,7 +76,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyErrorMessageUsesDefaultTimeout() {
+	void verifyErrorMessageUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -85,7 +85,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyErrorMatchesUsesDefaultTimeout() {
+	void verifyErrorMatchesUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))
@@ -94,7 +94,7 @@ public class StepVerifierDefaultTimeoutTests {
 	}
 
 	@Test
-	public void verifyErrorClassUsesDefaultTimeout() {
+	void verifyErrorClassUsesDefaultTimeout() {
 		assertThatExceptionOfType(AssertionError.class)
 				.isThrownBy(() ->
 						StepVerifier.create(Mono.delay(Duration.ofMillis(150)))

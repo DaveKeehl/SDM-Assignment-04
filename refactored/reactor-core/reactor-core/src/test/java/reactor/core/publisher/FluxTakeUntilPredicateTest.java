@@ -25,17 +25,17 @@ import reactor.test.subscriber.AssertSubscriber;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FluxTakeUntilPredicateTest {
+class FluxTakeUntilPredicateTest {
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			new FluxTakeUntil<>(null, v -> true);
 		});
 	}
 
 	@Test
-	public void predicateNull() {
+    void predicateNull() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
 			Flux.never()
 					.takeUntil(null);
@@ -43,7 +43,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void takeAll() {
+    void takeAll() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -56,7 +56,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void takeAllBackpressured() {
+    void takeAllBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -81,7 +81,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void takeSome() {
+    void takeSome() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -94,7 +94,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void takeSomeBackpressured() {
+    void takeSomeBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -119,7 +119,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void stopImmediately() {
+    void stopImmediately() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -132,7 +132,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void stopImmediatelyBackpressured() {
+    void stopImmediatelyBackpressured() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create(0);
 
 		Flux.range(1, 5)
@@ -151,7 +151,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void predicateThrows() {
+    void predicateThrows() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
 		Flux.range(1, 5)
@@ -167,7 +167,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxTakeUntil<Integer> test = new FluxTakeUntil<>(parent, v -> true);
 
@@ -176,7 +176,7 @@ public class FluxTakeUntilPredicateTest {
 	}
 
 	@Test
-    public void scanPredicateSubscriber() {
+    void scanPredicateSubscriber() {
         CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
         FluxTakeUntil.TakeUntilPredicateSubscriber<Integer> test =
         		new FluxTakeUntil.TakeUntilPredicateSubscriber<>(actual, i -> true);

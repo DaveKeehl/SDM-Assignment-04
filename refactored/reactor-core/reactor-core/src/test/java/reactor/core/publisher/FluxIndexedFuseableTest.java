@@ -37,7 +37,7 @@ import reactor.util.function.Tuples;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Long, Integer>> {
+class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Long, Integer>> {
 
 	@Override
 	protected Scenario<Integer, Tuple2<Long, Integer>> defaultScenarioOptions(
@@ -68,7 +68,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void defaultFused() {
+    void defaultFused() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -86,7 +86,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void defaultFusedBackpressured() {
+    void defaultFusedBackpressured() {
 		AtomicLong counter = new AtomicLong(4);
 
 		StepVerifier.create(
@@ -111,7 +111,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void defaultFusedConditional() {
+    void defaultFusedConditional() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -130,7 +130,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void customFused() {
+    void customFused() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -148,7 +148,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void customFusedBackpressured() {
+    void customFusedBackpressured() {
 		AtomicLong counter = new AtomicLong(4);
 
 		StepVerifier.create(
@@ -173,7 +173,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void customFusedConditional() {
+    void customFusedConditional() {
 		AtomicLong counter = new AtomicLong(2);
 		StepVerifier.create(
 				Flux.range(0, 1000)
@@ -192,7 +192,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void sourceNull() {
+    void sourceNull() {
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
 				.isThrownBy(() -> new FluxIndexFuseable<>(null, (i, v) -> i))
@@ -200,7 +200,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void indexMapperNull() {
+    void indexMapperNull() {
 		Flux<String> source = Flux.just("foo", "bar");
 		//noinspection ConstantConditions
 		assertThatNullPointerException()
@@ -209,7 +209,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void indexMapperReturnsNull() {
+    void indexMapperReturnsNull() {
 		Flux<String> source = Flux.just("foo", "bar");
 		Flux<Tuple2<Integer, String>> test = new FluxIndexFuseable<>(source,
 				(i, v) -> {
@@ -223,7 +223,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void indexMapperThrows() {
+    void indexMapperThrows() {
 		Flux<String> source = Flux.just("foo", "bar");
 		Flux<Tuple2<Integer, String>> test = new FluxIndexFuseable<>(source,
 				(i, v) -> {
@@ -239,7 +239,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void fusionThreadBarrierDefaultMapperDoesFuse() {
+    void fusionThreadBarrierDefaultMapperDoesFuse() {
 		StepVerifier.create(Flux.range(1, 10)
 		                        .index())
 		            .expectFusion(Fuseable.SYNC | Fuseable.THREAD_BARRIER,
@@ -249,7 +249,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void fusionThreadBarrierConditionalMapperDoesFuse() {
+    void fusionThreadBarrierConditionalMapperDoesFuse() {
 		@SuppressWarnings("unchecked") Fuseable.ConditionalSubscriber<Tuple2<String, String>> cs =
 				Mockito.mock(Fuseable.ConditionalSubscriber.class);
 		@SuppressWarnings("unchecked") Fuseable.QueueSubscription<String> qs =
@@ -276,7 +276,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void doNotCallToString() {
+    void doNotCallToString() {
 		Flux<ThrowsOnToString> source = Flux.just(new ThrowsOnToString());
 		Flux<Tuple2<Long, ThrowsOnToString>> test = new FluxIndexFuseable<>(source, Flux.tuple2Function());
 
@@ -293,7 +293,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void scanOperator(){
+    void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
 		FluxIndexFuseable<Integer, Tuple2<Long, Integer>> test = new FluxIndexFuseable<>(parent, Tuples::of);
 
@@ -302,7 +302,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void scanSubscriber(){
+    void scanSubscriber(){
 		CoreSubscriber<Tuple2<Long, String>> actual = new LambdaSubscriber<>(null, e -> {}, null, null);
 		FluxIndexFuseable.IndexFuseableSubscriber<Tuple2<Long, String>, String> test =
 				new FluxIndexFuseable.IndexFuseableSubscriber<>(actual, Tuples::of);
@@ -319,7 +319,7 @@ public class FluxIndexedFuseableTest extends FluxOperatorTest<Integer, Tuple2<Lo
 	}
 
 	@Test
-	public void scanConditionnalSubscriber(){
+    void scanConditionnalSubscriber(){
 		@SuppressWarnings("unchecked")
 		Fuseable.ConditionalSubscriber<Tuple2<Long, String>> actual = Mockito.mock(MockUtils.TestScannableConditionalSubscriber.class);
 		FluxIndexFuseable.IndexFuseableConditionalSubscriber<Tuple2<Long, String>, String> test =

@@ -38,20 +38,20 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 // This is ok as this class tests the deprecated ReplayProcessor. Will be removed with it in 3.5.
 @SuppressWarnings("deprecation")
-public class ReplayProcessorTest {
+class ReplayProcessorTest {
 
 	@BeforeEach
-	public void virtualTime() {
+	void virtualTime() {
 		VirtualTimeScheduler.getOrSet();
 	}
 
 	@AfterEach
-	public void teardownVirtualTime() {
+	void teardownVirtualTime() {
 		VirtualTimeScheduler.reset();
 	}
 
 	@Test
-	public void currentSubscriberCount() {
+    void currentSubscriberCount() {
 		Sinks.Many<Integer> sink = ReplayProcessor.create();
 
 		assertThat(sink.currentSubscriberCount()).isZero();
@@ -66,7 +66,7 @@ public class ReplayProcessorTest {
 	}
 
     @Test
-    public void unbounded() {
+    void unbounded() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, true);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
@@ -94,7 +94,7 @@ public class ReplayProcessorTest {
     }
     
     @Test
-    public void bounded() {
+    void bounded() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
@@ -122,7 +122,7 @@ public class ReplayProcessorTest {
     }
     
     @Test
-    public void cancel() {
+    void cancel() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create();
@@ -135,7 +135,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void unboundedAfter() {
+    void unboundedAfter() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, true);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
@@ -163,7 +163,7 @@ public class ReplayProcessorTest {
     }
     
     @Test
-    public void boundedAfter() {
+    void boundedAfter() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
@@ -191,7 +191,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void unboundedLong() {
+    void unboundedLong() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, true);
 
 	    AssertSubscriber<Integer> ts = AssertSubscriber.create(0L);
@@ -215,7 +215,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void boundedLong() {
+    void boundedLong() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -227,7 +227,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void boundedLongError() {
+    void boundedLongError() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -239,7 +239,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void unboundedFused() {
+    void unboundedFused() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, true);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -252,7 +252,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void unboundedFusedError() {
+    void unboundedFusedError() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, true);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -265,7 +265,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void boundedFused() {
+    void boundedFused() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -278,7 +278,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void boundedFusedError() {
+    void boundedFusedError() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 	    for (int i = 0; i < 256; i++) {
 		    rp.onNext(i);
@@ -291,7 +291,7 @@ public class ReplayProcessorTest {
     }
 
     @Test
-    public void boundedFusedAfter() {
+    void boundedFusedAfter() {
 	    ReplayProcessor<Integer> rp = ReplayProcessor.create(16, false);
 
 	    StepVerifier.create(rp)
@@ -307,7 +307,7 @@ public class ReplayProcessorTest {
     }
 
 	@Test
-	public void timed() throws Exception {
+    void timed() throws Exception {
 		VirtualTimeScheduler.getOrSet();
 
 		ReplayProcessor<Integer> rp =
@@ -331,7 +331,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedError() throws Exception {
+    void timedError() throws Exception {
 		VirtualTimeScheduler.getOrSet();
 
 		ReplayProcessor<Integer> rp =
@@ -356,7 +356,7 @@ public class ReplayProcessorTest {
 
 
 	@Test
-	public void timedAfter() throws Exception {
+    void timedAfter() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createTimeout(Duration.ofSeconds(1));
 
@@ -379,7 +379,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedFused() throws Exception {
+    void timedFused() throws Exception {
 		VirtualTimeScheduler.getOrSet();
 
 		ReplayProcessor<Integer> rp =
@@ -404,7 +404,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedFusedError() throws Exception {
+    void timedFusedError() throws Exception {
 		VirtualTimeScheduler.getOrSet();
 
 		ReplayProcessor<Integer> rp =
@@ -429,7 +429,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedFusedAfter() throws Exception {
+    void timedFusedAfter() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createTimeout(Duration.ofSeconds(1));
 
@@ -452,7 +452,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedAndBound() throws Exception {
+    void timedAndBound() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createSizeAndTimeout(5, Duration.ofSeconds(1));
 
@@ -477,7 +477,7 @@ public class ReplayProcessorTest {
     }
 
 	@Test
-	public void timedAndBoundError() throws Exception {
+    void timedAndBoundError() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createSizeAndTimeout(5, Duration.ofSeconds(1));
 
@@ -502,7 +502,7 @@ public class ReplayProcessorTest {
     }
 
 	@Test
-	public void timedAndBoundAfter() throws Exception {
+    void timedAndBoundAfter() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createSizeAndTimeout(5, Duration.ofSeconds(1));
 
@@ -527,7 +527,7 @@ public class ReplayProcessorTest {
     }
 
 	@Test
-	public void timedAndBoundFused() throws Exception {
+    void timedAndBoundFused() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createSizeAndTimeout(5, Duration.ofSeconds(1));
 
@@ -552,7 +552,7 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedAndBoundFusedError() throws Exception {
+    void timedAndBoundFusedError() throws Exception {
 		ReplayProcessor<Integer> rp =
 				ReplayProcessor.createSizeAndTimeout(5, Duration.ofSeconds(1));
 
@@ -577,22 +577,22 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void timedAndBoundedOnSubscribeAndState() {
+    void timedAndBoundedOnSubscribeAndState() {
 		testReplayProcessorState(ReplayProcessor.createSizeAndTimeout(1, Duration.ofSeconds(1)));
 	}
 
 	@Test
-	public void timedOnSubscribeAndState() {
+    void timedOnSubscribeAndState() {
 		testReplayProcessorState(ReplayProcessor.createTimeout(Duration.ofSeconds(1)));
 	}
 
 	@Test
-	public void unboundedOnSubscribeAndState() {
+    void unboundedOnSubscribeAndState() {
 		testReplayProcessorState(ReplayProcessor.create(1, true));
 	}
 
 	@Test
-	public void boundedOnSubscribeAndState() {
+    void boundedOnSubscribeAndState() {
     	testReplayProcessorState(ReplayProcessor.cacheLast());
 	}
 
@@ -637,21 +637,21 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void failNegativeBufferSizeBounded() {
+    void failNegativeBufferSizeBounded() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			ReplayProcessor.create(-1);
 		});
 	}
 
 	@Test
-	public void failNegativeBufferBoundedAndTimed() {
+    void failNegativeBufferBoundedAndTimed() {
 		assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
 			ReplayProcessor.createSizeAndTimeout(-1, Duration.ofSeconds(1));
 		});
 	}
 
 	@Test
-	public void scanProcessor() {
+    void scanProcessor() {
 		ReplayProcessor<String> test = ReplayProcessor.create(16, false);
 		Subscription subscription = Operators.emptySubscription();
 		test.onSubscribe(subscription);
@@ -668,13 +668,13 @@ public class ReplayProcessorTest {
 	}
 
 	@Test
-	public void scanProcessorUnboundedCapacity() {
+    void scanProcessorUnboundedCapacity() {
 		ReplayProcessor<String> test = ReplayProcessor.create(16, true);
 		assertThat(test.scan(Scannable.Attr.CAPACITY)).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	@Test
-	public void inners() {
+    void inners() {
 		Sinks.Many<Integer> sink = ReplayProcessor.create(1);
 		CoreSubscriber<Integer> notScannable = new BaseSubscriber<Integer>() {};
 		InnerConsumer<Integer> scannable = new LambdaSubscriber<>(null, null, null, null);
