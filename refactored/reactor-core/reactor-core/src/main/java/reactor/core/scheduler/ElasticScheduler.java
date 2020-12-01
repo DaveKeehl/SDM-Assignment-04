@@ -204,7 +204,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 
 	@Override
 	public Object scanUnsafe(Attr key) {
-		if (key == Attr.TERMINATED || key == Attr.CANCELLED) return isDisposed();
+		if (key == Attr.TERMINATED || key == Attr.CANCELLED) return this.isDisposed();
 		if (key == Attr.CAPACITY) return Integer.MAX_VALUE;
 		if (key == Attr.BUFFERED) return cache.size(); //BUFFERED: number of workers alive
 		if (key == Attr.NAME) return this.toString();
@@ -228,11 +228,9 @@ final class ElasticScheduler implements Scheduler, Scannable {
 
 		List<ScheduledExecutorServiceExpiry> list = new ArrayList<>(cache);
 		for (ScheduledExecutorServiceExpiry e : list) {
-			if (e.expireMillis < now) {
-				if (cache.remove(e)) {
-					e.cached.exec.shutdownNow();
-					all.remove(e.cached);
-				}
+			if (e.expireMillis < now && cache.remove(e)) {
+				e.cached.exec.shutdownNow();
+				all.remove(e.cached);
 			}
 		}
 	}
@@ -255,17 +253,13 @@ final class ElasticScheduler implements Scheduler, Scannable {
 
 		@Override
 		public void dispose() {
-			if (exec != null) {
-				if (this != SHUTDOWN && !parent.shutdown) {
-					ScheduledExecutorServiceExpiry e = new
-							ScheduledExecutorServiceExpiry(this,
-							System.currentTimeMillis() + parent.ttlSeconds * 1000L);
-					parent.cache.offerLast(e);
-					if (parent.shutdown) {
-						if (parent.cache.remove(e)) {
-							exec.shutdownNow();
-						}
-					}
+			if (exec != null && this != SHUTDOWN && !parent.shutdown) {
+				ScheduledExecutorServiceExpiry e = new
+						ScheduledExecutorServiceExpiry(this,
+						System.currentTimeMillis() + parent.ttlSeconds * 1000L);
+				parent.cache.offerLast(e);
+				if (parent.shutdown && parent.cache.remove(e)) {
+					exec.shutdownNow();
 				}
 			}
 		}
@@ -274,7 +268,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 		public Object scanUnsafe(Attr key) {
 			if (key == Attr.NAME) return parent.scanUnsafe(key);
 			if (key == Attr.PARENT) return parent;
-			if (key == Attr.TERMINATED || key == Attr.CANCELLED) return isDisposed();
+			if (key == Attr.TERMINATED || key == Attr.CANCELLED) return this.isDisposed();
 			if (key == Attr.CAPACITY) {
 				//assume 1 if unknown, otherwise use the one from underlying executor
 				Integer capacity = (Integer) Schedulers.scanExecutor(exec, key);

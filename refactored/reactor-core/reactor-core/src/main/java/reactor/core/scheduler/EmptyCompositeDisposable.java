@@ -28,6 +28,7 @@ final class EmptyCompositeDisposable implements Disposable.Composite {
 
     @Override
     public void dispose() {
+        //Does nothing
     }
 
     @Override

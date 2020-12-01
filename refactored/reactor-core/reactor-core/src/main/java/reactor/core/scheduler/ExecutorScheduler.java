@@ -16,6 +16,11 @@
 
 package reactor.core.scheduler;
 
+import reactor.core.Disposable;
+import reactor.core.Disposables;
+import reactor.core.Exceptions;
+import reactor.core.Scannable;
+
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,12 +28,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
-import reactor.core.Disposable;
-import reactor.core.Disposables;
-import reactor.core.Exceptions;
-import reactor.core.Scannable;
-import reactor.util.annotation.Nullable;
 
 /**
  * Wraps a java.util.concurrent.Executor and provides the Scheduler API over it.
@@ -63,7 +62,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 		try {
 			executor.execute(r);
 		}
-		catch (Throwable ex) {
+		catch (Exception ex) {
 			if (executor instanceof ExecutorService && ((ExecutorService) executor).isShutdown()) {
 				terminated = true;
 			}
@@ -131,7 +130,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 					try {
 						task.run();
 					}
-					catch (Throwable ex) {
+					catch (Exception ex) {
 						Schedulers.handleError(ex);
 					}
 					finally {
@@ -188,7 +187,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 					try {
 						task.run();
 					}
-					catch (Throwable ex) {
+					catch (Exception ex) {
 						Schedulers.handleError(ex);
 					}
 					finally {
@@ -241,7 +240,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 			try {
 				executor.execute(r);
 			}
-			catch (Throwable ex) {
+			catch (Exception ex) {
 				tasks.remove(r);
 				Schedulers.handleError(ex);
 				throw Exceptions.failWithRejected(ex);
@@ -321,7 +320,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 				try {
 					executor.execute(this);
 				}
-				catch (Throwable ex) {
+				catch (Exception ex) {
 					r.dispose();
 					Schedulers.handleError(ex);
 					throw Exceptions.failWithRejected(ex);

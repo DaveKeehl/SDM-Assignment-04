@@ -95,13 +95,10 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 				o.remove(this);
 			}
 
-			Future f;
-			for (;;) {
+			Future<?> f;
+			do {
 				f = future;
-				if (f == SYNC_CANCELLED || f == ASYNC_CANCELLED || FUTURE.compareAndSet(this, f, FINISHED)) {
-					break;
-				}
-			}
+			} while (f != SYNC_CANCELLED && f != ASYNC_CANCELLED && !FUTURE.compareAndSet(this, f, FINISHED));
 		}
 		return null;
 	}
@@ -113,7 +110,7 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 
 	void setFuture(Future<?> f) {
 		for (;;) {
-			Future o = future;
+			Future<?> o = future;
 			if (o == FINISHED) {
 				return;
 			}
@@ -137,22 +134,21 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 		return o == DISPOSED || o == DONE;
 	}
 
-	@Override
-	public void dispose() {
+	public void disposeStep1(){
 		for (;;) {
-			Future f = future;
-			if (f == FINISHED || f == SYNC_CANCELLED || f == ASYNC_CANCELLED) {
-				break;
-			}
+			Future<?> f = future;
 			boolean async = thread != Thread.currentThread();
-			if (FUTURE.compareAndSet(this, f, async ? ASYNC_CANCELLED : SYNC_CANCELLED)) {
+			if (f == FINISHED || f == SYNC_CANCELLED || f == ASYNC_CANCELLED
+					|| FUTURE.compareAndSet(this, f, async ? ASYNC_CANCELLED : SYNC_CANCELLED)) {
 				if (f != null) {
 					f.cancel(async);
 				}
 				break;
 			}
 		}
+	}
 
+	public void disposeStep2(){
 		for (;;) {
 			Composite o = parent;
 			if (o == DONE || o == DISPOSED || o == null) {
@@ -163,6 +159,12 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 				return;
 			}
 		}
+	}
+
+	@Override
+	public void dispose() {
+		disposeStep1();
+		disposeStep2();
 	}
 
 }
