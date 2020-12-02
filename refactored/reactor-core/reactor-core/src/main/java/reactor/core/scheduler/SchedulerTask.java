@@ -16,7 +16,6 @@
 
 package reactor.core.scheduler;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -25,9 +24,7 @@ import reactor.core.Disposable;
 import reactor.core.Disposables;
 import reactor.util.annotation.Nullable;
 
-final class SchedulerTask implements Runnable, Disposable, Callable<Void> {
-
-	final Runnable task;
+final class SchedulerTask extends Task {
 
 	static final Future<Void> FINISHED = new FutureTask<>(() -> null);
 	static final Future<Void> CANCELLED = new FutureTask<>(() -> null);
@@ -45,7 +42,7 @@ final class SchedulerTask implements Runnable, Disposable, Callable<Void> {
 	Thread thread;
 
 	SchedulerTask(Runnable task, @Nullable Disposable parent) {
-		this.task = task;
+		super(task);
 		PARENT.lazySet(this, parent);
 	}
 
@@ -65,7 +62,7 @@ final class SchedulerTask implements Runnable, Disposable, Callable<Void> {
 				}
 			}
 			try {
-				task.run();
+				runnableTask.run();
 			}
 			catch (Throwable ex) {
 				Schedulers.handleError(ex);

@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -142,7 +143,7 @@ class SchedulersHooksTest {
 		);
 	}
 
-	private static class TrackingDecorator implements Function<Runnable, Runnable> {
+	private static class TrackingDecorator implements Schedulers.RunnableUnaryOperator {
 		final AtomicInteger tracker;
 		final int dx;
 
@@ -161,7 +162,7 @@ class SchedulersHooksTest {
 	}
 
 	private static class ApplicationOrderRecordingDecorator
-			implements Function<Runnable, Runnable> {
+			implements Schedulers.RunnableUnaryOperator {
 
 		final List<String> items;
 

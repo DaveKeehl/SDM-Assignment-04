@@ -16,12 +16,10 @@
 
 package reactor.core.scheduler;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-import reactor.core.Disposable;
 import reactor.util.annotation.Nullable;
 
 /**
@@ -34,9 +32,7 @@ import reactor.util.annotation.Nullable;
  * @author Simon Baslé
  * @author David Karnok
  */
-final class WorkerTask implements Runnable, Disposable, Callable<Void> {
-
-	final Runnable task;
+final class WorkerTask extends Task {
 
 	/** marker that the Worker was disposed and the parent got notified */
 	static final Composite DISPOSED = new EmptyCompositeDisposable();
@@ -71,7 +67,7 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 			AtomicReferenceFieldUpdater.newUpdater(WorkerTask.class, Thread.class, "thread");
 
 	WorkerTask(Runnable task, Composite parent) {
-		this.task = task;
+		super(task);
 		PARENT.lazySet(this, parent);
 	}
 
@@ -81,7 +77,7 @@ final class WorkerTask implements Runnable, Disposable, Callable<Void> {
 		THREAD.lazySet(this, Thread.currentThread());
 		try {
 			try {
-				task.run();
+				runnableTask.run();
 			}
 			catch (Throwable ex) {
 				Schedulers.handleError(ex);

@@ -30,10 +30,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import reactor.core.Disposable;
@@ -67,6 +64,22 @@ import static reactor.core.Exceptions.unwrap;
  * @author Stephane Maldini
  */
 public abstract class Schedulers {
+
+	public interface RunnableUnaryOperator extends UnaryOperator<Runnable> {
+		static RunnableUnaryOperator identity() {
+			return s -> s;
+		}
+
+		default RunnableUnaryOperator andThen(RunnableUnaryOperator after) {
+			Objects.requireNonNull(after);
+			return s -> after.apply(this.apply(s));
+		}
+
+		default RunnableUnaryOperator compose(RunnableUnaryOperator before) {
+			Objects.requireNonNull(before);
+			return s -> this.apply(before.apply(s));
+		}
+	}
 
 	/**
 	 * Default pool size, initialized by system property {@code reactor.schedulers.defaultPoolSize}
@@ -778,7 +791,7 @@ public abstract class Schedulers {
 	 * for this key.
 	 * @see #setExecutorServiceDecorator(String, BiFunction)
 	 * @see #removeExecutorServiceDecorator(String)
-	 * @see Schedulers#onScheduleHook(String, Function)
+	 * @see Schedulers#onScheduleHook(String, RunnableUnaryOperator)
 	 */
 	public static boolean addExecutorServiceDecorator(String key, BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator) {
 		synchronized (DECORATORS) {
@@ -798,7 +811,7 @@ public abstract class Schedulers {
 	 * @param decorator the executor service decorator to add, if key not already present.
 	 * @see #addExecutorServiceDecorator(String, BiFunction)
 	 * @see #removeExecutorServiceDecorator(String)
-	 * @see Schedulers#onScheduleHook(String, Function)
+	 * @see Schedulers#onScheduleHook(String, RunnableUnaryOperator)
 	 */
 	public static void setExecutorServiceDecorator(String key, BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService> decorator) {
 		synchronized (DECORATORS) {
@@ -869,47 +882,42 @@ public abstract class Schedulers {
 	 * @see #resetOnScheduleHook(String)
 	 * @see #resetOnScheduleHooks()
 	 */
-	public static void onScheduleHook(String key, Function<Runnable, Runnable> decorator) {
+	public static void onScheduleHook(String key, RunnableUnaryOperator decorator) {
 		synchronized (onScheduleHooks) {
 			onScheduleHooks.put(key, decorator);
-			Function<Runnable, Runnable> newHook = null;
-			for (Function<Runnable, Runnable> function : onScheduleHooks.values()) {
-				if (newHook == null) {
-					newHook = function;
-				}
-				else {
-					newHook = newHook.andThen(function);
-				}
-			}
-			onScheduleHook = newHook;
+			helperOnScheduleHook();
 		}
+	}
+
+	private static void helperOnScheduleHook(){
+		RunnableUnaryOperator newHook = null;
+		for (RunnableUnaryOperator function : onScheduleHooks.values()) {
+			if (newHook == null) {
+				newHook = function;
+			}
+			else {
+				newHook = newHook.andThen(function);
+			}
+		}
+		onScheduleHook = newHook;
 	}
 
 	/**
 	 * Reset a specific onScheduleHook {@link Function sub-hook} if it has been set up
-	 * via {@link #onScheduleHook(String, Function)}.
+	 * via {@link #onScheduleHook(String, RunnableUnaryOperator)}.
 	 *
 	 * @param key the key for onScheduleHook sub-hook to remove
-	 * @see #onScheduleHook(String, Function)
+	 * @see #onScheduleHook(String, RunnableUnaryOperator)
 	 * @see #resetOnScheduleHooks()
 	 */
 	public static void resetOnScheduleHook(String key) {
 		synchronized (onScheduleHooks) {
 			onScheduleHooks.remove(key);
 			if (onScheduleHooks.isEmpty()) {
-				onScheduleHook = Function.identity();
+				onScheduleHook = RunnableUnaryOperator.identity();
 			}
 			else {
-				Function<Runnable, Runnable> newHook = null;
-				for (Function<Runnable, Runnable> function : onScheduleHooks.values()) {
-					if (newHook == null) {
-						newHook = function;
-					}
-					else {
-						newHook = newHook.andThen(function);
-					}
-				}
-				onScheduleHook = newHook;
+				helperOnScheduleHook();
 			}
 		}
 	}
@@ -917,7 +925,7 @@ public abstract class Schedulers {
 	/**
 	 * Remove all onScheduleHook {@link Function sub-hooks}.
 	 *
-	 * @see #onScheduleHook(String, Function)
+	 * @see #onScheduleHook(String, RunnableUnaryOperator)
 	 * @see #resetOnScheduleHook(String)
 	 */
 	public static void resetOnScheduleHooks() {
@@ -928,13 +936,13 @@ public abstract class Schedulers {
 	}
 
 	/**
-	 * Applies the hooks registered with {@link Schedulers#onScheduleHook(String, Function)}.
+	 * Applies the hooks registered with {@link Schedulers#onScheduleHook(String, RunnableUnaryOperator)}.
 	 *
 	 * @param runnable a {@link Runnable} submitted to a {@link Scheduler}
 	 * @return decorated {@link Runnable} if any hook is registered, the original otherwise.
 	 */
 	public static Runnable onSchedule(Runnable runnable) {
-		Function<Runnable, Runnable> hook = onScheduleHook;
+		RunnableUnaryOperator hook = onScheduleHook;
 		if (hook != null) {
 			return hook.apply(runnable);
 		}
@@ -1143,10 +1151,10 @@ public abstract class Schedulers {
 
 	static volatile Factory factory = DEFAULT;
 
-	private static final LinkedHashMap<String, Function<Runnable, Runnable>> onScheduleHooks = new LinkedHashMap<>(1);
+	private static final LinkedHashMap<String, RunnableUnaryOperator> onScheduleHooks = new LinkedHashMap<>(1);
 
 	@Nullable
-	private static Function<Runnable, Runnable> onScheduleHook;
+	private static RunnableUnaryOperator onScheduleHook;
 
 	/**
 	 * Get a {@link CachedScheduler} out of the {@code reference} or create one using the
@@ -1177,7 +1185,7 @@ public abstract class Schedulers {
 
 	static final Logger LOGGER = Loggers.getLogger(Schedulers.class);
 
-	static final void defaultUncaughtException(Thread t, Throwable e) {
+	static void defaultUncaughtException(Thread t, Throwable e) {
 		Schedulers.LOGGER.error("Scheduler worker in group " + t.getThreadGroup().getName()
 				+ " failed with an uncaught exception", e);
 	}
@@ -1277,13 +1285,8 @@ public abstract class Schedulers {
 		}
 	}
 
-	static Disposable directSchedule(ScheduledExecutorService exec,
-			Runnable task,
-			@Nullable Disposable parent,
-			long delay,
-			TimeUnit unit) {
-		task = onSchedule(task);
-		SchedulerTask sr = new SchedulerTask(task, parent);
+	private static Future<?> scheduleHelper(ScheduledExecutorService exec,
+									   Task sr, TimeUnit unit, long delay){
 		Future<?> f;
 		if (delay <= 0L) {
 			f = exec.submit((Callable<?>) sr);
@@ -1291,7 +1294,17 @@ public abstract class Schedulers {
 		else {
 			f = exec.schedule((Callable<?>) sr, delay, unit);
 		}
-		sr.setFuture(f);
+		return f;
+	}
+
+	static Disposable directSchedule(ScheduledExecutorService exec,
+			Runnable task,
+			@Nullable Disposable parent,
+			long delay,
+			TimeUnit unit) {
+		task = onSchedule(task);
+		SchedulerTask sr = new SchedulerTask(task, parent);
+		sr.setFuture(scheduleHelper(exec, sr, unit, delay));
 
 		return sr;
 	}
@@ -1339,14 +1352,7 @@ public abstract class Schedulers {
 		}
 
 		try {
-			Future<?> f;
-			if (delay <= 0L) {
-				f = exec.submit((Callable<?>) sr);
-			}
-			else {
-				f = exec.schedule((Callable<?>) sr, delay, unit);
-			}
-			sr.setFuture(f);
+			sr.setFuture(scheduleHelper(exec, sr, unit, delay));
 		}
 		catch (RejectedExecutionException ex) {
 			sr.dispose();
@@ -1433,7 +1439,7 @@ public abstract class Schedulers {
 	 * also work on some implementations of {@link Executor}
 	 */
 	@Nullable
-	static final Object scanExecutor(Executor executor, Scannable.Attr key) {
+	static Object scanExecutor(Executor executor, Scannable.Attr<?> key) {
 		if (executor instanceof DelegateServiceScheduler.UnsupportedScheduledExecutorService) {
 			executor = ((DelegateServiceScheduler.UnsupportedScheduledExecutorService) executor).get();
 		}
