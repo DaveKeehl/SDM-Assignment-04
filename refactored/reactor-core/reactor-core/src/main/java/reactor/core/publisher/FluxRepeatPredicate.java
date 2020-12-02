@@ -91,7 +91,7 @@ final class FluxRepeatPredicate<T> extends InternalFluxOperator<T, T> {
 			
 			try {
 				b = predicate.getAsBoolean();
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 				return;
 			}

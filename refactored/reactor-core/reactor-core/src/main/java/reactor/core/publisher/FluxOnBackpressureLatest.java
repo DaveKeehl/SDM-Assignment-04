@@ -62,7 +62,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<LatestSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<LatestSubscriber> LONG_REQUESTED =
 		  AtomicLongFieldUpdater.newUpdater(LatestSubscriber.class, "requested");
 
 		volatile int wip;
@@ -90,7 +90,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 
 				drain();
 			}
@@ -189,7 +189,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					Operators.produced(REQUESTED, this, e);
+					Operators.produced(LONG_REQUESTED, this, e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);

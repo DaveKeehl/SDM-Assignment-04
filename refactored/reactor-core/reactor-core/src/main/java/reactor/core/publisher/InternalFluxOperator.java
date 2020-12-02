@@ -86,7 +86,7 @@ abstract class InternalFluxOperator<I, O> extends FluxOperator<I, O> implements 
 
 	@Override
 	@Nullable
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.PREFETCH) return getPrefetch();
 		if (key == Attr.PARENT) return source;
 		return null;

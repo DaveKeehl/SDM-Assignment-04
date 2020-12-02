@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -1404,7 +1405,7 @@ class FluxPublishOnTest extends FluxOperatorTest<String, String> {
 	        .limitRate(10, 0)
 	        .subscribe(new BaseSubscriber<Integer>() {
 		        @Override
-		        protected void hookOnSubscribe(Subscription subscription) {
+		        protected void hookOnSubscribe(@NotNull Subscription subscription) {
 			        request(100);
 		        }
 

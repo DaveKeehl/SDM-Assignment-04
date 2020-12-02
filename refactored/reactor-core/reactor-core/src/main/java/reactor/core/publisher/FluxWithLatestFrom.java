@@ -196,7 +196,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 					r = Objects.requireNonNull(combiner.apply(t, u),
 					"The combiner returned a null value");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(this, e, t, actual.currentContext()));
 					return;
 				}

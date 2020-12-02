@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Subscription;
 
 public class StressSubscriber<T> extends BaseSubscriber<T> {
@@ -69,7 +70,7 @@ public class StressSubscriber<T> extends BaseSubscriber<T> {
 	}
 
 	@Override
-	protected void hookOnSubscribe(Subscription subscription) {
+	protected void hookOnSubscribe(@NotNull Subscription subscription) {
 		if (!guard.compareAndSet(null, Operation.ON_SUBSCRIBE)) {
 			concurrentOnSubscribe.set(true);
 		} else {
@@ -82,7 +83,7 @@ public class StressSubscriber<T> extends BaseSubscriber<T> {
 	}
 
 	@Override
-	protected void hookOnNext(T value) {
+	protected void hookOnNext(@NotNull T value) {
 		if (!guard.compareAndSet(null, Operation.ON_NEXT)) {
 			concurrentOnNext.set(true);
 		} else {

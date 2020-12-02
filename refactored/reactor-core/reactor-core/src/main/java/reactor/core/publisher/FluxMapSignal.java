@@ -73,7 +73,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
     }
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
     	if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -96,7 +96,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
         
         volatile long requested;
         @SuppressWarnings("rawtypes")
-        static final AtomicLongFieldUpdater<FluxMapSignalSubscriber> REQUESTED =
+        static final AtomicLongFieldUpdater<FluxMapSignalSubscriber> LONG_REQUESTED =
                 AtomicLongFieldUpdater.newUpdater(FluxMapSignalSubscriber.class, "requested");
 
         volatile boolean cancelled;
@@ -143,7 +143,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
                 v = Objects.requireNonNull(mapperNext.apply(t),
 		                "The mapper returned a null value.");
             }
-            catch (Throwable e) {
+            catch (Exception e) {
 	            done = true;
 	            actual.onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
                 return;
@@ -173,7 +173,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 		        v = Objects.requireNonNull(mapperError.apply(t),
 				        "The mapper returned a null value.");
 	        }
-	        catch (Throwable e) {
+	        catch (Exception e) {
 		        done = true;
 		        actual.onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 		        return;
@@ -182,9 +182,9 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 	        value = v;
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(REQUESTED, this, -p);
+	            Operators.addCap(LONG_REQUESTED, this, -p);
             }
-	        DrainUtils.postComplete(actual, this, REQUESTED, this, this);
+	        DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
         }
 
         @Override
@@ -205,7 +205,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 		        v = Objects.requireNonNull(mapperComplete.get(),
 				        "The mapper returned a null value.");
 	        }
-	        catch (Throwable e) {
+	        catch (Exception e) {
 		        done = true;
 		        actual.onError(Operators.onOperatorError(s, e, actual.currentContext()));
 		        return;
@@ -214,9 +214,9 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
             value = v;
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(REQUESTED, this, -p);
+	            Operators.addCap(LONG_REQUESTED, this, -p);
             }
-            DrainUtils.postComplete(actual, this, REQUESTED, this, this);
+            DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
         }
 
         @Override
@@ -227,7 +227,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 	    @Override
 	    public void request(long n) {
 	        if (Operators.validate(n)) {
-	            if (!DrainUtils.postCompleteRequest(n, actual, this, REQUESTED, this, this)) {
+	            if (!DrainUtils.postCompleteRequest(n, actual, this, LONG_REQUESTED, this, this)) {
 	                s.request(n);
 	            }
 	        }

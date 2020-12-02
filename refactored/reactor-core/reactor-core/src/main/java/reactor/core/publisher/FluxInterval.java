@@ -90,7 +90,7 @@ final class FluxInterval extends Flux<Long> implements SourceProducer<Long> {
 		final Worker worker;
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<IntervalRunnable> REQUESTED =
+		static final AtomicLongFieldUpdater<IntervalRunnable> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(IntervalRunnable.class, "requested");
 
 		long count;
@@ -123,7 +123,7 @@ final class FluxInterval extends Flux<Long> implements SourceProducer<Long> {
 				if (requested != 0L) {
 					actual.onNext(count++);
 					if (requested != Long.MAX_VALUE) {
-						REQUESTED.decrementAndGet(this);
+						LONG_REQUESTED.decrementAndGet(this);
 					}
 				} else {
 					cancel();
@@ -137,7 +137,7 @@ final class FluxInterval extends Flux<Long> implements SourceProducer<Long> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 		

@@ -101,7 +101,7 @@ final class FluxScan<T> extends InternalFluxOperator<T, T> {
 					t = Objects.requireNonNull(accumulator.apply(v, t),
 							"The accumulator returned a null value");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 					return;
 				}

@@ -89,7 +89,7 @@ final class Traces {
 					catch (LinkageError e) {
 						return Stream.empty();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						return Stream.empty();
 					}
 				})

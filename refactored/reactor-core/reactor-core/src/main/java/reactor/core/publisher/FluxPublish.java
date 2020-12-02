@@ -475,7 +475,7 @@ final class FluxPublish<T> extends ConnectableFlux<T> implements Scannable {
 
 						for (PubSubInner<T> inner : a) {
 							inner.actual.onNext(v);
-							if(Operators.producedCancellable(PubSubInner.REQUESTED,
+							if(Operators.producedCancellable(PubSubInner.LONG_REQUESTED,
 									inner,1) ==
 									Long.MIN_VALUE){
 								cancel = Integer.MIN_VALUE;
@@ -571,7 +571,7 @@ final class FluxPublish<T> extends ConnectableFlux<T> implements Scannable {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<PubSubInner> REQUESTED =
+		static final AtomicLongFieldUpdater<PubSubInner> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(PubSubInner.class, "requested");
 
 		PubSubInner(CoreSubscriber<? super T> actual) {
@@ -581,7 +581,7 @@ final class FluxPublish<T> extends ConnectableFlux<T> implements Scannable {
 		@Override
 		public final void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCapCancellable(REQUESTED, this, n);
+				Operators.addCapCancellable(LONG_REQUESTED, this, n);
 				drainParent();
 			}
 		}
@@ -590,7 +590,7 @@ final class FluxPublish<T> extends ConnectableFlux<T> implements Scannable {
 		public final void cancel() {
 			long r = requested;
 			if (r != Long.MIN_VALUE) {
-				r = REQUESTED.getAndSet(this, Long.MIN_VALUE);
+				r = LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE);
 				if (r != Long.MIN_VALUE) {
 					removeAndDrainParent();
 				}

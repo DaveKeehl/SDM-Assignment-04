@@ -236,7 +236,7 @@ public interface Scannable {
 			/**
 			 	guarantees the operator doesn't change threads (strongest level of guarantee)
 			 */
-			SYNC;
+			SYNC
 		}
 
 		/**
@@ -303,7 +303,7 @@ public interface Scannable {
 		 */
 		static final Scannable UNAVAILABLE_SCAN = new Scannable() {
 			@Override
-			public Object scanUnsafe(Attr key) {
+			public Object scanUnsafe(Attr<?> key) {
 				return null;
 			}
 
@@ -324,7 +324,7 @@ public interface Scannable {
 		 */
 		static final Scannable NULL_SCAN = new Scannable() {
 			@Override
-			public Object scanUnsafe(Attr key) {
+			public Object scanUnsafe(Attr<?> key) {
 				return null;
 			}
 
@@ -525,7 +525,7 @@ public interface Scannable {
 	 * @return the value associated to the key for that specific component, or null if none.
 	 */
 	@Nullable
-	Object scanUnsafe(Attr key);
+	Object scanUnsafe(Attr<?> key);
 
 	/**
 	 * Introspect a component's specific state {@link Attr attribute}, returning an

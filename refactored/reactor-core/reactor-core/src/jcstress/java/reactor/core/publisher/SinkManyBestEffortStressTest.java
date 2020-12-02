@@ -15,6 +15,7 @@
  */
 package reactor.core.publisher;
 
+import org.jetbrains.annotations.NotNull;
 import org.openjdk.jcstress.annotations.Actor;
 import org.openjdk.jcstress.annotations.Arbiter;
 import org.openjdk.jcstress.annotations.JCStressTest;
@@ -87,7 +88,7 @@ public class SinkManyBestEffortStressTest {
 		public void two() {
 			sink.subscribe(new BaseSubscriber<Integer>() {
 				@Override
-				protected void hookOnSubscribe(Subscription subscription) {
+				protected void hookOnSubscribe(@NotNull Subscription subscription) {
 					subscription.cancel();
 				}
 			});

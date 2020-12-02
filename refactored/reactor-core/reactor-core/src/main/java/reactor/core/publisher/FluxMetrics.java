@@ -108,7 +108,7 @@ final class FluxMetrics<T> extends InternalFluxOperator<T, T> {
 			                                .register(registry);
 
 			if (!REACTOR_DEFAULT_NAME.equals(sequenceName)) {
-				this.requestedCounter = DistributionSummary.builder(sequenceName + METER_REQUESTED)
+				this.requestedCounter = DistributionSummary.builder(sequenceName + METER_LONG_REQUESTED)
 				                                           .tags(commonTags)
 				                                           .description(
 						                                           "Counts the amount requested to a named Flux by all subscribers, until at least one requests an unbounded amount")
@@ -236,7 +236,7 @@ final class FluxMetrics<T> extends InternalFluxOperator<T, T> {
 	/**
 	 * Meter that tracks the request amount, in {@link Flux#name(String) named} sequences only.
 	 */
-	static final String METER_REQUESTED   = ".requested";
+	static final String METER_LONG_REQUESTED   = ".requested";
 	/**
 	 * Tag used by {@link #METER_FLOW_DURATION} when "status" is {@link #TAG_ON_ERROR}, to store the
 	 * exception that occurred.

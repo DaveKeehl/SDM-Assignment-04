@@ -628,7 +628,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<PublishMulticastInner> REQUESTED =
+		static final AtomicLongFieldUpdater<PublishMulticastInner> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(PublishMulticastInner.class,
 						"requested");
 
@@ -663,21 +663,21 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCapCancellable(REQUESTED, this, n);
+				Operators.addCapCancellable(LONG_REQUESTED, this, n);
 				parent.drain();
 			}
 		}
 
 		@Override
 		public void cancel() {
-			if (REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 				parent.drain();
 			}
 		}
 
 		void produced(long n) {
-			Operators.producedCancellable(REQUESTED, this, n);
+			Operators.producedCancellable(LONG_REQUESTED, this, n);
 		}
 	}
 

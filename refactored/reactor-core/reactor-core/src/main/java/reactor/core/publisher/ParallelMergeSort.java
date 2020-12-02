@@ -94,7 +94,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<MergeSortMain> REQUESTED =
+		static final AtomicLongFieldUpdater<MergeSortMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(MergeSortMain.class,
 						"requested");
 
@@ -156,7 +156,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				if (remaining == 0) {
 					drain();
 				}
@@ -293,7 +293,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				int w = wip;

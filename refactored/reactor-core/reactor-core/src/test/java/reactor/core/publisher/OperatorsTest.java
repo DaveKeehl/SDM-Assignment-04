@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.reactivestreams.Publisher;
@@ -727,7 +728,7 @@ class OperatorsTest {
 		ArrayList<Object> captured = new ArrayList<>();
 		BaseSubscriber<Object> actual = new BaseSubscriber<Object>() {
 			@Override
-			protected void hookOnNext(Object value) {
+			protected void hookOnNext(@NotNull Object value) {
 				captured.add(value);
 			}
 		};

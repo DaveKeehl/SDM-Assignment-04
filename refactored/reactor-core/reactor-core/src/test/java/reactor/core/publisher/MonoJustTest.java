@@ -17,6 +17,7 @@ package reactor.core.publisher;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import reactor.core.Fuseable;
 import reactor.core.Scannable;
@@ -30,9 +31,7 @@ class MonoJustTest {
 
     @Test
     void nullValue() {
-		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
-			new MonoJust<Integer>(null);
-		});
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new MonoJust<Integer>(null));
 	}
 
     @Test
@@ -61,7 +60,7 @@ class MonoJustTest {
 
 	@Test
     void normalOptionalOfNullable() {
-		StepVerifier.create(Mono.justOrEmpty(Optional.ofNullable(null)))
+		StepVerifier.create(Mono.justOrEmpty(Optional.empty()))
 				.verifyComplete();
 	}
 

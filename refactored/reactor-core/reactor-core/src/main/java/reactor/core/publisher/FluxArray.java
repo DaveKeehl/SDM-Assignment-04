@@ -61,7 +61,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.BUFFERED) return array.length;
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 
@@ -81,7 +81,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ArraySubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<ArraySubscription> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ArraySubscription.class, "requested");
 
 		ArraySubscription(CoreSubscriber<? super T> actual, T[] array) {
@@ -92,7 +92,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(REQUESTED, this, n) == 0) {
+				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -143,7 +143,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 				if (n == e) {
 					index = i;
-					n = REQUESTED.addAndGet(this, -e);
+					n = LONG_REQUESTED.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}
@@ -218,7 +218,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.TERMINATED) return isEmpty();
 			if (key == Attr.BUFFERED) return size();
 			if (key == Attr.CANCELLED) return cancelled;
@@ -241,7 +241,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ArrayConditionalSubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<ArrayConditionalSubscription> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ArrayConditionalSubscription.class,
 						"requested");
 
@@ -258,7 +258,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(REQUESTED, this, n) == 0) {
+				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -311,7 +311,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 				if (n == e) {
 					index = i;
-					n = REQUESTED.addAndGet(this, -e);
+					n = LONG_REQUESTED.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}
@@ -352,7 +352,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.TERMINATED) return isEmpty();
 			if (key == Attr.BUFFERED) return size();
 			if (key == Attr.CANCELLED) return cancelled;

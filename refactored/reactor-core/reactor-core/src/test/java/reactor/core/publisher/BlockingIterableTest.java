@@ -16,16 +16,12 @@
 
 package reactor.core.publisher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -85,7 +81,8 @@ class BlockingIterableTest {
 		List<Integer> values = new ArrayList<>();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> {
-			for (Integer i : Flux.<Integer>error(new RuntimeException("forced failure")).toIterable()) {
+			Iterable<Integer> error = Flux.<Integer>error(new RuntimeException("forced failure")).toIterable();
+			for (Integer i : error) {
 				values.add(i);
 			}
 		});
@@ -245,9 +242,11 @@ class BlockingIterableTest {
 		})
 				.sort((a, b) -> { throw new IllegalStateException("boom"); });
 
+		Stream<String> stream = source.toStream();
+		Collector<Object, ?, Set<Object>> collector = Collectors.toSet();
+
 		assertThatExceptionOfType(IllegalStateException.class)
-				.isThrownBy(() -> source.toStream()
-				                        .collect(Collectors.toSet()))
+				.isThrownBy(() -> stream.collect(collector))
 				.withMessage("boom");
 	}
 
@@ -263,9 +262,12 @@ class BlockingIterableTest {
 				.map(v -> 4 / v)
 				.log();
 
+		Stream<Integer> stream = source.toStream(1);
+		Collector<Object, ?, Set<Object>> collector = Collectors.toSet();
+
 		assertThatExceptionOfType(ArithmeticException.class)
-				.isThrownBy(() -> source.toStream(1)
-				                        .collect(Collectors.toSet()))
+				.isThrownBy(() -> stream
+				                        .collect(collector))
 				.withMessage("/ by zero");
 	}
 
@@ -275,9 +277,12 @@ class BlockingIterableTest {
 		Flux<String> source = Flux.fromIterable(Arrays.asList("a","b"))
 		                          .sort((a, b) -> { throw new IllegalStateException("boom"); });
 
+		Stream<String> stream = source.toStream();
+		Collector<Object, ?, Set<Object>> collector = Collectors.toSet();
+
 		assertThatExceptionOfType(IllegalStateException.class)
-				.isThrownBy(() -> source.toStream()
-				                        .collect(Collectors.toSet()))
+				.isThrownBy(() -> stream
+				                        .collect(collector))
 				.withMessage("boom");
 	}
 
@@ -327,9 +332,12 @@ class BlockingIterableTest {
 				.hide()
 				.flatMapIterable(Function.identity());
 
+		Stream<String> stream = source.toStream();
+		Collector<Object, ?, Set<Object>> collector = Collectors.toSet();
+
 		assertThatExceptionOfType(IllegalStateException.class)
-				.isThrownBy(() -> source.toStream()
-				                        .collect(Collectors.toSet()))
+				.isThrownBy(() -> stream
+				                        .collect(collector))
 				.withMessage("boom");
 	}
 }

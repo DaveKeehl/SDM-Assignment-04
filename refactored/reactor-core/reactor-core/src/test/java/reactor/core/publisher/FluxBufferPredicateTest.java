@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -742,7 +743,7 @@ class FluxBufferPredicateTest {
 
 		BaseSubscriber<List<Integer>> subscriber = new BaseSubscriber<List<Integer>>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 		};
@@ -773,7 +774,7 @@ class FluxBufferPredicateTest {
 
 		BaseSubscriber<List<Integer>> subscriber = new BaseSubscriber<List<Integer>>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 		};
@@ -804,7 +805,7 @@ class FluxBufferPredicateTest {
 
 		BaseSubscriber<List<Integer>> subscriber = new BaseSubscriber<List<Integer>>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 		};
@@ -1072,7 +1073,7 @@ class FluxBufferPredicateTest {
 			}
 
 			@Override
-			protected void hookOnNext(ArrayList<AtomicInteger> value) {
+			protected void hookOnNext(@NotNull ArrayList<AtomicInteger> value) {
 				receivedCounter.addAndGet(value.size());
 			}
 		};
@@ -1229,11 +1230,11 @@ class FluxBufferPredicateTest {
 		ConcurrentLinkedQueue<List<Integer>> buffers = new ConcurrentLinkedQueue<>();
 		final BaseSubscriber<List<Integer>> subscriber = new BaseSubscriber<List<Integer>>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 			@Override
-			protected void hookOnNext(List<Integer> value) {
+			protected void hookOnNext(@NotNull List<Integer> value) {
 				buffers.add(value);
 				if (value.equals(Collections.singletonList(0))) {
 					request(1);

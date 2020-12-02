@@ -294,7 +294,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 
 						try {
 							p = Objects.requireNonNull(close.apply(wo.open), "The publisher supplied is null");
-						} catch (Throwable e) {
+						} catch (Exception e) {
 							cancelled = true;
 							a.onError(e);
 							continue;

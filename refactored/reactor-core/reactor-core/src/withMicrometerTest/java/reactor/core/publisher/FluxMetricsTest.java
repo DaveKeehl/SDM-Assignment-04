@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import io.micrometer.core.instrument.*;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.api.SoftAssertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -453,7 +454,7 @@ public class FluxMetricsTest {
 	public void requestTracking() {
 		BaseSubscriber<Integer> bs = new BaseSubscriber<Integer>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				subscription.request(1);
 			}
 		};

@@ -104,7 +104,7 @@ final class FluxSampleTimeout<T, U> extends InternalFluxOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SampleTimeoutMain> REQUESTED =
+		static final AtomicLongFieldUpdater<SampleTimeoutMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(SampleTimeoutMain.class, "requested");
 
 		volatile int wip;
@@ -164,7 +164,7 @@ final class FluxSampleTimeout<T, U> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -199,7 +199,7 @@ final class FluxSampleTimeout<T, U> extends InternalFluxOperator<T, T> {
 				p = Objects.requireNonNull(throttler.apply(t),
 						"throttler returned a null publisher");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, ctx));
 				return;
 			}
@@ -288,7 +288,7 @@ final class FluxSampleTimeout<T, U> extends InternalFluxOperator<T, T> {
 						if (r != 0) {
 							a.onNext(o.value);
 							if (r != Long.MAX_VALUE) {
-								REQUESTED.decrementAndGet(this);
+								LONG_REQUESTED.decrementAndGet(this);
 							}
 						}
 						else {

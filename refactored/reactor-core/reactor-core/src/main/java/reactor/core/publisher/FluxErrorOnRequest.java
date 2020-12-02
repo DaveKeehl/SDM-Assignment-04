@@ -19,7 +19,6 @@ package reactor.core.publisher;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
-import org.reactivestreams.Subscriber;
 import reactor.core.CoreSubscriber;
 import reactor.util.annotation.Nullable;
 
@@ -40,7 +39,7 @@ final class FluxErrorOnRequest<T> extends Flux<T> implements SourceProducer<T> {
 
 	@Override
 	public void subscribe(CoreSubscriber<? super T> actual) {
-		actual.onSubscribe(new ErrorSubscription(actual, error));
+		actual.onSubscribe(new ErrorSubscription<T>(actual, error));
 	}
 
 	@Override
@@ -49,17 +48,20 @@ final class FluxErrorOnRequest<T> extends Flux<T> implements SourceProducer<T> {
 		return null;
 	}
 
-	static final class ErrorSubscription implements InnerProducer {
+	static final class ErrorSubscription<O> implements InnerProducer<O> {
 
-		final CoreSubscriber<?> actual;
+		final CoreSubscriber<? super O> actual;
 
 		final Throwable error;
 
 		volatile int once;
+
+
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<ErrorSubscription> ONCE =
 				AtomicIntegerFieldUpdater.newUpdater(ErrorSubscription.class, "once");
 
-		ErrorSubscription(CoreSubscriber<?> actual, Throwable error) {
+		ErrorSubscription(CoreSubscriber<? super O> actual, Throwable error) {
 			this.actual = actual;
 			this.error = error;
 		}
@@ -79,13 +81,13 @@ final class FluxErrorOnRequest<T> extends Flux<T> implements SourceProducer<T> {
 		}
 
 		@Override
-		public CoreSubscriber actual() {
+		public CoreSubscriber<? super O> actual() {
 			return actual;
 		}
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.ERROR) return error;
 			if (key == Attr.CANCELLED || key == Attr.TERMINATED)
 				return once == 1;

@@ -77,7 +77,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.RUN_ON) return timer;
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.ASYNC;
 
@@ -112,7 +112,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "requested");
 
 		volatile long outstanding;
@@ -123,6 +123,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		volatile int index = 0;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<BufferTimeoutSubscriber> INDEX =
 				AtomicIntegerFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "index");
 
@@ -146,16 +147,13 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 			this.flushTask = () -> {
 				if (terminated == NOT_TERMINATED) {
 					int index;
-					for(;;){
+					do {
 						index = this.index;
-						if(index == 0){
+						if (index == 0) {
 							return;
 						}
-						if(INDEX.compareAndSet(this, index, 0)){
-							break;
-						}
-					}
-					flushCallback(null);
+					} while (!INDEX.compareAndSet(this, index, 0));
+					flushCallback();
 				}
 			};
 
@@ -188,7 +186,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 			}
 		}
 
-		void flushCallback(@Nullable T ev) { //TODO investigate ev not used
+		void flushCallback() { //TODO investigate ev not used
 			final C v;
 			boolean flush = false;
 			synchronized (this) {
@@ -204,18 +202,15 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 				if (r != 0L) {
 					if (r != Long.MAX_VALUE) {
 						long next;
-						for (;;) {
+						do {
 							next = r - 1;
-							if (REQUESTED.compareAndSet(this, r, next)) {
+							if (LONG_REQUESTED.compareAndSet(this, r, next)) {
 								actual.onNext(v);
 								return;
 							}
 
 							r = requested;
-							if (r <= 0L) {
-								break;
-							}
-						}
+						} while (r > 0L);
 					}
 					else {
 						actual.onNext(v);
@@ -232,7 +227,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return subscription;
 			if (key == Attr.CANCELLED) return terminated == TERMINATED_WITH_CANCEL;
 			if (key == Attr.TERMINATED) return terminated == TERMINATED_WITH_ERROR || terminated == TERMINATED_WITH_SUCCESS;
@@ -248,12 +243,9 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		@Override
 		public void onNext(final T value) {
 			int index;
-			for(;;){
+			do {
 				index = this.index + 1;
-				if(INDEX.compareAndSet(this, index - 1, index)){
-					break;
-				}
-			}
+			} while (!INDEX.compareAndSet(this, index - 1, index));
 
 			if (index == 1) {
 				try {
@@ -275,37 +267,23 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 					timespanRegistration.dispose();
 					timespanRegistration = null;
 				}
-				flushCallback(value);
+				flushCallback();
 			}
 		}
 
 		void checkedComplete() {
 			try {
-				flushCallback(null);
+				flushCallback();
 			}
 			finally {
 				actual.onComplete();
 			}
 		}
 
-		/**
-		 * @return has this {@link Subscriber} terminated with success ?
-		 */
-		final boolean isCompleted() {
-			return terminated == TERMINATED_WITH_SUCCESS;
-		}
-
-		/**
-		 * @return has this {@link Subscriber} terminated with an error ?
-		 */
-		final boolean isFailed() {
-			return terminated == TERMINATED_WITH_ERROR;
-		}
-
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				if (terminated != NOT_TERMINATED) {
 					return;
 				}

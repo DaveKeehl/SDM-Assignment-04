@@ -74,7 +74,7 @@ final class MonoFirstWithSignal<T> extends Mono<T> implements SourceProducer<T> 
 			try {
 				it = Objects.requireNonNull(iterable.iterator(), "The iterator returned is null");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.error(actual, Operators.onOperatorError(e,
 						actual.currentContext()));
 				return;
@@ -87,7 +87,7 @@ final class MonoFirstWithSignal<T> extends Mono<T> implements SourceProducer<T> 
 				try {
 					b = it.hasNext();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.error(actual, Operators.onOperatorError(e,
 							actual.currentContext()));
 					return;
@@ -103,7 +103,7 @@ final class MonoFirstWithSignal<T> extends Mono<T> implements SourceProducer<T> 
 					p = Objects.requireNonNull(it.next(),
 					"The Publisher returned by the iterator is null");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.error(actual, Operators.onOperatorError(e,
 							actual.currentContext()));
 					return;

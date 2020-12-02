@@ -117,7 +117,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<GroupByMain> REQUESTED =
+		static final AtomicLongFieldUpdater<GroupByMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(GroupByMain.class, "requested");
 
 		volatile boolean   done;
@@ -272,7 +272,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -400,7 +400,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 					s.request(e);
 
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.addAndGet(this, -e);
+						LONG_REQUESTED.addAndGet(this, -e);
 					}
 				}
 
@@ -509,7 +509,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<UnicastGroupedFlux> REQUESTED =
+		static final AtomicLongFieldUpdater<UnicastGroupedFlux> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(UnicastGroupedFlux.class, "requested");
 
 		volatile boolean outputFused;
@@ -575,7 +575,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 						main.s.request(e);
 					}
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.addAndGet(this, -e);
+						LONG_REQUESTED.addAndGet(this, -e);
 					}
 				}
 
@@ -711,7 +711,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}

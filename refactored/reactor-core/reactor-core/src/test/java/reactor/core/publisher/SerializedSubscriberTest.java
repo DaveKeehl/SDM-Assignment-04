@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 
@@ -110,7 +111,7 @@ class SerializedSubscriberTest {
 		    .doFinally(sig -> latch.countDown())
             .subscribeWith(new BaseSubscriber<Integer>() {
 	            @Override
-	            protected void hookOnNext(Integer value) {
+	            protected void hookOnNext(@NotNull Integer value) {
 					seen.incrementAndGet();
 		            cancel();
 	            }

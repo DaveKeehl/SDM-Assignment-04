@@ -102,7 +102,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SampleMainSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<SampleMainSubscriber> LONG_REQUESTED =
 		  AtomicLongFieldUpdater.newUpdater(SampleMainSubscriber.class, "requested");
 
 		SampleMainSubscriber(CoreSubscriber<? super T> actual) {
@@ -178,7 +178,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -225,7 +225,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void decrement() {
-			REQUESTED.decrementAndGet(this);
+			LONG_REQUESTED.decrementAndGet(this);
 		}
 	}
 

@@ -93,7 +93,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 					p.subscribe(subscriber);
 				}
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.error(actual, e);
 			}
 			return;
@@ -119,7 +119,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 			p = Objects.requireNonNull(resourceClosure.apply(resource),
 					"The resourceClosure function returned a null value");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			p = Flux.error(e);
 		}
 
@@ -367,7 +367,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 					p = Objects.requireNonNull(asyncError.apply(resource, t),
 							"The asyncError returned a null Publisher");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					_e = Exceptions.addSuppressed(_e, t);
 					actual.onError(_e);
@@ -387,7 +387,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 					p = Objects.requireNonNull(asyncComplete.apply(resource),
 							"The asyncComplete returned a null Publisher");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					//give a chance for the Mono implementation to discard the recorded value
 					deferredError(_e);

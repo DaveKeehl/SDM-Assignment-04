@@ -147,7 +147,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
                         "The transformer returned a null value"
                     );
                 }
-                catch (Throwable e) {
+                catch (Exception e) {
                     this.done = true;
                     Operators.error(o, Operators.onOperatorError(this.s, e, t, o.currentContext()));
                     return;
@@ -185,7 +185,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
                         "The transformer returned a null value"
                     );
                 }
-                catch (Throwable e) {
+                catch (Exception e) {
                     this.done = true;
                     Operators.error(o, Operators.onOperatorError(this.s, e, t, o.currentContext()));
                     return;
@@ -221,7 +221,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
                         "The transformer returned a null value"
                     );
                 }
-                catch (Throwable e) {
+                catch (Exception e) {
                     this.done = true;
                     Operators.error(o, Operators.onOperatorError(this.s, e, null, o.currentContext()));
                     return;
@@ -417,7 +417,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
                         "The transformer returned a null value"
                     );
                 }
-                catch (Throwable e) {
+                catch (Exception e) {
                     this.done = true;
                     Operators.error(o, Operators.onOperatorError(this.s, e, t, o.currentContext()));
                     return false;
@@ -505,7 +505,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void cancel() {
-            final long state = REQUESTED.getAndSet(this, STATE_CANCELLED);
+            final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
             if (state == STATE_CANCELLED) {
                 return;
             }
@@ -599,7 +599,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void cancel() {
-            final long state = REQUESTED.getAndSet(this, STATE_CANCELLED);
+            final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
             if (state == STATE_CANCELLED) {
                 return;
             }

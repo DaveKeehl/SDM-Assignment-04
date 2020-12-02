@@ -46,7 +46,7 @@ final class FluxDefer<T> extends Flux<T> implements SourceProducer<T> {
 			p = Objects.requireNonNull(supplier.get(),
 					"The Publisher returned by the supplier is null");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}

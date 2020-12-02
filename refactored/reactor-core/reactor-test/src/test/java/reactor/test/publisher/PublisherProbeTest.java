@@ -18,6 +18,7 @@ package reactor.test.publisher;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -397,7 +398,7 @@ class PublisherProbeTest {
 	private <T> Subscriber<T> subscriptionCaptorVia(AtomicReference<Subscription> ref) {
 		return new BaseSubscriber<T>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				ref.set(subscription);
 			}
 		};

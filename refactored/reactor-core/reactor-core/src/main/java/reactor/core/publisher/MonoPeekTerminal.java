@@ -170,7 +170,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 					try {
 						parent.onSuccessCall.accept(t);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						onError(Operators.onOperatorError(s, e, t,
 								actual.currentContext()));
 						return;
@@ -183,7 +183,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 					try {
 						parent.onAfterTerminateCall.accept(t, null);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						//don't invoke error callback, see https://github.com/reactor/reactor-core/issues/270
 						Operators.onErrorDropped(Operators.onOperatorError(s, e, t,
 								actual.currentContext()),
@@ -212,7 +212,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 				try {
 					parent.onSuccessCall.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 					return false;
 				}
@@ -224,7 +224,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 				try {
 					parent.onAfterTerminateCall.accept(t, null);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//don't invoke error callback, see https://github.com/reactor/reactor-core/issues/270
 					Operators.onErrorDropped(Operators.onOperatorError(s, e, t,
 							actual.currentContext()),
@@ -249,7 +249,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 				try {
 					onError.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					t = Operators.onOperatorError(null, e, t, actual.currentContext());
 				}
 			}
@@ -268,7 +268,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 				try {
 					parent.onAfterTerminateCall.accept(null, t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//don't invoke error callback, see https://github.com/reactor/reactor-core/issues/270
 					Operators.onErrorDropped(Operators.onOperatorError(e,
 							actual.currentContext()),
@@ -288,7 +288,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 					try {
 						parent.onSuccessCall.accept(null);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						onError(Operators.onOperatorError(s, e, actual.currentContext()));
 						return;
 					}
@@ -302,7 +302,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 				try {
 					parent.onAfterTerminateCall.accept(null, null);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//don't invoke error callback, see https://github.com/reactor/reactor-core/issues/270
 					Operators.onErrorDropped(Operators.onOperatorError(e,
 							actual.currentContext()),
@@ -329,7 +329,7 @@ final class MonoPeekTerminal<T> extends InternalMonoOperator<T, T> implements Fu
 					try {
 						parent.onSuccessCall.accept(v);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						throw Exceptions.propagate(Operators.onOperatorError(s, e, v,
 								actual.currentContext()));
 					}

@@ -1511,7 +1511,7 @@ public abstract class Operators {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.CANCELLED) {
 				return true;
 			}
@@ -1566,7 +1566,7 @@ public abstract class Operators {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.TERMINATED) return true;
 			return null;
 		}
@@ -1597,7 +1597,7 @@ public abstract class Operators {
 
 		@Override
 		public void cancel() {
-			final long state = REQUESTED.getAndSet(this, STATE_CANCELLED);
+			final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
 			if (state == STATE_CANCELLED) {
 				return;
 			}
@@ -1608,12 +1608,12 @@ public abstract class Operators {
 		}
 
 		protected void terminate() {
-			REQUESTED.getAndSet(this, STATE_CANCELLED);
+			LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
 		}
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			long requested = this.requested; // volatile read to see subscription
 			if (key == Attr.PARENT) return s;
 			if (key == Attr.REQUESTED_FROM_DOWNSTREAM) return requested < 0 ? 0 : requested;
@@ -1633,7 +1633,7 @@ public abstract class Operators {
 						return;
 					}
 					u = Operators.addCap(r, n);
-					if (REQUESTED.compareAndSet(this, r, u)) { // Means increment happened before onSubscribe
+					if (LONG_REQUESTED.compareAndSet(this, r, u)) { // Means increment happened before onSubscribe
 						return;
 					}
 					else { // Means increment happened after onSubscribe
@@ -1691,13 +1691,13 @@ public abstract class Operators {
 				}
 				accumulated += toRequest;
 
-				if (REQUESTED.compareAndSet(this, r, STATE_SUBSCRIBED)) {
+				if (LONG_REQUESTED.compareAndSet(this, r, STATE_SUBSCRIBED)) {
 					return true;
 				}
 			}
 		}
 
-		static final AtomicLongFieldUpdater<DeferredSubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<DeferredSubscription> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(DeferredSubscription.class, "requested");
 
 	}
@@ -1734,7 +1734,7 @@ public abstract class Operators {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.CANCELLED) return isCancelled();
 			if (key == Attr.TERMINATED) return state == HAS_REQUEST_HAS_VALUE || state == NO_REQUEST_HAS_VALUE;
 			if (key == Attr.PREFETCH) return Integer.MAX_VALUE;
@@ -1995,7 +1995,7 @@ public abstract class Operators {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT)
 				return missedSubscription != null ? missedSubscription : subscription;
 			if (key == Attr.CANCELLED) return isCancelled();
@@ -2121,7 +2121,7 @@ public abstract class Operators {
 	                return;
 	            }
 
-	            addCap(MISSED_REQUESTED, this, n);
+	            addCap(MISSED_LONG_REQUESTED, this, n);
 
 	            drain();
 	        }
@@ -2196,7 +2196,7 @@ public abstract class Operators {
 
 	            long mr = missedRequested;
 	            if (mr != 0L) {
-	                mr = MISSED_REQUESTED.getAndSet(this, 0L);
+	                mr = MISSED_LONG_REQUESTED.getAndSet(this, 0L);
 	            }
 
 	            long mp = missedProduced;
@@ -2264,7 +2264,7 @@ public abstract class Operators {
 			"missedSubscription");
 		@SuppressWarnings("rawtypes")
 		static final AtomicLongFieldUpdater<MultiSubscriptionSubscriber>
-				MISSED_REQUESTED =
+				MISSED_LONG_REQUESTED =
 		  AtomicLongFieldUpdater.newUpdater(MultiSubscriptionSubscriber.class, "missedRequested");
 		@SuppressWarnings("rawtypes")
 		static final AtomicLongFieldUpdater<MultiSubscriptionSubscriber> MISSED_PRODUCED =

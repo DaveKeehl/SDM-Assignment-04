@@ -149,7 +149,7 @@ final class FluxPublishOn<T> extends InternalFluxOperator<T, T> implements Fusea
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<AbstractPublishOnSubscriber> ATOMIC_LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<AbstractPublishOnSubscriber> ATOMIC_LONG_LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(AbstractPublishOnSubscriber.class,
 						"requested");
 
@@ -600,7 +600,7 @@ final class FluxPublishOn<T> extends InternalFluxOperator<T, T> implements Fusea
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(ATOMIC_LONG_REQUESTED, this, n);
+				Operators.addCap(ATOMIC_LONG_LONG_REQUESTED, this, n);
 				//WIP also guards during request and onError is possible
 				trySchedule(this, null, null);
 			}
@@ -656,7 +656,7 @@ final class FluxPublishOn<T> extends InternalFluxOperator<T, T> implements Fusea
 					e++;
 					if (e == limit) {
 						if (r != Long.MAX_VALUE) {
-							r = ATOMIC_LONG_REQUESTED.addAndGet(this, -e);
+							r = ATOMIC_LONG_LONG_REQUESTED.addAndGet(this, -e);
 						}
 						s.request(e);
 						e = 0L;
@@ -780,7 +780,7 @@ final class FluxPublishOn<T> extends InternalFluxOperator<T, T> implements Fusea
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(ATOMIC_LONG_REQUESTED, this, n);
+				Operators.addCap(ATOMIC_LONG_LONG_REQUESTED, this, n);
 				trySchedule(this, null, null);
 			}
 		}

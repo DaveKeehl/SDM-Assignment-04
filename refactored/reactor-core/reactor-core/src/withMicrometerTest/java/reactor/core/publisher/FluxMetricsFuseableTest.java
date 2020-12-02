@@ -30,6 +30,7 @@ import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.assertj.core.api.SoftAssertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -601,7 +602,7 @@ public class FluxMetricsFuseableTest {
 	public void requestTrackingFuseable() {
 		BaseSubscriber<Integer> bs = new BaseSubscriber<Integer>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				subscription.request(1);
 			}
 		};

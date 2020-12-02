@@ -65,7 +65,7 @@ final class MonoRepeatWhen<T> extends FluxFromMonoOperator<T, T> {
 			p = Objects.requireNonNull(whenSourceFactory.apply(other),
 					"The whenSourceFactory returned a null Publisher");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 			return null;
 		}

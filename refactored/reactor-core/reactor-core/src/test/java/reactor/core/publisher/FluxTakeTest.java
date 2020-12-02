@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.reactivestreams.Publisher;
@@ -740,7 +741,7 @@ class FluxTakeTest {
 	    }
 
 	    @Override
-		public void hookOnSubscribe(Subscription s) {
+		public void hookOnSubscribe(@NotNull Subscription s) {
 			CountDownLatch countDownLatch = new CountDownLatch(take);
 			for (int i = 0; i < take; i++) {
 				new Thread(() -> {
@@ -757,7 +758,7 @@ class FluxTakeTest {
 		}
 
 		@Override
-		public void hookOnNext(T element) {
+		public void hookOnNext(@NotNull T element) {
 			received++;
 		}
 

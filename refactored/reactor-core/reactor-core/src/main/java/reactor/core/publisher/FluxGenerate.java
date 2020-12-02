@@ -76,7 +76,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 
 		try {
 			state = stateSupplier.call();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}
@@ -115,7 +115,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<GenerateSubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<GenerateSubscription> LONG_REQUESTED =
 			AtomicLongFieldUpdater.newUpdater(GenerateSubscription.class, "requested");
 
 		GenerateSubscription(CoreSubscriber<? super T> actual, S state,
@@ -199,7 +199,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(REQUESTED, this, n) == 0) {
+				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					} else {
@@ -223,7 +223,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 
 				try {
 					s = g.apply(s, this);
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					cleanup(s);
 
 					actual.onError(Operators.onOperatorError(e, actual.currentContext()));
@@ -288,7 +288,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 
 				if (n == e) {
 					state = s;
-					n = REQUESTED.addAndGet(this, -e);
+					n = LONG_REQUESTED.addAndGet(this, -e);
 					if (n == 0L) {
 						return;
 					}
@@ -301,7 +301,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 			if (!cancelled) {
 				cancelled = true;
 
-				if (REQUESTED.getAndIncrement(this) == 0) {
+				if (LONG_REQUESTED.getAndIncrement(this) == 0) {
 					cleanup(state);
 				}
 			}
@@ -312,7 +312,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 				state = null;
 
 				stateConsumer.accept(s);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				Operators.onErrorDropped(e, actual.currentContext());
 			}
 		}

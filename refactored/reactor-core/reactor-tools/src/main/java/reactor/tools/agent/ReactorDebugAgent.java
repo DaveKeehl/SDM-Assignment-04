@@ -22,6 +22,8 @@ import java.security.ProtectionDomain;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.jar.asm.ClassReader;
 import net.bytebuddy.jar.asm.ClassVisitor;
@@ -104,7 +106,7 @@ public class ReactorDebugAgent {
 					cr.accept(classVisitor, 0);
 				}
 				catch (Throwable e) {
-					e.printStackTrace();
+					LoggerFactory.getLogger(ReactorDebugAgent.class).error(e.getMessage(), e);
 					throw e;
 				}
 
@@ -160,7 +162,7 @@ public class ReactorDebugAgent {
 			instrumentation.retransformClasses(classes);
 		}
 		catch (Throwable e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger(ReactorDebugAgent.class).error(e.getMessage(), e);
 			// Some classes fail to re-transform (e.g. worker.org.gradle.internal.UncheckedException)
 			// See https://bugs.openjdk.java.net/browse/JDK-8014229
 		}

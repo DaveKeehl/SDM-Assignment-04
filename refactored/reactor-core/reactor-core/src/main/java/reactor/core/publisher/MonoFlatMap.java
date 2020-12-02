@@ -156,7 +156,7 @@ final class MonoFlatMap<T, R> extends InternalMonoOperator<T, R> implements Fuse
 			try {
 				m.subscribe(second);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				actual.onError(Operators.onOperatorError(this, e, t,
 						actual.currentContext()));
 			}

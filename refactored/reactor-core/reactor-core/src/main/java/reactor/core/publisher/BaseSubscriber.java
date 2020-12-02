@@ -50,9 +50,10 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
                                                    Disposable {
 
 	volatile Subscription subscription;
-
-	static AtomicReferenceFieldUpdater<BaseSubscriber, Subscription> S =
-			AtomicReferenceFieldUpdater.newUpdater(BaseSubscriber.class, Subscription.class, "subscription");
+	
+	@SuppressWarnings("rawtypes")
+	static final AtomicReferenceFieldUpdater<BaseSubscriber, Subscription> ATOMIC_REFERENCE_S =
+				AtomicReferenceFieldUpdater.newUpdater(BaseSubscriber.class, Subscription.class, "subscription");
 
 	/**
 	 * Return current {@link Subscription}
@@ -143,7 +144,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void onSubscribe(Subscription s) {
-		if (Operators.setOnce(S, this, s)) {
+		if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
 			try {
 				hookOnSubscribe(s);
 			}
@@ -168,7 +169,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 	public final void onError(Throwable t) {
 		Objects.requireNonNull(t, "onError");
 
-		if (S.getAndSet(this, Operators.cancelledSubscription()) == Operators
+		if (ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription()) == Operators
 				.cancelledSubscription()) {
 			//already cancelled concurrently
 			Operators.onErrorDropped(t, currentContext());
@@ -190,7 +191,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void onComplete() {
-		if (S.getAndSet(this, Operators.cancelledSubscription()) != Operators
+		if (ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription()) != Operators
 				.cancelledSubscription()) {
 			//we're sure it has not been concurrently cancelled
 			try {
@@ -225,7 +226,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void cancel() {
-		if (Operators.terminate(S, this)) {
+		if (Operators.terminate(ATOMIC_REFERENCE_S, this)) {
 			try {
 				hookOnCancel();
 			}

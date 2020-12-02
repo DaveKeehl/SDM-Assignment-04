@@ -138,7 +138,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlattenIterableSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<FlattenIterableSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(FlattenIterableSubscriber.class,
 						"requested");
 
@@ -270,7 +270,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain(null);
 			}
 		}
@@ -489,7 +489,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 					if (e != 0L) {
 						if (r != Long.MAX_VALUE) {
-							REQUESTED.addAndGet(this, -e);
+							LONG_REQUESTED.addAndGet(this, -e);
 						}
 					}
 
@@ -653,7 +653,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 					if (e != 0L) {
 						if (r != Long.MAX_VALUE) {
-							REQUESTED.addAndGet(this, -e);
+							LONG_REQUESTED.addAndGet(this, -e);
 						}
 					}
 

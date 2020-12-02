@@ -1095,7 +1095,7 @@ class FluxFlatMapTest {
 
 		ps.emitNext(1, FAIL_FAST);
 
-		Operators.addCap(FluxFlatMap.FlatMapMain.REQUESTED, fmm, 2L);
+		Operators.addCap(FluxFlatMap.FlatMapMain.LONG_REQUESTED, fmm, 2L);
 
 		ps.emitNext(2, FAIL_FAST);
 
@@ -1120,7 +1120,7 @@ class FluxFlatMapTest {
 
 		fmm.onNext(Flux.just(1));
 
-		Operators.addCap(FluxFlatMap.FlatMapMain.REQUESTED, fmm, 2L);
+		Operators.addCap(FluxFlatMap.FlatMapMain.LONG_REQUESTED, fmm, 2L);
 
 		fmm.onNext(Flux.just(2));
 

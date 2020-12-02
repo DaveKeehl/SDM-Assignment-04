@@ -91,7 +91,7 @@ final class FluxZipIterable<T, U, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.TERMINATED) return done;
 			if (key == Attr.PARENT) return s;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
@@ -119,7 +119,7 @@ final class FluxZipIterable<T, U, R> extends InternalFluxOperator<T, R> {
 			try {
 				u = it.next();
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				done = true;
 				actual.onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return;
@@ -131,7 +131,7 @@ final class FluxZipIterable<T, U, R> extends InternalFluxOperator<T, R> {
 				r = Objects.requireNonNull(zipper.apply(t, u),
 						"The zipper returned a null value");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				done = true;
 				actual.onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return;
@@ -144,7 +144,7 @@ final class FluxZipIterable<T, U, R> extends InternalFluxOperator<T, R> {
 			try {
 				b = it.hasNext();
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				done = true;
 				actual.onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return;

@@ -89,7 +89,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						"requested");
 
@@ -129,7 +129,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 		@Override
 		public void onSubscribe(Subscription s) {
 			if (Operators.setOnce(S, this, s)) {
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0L) {
 					trySchedule(r, s);
 				}
@@ -172,10 +172,10 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 					trySchedule(n, a);
 				}
 				else {
-					Operators.addCap(REQUESTED, this, n);
+					Operators.addCap(LONG_REQUESTED, this, n);
 					a = s;
 					if (a != null) {
-						long r = REQUESTED.getAndSet(this, 0L);
+						long r = LONG_REQUESTED.getAndSet(this, 0L);
 						if (r != 0L) {
 							trySchedule(n, a);
 						}

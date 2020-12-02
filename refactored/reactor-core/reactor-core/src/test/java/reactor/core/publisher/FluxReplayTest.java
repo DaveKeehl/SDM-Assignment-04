@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -586,12 +587,12 @@ class FluxReplayTest extends FluxOperatorTest<String, String> {
 		}
 
 		@Override
-		protected void hookOnSubscribe(Subscription subscription) {
+		protected void hookOnSubscribe(@NotNull Subscription subscription) {
 			request(firstRequest);
 		}
 
 		@Override
-		protected void hookOnNext(Integer value) {
+		protected void hookOnNext(@NotNull Integer value) {
 			if (value.longValue() == firstRequest) {
 				request(secondRequest);
 			}

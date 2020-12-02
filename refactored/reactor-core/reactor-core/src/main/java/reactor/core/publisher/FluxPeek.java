@@ -130,7 +130,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					requestHook.accept(n);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onOperatorError(e, actual.currentContext());
 				}
 			}
@@ -144,7 +144,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					cancelHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -160,7 +160,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 					try {
 						subscribeHook.accept(s);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Operators.error(actual, Operators.onOperatorError(s, e,
 								actual.currentContext()));
 						return;
@@ -183,7 +183,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					nextHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ == null) {
 						request(1);
@@ -211,7 +211,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					errorHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//this performs a throwIfFatal or suppresses t in e
 					t = Operators.onOperatorError(null, e, t, actual.currentContext());
 				}
@@ -233,7 +233,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					afterErrorWithFailure(parent, e, t, actual.currentContext());
 				}
 			}
@@ -249,7 +249,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					completeHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -263,7 +263,7 @@ final class FluxPeek<T> extends InternalFluxOperator<T, T> implements SignalPeek
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					afterCompleteWithFailure(parent, e, actual.currentContext());
 				}
 			}

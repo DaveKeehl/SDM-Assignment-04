@@ -103,7 +103,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 				try {
 					b = predicate.test(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, this.ctx, s);
 					if (e_ != null) {
 						onError(e_);
@@ -136,7 +136,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, this.ctx, s);
 				if (e_ != null) {
 					onError(e_);
@@ -214,7 +214,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 						Operators.onDiscard(v, this.ctx);
 						dropped++;
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						RuntimeException e_ = Operators.onNextPollError(v, e, currentContext());
 						Operators.onDiscard(v, this.ctx);
 						if (e_ != null) {
@@ -234,7 +234,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 						}
 						Operators.onDiscard(v, this.ctx);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						RuntimeException e_ = Operators.onNextPollError(v, e, currentContext());
 						Operators.onDiscard(v, this.ctx);
 						if (e_ != null) {
@@ -322,7 +322,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 				try {
 					b = predicate.test(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, this.ctx, s);
 					if (e_ != null) {
 						onError(e_);
@@ -355,7 +355,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, this.ctx, s);
 				if (e_ != null) {
 					onError(e_);
@@ -433,7 +433,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 						Operators.onDiscard(v, this.ctx);
 						dropped++;
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						RuntimeException e_ = Operators.onNextPollError(v, e, this.ctx);
 						Operators.onDiscard(v, this.ctx);
 						if (e_ != null) {
@@ -453,7 +453,7 @@ final class FluxFilterFuseable<T> extends InternalFluxOperator<T, T> implements 
 						}
 						Operators.onDiscard(v, this.ctx);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						RuntimeException e_ = Operators.onNextPollError(v, e, this.ctx);
 						Operators.onDiscard(v, this.ctx);
 						if (e_ != null) {

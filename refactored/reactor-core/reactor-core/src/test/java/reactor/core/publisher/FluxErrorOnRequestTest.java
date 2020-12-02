@@ -20,7 +20,7 @@ class FluxErrorOnRequestTest {
     void scanSubscription() {
 		CoreSubscriber<Integer> actual = new LambdaSubscriber<>(null, e -> {}, null, sub -> sub.request(100));
 		IllegalStateException error = new IllegalStateException();
-		FluxErrorOnRequest.ErrorSubscription test = new FluxErrorOnRequest.ErrorSubscription(actual, error);
+		FluxErrorOnRequest.ErrorSubscription<?> test = new FluxErrorOnRequest.ErrorSubscription<>(actual, error);
 
 		assertThat(test.scan(Scannable.Attr.ERROR)).isSameAs(error);
 		assertThat(test.scan(Scannable.Attr.ACTUAL)).isSameAs(actual);

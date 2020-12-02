@@ -104,7 +104,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BackpressureBufferSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<BackpressureBufferSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(BackpressureBufferSubscriber.class,
 						"requested");
 
@@ -179,7 +179,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 					try {
 						onOverflow.accept(t);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Exceptions.throwIfFatal(e);
 						ex.initCause(e);
 					}
@@ -277,7 +277,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);
@@ -326,7 +326,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain(null);
 			}
 		}

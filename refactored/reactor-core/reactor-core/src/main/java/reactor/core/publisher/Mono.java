@@ -58,6 +58,7 @@ import reactor.core.scheduler.Scheduler.Worker;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.Logger;
 import reactor.util.Metrics;
+import reactor.util.annotation.NonNull;
 import reactor.util.annotation.Nullable;
 import reactor.util.concurrent.Queues;
 import reactor.util.context.Context;
@@ -723,8 +724,12 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 *
 	 * @return a {@link Mono}.
 	 */
-	public static <T> Mono<T> justOrEmpty(@Nullable Optional<? extends T> data) {
-		return data != null && data.isPresent() ? just(data.get()) : empty();
+	public static <T> Mono<T> justOrEmpty(@NonNull Optional<? extends T> data) {
+		try {
+			return data.isPresent() ? just(data.get()) : empty();
+		} catch (Exception ex) {
+			return empty();
+		}
 	}
 
 	/**
@@ -1718,7 +1723,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	public T block(Duration timeout) {
 		BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
 		subscribe((Subscriber<T>) subscriber);
-		return subscriber.blockingGet(timeout.toNanos(), TimeUnit.NANOSECONDS);
+		return subscriber.blockingGet(timeout.toNanos());
 	}
 
 	/**
@@ -2044,7 +2049,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 				    return Mono.just(defaultV);
 			    }
 		    }
-		    catch (Throwable e) {
+		    catch (Exception e) {
 			    //leave MonoError returns as this
 		    }
 		    return this;

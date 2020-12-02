@@ -54,7 +54,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<UnicastManySinkNoBackpressure> REQUESTED =
+	static final AtomicLongFieldUpdater<UnicastManySinkNoBackpressure> LONG_REQUESTED =
 			AtomicLongFieldUpdater.newUpdater(UnicastManySinkNoBackpressure.class, "requested");
 
 	UnicastManySinkNoBackpressure() {
@@ -87,7 +87,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 	@Override
 	public void request(long n) {
 		if (Operators.validate(n)) {
-			Operators.addCap(REQUESTED, this, n);
+			Operators.addCap(LONG_REQUESTED, this, n);
 		}
 	}
 
@@ -117,7 +117,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 				}
 
 				actual.onNext(t);
-				Operators.produced(REQUESTED, this, 1);
+				Operators.produced(LONG_REQUESTED, this, 1);
 				return Sinks.EmitResult.OK;
 			case TERMINATED:
 				return Sinks.EmitResult.FAIL_TERMINATED;

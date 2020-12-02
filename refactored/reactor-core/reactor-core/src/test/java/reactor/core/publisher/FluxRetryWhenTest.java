@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.LongAssert;
 import org.assertj.core.data.Percentage;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 
@@ -262,7 +263,7 @@ public class FluxRetryWhenTest {
 		justError.retryWhen(Retry.from(other -> when))
 		         .subscribe(new BaseSubscriber<Integer>() {
 			         @Override
-			         protected void hookOnSubscribe(Subscription subscription) {
+			         protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				         subscription.request(1);
 				         subscription.cancel();
 				         subscription.cancel();

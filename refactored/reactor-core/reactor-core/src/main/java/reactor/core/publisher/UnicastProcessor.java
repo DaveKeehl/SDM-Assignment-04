@@ -194,7 +194,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<UnicastProcessor> REQUESTED =
+	static final AtomicLongFieldUpdater<UnicastProcessor> LONG_REQUESTED =
 			AtomicLongFieldUpdater.newUpdater(UnicastProcessor.class, "requested");
 
 	boolean outputFused;
@@ -310,7 +310,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 								try {
 									onOverflow.accept(value);
 								}
-								catch (Throwable e) {
+								catch (Exception e) {
 									Exceptions.throwIfFatal(e);
 									emitError(e, Sinks.EmitFailureHandler.FAIL_FAST);
 								}
@@ -396,7 +396,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 			}
 
 			if (e != 0 && r != Long.MAX_VALUE) {
-				REQUESTED.addAndGet(this, -e);
+				LONG_REQUESTED.addAndGet(this, -e);
 			}
 
 			missed = WIP.addAndGet(this, -missed);
@@ -541,7 +541,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 	@Override
 	public void request(long n) {
 		if (Operators.validate(n)) {
-			Operators.addCap(REQUESTED, this, n);
+			Operators.addCap(LONG_REQUESTED, this, n);
 			drain(null);
 		}
 	}

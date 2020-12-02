@@ -70,7 +70,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -97,13 +97,16 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		volatile long            requested;
 		volatile int             state;
 		volatile int             wip;
-
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, Throwable>      ERROR     =
-				AtomicReferenceFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, Throwable.class, "error");
-		static final AtomicLongFieldUpdater<FluxFilterWhenSubscriber>                      REQUESTED =
+						AtomicReferenceFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, Throwable.class, "error");
+		@SuppressWarnings("rawtypes")
+		static final AtomicLongFieldUpdater<FluxFilterWhenSubscriber>                      LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, "requested");
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<FluxFilterWhenSubscriber>                   WIP       =
 				AtomicIntegerFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, "wip");
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, FilterWhenInner>CURRENT   =
 				AtomicReferenceFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, FilterWhenInner.class, "current");
 
@@ -156,7 +159,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -384,7 +387,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return upstream;
 			if (key == Attr.TERMINATED) return done;
 			if (key == Attr.CANCELLED) return cancelled;
@@ -421,7 +424,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		volatile Subscription sub;
 
 		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB =
-				AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
+						AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
 
 		FilterWhenInner(FluxFilterWhenSubscriber<?> parent, boolean cancelOnNext) {
 			this.parent = parent;
@@ -475,7 +478,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return parent;
 			if (key == Attr.ACTUAL) return sub;
 			if (key == Attr.CANCELLED) return sub == Operators.cancelledSubscription();

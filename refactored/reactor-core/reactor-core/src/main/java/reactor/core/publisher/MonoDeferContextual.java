@@ -47,7 +47,7 @@ final class MonoDeferContextual<T> extends Mono<T> implements SourceProducer<T> 
 			p = Objects.requireNonNull(contextualMonoFactory.apply(ctx),
 					"The Mono returned by the contextualMonoFactory is null");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, ctx));
 			return;
 		}

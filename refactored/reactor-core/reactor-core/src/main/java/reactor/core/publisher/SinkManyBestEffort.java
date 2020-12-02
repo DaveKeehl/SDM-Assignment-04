@@ -286,7 +286,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 
 		volatile     long                                requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<DirectInner> REQUESTED = AtomicLongFieldUpdater.newUpdater(
+		static final AtomicLongFieldUpdater<DirectInner> LONG_REQUESTED = AtomicLongFieldUpdater.newUpdater(
 				DirectInner.class, "requested");
 
 		DirectInner(CoreSubscriber<? super T> actual, DirectInnerContainer<T> parent) {
@@ -297,7 +297,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -338,7 +338,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 				}
 				actual.onNext(value);
 				if (requested != Long.MAX_VALUE) {
-					REQUESTED.decrementAndGet(this);
+					LONG_REQUESTED.decrementAndGet(this);
 				}
 				return true;
 			}
@@ -355,7 +355,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 			if (requested != 0L) {
 				actual.onNext(value);
 				if (requested != Long.MAX_VALUE) {
-					REQUESTED.decrementAndGet(this);
+					LONG_REQUESTED.decrementAndGet(this);
 				}
 				return;
 			}

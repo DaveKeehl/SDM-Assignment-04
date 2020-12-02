@@ -548,7 +548,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ReplayInner> REQUESTED =
+		static final AtomicLongFieldUpdater<ReplayInner> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ReplayInner.class,
 						"requested");
 
@@ -615,7 +615,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 		public void request(long n) {
 			if (Operators.validate(n)) {
 				if (fusionMode() == NONE) {
-					Operators.addCapCancellable(REQUESTED, this, n);
+					Operators.addCapCancellable(LONG_REQUESTED, this, n);
 				}
 				buffer.replay(this);
 			}
@@ -623,7 +623,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		@Override
 		public void cancel() {
-			if (REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 
 				if (enter()) {
@@ -680,7 +680,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		@Override
 		public void produced(long n) {
-			REQUESTED.addAndGet(this, -n);
+			LONG_REQUESTED.addAndGet(this, -n);
 		}
 	}
 }

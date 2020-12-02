@@ -49,7 +49,7 @@ final class FluxDeferContextual<T> extends Flux<T> implements SourceProducer<T> 
 			p = Objects.requireNonNull(contextualPublisherFactory.apply(ctx.readOnly()),
 					"The Publisher returned by the contextualPublisherFactory is null");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, ctx));
 			return;
 		}

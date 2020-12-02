@@ -170,7 +170,7 @@ final class MonoMetricsFuseable<T> extends InternalMonoOperator<T, T> implements
 				done = true;
 				return v;
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				FluxMetrics.recordOnError(sequenceName, commonTags, registry, subscribeToTerminateSample, e);
 				throw e;
 			}

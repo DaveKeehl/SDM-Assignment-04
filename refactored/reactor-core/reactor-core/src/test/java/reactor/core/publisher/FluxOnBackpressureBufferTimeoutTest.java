@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
@@ -267,12 +268,12 @@ class FluxOnBackpressureBufferTimeoutTest implements Consumer<Object> {
 		    .onBackpressureBuffer(Duration.ofMinutes(1), Integer.MAX_VALUE, this, Schedulers.single())
 		    .subscribe(new BaseSubscriber<Integer>() {
 			    @Override
-			    protected void hookOnSubscribe(Subscription subscription) {
+			    protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				    request(1);
 			    }
 
 			    @Override
-			    protected void hookOnNext(Integer value) {
+			    protected void hookOnNext(@NotNull Integer value) {
 			    	seen.add(value);
 				    cancel();
 			    }

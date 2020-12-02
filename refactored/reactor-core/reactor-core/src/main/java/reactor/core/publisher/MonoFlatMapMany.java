@@ -75,7 +75,7 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlatMapManyMain> REQUESTED =
+		static final AtomicLongFieldUpdater<FlatMapManyMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(FlatMapManyMain.class, "requested");
 
 		boolean hasValue;
@@ -88,7 +88,7 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return main;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 
@@ -113,10 +113,10 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 			}
 			else {
 				if (Operators.validate(n)) {
-					Operators.addCap(REQUESTED, this, n);
+					Operators.addCap(LONG_REQUESTED, this, n);
 					a = inner;
 					if (a != null) {
-						n = REQUESTED.getAndSet(this, 0L);
+						n = LONG_REQUESTED.getAndSet(this, 0L);
 						if (n != 0L) {
 							a.request(n);
 						}
@@ -145,7 +145,7 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 		void onSubscribeInner(Subscription s) {
 			if (Operators.setOnce(INNER, this, s)) {
 
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0) {
 					s.request(r);
 				}

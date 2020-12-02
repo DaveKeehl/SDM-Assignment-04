@@ -60,7 +60,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == RUN_STYLE) return SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -92,8 +92,9 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 
 		volatile FilterWhenInner asyncFilter;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MonoFilterWhenMain, FilterWhenInner> ASYNC_FILTER =
-				AtomicReferenceFieldUpdater.newUpdater(MonoFilterWhenMain.class, FilterWhenInner.class, "asyncFilter");
+						AtomicReferenceFieldUpdater.newUpdater(MonoFilterWhenMain.class, FilterWhenInner.class, "asyncFilter");
 
 		@SuppressWarnings("ConstantConditions")
 		static final FilterWhenInner INNER_CANCELLED = new FilterWhenInner(null, false);
@@ -217,7 +218,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return upstream;
 			if (key == Attr.TERMINATED) return asyncFilter != null
 					? asyncFilter.scanUnsafe(Attr.TERMINATED)
@@ -246,7 +247,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 		volatile Subscription sub;
 
 		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB =
-				AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
+						AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
 
 		FilterWhenInner(MonoFilterWhenMain<?> main, boolean cancelOnNext) {
 			this.main = main;
@@ -301,7 +302,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return sub;
 			if (key == Attr.ACTUAL) return main;
 			if (key == Attr.CANCELLED) return sub == Operators.cancelledSubscription();

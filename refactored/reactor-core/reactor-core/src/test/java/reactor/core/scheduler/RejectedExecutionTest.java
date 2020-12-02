@@ -23,6 +23,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -429,7 +430,7 @@ class RejectedExecutionTest {
 		}
 
 		@Override
-		protected void hookOnSubscribe(Subscription subscription) {
+		protected void hookOnSubscribe(@NotNull Subscription subscription) {
 			if(unbounded)
 				requestUnbounded();
 			else
@@ -437,7 +438,7 @@ class RejectedExecutionTest {
 		}
 
 		@Override
-		protected void hookOnNext(Long value) {
+		protected void hookOnNext(@NotNull Long value) {
 			onNexts.add(value);
 			if(!unbounded)
 				request(1);

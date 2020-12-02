@@ -392,7 +392,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 			int prefetch,
 			Function<Object[], V> combinator) {
 
-		return onAssembly(new FluxCombineLatest<T, V>(sources,
+		return onAssembly(new FluxCombineLatest<>(sources,
 				combinator,
 				Queues.get(prefetch), prefetch));
 	}
@@ -2485,7 +2485,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	public final T blockFirst(Duration timeout) {
 		BlockingFirstSubscriber<T> subscriber = new BlockingFirstSubscriber<>();
 		subscribe((Subscriber<T>) subscriber);
-		return subscriber.blockingGet(timeout.toNanos(), TimeUnit.NANOSECONDS);
+		return subscriber.blockingGet(timeout.toNanos());
 	}
 
 	/**
@@ -2531,7 +2531,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	public final T blockLast(Duration timeout) {
 		BlockingLastSubscriber<T> subscriber = new BlockingLastSubscriber<>();
 		subscribe((Subscriber<T>) subscriber);
-		return subscriber.blockingGet(timeout.toNanos(), TimeUnit.NANOSECONDS);
+		return subscriber.blockingGet(timeout.toNanos());
 	}
 
 	/**
@@ -5553,8 +5553,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	) {
 		return onAssembly(new FluxGroupJoin<T, TRight, TLeftEnd, TRightEnd, R>(
 				this, other, leftEnd, rightEnd, resultSelector,
-				Queues.unbounded(Queues.XS_BUFFER_SIZE),
-				Queues.unbounded(Queues.XS_BUFFER_SIZE)));
+                Queues.unbounded(Queues.XS_BUFFER_SIZE)));
 	}
 
 	/**
@@ -8116,7 +8115,6 @@ public abstract class Flux<T> implements CorePublisher<T> {
 		}
 		catch (Throwable e) {
 			Operators.reportThrowInSubscribe(subscriber, e);
-			return;
 		}
 	}
 
@@ -9456,7 +9454,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 *
 	 * @return a microbatched {@link Flux} of {@link Flux} windows.
 	 */
-	public final <V> Flux<Flux<T>> windowUntilChanged() {
+	public final Flux<Flux<T>> windowUntilChanged() {
 		return windowUntilChanged(identityFunction());
 	}
 
@@ -9654,10 +9652,10 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 *
 	 * @return a zipped {@link Flux}
 	 */
+	@SuppressWarnings("unchecked")
 	public final <T2, V> Flux<V> zipWith(Publisher<? extends T2> source2,
 			final BiFunction<? super T, ? super T2, ? extends V> combinator) {
 		if (this instanceof FluxZip) {
-			@SuppressWarnings("unchecked")
 			FluxZip<T, V> o = (FluxZip<T, V>) this;
 			Flux<V> result = o.zipAdditionalSource(source2, combinator);
 			if (result != null) {
@@ -9831,7 +9829,6 @@ public abstract class Flux<T> implements CorePublisher<T> {
 				FluxConcatMap.ErrorMode.IMMEDIATE));
 	}
 
-	@SuppressWarnings("unchecked")
 	static <T> Flux<T> doOnSignal(Flux<T> source,
 			@Nullable Consumer<? super Subscription> onSubscribe,
 			@Nullable Consumer<? super T> onNext,

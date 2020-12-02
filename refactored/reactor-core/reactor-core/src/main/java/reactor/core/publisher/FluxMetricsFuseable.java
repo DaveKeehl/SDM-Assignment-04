@@ -145,7 +145,7 @@ final class FluxMetricsFuseable<T> extends InternalFluxOperator<T, T> implements
 				}
 				return v;
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				recordOnError(sequenceName, commonTags, registry, subscribeToTerminateSample, e);
 				throw e;
 			}

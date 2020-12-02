@@ -123,7 +123,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SwitchMapMain> REQUESTED =
+		static final AtomicLongFieldUpdater<SwitchMapMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(SwitchMapMain.class, "requested");
 
 		volatile int wip;
@@ -223,7 +223,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				p = Objects.requireNonNull(mapper.apply(t),
 				"The mapper returned a null publisher");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return;
 			}
@@ -276,7 +276,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -367,7 +367,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);

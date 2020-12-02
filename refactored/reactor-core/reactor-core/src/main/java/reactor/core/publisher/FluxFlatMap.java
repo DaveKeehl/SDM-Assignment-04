@@ -125,7 +125,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 			try {
 				t = ((Callable<? extends T>) source).call();
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Context ctx = s.currentContext();
 				Throwable e_ = errorContinueExpected ?
 					Operators.onNextError(null, e, ctx) :
@@ -151,7 +151,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				p = Objects.requireNonNull(mapper.apply(t),
 						"The mapper returned a null Publisher");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Context ctx = s.currentContext();
 				Throwable e_ = errorContinueExpected ?
 						Operators.onNextError(t, e, ctx) :
@@ -172,7 +172,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				try {
 					v = ((Callable<R>) p).call();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Context ctx = s.currentContext();
 					Throwable e_ = errorContinueExpected ?
 							Operators.onNextError(t, e, ctx) :
@@ -244,7 +244,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlatMapMain> REQUESTED =
+		static final AtomicLongFieldUpdater<FlatMapMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(FlatMapMain.class, "requested");
 
 		volatile int wip;
@@ -342,7 +342,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain(null);
 			}
 		}
@@ -385,7 +385,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				p = Objects.requireNonNull(mapper.apply(t),
 				"The mapper returned a null Publisher");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Context ctx = actual.currentContext();
 				Throwable e_ = Operators.onNextError(t, e, ctx, s);
 				Operators.onDiscard(t, ctx);
@@ -403,7 +403,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				try {
 					v = ((Callable<R>) p).call();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Context ctx = actual.currentContext();
 					//does the strategy apply? if so, short-circuit the delayError. In any case, don't cancel
 					Throwable e_ = Operators.onNextError(t, e, ctx);
@@ -487,7 +487,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					actual.onNext(v);
 
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.decrementAndGet(this);
+						LONG_REQUESTED.decrementAndGet(this);
 					}
 
 					if (maxConcurrency != Integer.MAX_VALUE) {
@@ -542,7 +542,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					actual.onNext(v);
 
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.decrementAndGet(this);
+						LONG_REQUESTED.decrementAndGet(this);
 					}
 
 					inner.request(1);
@@ -639,7 +639,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					if (e != 0L) {
 						replenishMain += e;
 						if (r != Long.MAX_VALUE) {
-							r = REQUESTED.addAndGet(this, -e);
+							r = LONG_REQUESTED.addAndGet(this, -e);
 						}
 						e = 0L;
 						again = true;
@@ -728,7 +728,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 										inner.request(e);
 									}
 									if (r != Long.MAX_VALUE) {
-										r = REQUESTED.addAndGet(this, -e);
+										r = LONG_REQUESTED.addAndGet(this, -e);
 										if (r == 0L) {
 											break; // 0 .. n - 1
 										}
@@ -937,8 +937,9 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		final int limit;
 
 		volatile Subscription s;
+
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FlatMapInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<FlatMapInner, Subscription> ATOMIC_REFERENCE_S =
 				AtomicReferenceFieldUpdater.newUpdater(FlatMapInner.class,
 						Subscription.class,
 						"s");
@@ -965,7 +966,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
 				if (s instanceof Fuseable.QueueSubscription) {
 					@SuppressWarnings("unchecked") Fuseable.QueueSubscription<R> f =
 							(Fuseable.QueueSubscription<R>) s;
@@ -1042,7 +1043,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(ATOMIC_REFERENCE_S, this);
 			Operators.onDiscardQueueWithClear(queue, parent.currentContext(), null);
 		}
 

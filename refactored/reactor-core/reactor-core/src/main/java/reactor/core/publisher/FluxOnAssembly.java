@@ -237,7 +237,7 @@ final class FluxOnAssembly<T> extends InternalFluxOperator<T, T> implements Fuse
 		}
 
 		@Override
-		public Throwable fillInStackTrace() {
+		public synchronized Throwable fillInStackTrace() {
 			return this;
 		}
 

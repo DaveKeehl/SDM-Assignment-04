@@ -96,7 +96,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -186,7 +186,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 				p = Objects.requireNonNull(itemTimeout.apply(t),
 						"The itemTimeout returned a null Publisher");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				actual.onError(Operators.onOperatorError(this, e, t,
 						actual.currentContext()));
 				return;
@@ -302,7 +302,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		}
 
 		@Override
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 			return super.scanUnsafe(key);
 		}
@@ -346,7 +346,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		}
 
 		@Override
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 			return null;
 		}
@@ -384,9 +384,9 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		volatile Subscription s;
 
 		static final AtomicReferenceFieldUpdater<TimeoutTimeoutSubscriber, Subscription>
-				S = AtomicReferenceFieldUpdater.newUpdater(TimeoutTimeoutSubscriber.class,
-				Subscription.class,
-				"s");
+						S = AtomicReferenceFieldUpdater.newUpdater(TimeoutTimeoutSubscriber.class,
+						Subscription.class,
+						"s");
 
 		TimeoutTimeoutSubscriber(TimeoutMainSubscriber<?, ?> main, long index) {
 			this.main = main;
@@ -445,7 +445,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		}
 
 		@Override
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 			return null;
 		}

@@ -96,7 +96,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 						"wip");
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<BackpressureBufferDropOldestSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<BackpressureBufferDropOldestSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(BackpressureBufferDropOldestSubscriber.class,
 						"requested");
 
@@ -176,7 +176,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 					try {
 						onOverflow.accept(overflowElement);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Throwable ex = Operators.onOperatorError(s, e, overflowElement, ctx);
 						onError(ex);
 						return;
@@ -283,7 +283,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					Operators.produced(REQUESTED, this, e);
+					Operators.produced(LONG_REQUESTED, this, e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);
@@ -296,7 +296,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}

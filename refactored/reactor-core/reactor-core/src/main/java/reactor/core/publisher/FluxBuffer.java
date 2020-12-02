@@ -144,7 +144,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 					b = Objects.requireNonNull(bufferSupplier.get(),
 							"The bufferSupplier returned a null buffer");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Context ctx = actual.currentContext();
 					onError(Operators.onOperatorError(s, e, t, ctx));
 					Operators.onDiscard(t, ctx); //this is in no buffer
@@ -296,7 +296,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 					b = Objects.requireNonNull(bufferSupplier.get(),
 							"The bufferSupplier returned a null buffer");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, t, this.ctx));
 					Operators.onDiscard(t, this.ctx); //t hasn't got a chance to end up in any buffer
 					return;
@@ -404,7 +404,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferOverlappingSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<BufferOverlappingSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(BufferOverlappingSubscriber.class,
 						"requested");
 
@@ -433,7 +433,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 			if (DrainUtils.postCompleteRequest(n,
 					actual,
 					this,
-					REQUESTED,
+					LONG_REQUESTED,
 					this,
 					this)) {
 				return;
@@ -486,7 +486,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 					b = Objects.requireNonNull(bufferSupplier.get(),
 							"The bufferSupplier returned a null buffer");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Context ctx = actual.currentContext();
 					onError(Operators.onOperatorError(s, e, t, ctx));
 					Operators.onDiscard(t, ctx); //didn't get a chance to be added to a buffer
@@ -546,9 +546,9 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 			done = true;
 			long p = produced;
 			if (p != 0L) {
-				Operators.produced(REQUESTED,this, p);
+				Operators.produced(LONG_REQUESTED,this, p);
 			}
-			DrainUtils.postComplete(actual, this, REQUESTED, this, this);
+			DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
 		}
 
 		@Override

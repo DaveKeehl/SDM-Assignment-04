@@ -87,7 +87,7 @@ final class MonoUsingWhen<T, S> extends Mono<T> implements SourceProducer<T> {
 					p.subscribe(subscriber);
 				}
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.error(actual, e);
 			}
 			return;
@@ -114,7 +114,7 @@ final class MonoUsingWhen<T, S> extends Mono<T> implements SourceProducer<T> {
 			p = Objects.requireNonNull(resourceClosure.apply(resource),
 					"The resourceClosure function returned a null value");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			p = Mono.error(e);
 		}
 

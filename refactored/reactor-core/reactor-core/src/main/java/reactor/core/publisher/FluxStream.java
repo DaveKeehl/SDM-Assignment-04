@@ -48,7 +48,7 @@ final class FluxStream<T> extends Flux<T> implements Fuseable, SourceProducer<T>
 			stream = Objects.requireNonNull(streamSupplier.get(),
 					"The stream supplier returned a null Stream");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}
@@ -61,7 +61,7 @@ final class FluxStream<T> extends Flux<T> implements Fuseable, SourceProducer<T>
 			knownToBeFinite = spliterator.hasCharacteristics(Spliterator.SIZED);
 			it = Spliterators.iterator(spliterator); //this is the default for BaseStream#iterator() anyway
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}

@@ -489,7 +489,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowOverlapSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<WindowOverlapSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(WindowOverlapSubscriber.class,
 						"requested");
 
@@ -650,7 +650,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);
@@ -687,7 +687,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 		public void request(long n) {
 			if (Operators.validate(n)) {
 
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 
 				if (firstRequest == 0 && FIRST_REQUEST.compareAndSet(this, 0, 1)) {
 					long u = Operators.multiplyCap(skip, n - 1);

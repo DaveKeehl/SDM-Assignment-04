@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -1381,7 +1382,7 @@ class FluxCreateTest {
 
 		BufferAsyncSink<String> sink = new BufferAsyncSink<>(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				//do not request
 			}
 
@@ -1419,7 +1420,7 @@ class FluxCreateTest {
 
 		LatestAsyncSink<String> sink = new LatestAsyncSink<>(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				//do not request
 			}
 
@@ -1457,7 +1458,7 @@ class FluxCreateTest {
 
 		BufferAsyncSink<String> baseSink = new BufferAsyncSink<>(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				//do not request
 			}
 

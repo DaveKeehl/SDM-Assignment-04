@@ -82,7 +82,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			/**
 			 * Requested from {@link #upstream}, waiting for {@link #onNext(Object)}
 			 */
-			REQUESTED,
+			LONG_REQUESTED,
 			/**
 			 * {@link #onNext(Object)} received, listening on {@link #inner}
 			 */
@@ -166,7 +166,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onNext(T t) {
-			if (!STATE.compareAndSet(this, State.REQUESTED, State.ACTIVE)) {
+			if (!STATE.compareAndSet(this, State.LONG_REQUESTED, State.ACTIVE)) {
 				switch (state) {
 					case CANCELLED:
 						Operators.onDiscard(t, currentContext());
@@ -204,7 +204,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 				p.subscribe(inner);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Context ctx = actual.currentContext();
 				Operators.onDiscard(t, ctx);
 				if (!maybeOnError(Operators.onNextError(t, e, ctx), ctx, upstream)) {
@@ -226,7 +226,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			for (State previousState = this.state; ; previousState = this.state) {
 				switch (previousState) {
 					case INITIAL:
-					case REQUESTED:
+					case LONG_REQUESTED:
 						if (!STATE.compareAndSet(this, previousState, State.TERMINATED)) {
 							continue;
 						}
@@ -267,7 +267,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			for (State previousState = this.state; ; previousState = this.state) {
 				switch (previousState) {
 					case ACTIVE:
-						if (!STATE.compareAndSet(this, previousState, State.REQUESTED)) {
+						if (!STATE.compareAndSet(this, previousState, State.LONG_REQUESTED)) {
 							continue;
 						}
 						upstream.request(1);
@@ -331,7 +331,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void request(long n) {
-			if (STATE.compareAndSet(this, State.INITIAL, State.REQUESTED)) {
+			if (STATE.compareAndSet(this, State.INITIAL, State.LONG_REQUESTED)) {
 				upstream.request(1);
 			}
 			inner.request(n);

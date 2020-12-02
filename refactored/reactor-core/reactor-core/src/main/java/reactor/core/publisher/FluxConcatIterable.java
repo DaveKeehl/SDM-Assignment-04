@@ -47,7 +47,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 			it = Objects.requireNonNull(iterable.iterator(),
 					"The Iterator returned is null");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}
@@ -107,7 +107,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 					try {
 						b = a.hasNext();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						onError(Operators.onOperatorError(this, e,
 								actual.currentContext()));
 						return;
@@ -128,7 +128,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 						p = Objects.requireNonNull(it.next(),
 								"The Publisher returned by the iterator is null");
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						actual.onError(Operators.onOperatorError(this, e,
 								actual.currentContext()));
 						return;

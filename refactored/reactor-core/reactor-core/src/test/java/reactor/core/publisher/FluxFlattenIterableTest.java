@@ -27,6 +27,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
@@ -634,7 +635,7 @@ class FluxFlattenIterableTest extends FluxOperatorTest<String, String> {
 		FluxFlattenIterable.FlattenIterableSubscriber<Integer, ReferenceCounted> test = new FluxFlattenIterable.FlattenIterableSubscriber<>(
 				new BaseSubscriber<ReferenceCounted>() {
 					@Override
-					protected void hookOnSubscribe(Subscription subscription) {
+					protected void hookOnSubscribe(@NotNull Subscription subscription) {
 						request(1);
 					}
 

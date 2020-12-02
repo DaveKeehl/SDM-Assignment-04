@@ -44,7 +44,7 @@ final class MonoDefer<T> extends Mono<T> implements SourceProducer<T> {
 			p = Objects.requireNonNull(supplier.get(),
 					"The Mono returned by the supplier is null");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}

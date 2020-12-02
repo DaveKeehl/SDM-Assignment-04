@@ -74,7 +74,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 		try {
 			resource = resourceSupplier.call();
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}
@@ -190,7 +190,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 			try {
 				resourceCleanup.accept(resource);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.onErrorDropped(e, actual.currentContext());
 			}
 		}
@@ -220,7 +220,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Context ctx = actual.currentContext();
 					actual.onError(Operators.onOperatorError(e, ctx));
 					Operators.onDiscard(t, ctx);
@@ -235,7 +235,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onErrorDropped(e, actual.currentContext());
 				}
 			}
@@ -251,7 +251,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					t = Exceptions.addSuppressed(_e, t);
 				}
@@ -274,7 +274,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 					return;
 				}
@@ -286,7 +286,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onErrorDropped(e, actual.currentContext());
 				}
 			}

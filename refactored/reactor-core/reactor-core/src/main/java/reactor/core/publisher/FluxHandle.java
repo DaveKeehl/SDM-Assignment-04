@@ -101,7 +101,7 @@ final class FluxHandle<T, R> extends InternalFluxOperator<T, R> {
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);
@@ -154,7 +154,7 @@ final class FluxHandle<T, R> extends InternalFluxOperator<T, R> {
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);
@@ -309,7 +309,7 @@ final class FluxHandle<T, R> extends InternalFluxOperator<T, R> {
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);
@@ -363,7 +363,7 @@ final class FluxHandle<T, R> extends InternalFluxOperator<T, R> {
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);

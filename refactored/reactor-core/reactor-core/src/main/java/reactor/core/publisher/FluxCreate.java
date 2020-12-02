@@ -408,7 +408,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BaseSink> REQUESTED =
+		static final AtomicLongFieldUpdater<BaseSink> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(BaseSink.class, "requested");
 
 		volatile LongConsumer requestConsumer;
@@ -498,7 +498,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		@Override
 		public final void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 
 				LongConsumer consumer = requestConsumer;
 				if (n > 0 && consumer != null && !isCancelled()) {
@@ -619,7 +619,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 			for (; ; ) {
 				long r = requested;
-				if (r == 0L || REQUESTED.compareAndSet(this, r, r - 1)) {
+				if (r == 0L || LONG_REQUESTED.compareAndSet(this, r, r - 1)) {
 					return this;
 				}
 			}
@@ -646,7 +646,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 			if (requested != 0) {
 				actual.onNext(t);
-				Operators.produced(REQUESTED, this, 1);
+				Operators.produced(LONG_REQUESTED, this, 1);
 			}
 			else {
 				onOverflow();
@@ -823,7 +823,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				}
 
 				if (e != 0) {
-					Operators.produced(REQUESTED, this, e);
+					Operators.produced(LONG_REQUESTED, this, e);
 				}
 
 				if (WIP.decrementAndGet(this) == 0) {
@@ -985,7 +985,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				}
 
 				if (e != 0) {
-					Operators.produced(REQUESTED, this, e);
+					Operators.produced(LONG_REQUESTED, this, e);
 				}
 
 				if (WIP.decrementAndGet(this) == 0) {

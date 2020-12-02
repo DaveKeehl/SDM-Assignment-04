@@ -83,7 +83,7 @@ final class FluxTakeWhile<T> extends InternalFluxOperator<T, T> {
 
 			try {
 				b = predicate.test(t);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 
 				return;

@@ -87,7 +87,7 @@ abstract class InternalConnectableFluxOperator<I, O> extends ConnectableFlux<O> 
 
 	@Override
 	@Nullable
-	public Object scanUnsafe(Scannable.Attr key) {
+	public Object scanUnsafe(Scannable.Attr<?> key) {
 		if (key == Scannable.Attr.PREFETCH) return getPrefetch();
 		if (key == Scannable.Attr.PARENT) return source;
 		return null;

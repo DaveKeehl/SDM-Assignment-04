@@ -122,7 +122,7 @@ final class MonoReduceSeed<T, R> extends MonoFromFluxOperator<T, R>
 							"The accumulator returned a null value");
 
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(this, e, t, actual.currentContext()));
 					return;
 				}

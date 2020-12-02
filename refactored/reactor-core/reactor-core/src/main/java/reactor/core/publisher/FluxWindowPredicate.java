@@ -134,7 +134,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowPredicateMain> REQUESTED =
+		static final AtomicLongFieldUpdater<WindowPredicateMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(WindowPredicateMain.class, "requested");
 
 		volatile boolean   done;
@@ -219,7 +219,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 			try {
 				match = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, ctx));
 				return;
 			}
@@ -230,29 +230,28 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 			}
 			drain();
 
-			if (mode == Mode.UNTIL && match) {
-				g.onNext(t);
-				g.onComplete();
-				newWindowDeferred();
-			}
-			else if (mode == Mode.UNTIL_CUT_BEFORE && match) {
-				g.onComplete();
-				g = newWindowDeferred();
-				if (g != null) {
+			if(g != null) {
+				if (mode == Mode.UNTIL && match) {
 					g.onNext(t);
-					handleDeferredWindow(g, t);
-					drain();
+					g.onComplete();
+					newWindowDeferred();
+				} else if (mode == Mode.UNTIL_CUT_BEFORE && match) {
+					g.onComplete();
+					g = newWindowDeferred();
+					if (g != null) {
+						g.onNext(t);
+						handleDeferredWindow(g, t);
+						drain();
+					}
+				} else if (mode == Mode.WHILE && !match) {
+					g.onComplete();
+					newWindowDeferred();
+					Operators.onDiscard(t, ctx);
+					//compensate for the dropped delimiter
+					s.request(1);
+				} else {
+					g.onNext(t);
 				}
-			}
-			else if (mode == Mode.WHILE && !match) {
-				g.onComplete();
-				newWindowDeferred();
-				Operators.onDiscard(t, ctx);
-				//compensate for the dropped delimiter
-				s.request(1);
-			}
-			else {
-				g.onNext(t);
 			}
 		}
 
@@ -345,7 +344,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -496,7 +495,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 					s.request(e);
 
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.addAndGet(this, -e);
+						LONG_REQUESTED.addAndGet(this, -e);
 					}
 				}
 
@@ -601,7 +600,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowFlux> REQUESTED =
+		static final AtomicLongFieldUpdater<WindowFlux> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(WindowFlux.class, "requested");
 
 		volatile boolean enableOperatorFusion;
@@ -671,7 +670,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 						main.s.request(e);
 					}
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.addAndGet(this, -e);
+						LONG_REQUESTED.addAndGet(this, -e);
 					}
 				}
 
@@ -818,7 +817,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}

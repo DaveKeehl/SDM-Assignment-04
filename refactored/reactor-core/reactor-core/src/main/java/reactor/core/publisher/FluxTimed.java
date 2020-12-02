@@ -208,7 +208,7 @@ final class FluxTimed<T> extends InternalFluxOperator<T, Timed<T>> {
 
 		@Nullable
 		@Override
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.TERMINATED) return done;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 

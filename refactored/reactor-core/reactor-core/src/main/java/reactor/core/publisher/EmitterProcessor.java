@@ -137,7 +137,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	volatile Subscription s;
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<EmitterProcessor, Subscription> S =
+	static final AtomicReferenceFieldUpdater<EmitterProcessor, Subscription> ATOMIC_REFERENCE_S =
 			AtomicReferenceFieldUpdater.newUpdater(EmitterProcessor.class,
 					Subscription.class,
 					"s");
@@ -276,20 +276,17 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 		Queue<T> q = queue;
 
 		if (q == null) {
-			if (Operators.setOnce(S, this, Operators.emptySubscription())) {
+			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, Operators.emptySubscription())) {
 				q = Queues.<T>get(prefetch).get();
 				queue = q;
 			}
 			else {
-				for (; ; ) {
+				do {
 					if (isCancelled()) {
 						return EmitResult.FAIL_CANCELLED;
 					}
 					q = queue;
-					if (q != null) {
-						break;
-					}
-				}
+				} while (q == null);
 			}
 		}
 
@@ -332,7 +329,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	@Override
 	public void onSubscribe(final Subscription s) {
-		if (Operators.setOnce(S, this, s)) {
+		if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
 			if (s instanceof Fuseable.QueueSubscription) {
 				@SuppressWarnings("unchecked") Fuseable.QueueSubscription<T> f =
 						(Fuseable.QueueSubscription<T>) s;
@@ -388,7 +385,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	@Override
 	@Nullable
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.PARENT) return s;
 		if (key == Attr.BUFFERED) return getPending();
 		if (key == Attr.CANCELLED) return isCancelled();
@@ -490,7 +487,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 					for (FluxPublish.PubSubInner<T> inner : a) {
 						inner.actual.onNext(v);
 						if (Operators.producedCancellable(FluxPublish
-										.PublishInner.REQUESTED, inner,
+										.PublishInner.LONG_REQUESTED, inner,
 								1) == Long.MIN_VALUE) {
 							cancel = Integer.MIN_VALUE;
 						}
@@ -576,48 +573,45 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 	}
 
 	final void remove(FluxPublish.PubSubInner<T> inner) {
-		for (; ; ) {
-			FluxPublish.PubSubInner<T>[] a = subscribers;
-			if (a == TERMINATED || a == EMPTY) {
-				return;
-			}
-			int n = a.length;
-			int j = -1;
-			for (int i = 0; i < n; i++) {
-				if (a[i] == inner) {
-					j = i;
-					break;
-				}
-			}
-
-			if (j < 0) {
-				return;
-			}
-
-			FluxPublish.PubSubInner<?>[] b;
-			if (n == 1) {
-				b = EMPTY;
-			}
-			else {
-				b = new FluxPublish.PubSubInner<?>[n - 1];
-				System.arraycopy(a, 0, b, 0, j);
-				System.arraycopy(a, j + 1, b, j, n - j - 1);
-			}
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
-				//contrary to FluxPublish, there is a possibility of auto-cancel, which
-				//happens when the removed inner makes the subscribers array EMPTY
-				if (autoCancel && b == EMPTY && Operators.terminate(S, this)) {
-					if (WIP.getAndIncrement(this) != 0) {
-						return;
-					}
-					terminate();
-					Queue<T> q = queue;
-					if (q != null) {
-						q.clear();
-					}
-				}
-			}
+		FluxPublish.PubSubInner<T>[] a = subscribers;
+		if (a == TERMINATED || a == EMPTY) {
 			return;
+		}
+		int n = a.length;
+		int j = -1;
+		for (int i = 0; i < n; i++) {
+			if (a[i] == inner) {
+				j = i;
+				break;
+			}
+		}
+
+		if (j < 0) {
+			return;
+		}
+
+		FluxPublish.PubSubInner<?>[] b;
+		if (n == 1) {
+			b = EMPTY;
+		}
+		else {
+			b = new FluxPublish.PubSubInner<?>[n - 1];
+			System.arraycopy(a, 0, b, 0, j);
+			System.arraycopy(a, j + 1, b, j, n - j - 1);
+		}
+		if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			//contrary to FluxPublish, there is a possibility of auto-cancel, which
+			//happens when the removed inner makes the subscribers array EMPTY
+			if (autoCancel && b == EMPTY && Operators.terminate(ATOMIC_REFERENCE_S, this)) {
+				if (WIP.getAndIncrement(this) != 0) {
+					return;
+				}
+				terminate();
+				Queue<T> q = queue;
+				if (q != null) {
+					q.clear();
+				}
+			}
 		}
 	}
 

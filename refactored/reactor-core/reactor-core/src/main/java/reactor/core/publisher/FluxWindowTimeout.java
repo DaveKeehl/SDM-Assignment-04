@@ -90,7 +90,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowTimeoutSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<WindowTimeoutSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(WindowTimeoutSubscriber.class,
 						"requested");
 
@@ -172,7 +172,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 				if (r != 0L) {
 					a.onNext(w.asFlux());
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.decrementAndGet(this);
+						LONG_REQUESTED.decrementAndGet(this);
 					}
 				}
 				else {
@@ -223,7 +223,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 						window = w;
 						actual.onNext(w.asFlux());
 						if (r != Long.MAX_VALUE) {
-							REQUESTED.decrementAndGet(this);
+							LONG_REQUESTED.decrementAndGet(this);
 						}
 
 						Disposable tm = timer;
@@ -290,7 +290,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 		@Override
 		public void request(long n) {
 			if(Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -353,7 +353,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 						if (r != 0L) {
 							a.onNext(w.asFlux());
 							if (r != Long.MAX_VALUE) {
-								REQUESTED.decrementAndGet(this);
+								LONG_REQUESTED.decrementAndGet(this);
 							}
 						}
 						else {
@@ -384,7 +384,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 							window = w;
 							actual.onNext(w.asFlux());
 							if (r != Long.MAX_VALUE) {
-								REQUESTED.decrementAndGet(this);
+								LONG_REQUESTED.decrementAndGet(this);
 							}
 
 							Disposable tm = timer;

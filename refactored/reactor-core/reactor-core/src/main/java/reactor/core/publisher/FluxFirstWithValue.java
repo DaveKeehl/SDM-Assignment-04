@@ -108,7 +108,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 			try {
 				it = Objects.requireNonNull(iterable.iterator(),
 						"The iterator returned is null");
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				Operators.error(actual, Operators.onOperatorError(e,
 						actual.currentContext()));
 				return;
@@ -120,7 +120,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 
 				try {
 					b = it.hasNext();
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					Operators.error(actual, Operators.onOperatorError(e,
 							actual.currentContext()));
 					return;
@@ -135,7 +135,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 				try {
 					p = Objects.requireNonNull(it.next(),
 							"The Publisher returned by the iterator is null");
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					Operators.error(actual, Operators.onOperatorError(e,
 							actual.currentContext()));
 					return;
@@ -308,7 +308,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return s;
 			if (key == Attr.CANCELLED) return parent.cancelled;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;

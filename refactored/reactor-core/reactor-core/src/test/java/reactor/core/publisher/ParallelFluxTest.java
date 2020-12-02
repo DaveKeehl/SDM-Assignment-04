@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.reactivestreams.Publisher;
@@ -593,10 +594,10 @@ class ParallelFluxTest {
 		for (int i = 0; i < subs.length; i++) {
 			subs[i] = new BaseSubscriber<Integer>() {
 				@Override
-				protected void hookOnSubscribe(Subscription subscription) { requestUnbounded(); }
+				protected void hookOnSubscribe(@NotNull Subscription subscription) { requestUnbounded(); }
 
 				@Override
-				protected void hookOnNext(Integer value) { }
+				protected void hookOnNext(@NotNull Integer value) { }
 
 				@Override
 				protected void hookOnError(Throwable throwable) {
@@ -851,12 +852,12 @@ class ParallelFluxTest {
 		ParallelFlux<Integer> pf = ParallelFlux.from(Flux.range(1, 4), 2);
 		pf.subscribe(new BaseSubscriber<Integer>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				requestUnbounded();
 			}
 
 			@Override
-			protected void hookOnNext(Integer value) {
+			protected void hookOnNext(@NotNull Integer value) {
 				valueCount.increment();
 			}
 		});

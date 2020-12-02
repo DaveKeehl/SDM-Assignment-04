@@ -140,7 +140,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				handleIterableMode(actual, sourcesIterable);
 			}
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.reportThrowInSubscribe(actual, e);
 			return;
 		}
@@ -172,7 +172,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				try {
 					v = callable.call();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.error(s, Operators.onOperatorError(e,
 							s.currentContext()));
 					return;
@@ -250,7 +250,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				try {
 					v = ((Callable<? extends T>) p).call();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.error(s, Operators.onOperatorError(e,
 							s.currentContext()));
 					return;
@@ -314,7 +314,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					r = Objects.requireNonNull(zipper.apply(scalars),
 							"The zipper returned a null value");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					s.onError(Operators.onOperatorError(e, s.currentContext()));
 					return;
 				}
@@ -382,7 +382,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					try {
 						sources[i].subscribe(s);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Operators.reportThrowInSubscribe(s, e);
 					}
 				}
@@ -399,7 +399,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					r = Objects.requireNonNull(zipper.apply(a),
 							"The zipper returned a null value");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					actual.onError(Operators.onOperatorError(this, e, value,
 							actual.currentContext()));
 					return;
@@ -555,7 +555,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ZipCoordinator> REQUESTED =
+		static final AtomicLongFieldUpdater<ZipCoordinator> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ZipCoordinator.class, "requested");
 
 		volatile Throwable error;
@@ -594,7 +594,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				try {
 					sources[i].subscribe(s);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.reportThrowInSubscribe(s, e);
 				}
 			}
@@ -603,7 +603,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -821,7 +821,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					}
 
 					if (r != Long.MAX_VALUE) {
-						REQUESTED.addAndGet(this, -e);
+						LONG_REQUESTED.addAndGet(this, -e);
 					}
 				}
 

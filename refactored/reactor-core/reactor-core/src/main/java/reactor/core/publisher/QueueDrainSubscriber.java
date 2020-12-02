@@ -165,12 +165,12 @@ abstract class QueueDrainSubscriber<T, U, V> extends QueueDrainSubscriberPad4
 	}
 
 	public final long produced(long n) {
-		return REQUESTED.addAndGet(this, -n);
+		return LONG_REQUESTED.addAndGet(this, -n);
 	}
 
 	public final void requested(long n) {
 		if (Operators.validate(n)) {
-			Operators.addCap(REQUESTED, this, n);
+			Operators.addCap(LONG_REQUESTED, this, n);
 		}
 	}
 
@@ -303,7 +303,7 @@ class QueueDrainSubscriberPad2 extends QueueDrainSubscriberWip {
 /** Contains the requested field. */
 class QueueDrainSubscriberPad3 extends QueueDrainSubscriberPad2 {
 
-	static final AtomicLongFieldUpdater<QueueDrainSubscriberPad3> REQUESTED =
+	static final AtomicLongFieldUpdater<QueueDrainSubscriberPad3> LONG_REQUESTED =
 			AtomicLongFieldUpdater.newUpdater(QueueDrainSubscriberPad3.class, "requested");
 
 	volatile long requested;

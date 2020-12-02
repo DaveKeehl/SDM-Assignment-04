@@ -91,7 +91,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 			return null;
 		}
 
-		return new MergeSequentialMain<T, R>(actual,
+		return new MergeSequentialMain<>(actual,
 				mapper,
 				maxConcurrency,
 				prefetch,
@@ -100,7 +100,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -133,8 +133,9 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile Throwable error;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeSequentialMain, Throwable> ERROR =
-				AtomicReferenceFieldUpdater.newUpdater(MergeSequentialMain.class, Throwable.class, "error");
+						AtomicReferenceFieldUpdater.newUpdater(MergeSequentialMain.class, Throwable.class, "error");
 
 		MergeSequentialInner<R> current;
 
@@ -143,12 +144,15 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		 * a separate thread. */
 		volatile int wip;
 
+
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<MergeSequentialMain> WIP =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSequentialMain.class, "wip");
 
 		volatile long requested;
 
-		static final AtomicLongFieldUpdater<MergeSequentialMain> REQUESTED =
+		@SuppressWarnings("rawtypes")
+		static final AtomicLongFieldUpdater<MergeSequentialMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(MergeSequentialMain.class, "requested");
 
 		MergeSequentialMain(CoreSubscriber<? super R> actual,
@@ -175,7 +179,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return s;
 			if (key == Attr.ERROR) return error;
 			if (key == Attr.TERMINATED) return done && subscribers.isEmpty();
@@ -294,7 +298,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -469,7 +473,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				if (continueNextSource) {
@@ -502,9 +506,10 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile Subscription subscription;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeSequentialInner, Subscription>
-				SUBSCRIPTION = AtomicReferenceFieldUpdater.newUpdater(
-						MergeSequentialInner.class, Subscription.class, "subscription");
+						SUBSCRIPTION = AtomicReferenceFieldUpdater.newUpdater(
+								MergeSequentialInner.class, Subscription.class, "subscription");
 
 		volatile boolean done;
 
@@ -525,7 +530,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return subscription;
 			if (key == Attr.ACTUAL) return parent;
 			if (key == Attr.TERMINATED) return done && (queue == null || queue.isEmpty());

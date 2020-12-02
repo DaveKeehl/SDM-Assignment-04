@@ -115,7 +115,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 
 		volatile long requested;
 		static final AtomicLongFieldUpdater<BackpressureBufferTimeoutSubscriber>
-				REQUESTED = AtomicLongFieldUpdater.newUpdater(
+				LONG_REQUESTED = AtomicLongFieldUpdater.newUpdater(
 				BackpressureBufferTimeoutSubscriber.class,
 				"requested");
 
@@ -180,7 +180,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 				drain();
 			}
 		}
@@ -397,7 +397,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					REQUESTED.addAndGet(this, -e);
+					LONG_REQUESTED.addAndGet(this, -e);
 				}
 
 				missed = WIP.addAndGet(this, -missed);

@@ -98,7 +98,7 @@ final class FluxFilter<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e,  this.ctx, s);
 				if (e_ != null) {
 					onError(e_);
@@ -130,7 +130,7 @@ final class FluxFilter<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e,  this.ctx, s);
 				if (e_ != null) {
 					onError(e_);
@@ -232,7 +232,7 @@ final class FluxFilter<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e,  this.ctx, s);
 				if (e_ != null) {
 					onError(e_);
@@ -264,7 +264,7 @@ final class FluxFilter<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e,  this.ctx, s);
 				if (e_ != null) {
 					onError(e_);

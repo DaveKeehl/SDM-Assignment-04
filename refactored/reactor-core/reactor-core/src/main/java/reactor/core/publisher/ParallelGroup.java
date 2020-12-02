@@ -84,7 +84,7 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ParallelInnerGroup> REQUESTED =
+		static final AtomicLongFieldUpdater<ParallelInnerGroup> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ParallelInnerGroup.class, "requested");
 
 		CoreSubscriber<? super T> actual;
@@ -127,7 +127,7 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 		@Override
 		public void onSubscribe(Subscription s) {
 			if (Operators.setOnce(S, this, s)) {
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0L) {
 					s.request(r);
 				}
@@ -154,11 +154,11 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 			if (Operators.validate(n)) {
 				Subscription a = s;
 				if (a == null) {
-					Operators.addCap(REQUESTED, this, n);
+					Operators.addCap(LONG_REQUESTED, this, n);
 
 					a = s;
 					if (a != null) {
-						long r = REQUESTED.getAndSet(this, 0L);
+						long r = LONG_REQUESTED.getAndSet(this, 0L);
 						if (r != 0L) {
 							a.request(n);
 						}

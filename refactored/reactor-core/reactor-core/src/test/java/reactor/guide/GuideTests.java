@@ -36,6 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -343,13 +344,13 @@ class GuideTests {
 		source.map(String::toUpperCase)
 		      .subscribe(new BaseSubscriber<String>() { // <1>
 			      @Override
-			      protected void hookOnSubscribe(Subscription subscription) {
+			      protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				      // <2>
 				      request(1); // <3>
 			      }
 
 			      @Override
-			      protected void hookOnNext(String value) {
+			      protected void hookOnNext(@NotNull String value) {
 				      request(1); // <4>
 			      }
 

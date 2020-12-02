@@ -47,8 +47,8 @@ class FluxErrorTest {
     @Test
     void scanSubscription() {
 	    @SuppressWarnings("unchecked") CoreSubscriber<String> subscriber = Mockito.mock(InnerOperator.class);
-        FluxErrorOnRequest.ErrorSubscription test =
-                new FluxErrorOnRequest.ErrorSubscription(subscriber, new IllegalStateException("boom"));
+        FluxErrorOnRequest.ErrorSubscription<?> test =
+                new FluxErrorOnRequest.ErrorSubscription<>(subscriber, new IllegalStateException("boom"));
 
         assertThat(test.scan(Scannable.Attr.TERMINATED)).isFalse();
         assertThat(test.scan(Scannable.Attr.CANCELLED)).isFalse();
@@ -62,8 +62,8 @@ class FluxErrorTest {
     void scanSubscriptionCancelled() {
 	    @SuppressWarnings("unchecked")
 	    CoreSubscriber<String> subscriber = Mockito.mock(CoreSubscriber.class);
-	    FluxErrorOnRequest.ErrorSubscription test =
-                new FluxErrorOnRequest.ErrorSubscription(subscriber, new IllegalStateException("boom"));
+	    FluxErrorOnRequest.ErrorSubscription<?> test =
+                new FluxErrorOnRequest.ErrorSubscription<>(subscriber, new IllegalStateException("boom"));
 
         assertThat(test.scan(Scannable.Attr.CANCELLED)).isFalse();
         test.cancel();

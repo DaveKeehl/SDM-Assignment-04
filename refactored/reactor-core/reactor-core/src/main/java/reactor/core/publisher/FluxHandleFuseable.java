@@ -108,7 +108,7 @@ final class FluxHandleFuseable<T, R> extends InternalFluxOperator<T, R> implemen
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);
@@ -168,7 +168,7 @@ final class FluxHandleFuseable<T, R> extends InternalFluxOperator<T, R> implemen
 				try {
 					handler.accept(t, this);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ != null) {
 						onError(e_);
@@ -472,7 +472,7 @@ final class FluxHandleFuseable<T, R> extends InternalFluxOperator<T, R> implemen
 				try {
 					handler.accept(t, this);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ != null) {
 						onError(e_);
@@ -528,7 +528,7 @@ final class FluxHandleFuseable<T, R> extends InternalFluxOperator<T, R> implemen
 			try {
 				handler.accept(t, this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, error, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);

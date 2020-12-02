@@ -66,7 +66,7 @@ final class FluxRetryWhen<T> extends InternalFluxOperator<T, T> {
 		try {
 			p = Objects.requireNonNull(whenSourceFactory.generateCompanion(other), "The whenSourceFactory returned a null Publisher");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			s.onError(Operators.onOperatorError(e, s.currentContext()));
 			return;
 		}

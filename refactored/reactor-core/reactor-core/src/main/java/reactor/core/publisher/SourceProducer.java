@@ -50,7 +50,7 @@ interface SourceProducer<O> extends Scannable, Publisher<O> {
 
 	@Override
 	@Nullable
-	default Object scanUnsafe(Attr key) {
+	default Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.PARENT) return Scannable.from(null);
 		if (key == Attr.ACTUAL) return Scannable.from(null);
 

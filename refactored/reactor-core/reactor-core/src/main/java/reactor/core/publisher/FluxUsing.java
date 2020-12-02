@@ -74,7 +74,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 		try {
 			resource = resourceSupplier.call();
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
 			return;
 		}
@@ -85,7 +85,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 			p = Objects.requireNonNull(sourceFactory.apply(resource),
 					"The sourceFactory returned a null value");
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 			try {
 				resourceCleanup.accept(resource);
@@ -183,7 +183,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 			try {
 				resourceCleanup.accept(resource);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.onErrorDropped(e, actual.currentContext());
 			}
 		}
@@ -208,7 +208,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					t = Exceptions.addSuppressed(_e, t);
 				}
@@ -227,7 +227,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 					return;
 				}
@@ -333,7 +333,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 			try {
 				resourceCleanup.accept(resource);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.onErrorDropped(e, actual.currentContext());
 			}
 		}
@@ -359,7 +359,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					t = Exceptions.addSuppressed(_e, t);
 				}
@@ -378,7 +378,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 					return;
 				}
@@ -491,7 +491,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 			try {
 				resourceCleanup.accept(resource);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.onErrorDropped(e, actual.currentContext());
 			}
 		}
@@ -521,7 +521,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable _e = Operators.onOperatorError(e, actual.currentContext());
 					t = Exceptions.addSuppressed(_e, t);
 				}
@@ -540,7 +540,7 @@ final class FluxUsing<T, S> extends Flux<T> implements Fuseable, SourceProducer<
 				try {
 					resourceCleanup.accept(resource);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 					return;
 				}

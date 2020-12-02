@@ -137,7 +137,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					requestHook.accept(n);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onOperatorError(e, actual.currentContext());
 				}
 			}
@@ -151,7 +151,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					cancelHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -168,7 +168,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						subscribeHook.accept(s);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Operators.error(actual, Operators.onOperatorError(s, e,
 								actual.currentContext()));
 						return;
@@ -195,7 +195,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						nextHook.accept(t);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 						if (e_ == null) {
 							request(1);
@@ -224,7 +224,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					errorHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//this performs a throwIfFatal or suppresses t in e
 					t = Operators.onOperatorError(null, e, t, actual.currentContext());
 				}
@@ -245,7 +245,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					FluxPeek.afterErrorWithFailure(parent, e, t, actual.currentContext());
 				}
 			}
@@ -267,7 +267,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						completeHook.run();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						onError(Operators.onOperatorError(s, e, actual.currentContext()));
 						return;
 					}
@@ -281,7 +281,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						afterTerminateHook.run();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						FluxPeek.afterCompleteWithFailure(parent, e, actual.currentContext());
 					}
 				}
@@ -301,7 +301,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 			try {
 				v = s.poll();
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				final Consumer<? super Throwable> errorHook = parent.onErrorCall();
 				if (errorHook != null) {
 					try {
@@ -331,7 +331,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					nextHook.accept(v);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(v, e, actual.currentContext(), s);
 					if (e_ == null) {
 						return poll();
@@ -430,7 +430,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					requestHook.accept(n);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onOperatorError(e, actual.currentContext());
 				}
 			}
@@ -444,7 +444,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					cancelHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -461,7 +461,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						subscribeHook.accept(s);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Operators.error(actual, Operators.onOperatorError(s, e,
 								actual.currentContext()));
 						return;
@@ -488,7 +488,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						nextHook.accept(t);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 						if (e_ == null) {
 							request(1);
@@ -516,7 +516,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					nextHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ == null) {
 						return false;
@@ -543,7 +543,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					errorHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//this performs a throwIfFatal or suppresses t in e
 					t = Operators.onOperatorError(null, e, t, actual.currentContext());
 				}
@@ -564,7 +564,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					FluxPeek.afterErrorWithFailure(parent, e, t, actual.currentContext());
 				}
 			}
@@ -586,7 +586,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						completeHook.run();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						onError(Operators.onOperatorError(s, e, actual.currentContext()));
 						return;
 					}
@@ -599,7 +599,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						afterTerminateHook.run();
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						FluxPeek.afterCompleteWithFailure(parent, e, actual.currentContext());
 					}
 				}
@@ -619,7 +619,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 			try {
 				v = s.poll();
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				final Consumer<? super Throwable> errorHook = parent.onErrorCall();
 				if (errorHook != null) {
 					try {
@@ -649,7 +649,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					nextHook.accept(v);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(v, e, actual.currentContext(), s);
 					if (e_ == null) {
 						return poll();
@@ -776,7 +776,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					requestHook.accept(n);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Operators.onOperatorError(e, actual.currentContext());
 				}
 			}
@@ -790,7 +790,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					cancelHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -806,7 +806,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 					try {
 						subscribeHook.accept(s);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Operators.error(actual, Operators.onOperatorError(s, e,
 								actual.currentContext()));
 						return;
@@ -839,7 +839,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					nextHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ == null) {
 						request(1);
@@ -866,7 +866,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					nextHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ == null) {
 						return false;
@@ -893,7 +893,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					errorHook.accept(t);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//this performs a throwIfFatal or suppresses t in e
 					t = Operators.onOperatorError(null, e, t, actual.currentContext());
 				}
@@ -914,7 +914,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					FluxPeek.afterErrorWithFailure(parent, e, t, actual.currentContext());
 				}
 			}
@@ -930,7 +930,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					completeHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, actual.currentContext()));
 					return;
 				}
@@ -944,7 +944,7 @@ final class FluxPeekFuseable<T> extends InternalFluxOperator<T, T>
 				try {
 					afterTerminateHook.run();
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					FluxPeek.afterCompleteWithFailure(parent, e, actual.currentContext());
 				}
 			}

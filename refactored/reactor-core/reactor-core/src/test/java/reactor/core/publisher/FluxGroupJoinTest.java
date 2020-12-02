@@ -282,7 +282,7 @@ class FluxGroupJoinTest {
 		Flux<Integer> source2 = Flux.just(2);
 
 		FluxGroupJoin<Integer, Integer, Integer, Object, Flux<Integer>> test =
-				new FluxGroupJoin<>(source1, source2, just(Flux.never()), just2(Flux.never()), add2, Queues.unbounded(Queues.XS_BUFFER_SIZE), Queues.unbounded(Queues.XS_BUFFER_SIZE));
+				new FluxGroupJoin<>(source1, source2, just(Flux.never()), just2(Flux.never()), add2, Queues.unbounded(Queues.XS_BUFFER_SIZE));
 
 		assertThat(test.scan(Scannable.Attr.PARENT)).isSameAs(source1);
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

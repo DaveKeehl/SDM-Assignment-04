@@ -16,6 +16,7 @@
 
 package reactor.core.publisher;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
@@ -125,7 +126,7 @@ class SinkManyBestEffortTest {
 
 		sink.subscribe(new BaseSubscriber<Integer>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				subscription.cancel();
 			}
 		});

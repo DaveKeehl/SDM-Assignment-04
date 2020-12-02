@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.assertj.core.api.Assumptions;
 import org.mockito.ArgumentCaptor;
@@ -1232,7 +1233,7 @@ class FluxSwitchOnFirstTest {
                                 .flux()
                                 .transform(Operators.lift((__, cs) -> new BaseSubscriber<Long>() {
                                     @Override
-                                    protected void hookOnSubscribe(Subscription subscription) {
+                                    protected void hookOnSubscribe(@NotNull Subscription subscription) {
                                         Schedulers.parallel().schedule(() -> cs.onSubscribe(this), 1, TimeUnit.SECONDS);
                                     }
                                 })),
@@ -1270,7 +1271,7 @@ class FluxSwitchOnFirstTest {
                                                             .flux()
                                                             .transform(Operators.lift((__, cs) -> new BaseSubscriber<Long>() {
                                                                 @Override
-                                                                protected void hookOnSubscribe(Subscription subscription) {
+                                                                protected void hookOnSubscribe(@NotNull Subscription subscription) {
                                                                     Schedulers.parallel().schedule(() -> cs.onSubscribe(this), 1, TimeUnit.SECONDS);
                                                                 }
                                                             })),
@@ -1988,14 +1989,14 @@ class FluxSwitchOnFirstTest {
         }
 
         @Override
-        protected void hookOnSubscribe(Subscription subscription) {
+        protected void hookOnSubscribe(@NotNull Subscription subscription) {
             if (onSubscribe != null) {
                 onSubscribe.accept(subscription);
             }
         }
 
         @Override
-        protected void hookOnNext(T value) {
+        protected void hookOnNext(@NotNull T value) {
             if (onNext != null) {
                 onNext.accept(value);
             }

@@ -117,7 +117,7 @@ final class MonoCollect<T, R> extends MonoFromFluxOperator<T, R>
 					try {
 						action.accept(c, t);
 					}
-					catch (Throwable e) {
+					catch (Exception e) {
 						Context ctx = actual.currentContext();
 						Operators.onDiscard(t, ctx);
 						onError(Operators.onOperatorError(this, e, t, ctx));

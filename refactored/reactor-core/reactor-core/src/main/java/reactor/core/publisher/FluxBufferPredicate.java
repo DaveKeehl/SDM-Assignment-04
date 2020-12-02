@@ -119,22 +119,22 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 		volatile long requestedBuffers;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferPredicateSubscriber> REQUESTED_BUFFERS =
+		static final AtomicLongFieldUpdater<BufferPredicateSubscriber> LONG_REQUESTED_BUFFERS =
 				AtomicLongFieldUpdater.newUpdater(BufferPredicateSubscriber.class,
 						"requestedBuffers");
 
 		volatile long requestedFromSource;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferPredicateSubscriber> REQUESTED_FROM_SOURCE =
+		static final AtomicLongFieldUpdater<BufferPredicateSubscriber> LONG_REQUESTED_FROM_SOURCE =
 				AtomicLongFieldUpdater.newUpdater(BufferPredicateSubscriber.class,
 						"requestedFromSource");
 
 		volatile Subscription s;
-
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<BufferPredicateSubscriber,
-				Subscription> S = AtomicReferenceFieldUpdater.newUpdater
-				(BufferPredicateSubscriber.class, Subscription.class, "s");
+						Subscription> ATOMIC_REFERENCE_S = AtomicReferenceFieldUpdater.newUpdater
+						(BufferPredicateSubscriber.class, Subscription.class, "s");
 
 		BufferPredicateSubscriber(CoreSubscriber<? super C> actual, C initialBuffer,
 				Supplier<C> bufferSupplier, Predicate<? super T> predicate, Mode mode) {
@@ -152,8 +152,8 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 					// here we request everything from the source. switching to
 					// fastpath will avoid unnecessary request(1) during filling
 					fastpath = true;
-					REQUESTED_BUFFERS.set(this, Long.MAX_VALUE);
-					REQUESTED_FROM_SOURCE.set(this, Long.MAX_VALUE);
+					LONG_REQUESTED_BUFFERS.set(this, Long.MAX_VALUE);
+					LONG_REQUESTED_FROM_SOURCE.set(this, Long.MAX_VALUE);
 					s.request(Long.MAX_VALUE);
 				}
 				else {
@@ -165,10 +165,10 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 					// we'll continue requesting one by one)
 					if (!DrainUtils.postCompleteRequest(n,
 							actual,
-							this, REQUESTED_BUFFERS,
+							this, LONG_REQUESTED_BUFFERS,
 							this,
 							this)) {
-						Operators.addCap(REQUESTED_FROM_SOURCE, this, n);
+						Operators.addCap(LONG_REQUESTED_FROM_SOURCE, this, n);
 						s.request(n);
 					}
 				}
@@ -184,12 +184,12 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 				Operators.onDiscardMultiple(b, actual.currentContext());
 			}
 			cleanup();
-			Operators.terminate(S, this);
+			Operators.terminate(ATOMIC_REFERENCE_S, this);
 		}
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
 				actual.onSubscribe(this);
 			}
 		}
@@ -212,7 +212,7 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 			try {
 				match = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Context ctx = actual.currentContext();
 				onError(Operators.onOperatorError(s, e, t, ctx)); //will discard the buffer
 				Operators.onDiscard(t, ctx);
@@ -244,10 +244,10 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 				return true;
 			}
 
-			boolean isNotExpectingFromSource = REQUESTED_FROM_SOURCE.decrementAndGet(this) == 0;
-			boolean isStillExpectingBuffer = REQUESTED_BUFFERS.get(this) > 0;
+			boolean isNotExpectingFromSource = LONG_REQUESTED_FROM_SOURCE.decrementAndGet(this) == 0;
+			boolean isStillExpectingBuffer = LONG_REQUESTED_BUFFERS.get(this) > 0;
 			if (isNotExpectingFromSource && isStillExpectingBuffer
-					&& REQUESTED_FROM_SOURCE.compareAndSet(this, 0, 1)) {
+					&& LONG_REQUESTED_FROM_SOURCE.compareAndSet(this, 0, 1)) {
 				return false; //explicitly mark as "needing more", either in attached conditional or onNext()
 			}
 			return true;
@@ -290,7 +290,7 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 				c = Objects.requireNonNull(bufferSupplier.get(),
 						"The bufferSupplier returned a null buffer");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, actual.currentContext()));
 				return null;
 			}
@@ -311,7 +311,7 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 					actual.onNext(b);
 					return;
 				}
-				long r = REQUESTED_BUFFERS.getAndDecrement(this);
+				long r = LONG_REQUESTED_BUFFERS.getAndDecrement(this);
 				if (r > 0) {
 					actual.onNext(b);
 					return;
@@ -352,7 +352,7 @@ final class FluxBufferPredicate<T, C extends Collection<? super T>>
 			}
 			done = true;
 			cleanup();
-			DrainUtils.postComplete(actual, this, REQUESTED_BUFFERS, this, this);
+			DrainUtils.postComplete(actual, this, LONG_REQUESTED_BUFFERS, this, this);
 		}
 
 		void cleanup() {

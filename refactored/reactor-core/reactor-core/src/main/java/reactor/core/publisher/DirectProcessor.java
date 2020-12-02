@@ -140,11 +140,6 @@ public final class DirectProcessor<T> extends FluxProcessor<T, T>
 		@SuppressWarnings("unused") Sinks.EmitResult emitResult = tryEmitComplete();
 	}
 
-	private void emitComplete() {
-		//no particular error condition handling for onComplete
-		@SuppressWarnings("unused") EmitResult emitResult = tryEmitComplete();
-	}
-
 	private EmitResult tryEmitComplete() {
 		@SuppressWarnings("unchecked")
 		DirectInner<T>[] inners = SUBSCRIBERS.getAndSet(this, SinkManyBestEffort.TERMINATED);

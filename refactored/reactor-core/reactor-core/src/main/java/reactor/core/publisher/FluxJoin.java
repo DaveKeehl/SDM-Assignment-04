@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
@@ -91,7 +90,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 	}
 
 	@Override
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 		return super.scanUnsafe(key);
 	}
@@ -117,27 +116,31 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 		volatile int wip;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<JoinSubscription> WIP =
 				AtomicIntegerFieldUpdater.newUpdater(JoinSubscription.class, "wip");
 
 		volatile int active;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<JoinSubscription> ACTIVE =
 				AtomicIntegerFieldUpdater.newUpdater(JoinSubscription.class,
 						"active");
 
 		volatile long requested;
 
-		static final AtomicLongFieldUpdater<JoinSubscription> REQUESTED =
+		@SuppressWarnings("rawtypes")
+		static final AtomicLongFieldUpdater<JoinSubscription> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(JoinSubscription.class,
 						"requested");
 
 		volatile Throwable error;
 
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<JoinSubscription, Throwable> ERROR =
-				AtomicReferenceFieldUpdater.newUpdater(JoinSubscription.class,
-						Throwable.class,
-						"error");
+						AtomicReferenceFieldUpdater.newUpdater(JoinSubscription.class,
+								Throwable.class,
+								"error");
 
 		int leftIndex;
 
@@ -180,7 +183,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 		@Override
 		@Nullable
-		public Object scanUnsafe(Attr key) {
+		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.REQUESTED_FROM_DOWNSTREAM) return requested;
 			if (key == Attr.CANCELLED) return cancellations.isDisposed();
 			if (key == Attr.BUFFERED) return queue.size() / 2;
@@ -194,7 +197,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -227,7 +230,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 			Queue<Object> q = queue;
 			Subscriber<? super R> a = actual;
 
-			for (; ; ) {
+			do {
 				for (; ; ) {
 					if (cancellations.isDisposed()) {
 						q.clear();
@@ -264,7 +267,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 					Object val = q.poll();
 
-					if (mode == LEFT_VALUE) {
+					if (mode.equals(LEFT_VALUE)) {
 						@SuppressWarnings("unchecked") TLeft left = (TLeft) val;
 
 						int idx = leftIndex++;
@@ -275,8 +278,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						try {
 							p = Objects.requireNonNull(leftEnd.apply(left),
 									"The leftEnd returned a null Publisher");
-						}
-						catch (Throwable exc) {
+						} catch (Throwable exc) {
 							Exceptions.addThrowable(ERROR,
 									this,
 									Operators.onOperatorError(this, exc, left,
@@ -310,8 +312,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 								w = Objects.requireNonNull(resultSelector.apply(left,
 										right),
 										"The resultSelector returned a null value");
-							}
-							catch (Throwable exc) {
+							} catch (Throwable exc) {
 								Exceptions.addThrowable(ERROR,
 										this,
 										Operators.onOperatorError(this,
@@ -324,8 +325,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 								a.onNext(w);
 
 								e++;
-							}
-							else {
+							} else {
 								Exceptions.addThrowable(ERROR,
 										this,
 										Exceptions.failWithOverflow("Could not " + "emit value due to lack of requests"));
@@ -337,10 +337,9 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						}
 
 						if (e != 0L) {
-							Operators.produced(REQUESTED, this, e);
+							Operators.produced(LONG_REQUESTED, this, e);
 						}
-					}
-					else if (mode == RIGHT_VALUE) {
+					} else if (mode.equals(RIGHT_VALUE)) {
 						@SuppressWarnings("unchecked") TRight right = (TRight) val;
 
 						int idx = rightIndex++;
@@ -352,8 +351,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						try {
 							p = Objects.requireNonNull(rightEnd.apply(right),
 									"The rightEnd returned a null Publisher");
-						}
-						catch (Throwable exc) {
+						} catch (Throwable exc) {
 							Exceptions.addThrowable(ERROR,
 									this,
 									Operators.onOperatorError(this, exc, right,
@@ -387,8 +385,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 								w = Objects.requireNonNull(resultSelector.apply(left,
 										right),
 										"The resultSelector returned a null value");
-							}
-							catch (Throwable exc) {
+							} catch (Throwable exc) {
 								Exceptions.addThrowable(ERROR,
 										this,
 										Operators.onOperatorError(this, exc, left,
@@ -401,8 +398,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 								a.onNext(w);
 
 								e++;
-							}
-							else {
+							} else {
 								Exceptions.addThrowable(ERROR,
 										this,
 										Exceptions.failWithOverflow("Could not emit " + "value due to lack of requests"));
@@ -414,16 +410,14 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						}
 
 						if (e != 0L) {
-							Operators.produced(REQUESTED, this, e);
+							Operators.produced(LONG_REQUESTED, this, e);
 						}
-					}
-					else if (mode == LEFT_CLOSE) {
+					} else if (mode.equals(LEFT_CLOSE)) {
 						LeftRightEndSubscriber end = (LeftRightEndSubscriber) val;
 
 						lefts.remove(end.index);
 						cancellations.remove(end);
-					}
-					else if (mode == RIGHT_CLOSE) {
+					} else if (mode.equals(RIGHT_CLOSE)) {
 						LeftRightEndSubscriber end = (LeftRightEndSubscriber) val;
 
 						rights.remove(end.index);
@@ -432,10 +426,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 				}
 
 				missed = WIP.addAndGet(this, -missed);
-				if (missed == 0) {
-					break;
-				}
-			}
+			} while (missed != 0);
 		}
 
 		@Override

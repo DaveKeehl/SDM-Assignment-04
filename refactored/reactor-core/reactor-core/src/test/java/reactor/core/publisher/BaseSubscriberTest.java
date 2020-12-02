@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 
@@ -45,12 +46,12 @@ class BaseSubscriberTest {
 		intFlux.subscribe(new BaseSubscriber<Integer>() {
 
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 
 			@Override
-			public void hookOnNext(Integer integer) {
+			public void hookOnNext(@NotNull Integer integer) {
 				assertThat(lastValue.compareAndSet(integer - 1, integer)).as("compareAndSet of %d", integer).isTrue();
 				if (integer < 10) {
 					request(1);
@@ -90,12 +91,12 @@ class BaseSubscriberTest {
 
 			flux.subscribe(new BaseSubscriber<String>() {
 				@Override
-				protected void hookOnSubscribe(Subscription subscription) {
+				protected void hookOnSubscribe(@NotNull Subscription subscription) {
 					request(1);
 				}
 
 				@Override
-				protected void hookOnNext(String value) {
+				protected void hookOnNext(@NotNull String value) {
 					//NO-OP
 				}
 			});
@@ -116,12 +117,12 @@ class BaseSubscriberTest {
 
 		flux.subscribe(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				throw new IllegalStateException("boom");
 			}
 
 			@Override
-			protected void hookOnNext(String value) {
+			protected void hookOnNext(@NotNull String value) {
 				//NO-OP
 			}
 
@@ -145,29 +146,27 @@ class BaseSubscriberTest {
 		AtomicReference<Throwable> error = new AtomicReference<>();
 		AtomicReference<SignalType> checkFinally = new AtomicReference<>();
 
-		assertThatExceptionOfType(OutOfMemoryError.class).isThrownBy(() -> {
-			flux.subscribe(new BaseSubscriber<String>() {
-				@Override
-				protected void hookOnSubscribe(Subscription subscription) {
-					throw new OutOfMemoryError("boom");
-				}
+		assertThatExceptionOfType(OutOfMemoryError.class).isThrownBy(() -> flux.subscribe(new BaseSubscriber<String>() {
+			@Override
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
+				throw new OutOfMemoryError("boom");
+			}
 
-				@Override
-				protected void hookOnNext(String value) {
-					//NO-OP
-				}
+			@Override
+			protected void hookOnNext(@NotNull String value) {
+				//NO-OP
+			}
 
-				@Override
-				protected void hookOnError(Throwable throwable) {
-					error.set(throwable);
-				}
+			@Override
+			protected void hookOnError(Throwable throwable) {
+				error.set(throwable);
+			}
 
-				@Override
-				protected void hookFinally(SignalType type) {
-					checkFinally.set(type);
-				}
-			});
-		});
+			@Override
+			protected void hookFinally(SignalType type) {
+				checkFinally.set(type);
+			}
+		}));
 		Assertions.assertThat(checkFinally.get()).isNull();
 		Assertions.assertThat(error.get()).isNull();
 	}
@@ -180,12 +179,12 @@ class BaseSubscriberTest {
 
 		flux.subscribe(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				requestUnbounded();
 			}
 
 			@Override
-			protected void hookOnNext(String value) {
+			protected void hookOnNext(@NotNull String value) {
 				throw new IllegalArgumentException("boom");
 			}
 
@@ -211,12 +210,12 @@ class BaseSubscriberTest {
 
 		flux.subscribe(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				requestUnbounded();
 			}
 
 			@Override
-			protected void hookOnNext(String value) {
+			protected void hookOnNext(@NotNull String value) {
 				//NO-OP
 			}
 
@@ -248,12 +247,12 @@ class BaseSubscriberTest {
 		Flux.just("foo")
 		    .subscribe(new BaseSubscriber<String>() {
 			    @Override
-			    protected void hookOnSubscribe(Subscription subscription) {
+			    protected void hookOnSubscribe(@NotNull Subscription subscription) {
 			    	requestUnbounded();
 			    }
 
 			    @Override
-			    protected void hookOnNext(String value) {
+			    protected void hookOnNext(@NotNull String value) {
 			    }
 
 			    @Override
@@ -286,12 +285,12 @@ class BaseSubscriberTest {
 
 			Flux.<String>error(new IllegalStateException("someError")).subscribe(new BaseSubscriber<String>() {
 				@Override
-				protected void hookOnSubscribe(Subscription subscription) {
+				protected void hookOnSubscribe(@NotNull Subscription subscription) {
 					requestUnbounded();
 				}
 
 				@Override
-				protected void hookOnNext(String value) {
+				protected void hookOnNext(@NotNull String value) {
 				}
 
 				@Override
@@ -323,12 +322,12 @@ class BaseSubscriberTest {
 		Flux.just("foo")
 		    .subscribe(new BaseSubscriber<String>() {
 			    @Override
-			    protected void hookOnSubscribe(Subscription subscription) {
+			    protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				    this.cancel();
 			    }
 
 			    @Override
-			    protected void hookOnNext(String value) {
+			    protected void hookOnNext(@NotNull String value) {
 			    }
 
 			    @Override
@@ -359,12 +358,12 @@ class BaseSubscriberTest {
 		BaseSubscriber<Long> sub = new BaseSubscriber<Long>() {
 			@Override
 			protected void hookOnSubscribe(
-					Subscription subscription) {
+					@NotNull Subscription subscription) {
 				requestUnbounded();
 			}
 
 			@Override
-			protected void hookOnNext(Long value) {
+			protected void hookOnNext(@NotNull Long value) {
 				fail("delay was not cancelled");
 			}
 

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
 
@@ -195,12 +196,12 @@ class FluxFilterWhenTest {
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
 
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				requestUnbounded();
 			}
 
 			@Override
-			public void hookOnNext(Object t) {
+			public void hookOnNext(@NotNull Object t) {
 				onNextCount.incrementAndGet();
 				cancel();
 				onComplete();
@@ -227,12 +228,12 @@ class FluxFilterWhenTest {
 		BaseSubscriber<Object> bs = new BaseSubscriber<Object>() {
 
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				request(1);
 			}
 
 			@Override
-			public void hookOnNext(Object t) {
+			public void hookOnNext(@NotNull Object t) {
 				onNextCount.incrementAndGet();
 				cancel();
 				onComplete();

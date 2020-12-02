@@ -139,7 +139,7 @@ final class FluxIndexFuseable<T, I> extends InternalFluxOperator<T, I>
 					this.index = i + 1L;
 					actual.onNext(indexed);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				}
 			}
@@ -277,7 +277,7 @@ final class FluxIndexFuseable<T, I> extends InternalFluxOperator<T, I>
 				indexed = indexMapper.apply(i, t);
 				this.index = i + 1L;
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return true;
 			}
@@ -302,7 +302,7 @@ final class FluxIndexFuseable<T, I> extends InternalFluxOperator<T, I>
 					this.index = i + 1L;
 					actual.onNext(indexed);
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				}
 			}

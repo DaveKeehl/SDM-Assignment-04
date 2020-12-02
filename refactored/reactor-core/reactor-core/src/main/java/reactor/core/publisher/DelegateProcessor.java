@@ -18,11 +18,11 @@ package reactor.core.publisher;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
-import reactor.core.Exceptions;
 import reactor.core.Scannable;
 import reactor.util.annotation.Nullable;
 import reactor.util.context.Context;
@@ -77,7 +77,6 @@ final class DelegateProcessor<IN, OUT> extends FluxProcessor<IN, OUT> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public boolean isSerialized() {
 		return upstream instanceof SerializedSubscriber ||
 				(upstream instanceof FluxProcessor &&
@@ -86,20 +85,18 @@ final class DelegateProcessor<IN, OUT> extends FluxProcessor<IN, OUT> {
 
 	@Override
 	public Stream<? extends Scannable> inners() {
-		//noinspection ConstantConditions
 		return Scannable.from(upstream)
 		                .inners();
 	}
 
 	@Override
 	public int getBufferSize() {
-		//noinspection ConstantConditions
 		return Scannable.from(upstream)
 		                .scanOrDefault(Attr.CAPACITY, super.getBufferSize());
 	}
 
+	@NotNull
 	@Override
-	@Nullable
 	public Throwable getError() {
 		//noinspection ConstantConditions
 		return Scannable.from(upstream)
@@ -108,18 +105,16 @@ final class DelegateProcessor<IN, OUT> extends FluxProcessor<IN, OUT> {
 
 	@Override
 	public boolean isTerminated() {
-		//noinspection ConstantConditions
 		return Scannable.from(upstream)
 		                .scanOrDefault(Attr.TERMINATED, super.isTerminated());
 	}
 
 	@Override
 	@Nullable
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.PARENT) {
 			return downstream;
 		}
-		//noinspection ConstantConditions
 		return Scannable.from(upstream)
 		                .scanUnsafe(key);
 	}

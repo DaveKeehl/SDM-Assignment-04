@@ -113,7 +113,7 @@ final class FluxMapFuseable<T, R> extends InternalFluxOperator<T, R> implements 
 					v = Objects.requireNonNull(mapper.apply(t),
 							"The mapper returned a null value.");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ != null) {
 						onError(e_);
@@ -281,7 +281,7 @@ final class FluxMapFuseable<T, R> extends InternalFluxOperator<T, R> implements 
 					v = Objects.requireNonNull(mapper.apply(t),
 							"The mapper returned a null value.");
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 					if (e_ != null) {
 						onError(e_);
@@ -310,7 +310,7 @@ final class FluxMapFuseable<T, R> extends InternalFluxOperator<T, R> implements 
 						"The mapper returned a null value.");
 				return actual.tryOnNext(v);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Throwable e_ = Operators.onNextError(t, e, actual.currentContext(), s);
 				if (e_ != null) {
 					onError(e_);

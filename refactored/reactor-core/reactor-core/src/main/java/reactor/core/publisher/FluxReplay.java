@@ -166,7 +166,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			int missed = 1;
 			final Subscriber<? super T> a = rs.actual();
 
-			for (; ; ) {
+			do {
 				@SuppressWarnings("unchecked") TimedNode<T> node =
 						(TimedNode<T>) rs.node();
 				if (node == null) {
@@ -196,7 +196,9 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 					}
 
 					boolean d = done != NOT_DONE;
-					TimedNode<T> next = node.get();
+
+
+					TimedNode<T> next = Objects.requireNonNull(node).get();
 					boolean empty = next == null;
 
 					if (d && empty) {
@@ -204,8 +206,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 						Throwable ex = error;
 						if (ex != null) {
 							a.onError(ex);
-						}
-						else {
+						} else {
 							a.onComplete();
 						}
 						return;
@@ -215,7 +216,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 						break;
 					}
 
-					a.onNext(next.value);
+					a.onNext(Objects.requireNonNull(next.value));
 
 					e++;
 					node = next;
@@ -228,15 +229,15 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 					}
 
 					boolean d = done != NOT_DONE;
-					boolean empty = node.get() == null;
+
+					boolean empty = Objects.requireNonNull(node).get() == null;
 
 					if (d && empty) {
 						rs.node(null);
 						Throwable ex = error;
 						if (ex != null) {
 							a.onError(ex);
-						}
-						else {
+						} else {
 							a.onComplete();
 						}
 						return;
@@ -252,10 +253,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 				rs.node(node);
 
 				missed = rs.leave(missed);
-				if (missed == 0) {
-					break;
-				}
-			}
+			} while (missed != 0);
 		}
 
 		void replayFused(ReplaySubscription<T> rs) {
@@ -1072,7 +1070,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			try {
 				source.subscribe(s);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				Operators.reportThrowInSubscribe(connection, e);
 				return;
 			}
@@ -1431,7 +1429,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ReplayInner> REQUESTED =
+		static final AtomicLongFieldUpdater<ReplayInner> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(ReplayInner.class, "requested");
 
 		volatile int state;
@@ -1453,14 +1451,14 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 		public void request(long n) {
 			if (Operators.validate(n)) {
 				if (STATE.get(this) == STATE_EARLY_ACCUMULATE) {
-					Operators.addCapCancellable(REQUESTED, this, n);
+					Operators.addCapCancellable(LONG_REQUESTED, this, n);
 					return;
 				}
 				if (STATE.get(this) == STATE_EARLY_PROPAGATE) {
 					parent.propagateRequest(n);
 				}
 				if (fusionMode() == NONE) {
-					Operators.addCapCancellable(REQUESTED, this, n);
+					Operators.addCapCancellable(LONG_REQUESTED, this, n);
 				}
 				parent.buffer.replay(this);
 			}
@@ -1481,7 +1479,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public void cancel() {
-			if (REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 				if (enter()) {
 					node = null;
@@ -1491,13 +1489,13 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public long requested() {
-			return REQUESTED.get(this);
+			return LONG_REQUESTED.get(this);
 		}
 
 		@Override
 		public long signalConnectAndGetRequested() {
 			STATE.set(this, STATE_EARLY_PROPAGATE);
-			return REQUESTED.get(this);
+			return LONG_REQUESTED.get(this);
 		}
 
 		@Override
@@ -1588,7 +1586,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public void produced(long n) {
-			REQUESTED.addAndGet(this, -n);
+			LONG_REQUESTED.addAndGet(this, -n);
 		}
 	}
 }

@@ -61,7 +61,7 @@ extends Mono<T>
 				sds.complete(t);
 			}
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			actual.onError(Operators.onOperatorError(e, actual.currentContext()));
 		}
 	}

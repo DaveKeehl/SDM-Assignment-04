@@ -32,7 +32,7 @@ abstract class DrainUtils {
 	 * for one signal bit. This also means the standard request accounting helper method doesn't work.
 	 */
 	static final long COMPLETED_MASK = 0x8000_0000_0000_0000L;
-	static final long REQUESTED_MASK = 0x7FFF_FFFF_FFFF_FFFFL;
+	static final long LONG_REQUESTED_MASK = 0x7FFF_FFFF_FFFF_FFFFL;
 
 	/**
 	 * Perform a potential post-completion request accounting.
@@ -58,7 +58,7 @@ abstract class DrainUtils {
 			long r = field.get(instance);
 
 			// extract the current request amount
-			long r0 = r & REQUESTED_MASK;
+			long r0 = r & LONG_REQUESTED_MASK;
 
 			// preserve COMPLETED_MASK and calculate new requested amount
 			long u = (r & COMPLETED_MASK) | Operators.addCap(r0, n);
@@ -149,9 +149,9 @@ abstract class DrainUtils {
 
 			if (n == e) {
 
-				n = field.addAndGet(instance, -(e & REQUESTED_MASK));
+				n = field.addAndGet(instance, -(e & LONG_REQUESTED_MASK));
 
-				if ((n & REQUESTED_MASK) == 0L) {
+				if ((n & LONG_REQUESTED_MASK) == 0L) {
 					return false;
 				}
 
@@ -207,52 +207,7 @@ abstract class DrainUtils {
 		}
 	}
 
-    /**
-     * Perform a potential post-completion request accounting.
-     *
-     * @param <T> the output value type
-     * @param <F> the field type holding the requested amount
-     * @param n the request amount
-     * @param actual the consumer of values
-     * @param queue the queue of available values
-     * @param field the field updater for the requested amount
-     * @param instance the parent instance of the requested field 
-     * @param isCancelled callback to detect cancellation
-     * @param error if not null, the error to signal after the queue has been drained
-     * @return true if the state indicates a completion state.
-     */
-    public static <T, F> boolean postCompleteRequestDelayError(long n,
-            Subscriber<? super T> actual,
-            Queue<T> queue,
-            AtomicLongFieldUpdater<F> field,
-            F instance,
-            BooleanSupplier isCancelled, Throwable error) {
-
-        for (; ; ) {
-            long r = field.get(instance);
-
-            // extract the current request amount
-            long r0 = r & REQUESTED_MASK;
-
-            // preserve COMPLETED_MASK and calculate new requested amount
-            long u = (r & COMPLETED_MASK) | Operators.addCap(r0, n);
-
-            if (field.compareAndSet(instance, r, u)) {
-                // (complete, 0) -> (complete, n) transition then replay
-                if (r == COMPLETED_MASK) {
-
-                    postCompleteDrainDelayError(n | COMPLETED_MASK, actual, queue, field, instance, isCancelled, error);
-
-                    return true;
-                }
-                // (active, r) -> (active, r + n) transition then continue with requesting from upstream
-                return false;
-            }
-        }
-
-    }
-
-    /**
+	/**
      * Drains the queue either in a pre- or post-complete state, delaying an
      * optional error to the end of the drain operation.
      *
@@ -314,9 +269,9 @@ abstract class DrainUtils {
 
             if (n == e) {
 
-                n = field.addAndGet(instance, -(e & REQUESTED_MASK));
+                n = field.addAndGet(instance, -(e & LONG_REQUESTED_MASK));
 
-                if ((n & REQUESTED_MASK) == 0L) {
+                if ((n & LONG_REQUESTED_MASK) == 0L) {
                     return false;
                 }
 

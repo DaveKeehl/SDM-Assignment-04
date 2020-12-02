@@ -153,7 +153,7 @@ final class FluxDoOnEach<T> extends InternalFluxOperator<T, T> {
 				this.t = t;
 				onSignal.accept(this);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, cachedContext));
 				return;
 			}
@@ -163,7 +163,7 @@ final class FluxDoOnEach<T> extends InternalFluxOperator<T, T> {
 				try {
 					onSignal.accept(Signal.complete(cachedContext));
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					state = STATE_MONO_START;
 					onError(Operators.onOperatorError(s, e, cachedContext));
 					return;
@@ -185,7 +185,7 @@ final class FluxDoOnEach<T> extends InternalFluxOperator<T, T> {
 				try {
 					onSignal.accept(Signal.error(t, cachedContext));
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					//this performs a throwIfFatal or suppresses t in e
 					t = Operators.onOperatorError(null, e, t, cachedContext);
 				}
@@ -213,7 +213,7 @@ final class FluxDoOnEach<T> extends InternalFluxOperator<T, T> {
 				try {
 					onSignal.accept(Signal.complete(cachedContext));
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					state = oldState;
 					onError(Operators.onOperatorError(s, e, cachedContext));
 					return;
@@ -307,7 +307,7 @@ final class FluxDoOnEach<T> extends InternalFluxOperator<T, T> {
 				try {
 					onSignal.accept(Signal.complete(cachedContext));
 				}
-				catch (Throwable e) {
+				catch (Exception e) {
 					throw e;
 				}
 			} else if (v != null) {

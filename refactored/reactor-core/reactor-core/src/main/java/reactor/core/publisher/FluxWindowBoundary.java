@@ -105,7 +105,7 @@ final class FluxWindowBoundary<T, U> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowBoundaryMain> REQUESTED =
+		static final AtomicLongFieldUpdater<WindowBoundaryMain> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(WindowBoundaryMain.class, "requested");
 
 		volatile Throwable error;
@@ -231,7 +231,7 @@ final class FluxWindowBoundary<T, U> extends InternalFluxOperator<T, Flux<T>> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(LONG_REQUESTED, this, n);
 			}
 		}
 
@@ -335,7 +335,7 @@ final class FluxWindowBoundary<T, U> extends InternalFluxOperator<T, Flux<T>> {
 								a.onNext(w.asFlux());
 
 								if (requested != Long.MAX_VALUE) {
-									REQUESTED.decrementAndGet(this);
+									LONG_REQUESTED.decrementAndGet(this);
 								}
 							} else {
 								q.clear();
@@ -361,7 +361,7 @@ final class FluxWindowBoundary<T, U> extends InternalFluxOperator<T, Flux<T>> {
 			if (r != 0L) {
 				actual.onNext(w.asFlux());
 				if (r != Long.MAX_VALUE) {
-					REQUESTED.decrementAndGet(this);
+					LONG_REQUESTED.decrementAndGet(this);
 				}
 				return true;
 			} else {

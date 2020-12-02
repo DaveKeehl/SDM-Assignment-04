@@ -63,7 +63,7 @@ final class MonoCallableOnAssembly<T> extends InternalMonoOperator<T, T>
 		try {
 			return ((Callable<T>) source).call();
 		}
-		catch (Throwable e) {
+		catch (Exception e) {
 			throw Exceptions.propagate(e);
 		}
 	}

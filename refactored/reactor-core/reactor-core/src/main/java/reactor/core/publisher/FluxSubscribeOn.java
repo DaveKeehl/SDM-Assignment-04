@@ -95,7 +95,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						"requested");
 
@@ -118,7 +118,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void onSubscribe(Subscription s) {
 			if (Operators.setOnce(S, this, s)) {
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0L) {
 					requestUpstream(r, s);
 				}
@@ -174,10 +174,10 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 					requestUpstream(n, s);
 				}
 				else {
-					Operators.addCap(REQUESTED, this, n);
+					Operators.addCap(LONG_REQUESTED, this, n);
 					s = S.get(this);
 					if (s != null) {
-						long r = REQUESTED.getAndSet(this, 0L);
+						long r = LONG_REQUESTED.getAndSet(this, 0L);
 						if (r != 0L) {
 							requestUpstream(r, s);
 						}

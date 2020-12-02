@@ -125,7 +125,7 @@ final class FluxScanSeed<T, R> extends InternalFluxOperator<T, R> {
 							initialValue = Objects.requireNonNull(initialSupplier.get(),
 									"The initial value supplied is null");
 						}
-						catch (Throwable e) {
+						catch (Exception e) {
 							onError(Operators.onOperatorError(e, actual.currentContext()));
 							return;
 						}
@@ -228,7 +228,7 @@ final class FluxScanSeed<T, R> extends InternalFluxOperator<T, R> {
 				r = Objects.requireNonNull(accumulator.apply(r, t),
 						"The accumulator returned a null value");
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, actual.currentContext()));
 				return;
 			}

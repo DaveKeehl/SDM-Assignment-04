@@ -38,7 +38,7 @@ interface InnerProducer<O>
 
 	@Override
 	@Nullable
-	default Object scanUnsafe(Attr key){
+	default Object scanUnsafe(Attr<?> key){
 		if (key == Attr.ACTUAL) {
 			return actual();
 		}

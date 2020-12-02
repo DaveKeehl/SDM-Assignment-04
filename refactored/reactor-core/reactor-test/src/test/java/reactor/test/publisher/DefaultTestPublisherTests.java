@@ -18,6 +18,7 @@ package reactor.test.publisher;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -195,13 +196,13 @@ class DefaultTestPublisherTests {
 
 		publisher.flux().subscribe(new BaseSubscriber<String>() {
 			@Override
-			protected void hookOnSubscribe(Subscription subscription) {
+			protected void hookOnSubscribe(@NotNull Subscription subscription) {
 				subscription.request(Long.MAX_VALUE);
 				subscription.cancel();
 			}
 
 			@Override
-			protected void hookOnNext(String value) {
+			protected void hookOnNext(@NotNull String value) {
 				emitCount.incrementAndGet();
 			}
 		});

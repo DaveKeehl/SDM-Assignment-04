@@ -107,20 +107,18 @@ abstract class BlockingSingleSubscriber<T> extends CountDownLatch
 	 * return null for an empty source and rethrow any exception.
 	 *
 	 * @param timeout the timeout to wait
-	 * @param unit the time unit
-	 *
 	 * @return the first value or null if the source is empty
 	 */
 	@Nullable
-	final T blockingGet(long timeout, TimeUnit unit) {
+	final T blockingGet(long timeout) {
 		if (Schedulers.isInNonBlockingThread()) {
 			throw new IllegalStateException("block()/blockFirst()/blockLast() are blocking, which is not supported in thread " + Thread.currentThread().getName());
 		}
 		if (getCount() != 0) {
 			try {
-				if (!await(timeout, unit)) {
+				if (!await(timeout, TimeUnit.NANOSECONDS)) {
 					dispose();
-					throw new IllegalStateException("Timeout on blocking read for " + timeout + " " + unit);
+					throw new IllegalStateException("Timeout on blocking read for " + timeout + " " + TimeUnit.NANOSECONDS);
 				}
 			}
 			catch (InterruptedException ex) {
@@ -146,7 +144,7 @@ abstract class BlockingSingleSubscriber<T> extends CountDownLatch
 
 	@Override
 	@Nullable
-	public Object scanUnsafe(Attr key) {
+	public Object scanUnsafe(Attr<?> key) {
 		if (key == Attr.TERMINATED) return getCount() == 0;
 		if (key == Attr.PARENT) return  s;
 		if (key == Attr.CANCELLED) return cancelled;

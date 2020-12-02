@@ -94,7 +94,7 @@ final class FluxSkipWhile<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, ctx));
 				return;
 			}
@@ -125,7 +125,7 @@ final class FluxSkipWhile<T> extends InternalFluxOperator<T, T> {
 			try {
 				b = predicate.test(t);
 			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				onError(Operators.onOperatorError(s, e, t, ctx));
 
 				return true;

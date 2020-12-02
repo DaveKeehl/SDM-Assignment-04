@@ -29,7 +29,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.Exceptions;
-import reactor.core.Scannable;
 import reactor.util.annotation.Nullable;
 import reactor.util.concurrent.Queues;
 
@@ -134,22 +133,28 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		final Object[] values;
 
 		volatile Throwable error;
+
+		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeOrderedMainProducer, Throwable> ERROR =
 				AtomicReferenceFieldUpdater.newUpdater(MergeOrderedMainProducer.class, Throwable.class, "error");
 
 		volatile int cancelled;
+
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> CANCELLED =
 				AtomicIntegerFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "cancelled");
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<MergeOrderedMainProducer> REQUESTED =
+
+		@SuppressWarnings("rawtypes")
+		static final AtomicLongFieldUpdater<MergeOrderedMainProducer> LONG_REQUESTED =
 				AtomicLongFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "requested");
 
 		volatile long emitted;
-		static final AtomicLongFieldUpdater<MergeOrderedMainProducer> EMITTED =
-				AtomicLongFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "emitted");
 
 		volatile int wip;
+
+		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> WIP =
 				AtomicIntegerFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "wip");
 
@@ -186,7 +191,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void request(long n) {
-			Operators.addCap(REQUESTED, this, n);
+			Operators.addCap(LONG_REQUESTED, this, n);
 			drain();
 		}
 
@@ -349,7 +354,9 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		volatile boolean done;
 
 		volatile Subscription s;
-		AtomicReferenceFieldUpdater<MergeOrderedInnerSubscriber, Subscription> S =
+
+		@SuppressWarnings("rawtypes")
+		static final AtomicReferenceFieldUpdater<MergeOrderedInnerSubscriber, Subscription> ATOMIC_REFERENCE_S =
 				AtomicReferenceFieldUpdater.newUpdater(MergeOrderedInnerSubscriber.class, Subscription.class, "s");
 
 		MergeOrderedInnerSubscriber(MergeOrderedMainProducer<T> parent,
@@ -362,7 +369,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
 				s.request(prefetch);
 			}
 		}
@@ -404,7 +411,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void cancel() {
-			Subscription sub  = S.getAndSet(this, this);
+			Subscription sub  = ATOMIC_REFERENCE_S.getAndSet(this, this);
 			if (sub != null && sub != this) {
 				sub.cancel();
 			}

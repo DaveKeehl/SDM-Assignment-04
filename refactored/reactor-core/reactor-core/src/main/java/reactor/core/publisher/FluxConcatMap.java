@@ -355,7 +355,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 						try {
 							v = queue.poll();
 						}
-						catch (Throwable e) {
+						catch (Exception e) {
 							actual.onError(Operators.onOperatorError(s, e, this.ctx));
 							return;
 						}
@@ -374,7 +374,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 								p = Objects.requireNonNull(mapper.apply(v),
 								"The mapper returned a null Publisher");
 							}
-							catch (Throwable e) {
+							catch (Exception e) {
 								Operators.onDiscard(v, this.ctx);
 								Throwable e_ = Operators.onNextError(v, e, this.ctx, s);
 								if (e_ != null) {
@@ -407,7 +407,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 								try {
 									vr = callable.call();
 								}
-								catch (Throwable e) {
+								catch (Exception e) {
 									Throwable e_ = Operators.onNextError(v, e, this.ctx, s);
 									if (e_ != null) {
 										actual.onError(Operators.onOperatorError(s, e, v,
@@ -708,7 +708,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 						try {
 							v = queue.poll();
 						}
-						catch (Throwable e) {
+						catch (Exception e) {
 							actual.onError(Operators.onOperatorError(s, e, actual.currentContext()));
 							return;
 						}
@@ -733,7 +733,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 								p = Objects.requireNonNull(mapper.apply(v),
 										"The mapper returned a null Publisher");
 							}
-							catch (Throwable e) {
+							catch (Exception e) {
 								if (ctx == null) {
 									ctx = actual.currentContext();
 								}
@@ -768,7 +768,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 								try {
 									vr = supplier.call();
 								}
-								catch (Throwable e) {
+								catch (Exception e) {
 									//does the strategy apply? if so, short-circuit the delayError. In any case, don't cancel
 									if (ctx == null) {
 										ctx = actual.currentContext();

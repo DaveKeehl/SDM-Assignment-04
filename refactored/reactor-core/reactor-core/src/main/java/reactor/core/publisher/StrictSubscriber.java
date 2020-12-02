@@ -44,7 +44,7 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<StrictSubscriber> REQUESTED =
+	static final AtomicLongFieldUpdater<StrictSubscriber> LONG_REQUESTED =
 			AtomicLongFieldUpdater.newUpdater(StrictSubscriber.class, "requested");
 
 	volatile int wip;
@@ -72,7 +72,7 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 			actual.onSubscribe(this);
 
 			if (Operators.setOnce(S, this, s)) {
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0L) {
 					s.request(r);
 				}
@@ -138,10 +138,10 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 			a.request(n);
 		}
 		else {
-			Operators.addCap(REQUESTED, this, n);
+			Operators.addCap(LONG_REQUESTED, this, n);
 			a = s;
 			if (a != null) {
-				long r = REQUESTED.getAndSet(this, 0L);
+				long r = LONG_REQUESTED.getAndSet(this, 0L);
 				if (r != 0L) {
 					a.request(n);
 				}
