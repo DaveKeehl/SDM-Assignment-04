@@ -32,18 +32,18 @@ final class SchedulerTask extends Task {
 	static final Disposable TAKEN = Disposables.disposed();
 
 	volatile Future<?> future;
-	static final AtomicReferenceFieldUpdater<SchedulerTask, Future> FUTURE =
+	static final AtomicReferenceFieldUpdater<SchedulerTask, Future> FUTURE_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(SchedulerTask.class, Future.class, "future");
 
 	volatile Disposable parent;
-	static final AtomicReferenceFieldUpdater<SchedulerTask, Disposable> PARENT =
+	static final AtomicReferenceFieldUpdater<SchedulerTask, Disposable> PARENT_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(SchedulerTask.class, Disposable.class, "parent");
 
 	Thread thread;
 
 	SchedulerTask(Runnable task, @Nullable Disposable parent) {
 		super(task);
-		PARENT.lazySet(this, parent);
+		PARENT_UPDATER.lazySet(this, parent);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ final class SchedulerTask extends Task {
 				if (d == TAKEN || d == null) {
 					break;
 				}
-				if (PARENT.compareAndSet(this, d, TAKEN)) {
+				if (PARENT_UPDATER.compareAndSet(this, d, TAKEN)) {
 					break;
 				}
 			}
@@ -73,7 +73,7 @@ final class SchedulerTask extends Task {
 			Future f;
 			for (;;) {
 				f = future;
-				if (f == CANCELLED || FUTURE.compareAndSet(this, f, FINISHED)) {
+				if (f == CANCELLED || FUTURE_UPDATER.compareAndSet(this, f, FINISHED)) {
 					break;
 				}
 			}
@@ -99,7 +99,7 @@ final class SchedulerTask extends Task {
 				f.cancel(thread != Thread.currentThread());
 				return;
 			}
-			if (FUTURE.compareAndSet(this, o, f)) {
+			if (FUTURE_UPDATER.compareAndSet(this, o, f)) {
 				return;
 			}
 		}
@@ -118,7 +118,7 @@ final class SchedulerTask extends Task {
 			if (f == FINISHED || f == CANCELLED) {
 				break;
 			}
-			if (FUTURE.compareAndSet(this, f, CANCELLED)) {
+			if (FUTURE_UPDATER.compareAndSet(this, f, CANCELLED)) {
 				if (f != null) {
 					f.cancel(thread != Thread.currentThread());
 				}
@@ -132,7 +132,7 @@ final class SchedulerTask extends Task {
 			if (d == TAKEN || d == null) {
 				break;
 			}
-			if (PARENT.compareAndSet(this, d, TAKEN)) {
+			if (PARENT_UPDATER.compareAndSet(this, d, TAKEN)) {
 				d.dispose();
 				break;
 			}

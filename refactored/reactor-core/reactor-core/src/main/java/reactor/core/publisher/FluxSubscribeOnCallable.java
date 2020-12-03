@@ -82,7 +82,7 @@ final class FluxSubscribeOnCallable<T> extends Flux<T> implements Fuseable, Scan
 
 		volatile int state;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<CallableSubscribeOnSubscription> STATE =
+		static final AtomicIntegerFieldUpdater<CallableSubscribeOnSubscription> STATE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(CallableSubscribeOnSubscription.class,
 						"state");
 
@@ -255,7 +255,7 @@ final class FluxSubscribeOnCallable<T> extends Flux<T> implements Fuseable, Scan
 					return;
 				}
 				this.value = v;
-				if (STATE.compareAndSet(this, s, NO_REQUEST_HAS_VALUE)) {
+				if (STATE_UPDATER.compareAndSet(this, s, NO_REQUEST_HAS_VALUE)) {
 					return;
 				}
 			}
@@ -270,7 +270,7 @@ final class FluxSubscribeOnCallable<T> extends Flux<T> implements Fuseable, Scan
 						return;
 					}
 					if (s == NO_REQUEST_HAS_VALUE) {
-						if (STATE.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
+						if (STATE_UPDATER.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
 							try {
 								Disposable f = scheduler.schedule(this::emitValue);
 								setRequestFuture(f);
@@ -282,7 +282,7 @@ final class FluxSubscribeOnCallable<T> extends Flux<T> implements Fuseable, Scan
 						}
 						return;
 					}
-					if (STATE.compareAndSet(this, s, HAS_REQUEST_NO_VALUE)) {
+					if (STATE_UPDATER.compareAndSet(this, s, HAS_REQUEST_NO_VALUE)) {
 						return;
 					}
 				}

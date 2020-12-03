@@ -97,7 +97,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 				return;
 			}
 			if (rc == connection) {
-				dispose = RefCountMonitor.DISCONNECT.getAndSet(rc, Disposables.disposed());
+				dispose = RefCountMonitor.DISCONNECT_UPDATER.getAndSet(rc, Disposables.disposed());
 				connection = null;
 			}
 		}
@@ -136,7 +136,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 
 		volatile Disposable disconnect;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<RefCountMonitor, Disposable> DISCONNECT =
+		static final AtomicReferenceFieldUpdater<RefCountMonitor, Disposable> DISCONNECT_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(RefCountMonitor.class, Disposable.class, "disconnect");
 
 		RefCountMonitor(FluxRefCount<? extends T> parent) {
@@ -145,7 +145,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 
 		@Override
 		public void accept(Disposable r) {
-			OperatorDisposables.replace(DISCONNECT, this, r);
+			OperatorDisposables.replace(DISCONNECT_UPDATER, this, r);
 		}
 
 		void innerCancelled() {
@@ -167,7 +167,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 		QueueSubscription<T> qs;
 
 		volatile     int parentDone; //used to guard against doubly terminating subscribers (eg. double cancel)
-		static final AtomicIntegerFieldUpdater<RefCountInner> PARENT_DONE =
+		static final AtomicIntegerFieldUpdater<RefCountInner> PARENT_DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(RefCountInner.class, "parentDone");
 
 		RefCountInner(CoreSubscriber<? super T> actual, RefCountMonitor<T> connection) {
@@ -201,7 +201,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 
 		@Override
 		public void onError(Throwable t) {
-			if (PARENT_DONE.compareAndSet(this, 0, 1)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 1)) {
 				connection.upstreamFinished();
 				actual.onError(t);
 			}
@@ -212,7 +212,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 
 		@Override
 		public void onComplete() {
-			if (PARENT_DONE.compareAndSet(this, 0, 1)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 1)) {
 				connection.upstreamFinished();
 				actual.onComplete();
 			}
@@ -226,7 +226,7 @@ final class FluxRefCount<T> extends Flux<T> implements Scannable, Fuseable {
 		@Override
 		public void cancel() {
 			s.cancel();
-			if (PARENT_DONE.compareAndSet(this, 0, 2)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 2)) {
 				connection.innerCancelled();
 			}
 		}

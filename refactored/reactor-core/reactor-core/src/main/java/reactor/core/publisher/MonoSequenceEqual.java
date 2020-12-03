@@ -78,7 +78,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<EqualCoordinator> ONCE =
+		static final AtomicIntegerFieldUpdater<EqualCoordinator> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(EqualCoordinator.class, "once");
 
 		T v1;
@@ -87,7 +87,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<EqualCoordinator> WIP =
+		static final AtomicIntegerFieldUpdater<EqualCoordinator> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(EqualCoordinator.class, "wip");
 
 		EqualCoordinator(CoreSubscriber<? super Boolean> actual, int prefetch,
@@ -121,7 +121,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 		}
 
 		void subscribe() {
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				first.subscribe(firstSubscriber);
 				second.subscribe(secondSubscriber);
 			}
@@ -132,7 +132,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 			if (!Operators.validate(n)) {
 				return;
 			}
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				first.subscribe(firstSubscriber);
 				second.subscribe(secondSubscriber);
 			}
@@ -146,7 +146,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 				cancelInner(firstSubscriber);
 				cancelInner(secondSubscriber);
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					firstSubscriber.queue.clear();
 					secondSubscriber.queue.clear();
 				}
@@ -164,7 +164,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 		void cancelInner(EqualSubscriber<T> innerSubscriber) {
 			Subscription s = innerSubscriber.subscription;
 			if (s != cancelledSubscription()) {
-				s = EqualSubscriber.S.getAndSet(innerSubscriber,
+				s = EqualSubscriber.S_UPDATER.getAndSet(innerSubscriber,
 						cancelledSubscription());
 				if (s != null && s != cancelledSubscription()) {
 					s.cancel();
@@ -173,7 +173,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -278,7 +278,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 				}
 
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -297,7 +297,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 
 		Subscription cachedSubscription;
 		volatile Subscription subscription;
-		static final AtomicReferenceFieldUpdater<EqualSubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<EqualSubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(EqualSubscriber.class,
 						Subscription.class, "subscription");
 
@@ -329,7 +329,7 @@ final class MonoSequenceEqual<T> extends Mono<Boolean> implements SourceProducer
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				this.cachedSubscription = s;
 				s.request(Operators.unboundedOrPrefetch(prefetch));
 			}

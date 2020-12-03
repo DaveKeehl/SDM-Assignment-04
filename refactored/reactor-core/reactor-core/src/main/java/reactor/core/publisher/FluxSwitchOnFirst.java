@@ -82,12 +82,12 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         volatile CoreSubscriber<? super T> inner;
         @SuppressWarnings("rawtypes")
-        static final AtomicReferenceFieldUpdater<AbstractSwitchOnFirstMain, CoreSubscriber> INNER =
+        static final AtomicReferenceFieldUpdater<AbstractSwitchOnFirstMain, CoreSubscriber> INNER_UPDATER =
                 AtomicReferenceFieldUpdater.newUpdater(AbstractSwitchOnFirstMain.class, CoreSubscriber.class, "inner");
 
         volatile int wip;
         @SuppressWarnings("rawtypes")
-        static final AtomicIntegerFieldUpdater<AbstractSwitchOnFirstMain> WIP =
+        static final AtomicIntegerFieldUpdater<AbstractSwitchOnFirstMain> WIP_UPDATER =
                 AtomicIntegerFieldUpdater.newUpdater(AbstractSwitchOnFirstMain.class, "wip");
 
         @SuppressWarnings("unchecked")
@@ -236,13 +236,13 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void cancel() {
-            if (INNER.getAndSet(this, Operators.EMPTY_SUBSCRIBER) == Operators.EMPTY_SUBSCRIBER) {
+            if (INNER_UPDATER.getAndSet(this, Operators.EMPTY_SUBSCRIBER) == Operators.EMPTY_SUBSCRIBER) {
                 return;
             }
 
             this.s.cancel();
 
-            if (WIP.getAndIncrement(this) == 0) {
+            if (WIP_UPDATER.getAndIncrement(this) == 0) {
                 final T f = this.first;
                 if (f != null) {
                     this.first = null;
@@ -272,7 +272,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @SuppressWarnings("unchecked")
         boolean drain() {
-            if (WIP.getAndIncrement(this) != 0) {
+            if (WIP_UPDATER.getAndIncrement(this) != 0) {
                 return false;
             }
 
@@ -311,12 +311,12 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
                         } else {
                             a.onComplete();
                         }
-                        INNER.lazySet(this, Operators.EMPTY_SUBSCRIBER);
+                        INNER_UPDATER.lazySet(this, Operators.EMPTY_SUBSCRIBER);
                         return sent;
                     }
                 }
 
-                m = WIP.addAndGet(this, -m);
+                m = WIP_UPDATER.addAndGet(this, -m);
                 if (m == 0) {
                     return sent;
                 }
@@ -338,7 +338,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void subscribe(CoreSubscriber<? super T> actual) {
-            if (this.inner == null && INNER.compareAndSet(this, null, actual)) {
+            if (this.inner == null && INNER_UPDATER.compareAndSet(this, null, actual)) {
                 if (this.first == null && this.done) {
                     final Throwable t = this.throwable;
                     if (t != null) {
@@ -377,7 +377,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void subscribe(CoreSubscriber<? super T> actual) {
-            if (this.inner == null && INNER.compareAndSet(this, null, Operators.toConditionalSubscriber(actual))) {
+            if (this.inner == null && INNER_UPDATER.compareAndSet(this, null, Operators.toConditionalSubscriber(actual))) {
                 if (this.first == null && this.done) {
                     final Throwable t = this.throwable;
                     if (t != null) {
@@ -505,7 +505,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void cancel() {
-            final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
+            final long state = REQUESTED_UPDATER.getAndSet(this, STATE_CANCELLED);
             if (state == STATE_CANCELLED) {
                 return;
             }
@@ -599,7 +599,7 @@ final class FluxSwitchOnFirst<T, R> extends InternalFluxOperator<T, R> {
 
         @Override
         public void cancel() {
-            final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
+            final long state = REQUESTED_UPDATER.getAndSet(this, STATE_CANCELLED);
             if (state == STATE_CANCELLED) {
                 return;
             }

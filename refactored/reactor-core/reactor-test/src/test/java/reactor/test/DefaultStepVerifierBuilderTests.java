@@ -98,7 +98,7 @@ class DefaultStepVerifierBuilderTests {
 			vts.advanceTimeBy(Duration.ofSeconds(3));
 			s.verify();
 
-			assertThat(s.virtualTimeScheduler()).isSameAs(vts);
+			assertThat(s.getVirtualTimeScheduler()).isSameAs(vts);
 			assertThat(VirtualTimeScheduler.get()).isSameAs(vts);
 		}
 		finally {

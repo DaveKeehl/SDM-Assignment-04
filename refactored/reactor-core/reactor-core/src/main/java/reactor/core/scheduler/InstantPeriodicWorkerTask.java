@@ -39,15 +39,15 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 	static final Future<Void> CANCELLED = new FutureTask<>(() -> null);
 
 	volatile Future<?>                                                          rest;
-	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Future> REST =
+	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Future> REST_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(InstantPeriodicWorkerTask.class, Future.class, "rest");
 
 	volatile Future<?>                                                          first;
-	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Future> FIRST =
+	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Future> FIRST_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(InstantPeriodicWorkerTask.class, Future.class, "first");
 
 	volatile Composite                                                             parent;
-	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Composite> PARENT =
+	static final AtomicReferenceFieldUpdater<InstantPeriodicWorkerTask, Composite> PARENT_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(InstantPeriodicWorkerTask.class, Composite.class, "parent");
 
 	Thread thread;
@@ -60,7 +60,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 	InstantPeriodicWorkerTask(Runnable task, ExecutorService executor, Composite parent) {
 		this.task = task;
 		this.executor = executor;
-		PARENT.lazySet(this, parent);
+		PARENT_UPDATER.lazySet(this, parent);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 				f.cancel(thread != Thread.currentThread());
 				return;
 			}
-			if (REST.compareAndSet(this, o, f)) {
+			if (REST_UPDATER.compareAndSet(this, o, f)) {
 				return;
 			}
 		}
@@ -102,7 +102,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 				f.cancel(thread != Thread.currentThread());
 				return;
 			}
-			if (FIRST.compareAndSet(this, o, f)) {
+			if (FIRST_UPDATER.compareAndSet(this, o, f)) {
 				return;
 			}
 		}
@@ -120,7 +120,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 			if (f == CANCELLED) {
 				break;
 			}
-			if (FIRST.compareAndSet(this, f, CANCELLED)) {
+			if (FIRST_UPDATER.compareAndSet(this, f, CANCELLED)) {
 				if (f != null) {
 					f.cancel(thread != Thread.currentThread());
 				}
@@ -133,7 +133,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 			if (f == CANCELLED) {
 				break;
 			}
-			if (REST.compareAndSet(this, f, CANCELLED)) {
+			if (REST_UPDATER.compareAndSet(this, f, CANCELLED)) {
 				if (f != null) {
 					f.cancel(thread != Thread.currentThread());
 				}
@@ -146,7 +146,7 @@ final class InstantPeriodicWorkerTask implements Disposable, Callable<Void> {
 			if (o == DISPOSED || o == null) {
 				return;
 			}
-			if (PARENT.compareAndSet(this, o, DISPOSED)) {
+			if (PARENT_UPDATER.compareAndSet(this, o, DISPOSED)) {
 				o.remove(this);
 				return;
 			}

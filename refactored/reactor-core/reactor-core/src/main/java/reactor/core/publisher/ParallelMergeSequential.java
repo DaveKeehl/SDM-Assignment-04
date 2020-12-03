@@ -81,25 +81,25 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		final CoreSubscriber<? super T> actual;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MergeSequentialMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<MergeSequentialMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MergeSequentialMain.class, Throwable.class, "error");
 
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeSequentialMain> WIP =
+		static final AtomicIntegerFieldUpdater<MergeSequentialMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSequentialMain.class, "wip");
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<MergeSequentialMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<MergeSequentialMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(MergeSequentialMain.class, "requested");
 		volatile boolean cancelled;
 
 		volatile int done;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeSequentialMain> DONE =
+		static final AtomicIntegerFieldUpdater<MergeSequentialMain> DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSequentialMain.class, "done");
 		volatile Throwable error;
 
@@ -116,7 +116,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 			}
 
 			this.subscribers = a;
-			DONE.lazySet(this, n);
+			DONE_UPDATER.lazySet(this, n);
 		}
 
 		@Override
@@ -144,7 +144,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -156,7 +156,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 				
 				cancelAll();
 				
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					cleanup();
 				}
 			}
@@ -175,11 +175,11 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		}
 		
 		void onNext(MergeSequentialInner<T> inner, T value) {
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				if (requested != 0) {
 					actual.onNext(value);
 					if (requested != Long.MAX_VALUE) {
-						LONG_REQUESTED.decrementAndGet(this);
+						REQUESTED_UPDATER.decrementAndGet(this);
 					}
 					inner.requestOne();
 				} else {
@@ -191,7 +191,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 						return;
 					}
 				}
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return;
 				}
 			} else {
@@ -203,7 +203,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 					return;
 				}
 
-				if (WIP.getAndIncrement(this) != 0) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return;
 				}
 			}
@@ -212,7 +212,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		}
 		
 		void onError(Throwable ex) {
-			if(ERROR.compareAndSet(this, null, ex)){
+			if(ERROR_UPDATER.compareAndSet(this, null, ex)){
 				cancelAll();
 				drain();
 			}
@@ -222,14 +222,14 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		}
 		
 		void onComplete() {
-			if(DONE.decrementAndGet(this) < 0){
+			if(DONE_UPDATER.decrementAndGet(this) < 0){
 				return;
 			}
 			drain();
 		}
 		
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 			
@@ -328,12 +328,12 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 				}
 				
 				if (e != 0 && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 				
 				int w = wip;
 				if (w == missed) {
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -356,7 +356,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MergeSequentialInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<MergeSequentialInner, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(MergeSequentialInner.class, Subscription.class, "s");
 		
 		volatile Queue<T> queue;
@@ -390,7 +390,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Operators.unboundedOrPrefetch(prefetch));
 			}
 		}
@@ -421,7 +421,7 @@ final class ParallelMergeSequential<T> extends Flux<T> implements Scannable {
 		}
 
 		public void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 		
 		Queue<T> getQueue(Supplier<Queue<T>> queueSupplier) {

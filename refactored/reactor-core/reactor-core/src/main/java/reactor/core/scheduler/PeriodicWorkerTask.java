@@ -26,12 +26,12 @@ final class PeriodicWorkerTask extends PeriodicTask {
 	static final Composite DISPOSED = new EmptyCompositeDisposable();
 
 	volatile Composite parent;
-	static final AtomicReferenceFieldUpdater<PeriodicWorkerTask, Composite> PARENT =
+	static final AtomicReferenceFieldUpdater<PeriodicWorkerTask, Composite> PARENT_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(PeriodicWorkerTask.class, Composite.class, "parent");
 
 	PeriodicWorkerTask(Runnable task, Composite parent) {
 		super(task);
-		PARENT.lazySet(this, parent);
+		PARENT_UPDATER.lazySet(this, parent);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ final class PeriodicWorkerTask extends PeriodicTask {
 			if (o == DISPOSED || o == null) {
 				return;
 			}
-			if (PARENT.compareAndSet(this, o, DISPOSED)) {
+			if (PARENT_UPDATER.compareAndSet(this, o, DISPOSED)) {
 				o.remove(this);
 				return;
 			}

@@ -117,7 +117,7 @@ class MonoRetryWhenTest {
 				    	elapsedList.add(Schedulers.parallel().now(TimeUnit.MILLISECONDS));
 				    })
 				    .retryWhen(Retry.backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 						    .jitter(0.1)
 				    )
 		)
@@ -154,7 +154,7 @@ class MonoRetryWhenTest {
 				    	elapsedList.add(Schedulers.parallel().now(TimeUnit.MILLISECONDS));
 				    })
 				    .retryWhen(Retry.backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 				    )
 		)
 		            .thenAwait(Duration.ofMinutes(1)) //ensure whatever the jittered delay that we have time to fit 4 retries
@@ -225,7 +225,7 @@ class MonoRetryWhenTest {
 				    	elapsedList.add(Schedulers.parallel().now(TimeUnit.MILLISECONDS));
 				    })
 				    .retryWhen(Retry.backoff(4, Duration.ofMillis(100))
-				                    .maxBackoff(Duration.ofMillis(220))
+				                    .setMaxBackoff(Duration.ofMillis(220))
 				                    .jitter(0.9)
 				    )
 		)
@@ -268,7 +268,7 @@ class MonoRetryWhenTest {
 						    elapsedList.add(Schedulers.parallel().now(TimeUnit.MILLISECONDS));
 					    })
 					    .retryWhen(Retry.backoff(1, Duration.ofMillis(100))
-							    .maxBackoff(Duration.ofMillis(2000))
+							    .setMaxBackoff(Duration.ofMillis(2000))
 							    .jitter(0.9)
 					    )
 			)
@@ -300,7 +300,7 @@ class MonoRetryWhenTest {
 					    elapsedList.add(Schedulers.parallel().now(TimeUnit.MILLISECONDS));
 				    })
 				    .retryWhen(Retry.backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 						    .jitter(0d)
 				    )
 		)
@@ -329,7 +329,7 @@ class MonoRetryWhenTest {
 				Mono.error(exception)
 				    .doOnError(t -> errorCount.incrementAndGet())
 				    .retryWhen(Retry.backoff(4, Duration.ofMillis(10))
-						    .maxBackoff(Duration.ofMillis(100))
+						    .setMaxBackoff(Duration.ofMillis(100))
 						    .jitter(0)
 						    .scheduler(backoffScheduler)
 				    )
@@ -358,7 +358,7 @@ class MonoRetryWhenTest {
 			StepVerifier.create(Mono.error(exception)
 			                        .doOnError(e -> threadNames.add(Thread.currentThread().getName().replaceFirst("-\\d+", "")))
 			                        .retryWhen(Retry.backoff(2, Duration.ofMillis(10))
-					                        .maxBackoff(Duration.ofMillis(100))
+					                        .setMaxBackoff(Duration.ofMillis(100))
 					                        .jitter(0.5d)
 					                        .scheduler(backoffScheduler)
 			                        )

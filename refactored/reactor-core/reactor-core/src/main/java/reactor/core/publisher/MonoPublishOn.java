@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.Disposable;
-import reactor.core.Scannable;
 import reactor.core.scheduler.Scheduler;
 import reactor.util.annotation.Nullable;
 
@@ -66,7 +65,7 @@ final class MonoPublishOn<T> extends InternalMonoOperator<T, T> {
 		volatile Disposable future;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<PublishOnSubscriber, Disposable>
-				FUTURE =
+				FUTURE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(PublishOnSubscriber.class,
 						Disposable.class,
 						"future");
@@ -75,7 +74,7 @@ final class MonoPublishOn<T> extends InternalMonoOperator<T, T> {
 		volatile T         value;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<PublishOnSubscriber, Object>
-				VALUE =
+				VALUE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(PublishOnSubscriber.class,
 						Object.class,
 						"value");
@@ -160,7 +159,7 @@ final class MonoPublishOn<T> extends InternalMonoOperator<T, T> {
 		public void cancel() {
 			Disposable c = future;
 			if (c != OperatorDisposables.DISPOSED) {
-				c = FUTURE.getAndSet(this, OperatorDisposables.DISPOSED);
+				c = FUTURE_UPDATER.getAndSet(this, OperatorDisposables.DISPOSED);
 				if (c != null && !OperatorDisposables.isDisposed(c)) {
 					c.dispose();
 				}
@@ -175,7 +174,7 @@ final class MonoPublishOn<T> extends InternalMonoOperator<T, T> {
 			if (OperatorDisposables.isDisposed(future)) {
 				return;
 			}
-			T v = (T)VALUE.getAndSet(this, null);
+			T v = (T) VALUE_UPDATER.getAndSet(this, null);
 
 			if (v != null) {
 				actual.onNext(v);

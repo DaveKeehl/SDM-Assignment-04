@@ -59,7 +59,7 @@ final class FluxMaterialize<T> extends InternalFluxOperator<T, Signal<T>> {
 	    
 	    volatile long requested;
 	    @SuppressWarnings("rawtypes")
-        static final AtomicLongFieldUpdater<MaterializeSubscriber> LONG_REQUESTED =
+        static final AtomicLongFieldUpdater<MaterializeSubscriber> REQUESTED_UPDATER =
 	            AtomicLongFieldUpdater.newUpdater(MaterializeSubscriber.class, "requested");
 	    
 	    long produced;
@@ -123,9 +123,9 @@ final class FluxMaterialize<T> extends InternalFluxOperator<T, Signal<T>> {
 			terminalSignal = Signal.error(ev, this.cachedContext);
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(LONG_REQUESTED, this, -p);
+	            Operators.addCap(REQUESTED_UPDATER, this, -p);
             }
-            DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+            DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
 		}
 
 		@Override
@@ -136,15 +136,15 @@ final class FluxMaterialize<T> extends InternalFluxOperator<T, Signal<T>> {
 			terminalSignal = Signal.complete(this.cachedContext);
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(LONG_REQUESTED, this, -p);
+	            Operators.addCap(REQUESTED_UPDATER, this, -p);
             }
-            DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+            DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
 		}
 		
 		@Override
 		public void request(long n) {
 		    if (Operators.validate(n)) {
-		        if (!DrainUtils.postCompleteRequest(n, actual, this, LONG_REQUESTED, this, this)) {
+		        if (!DrainUtils.postCompleteRequest(n, actual, this, REQUESTED_UPDATER, this, this)) {
 		            s.request(n);
 		        }
 		    }

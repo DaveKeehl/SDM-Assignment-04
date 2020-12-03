@@ -665,7 +665,7 @@ public class FluxRetryWhenTest {
 				Flux.concat(Flux.range(0, 2), Flux.error(exception))
 				    .retryWhen(Retry
 						    .backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 						    .jitter(0.1)
 				    )
 				    .elapsed()
@@ -702,7 +702,7 @@ public class FluxRetryWhenTest {
 				Flux.concat(Flux.range(0, 2), Flux.error(exception))
 				    .retryWhen(Retry
 						    .backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 				    )
 				    .elapsed()
 				    .doOnNext(elapsed -> { if (elapsed.getT2() == 0) elapsedList.add(elapsed.getT1());} )
@@ -771,7 +771,7 @@ public class FluxRetryWhenTest {
 				Flux.concat(Flux.range(0, 2), Flux.error(exception))
 				    .retryWhen(Retry
 						    .backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(220))
+						    .setMaxBackoff(Duration.ofMillis(220))
 						    .jitter(0.9)
 				    )
 				    .elapsed()
@@ -819,7 +819,7 @@ public class FluxRetryWhenTest {
 					Flux.concat(Flux.range(0, 2), Flux.error(exception))
 					    .retryWhen(Retry
 							    .backoff(1, Duration.ofMillis(100))
-							    .maxBackoff(Duration.ofMillis(2000))
+							    .setMaxBackoff(Duration.ofMillis(2000))
 							    .jitter(0.9)
 					    )
 					    .elapsed()
@@ -854,7 +854,7 @@ public class FluxRetryWhenTest {
 				Flux.concat(Flux.range(0, 2), Flux.error(exception))
 				    .retryWhen(Retry
 						    .backoff(4, Duration.ofMillis(100))
-						    .maxBackoff(Duration.ofMillis(2000))
+						    .setMaxBackoff(Duration.ofMillis(2000))
 						    .jitter(0)
 				    )
 				    .elapsed()
@@ -881,7 +881,7 @@ public class FluxRetryWhenTest {
 			RetryBackoffSpec retryBuilder = Retry
 					//with pure exponential, 80 retries would overflow Duration's capacity
 					.backoff(80, INIT)
-					.maxBackoff(EXPLICIT_MAX)
+					.setMaxBackoff(EXPLICIT_MAX)
 					.jitter(0d);
 
 			return Flux.error(new IllegalStateException("boom"))
@@ -906,7 +906,7 @@ public class FluxRetryWhenTest {
 				Flux.concat(Flux.range(0, 2), Flux.error(exception))
 				    .retryWhen(Retry
 						    .backoff(4, Duration.ofHours(1))
-						    .maxBackoff(Duration.ofHours(1))
+						    .setMaxBackoff(Duration.ofHours(1))
 						    .jitter(0)
 						    .scheduler(backoffScheduler)
 				    )
@@ -934,7 +934,7 @@ public class FluxRetryWhenTest {
 			                        .doOnError(e -> threadNames.add(Thread.currentThread().getName().replaceAll("-\\d+", "")))
 			                        .retryWhen(Retry
 					                        .backoff(2, Duration.ofMillis(10))
-					                        .maxBackoff(Duration.ofMillis(100))
+					                        .setMaxBackoff(Duration.ofMillis(100))
 					                        .jitter(0.5d)
 					                        .scheduler(backoffScheduler)
 			                        )
@@ -960,7 +960,7 @@ public class FluxRetryWhenTest {
 
 		Retry retryFunction =
 				Retry.backoff(2, Duration.ZERO)
-				     .maxBackoff(Duration.ofMillis(100))
+				     .setMaxBackoff(Duration.ofMillis(100))
 				     .jitter(0d)
 				     .transientErrors(false);
 
@@ -977,7 +977,7 @@ public class FluxRetryWhenTest {
 
 		Retry retryFunction =
 				Retry.backoff(2, Duration.ZERO)
-				     .maxBackoff(Duration.ofMillis(100))
+				     .setMaxBackoff(Duration.ofMillis(100))
 				     .jitter(0d)
 				     .transientErrors(true);
 
@@ -1024,7 +1024,7 @@ public class FluxRetryWhenTest {
 		StepVerifier.withVirtualTime(() ->
 				source.retryWhen(Retry
 						.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
-						.maxBackoff(Duration.ofMinutes(1))
+						.setMaxBackoff(Duration.ofMinutes(1))
 						.jitter(0d)
 						.transientErrors(true)
 				)

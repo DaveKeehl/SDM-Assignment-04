@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
-import reactor.core.CorePublisher;
 import reactor.core.CoreSubscriber;
 import reactor.core.Exceptions;
 import reactor.core.Scannable;
@@ -85,24 +84,24 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		volatile T                  value;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Object> VALUE =
+		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Object> VALUE_UPDATER =
 		  AtomicReferenceFieldUpdater.newUpdater(SampleMainSubscriber.class, Object.class, "value");
 
 		volatile Subscription main;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Subscription> MAIN =
+		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Subscription> MAIN_UPDATER =
 		  AtomicReferenceFieldUpdater.newUpdater(SampleMainSubscriber.class, Subscription.class, "main");
 		volatile Subscription other;
 
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Subscription> OTHER =
+		static final AtomicReferenceFieldUpdater<SampleMainSubscriber, Subscription> OTHER_UPDATER=
 		  AtomicReferenceFieldUpdater.newUpdater(SampleMainSubscriber.class, Subscription.class, "other");
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SampleMainSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<SampleMainSubscriber> REQUESTED_UPDATER =
 		  AtomicLongFieldUpdater.newUpdater(SampleMainSubscriber.class, "requested");
 
 		SampleMainSubscriber(CoreSubscriber<? super T> actual) {
@@ -134,7 +133,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (!MAIN.compareAndSet(this, null, s)) {
+			if (!MAIN_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (main != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -147,7 +146,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		void cancelMain() {
 			Subscription s = main;
 			if (s != Operators.cancelledSubscription()) {
-				s = MAIN.getAndSet(this, Operators.cancelledSubscription());
+				s = MAIN_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -157,7 +156,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		void cancelOther() {
 			Subscription s = other;
 			if (s != Operators.cancelledSubscription()) {
-				s = OTHER.getAndSet(this, Operators.cancelledSubscription());
+				s = OTHER_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -165,7 +164,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void setOther(Subscription s) {
-			if (!OTHER.compareAndSet(this, null, s)) {
+			if (!OTHER_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (other != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -178,7 +177,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -190,7 +189,7 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onNext(T t) {
-			Object old = VALUE.getAndSet(this, t);
+			Object old = VALUE_UPDATER.getAndSet(this, t);
 			if (old != null) {
 				Operators.onDiscard(old, ctx);
 			}
@@ -221,11 +220,11 @@ final class FluxSample<T, U> extends InternalFluxOperator<T, T> {
 		@SuppressWarnings("unchecked")
 		@Nullable
 		T getAndNullValue() {
-			return (T) VALUE.getAndSet(this, null);
+			return (T) VALUE_UPDATER.getAndSet(this, null);
 		}
 
 		void decrement() {
-			LONG_REQUESTED.decrementAndGet(this);
+			REQUESTED_UPDATER.decrementAndGet(this);
 		}
 	}
 

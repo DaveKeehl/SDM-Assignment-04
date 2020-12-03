@@ -119,7 +119,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile int cancelled;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowExactSubscriber> CANCELLED =
+		static final AtomicIntegerFieldUpdater<WindowExactSubscriber> CANCELED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowExactSubscriber.class, "cancelled");
 
 		volatile int windowCount;
@@ -226,7 +226,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELED_UPDATER.compareAndSet(this, 0, 1)) {
 				dispose();
 			}
 		}
@@ -280,7 +280,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile int cancelled;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowSkipSubscriber> CANCELLED =
+		static final AtomicIntegerFieldUpdater<WindowSkipSubscriber> CANCELED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowSkipSubscriber.class, "cancelled");
 
 		volatile int windowCount;
@@ -416,7 +416,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELED_UPDATER.compareAndSet(this, 0, 1)) {
 				dispose();
 			}
 		}
@@ -471,7 +471,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile int cancelled;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowOverlapSubscriber> CANCELLED =
+		static final AtomicIntegerFieldUpdater<WindowOverlapSubscriber> CANCELED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowOverlapSubscriber.class,
 						"cancelled");
 
@@ -489,13 +489,13 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowOverlapSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<WindowOverlapSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(WindowOverlapSubscriber.class,
 						"requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowOverlapSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<WindowOverlapSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowOverlapSubscriber.class, "wip");
 
 		int index;
@@ -610,7 +610,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -650,10 +650,10 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -687,7 +687,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 		public void request(long n) {
 			if (Operators.validate(n)) {
 
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 
 				if (firstRequest == 0 && FIRST_REQUEST.compareAndSet(this, 0, 1)) {
 					long u = Operators.multiplyCap(skip, n - 1);
@@ -705,7 +705,7 @@ final class FluxWindow<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELED_UPDATER.compareAndSet(this, 0, 1)) {
 				dispose();
 			}
 		}

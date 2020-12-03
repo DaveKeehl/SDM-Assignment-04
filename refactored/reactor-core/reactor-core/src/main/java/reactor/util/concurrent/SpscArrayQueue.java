@@ -177,9 +177,6 @@ class SpscArrayQueueCold<T> extends AtomicReferenceArray<T> {
 class SpscArrayQueueP1<T> extends SpscArrayQueueCold<T> {
 	/** */
 	private static final long serialVersionUID = -4461305682174876914L;
-	
-	long p00, p01, p02, p03, p04, p05, p06, p07;
-	long p08, p09, p0A, p0B, p0C, p0D, p0E;
 
 	SpscArrayQueueP1(int length) {
 		super(length);
@@ -205,9 +202,6 @@ class SpscArrayQueueProducer<T> extends SpscArrayQueueP1<T> {
 class SpscArrayQueueP2<T> extends SpscArrayQueueProducer<T> {
 	/** */
 	private static final long serialVersionUID = -5400235061461013116L;
-	
-	long p00, p01, p02, p03, p04, p05, p06, p07;
-	long p08, p09, p0A, p0B, p0C, p0D, p0E;
 
 	SpscArrayQueueP2(int length) {
 		super(length);
@@ -233,9 +227,6 @@ class SpscArrayQueueConsumer<T> extends SpscArrayQueueP2<T> {
 class SpscArrayQueueP3<T> extends SpscArrayQueueConsumer<T> {
 	/** */
 	private static final long serialVersionUID = -2684922090021364171L;
-	
-	long p00, p01, p02, p03, p04, p05, p06, p07;
-	long p08, p09, p0A, p0B, p0C, p0D, p0E;
 
 	SpscArrayQueueP3(int length) {
 		super(length);

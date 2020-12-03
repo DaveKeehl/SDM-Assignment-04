@@ -109,13 +109,13 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 		Throwable error;
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<BackpressureBufferTimeoutSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<BackpressureBufferTimeoutSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BackpressureBufferTimeoutSubscriber.class,
 						"wip");
 
 		volatile long requested;
 		static final AtomicLongFieldUpdater<BackpressureBufferTimeoutSubscriber>
-				LONG_REQUESTED = AtomicLongFieldUpdater.newUpdater(
+				REQUESTED_UPDATER = AtomicLongFieldUpdater.newUpdater(
 				BackpressureBufferTimeoutSubscriber.class,
 				"requested");
 
@@ -180,7 +180,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -191,7 +191,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 			s.cancel();
 			worker.dispose();
 
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				clearQueue();
 			}
 		}
@@ -318,7 +318,7 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 
 		@SuppressWarnings("unchecked")
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -397,10 +397,10 @@ final class FluxOnBackpressureBufferTimeout<O> extends InternalFluxOperator<O, O
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}

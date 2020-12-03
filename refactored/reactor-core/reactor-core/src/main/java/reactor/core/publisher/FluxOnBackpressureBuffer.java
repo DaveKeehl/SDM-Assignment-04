@@ -92,19 +92,19 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BackpressureBufferSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<BackpressureBufferSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BackpressureBufferSubscriber.class,
 						"wip");
 
 		volatile int discardGuard;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BackpressureBufferSubscriber> DISCARD_GUARD =
+		static final AtomicIntegerFieldUpdater<BackpressureBufferSubscriber> DISCARD_GUARD_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BackpressureBufferSubscriber.class,
 						"discardGuard");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BackpressureBufferSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BackpressureBufferSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BackpressureBufferSubscriber.class,
 						"requested");
 
@@ -212,7 +212,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 		}
 
 		void drain(@Nullable T dataSignal) {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				if (dataSignal != null && cancelled) {
 					Operators.onDiscard(dataSignal, actual.currentContext());
 				}
@@ -234,7 +234,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -277,10 +277,10 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -316,7 +316,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -326,7 +326,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain(null);
 			}
 		}
@@ -338,10 +338,10 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 
 				s.cancel();
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					if (!enabledFusion) {
 						// discard MUST be happening only and only if there is no racing on elements consumption
-						// which is guaranteed by the WIP guard here in case non-fused output
+						// which is guaranteed by the WIP_UPDATER guard here in case non-fused output
 						Operators.onDiscardQueueWithClear(queue, ctx, null);
 					}
 				}
@@ -369,7 +369,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 			// use guard on the queue instance as the best way to ensure there is no racing on draining
 			// the call to this method must be done only during the ASYNC fusion so all the callers will be waiting
 			// this should not be performance costly with the assumption the cancel is rare operation
-			if (DISCARD_GUARD.getAndIncrement(this) != 0) {
+			if (DISCARD_GUARD_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -380,7 +380,7 @@ final class FluxOnBackpressureBuffer<O> extends InternalFluxOperator<O, O> imple
 
 				int dg = discardGuard;
 				if (missed == dg) {
-					missed = DISCARD_GUARD.addAndGet(this, -missed);
+					missed = DISCARD_GUARD_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}

@@ -350,7 +350,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ZipSingleCoordinator> WIP =
+		static final AtomicIntegerFieldUpdater<ZipSingleCoordinator> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ZipSingleCoordinator.class, "wip");
 
 		@SuppressWarnings("unchecked")
@@ -371,7 +371,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		}
 
 		void subscribe(int n, int sc, Publisher<? extends T>[] sources) {
-			WIP.lazySet(this, n - sc);
+			WIP_UPDATER.lazySet(this, n - sc);
 			ZipSingleSubscriber<T>[] a = subscribers;
 			for (int i = 0; i < n; i++) {
 				if (wip <= 0 || isCancelled()) {
@@ -392,7 +392,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		void next(T value, int index) {
 			Object[] a = scalars;
 			a[index] = value;
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				R r;
 
 				try {
@@ -410,7 +410,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		}
 
 		void error(Throwable e, int index) {
-			if (WIP.getAndSet(this, 0) > 0) {
+			if (WIP_UPDATER.getAndSet(this, 0) > 0) {
 				cancelAll();
 				actual.onError(e);
 			}
@@ -420,7 +420,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		}
 
 		void complete(int index) {
-			if (WIP.getAndSet(this, 0) > 0) {
+			if (WIP_UPDATER.getAndSet(this, 0) > 0) {
 				cancelAll();
 				actual.onComplete();
 			}
@@ -465,7 +465,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ZipSingleSubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<ZipSingleSubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(ZipSingleSubscriber.class,
 						Subscription.class,
 						"s");
@@ -497,7 +497,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				this.s = s;
 				s.request(Long.MAX_VALUE);
 			}
@@ -510,7 +510,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				return;
 			}
 			done = true;
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 			parent.next(t, index);
 		}
 
@@ -535,7 +535,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		@Override
 		public void dispose() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 
@@ -550,17 +550,17 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ZipCoordinator> WIP =
+		static final AtomicIntegerFieldUpdater<ZipCoordinator> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ZipCoordinator.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ZipCoordinator> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ZipCoordinator> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ZipCoordinator.class, "requested");
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ZipCoordinator, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<ZipCoordinator, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ZipCoordinator.class,
 						Throwable.class,
 						"error");
@@ -603,7 +603,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -638,8 +638,8 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 			return InnerProducer.super.scanUnsafe(key);
 		}
 
-		void error(Throwable e, int index) {
-			if (Exceptions.addThrowable(ERROR, this, e)) {
+		void addException(Throwable e, int index) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 				drain();
 			}
 			else {
@@ -655,7 +655,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		void drain() {
 
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -680,7 +680,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					if (error != null) {
 						cancelAll();
 
-						Throwable ex = Exceptions.terminate(ERROR, this);
+						Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 						a.onError(ex);
 
@@ -718,9 +718,9 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 								cancelAll();
 
-								Exceptions.addThrowable(ERROR, this, ex);
+								Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 								//noinspection ConstantConditions
-								ex = Exceptions.terminate(ERROR, this);
+								ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 								a.onError(ex);
 
@@ -744,9 +744,9 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 								actual.currentContext());
 						cancelAll();
 
-						Exceptions.addThrowable(ERROR, this, ex);
+						Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 						//noinspection ConstantConditions
-						ex = Exceptions.terminate(ERROR, this);
+						ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 						a.onError(ex);
 
@@ -768,7 +768,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					if (error != null) {
 						cancelAll();
 
-						Throwable ex = Exceptions.terminate(ERROR, this);
+						Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 						a.onError(ex);
 
@@ -800,9 +800,9 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 								cancelAll();
 
-								Exceptions.addThrowable(ERROR, this, ex);
+								Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 								//noinspection ConstantConditions
-								ex = Exceptions.terminate(ERROR, this);
+								ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 								a.onError(ex);
 
@@ -821,11 +821,11 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 					}
 
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.addAndGet(this, -e);
+						REQUESTED_UPDATER.addAndGet(this, -e);
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -850,7 +850,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ZipInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<ZipInner, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(ZipInner.class,
 						Subscription.class,
 						"s");
@@ -875,7 +875,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				if (s instanceof Fuseable.QueueSubscription) {
 					Fuseable.QueueSubscription<T> f = (Fuseable.QueueSubscription<T>) s;
 
@@ -927,7 +927,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 				return;
 			}
 			done = true;
-			parent.error(t, index);
+			parent.addException(t, index);
 		}
 
 		@Override
@@ -951,7 +951,7 @@ final class FluxZip<T, R> extends Flux<R> implements SourceProducer<R> {
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 
 		void request(long n) {

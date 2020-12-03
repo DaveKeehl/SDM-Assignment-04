@@ -82,7 +82,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			/**
 			 * Requested from {@link #upstream}, waiting for {@link #onNext(Object)}
 			 */
-			LONG_REQUESTED,
+			REQUESTED_UPDATER,
 			/**
 			 * {@link #onNext(Object)} received, listening on {@link #inner}
 			 */
@@ -101,7 +101,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 		volatile State state;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FluxConcatMapNoPrefetchSubscriber, State> STATE = AtomicReferenceFieldUpdater.newUpdater(
+		static final AtomicReferenceFieldUpdater<FluxConcatMapNoPrefetchSubscriber, State> STATE_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				FluxConcatMapNoPrefetchSubscriber.class,
 				State.class,
 				"state"
@@ -110,7 +110,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FluxConcatMapNoPrefetchSubscriber, Throwable> ERROR = AtomicReferenceFieldUpdater.newUpdater(
+		static final AtomicReferenceFieldUpdater<FluxConcatMapNoPrefetchSubscriber, Throwable> ERROR_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				FluxConcatMapNoPrefetchSubscriber.class,
 				Throwable.class,
 				"error"
@@ -135,7 +135,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			this.mapper = mapper;
 			this.errorMode = errorMode;
 			this.inner = new ConcatMapInner<>(this);
-			STATE.lazySet(this, State.INITIAL);
+			STATE_UPDATER.lazySet(this, State.INITIAL);
 		}
 
 		@Override
@@ -166,7 +166,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onNext(T t) {
-			if (!STATE.compareAndSet(this, State.LONG_REQUESTED, State.ACTIVE)) {
+			if (!STATE_UPDATER.compareAndSet(this, State.REQUESTED_UPDATER, State.ACTIVE)) {
 				switch (state) {
 					case CANCELLED:
 						Operators.onDiscard(t, currentContext());
@@ -226,8 +226,8 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			for (State previousState = this.state; ; previousState = this.state) {
 				switch (previousState) {
 					case INITIAL:
-					case LONG_REQUESTED:
-						if (!STATE.compareAndSet(this, previousState, State.TERMINATED)) {
+					case REQUESTED_UPDATER:
+						if (!STATE_UPDATER.compareAndSet(this, previousState, State.TERMINATED)) {
 							continue;
 						}
 
@@ -239,7 +239,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 						actual.onComplete();
 						return;
 					case ACTIVE:
-						if (!STATE.compareAndSet(this, previousState, State.LAST_ACTIVE)) {
+						if (!STATE_UPDATER.compareAndSet(this, previousState, State.LAST_ACTIVE)) {
 							continue;
 						}
 						return;
@@ -267,13 +267,13 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 			for (State previousState = this.state; ; previousState = this.state) {
 				switch (previousState) {
 					case ACTIVE:
-						if (!STATE.compareAndSet(this, previousState, State.LONG_REQUESTED)) {
+						if (!STATE_UPDATER.compareAndSet(this, previousState, State.REQUESTED_UPDATER)) {
 							continue;
 						}
 						upstream.request(1);
 						return;
 					case LAST_ACTIVE:
-						if (!STATE.compareAndSet(this, previousState, State.TERMINATED)) {
+						if (!STATE_UPDATER.compareAndSet(this, previousState, State.TERMINATED)) {
 							continue;
 						}
 
@@ -303,7 +303,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 				return false;
 			}
 
-			if (!ERROR.compareAndSet(this, null, e)) {
+			if (!ERROR_UPDATER.compareAndSet(this, null, e)) {
 				Operators.onErrorDropped(e, ctx);
 			}
 
@@ -317,7 +317,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 					case TERMINATED:
 						return true;
 					default:
-						if (!STATE.compareAndSet(this, previousState, State.TERMINATED)) {
+						if (!STATE_UPDATER.compareAndSet(this, previousState, State.TERMINATED)) {
 							continue;
 						}
 						subscriptionToCancel.cancel();
@@ -331,7 +331,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void request(long n) {
-			if (STATE.compareAndSet(this, State.INITIAL, State.LONG_REQUESTED)) {
+			if (STATE_UPDATER.compareAndSet(this, State.INITIAL, State.REQUESTED_UPDATER)) {
 				upstream.request(1);
 			}
 			inner.request(n);
@@ -339,7 +339,7 @@ final class FluxConcatMapNoPrefetch<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void cancel() {
-			switch (STATE.getAndSet(this, State.CANCELLED)) {
+			switch (STATE_UPDATER.getAndSet(this, State.CANCELLED)) {
 				case CANCELLED:
 					break;
 				case TERMINATED:

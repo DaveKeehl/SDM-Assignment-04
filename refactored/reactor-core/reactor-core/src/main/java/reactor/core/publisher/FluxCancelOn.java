@@ -56,7 +56,7 @@ final class FluxCancelOn<T> extends InternalFluxOperator<T, T> {
 		Subscription s;
 
 		volatile int cancelled = 0;
-		static final AtomicIntegerFieldUpdater<CancelSubscriber> CANCELLED =
+		static final AtomicIntegerFieldUpdater<CancelSubscriber> CANCELLED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(CancelSubscriber.class, "cancelled");
 
 		CancelSubscriber(CoreSubscriber<? super T> actual, Scheduler scheduler) {
@@ -115,7 +115,7 @@ final class FluxCancelOn<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELLED_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					scheduler.schedule(this);
 				}

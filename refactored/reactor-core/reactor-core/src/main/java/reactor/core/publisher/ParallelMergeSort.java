@@ -89,12 +89,12 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeSortMain> WIP =
+		static final AtomicIntegerFieldUpdater<MergeSortMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSortMain.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<MergeSortMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<MergeSortMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(MergeSortMain.class,
 						"requested");
 
@@ -102,14 +102,14 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 
 		volatile int remaining;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeSortMain> REMAINING =
+		static final AtomicIntegerFieldUpdater<MergeSortMain> REMAINING_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSortMain.class,
 						"remaining");
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeSortMain, Throwable>
-				ERROR =
+				ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MergeSortMain.class,
 						Throwable.class,
 						"error");
@@ -128,7 +128,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 			this.subscribers = s;
 			this.lists = new List[n];
 			this.indexes = new int[n];
-			REMAINING.lazySet(this, n);
+			REMAINING_UPDATER.lazySet(this, n);
 		}
 
 		@Override
@@ -156,7 +156,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				if (remaining == 0) {
 					drain();
 				}
@@ -168,7 +168,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 			if (!cancelled) {
 				cancelled = true;
 				cancelAll();
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					Arrays.fill(lists, null);
 				}
 			}
@@ -182,13 +182,13 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 
 		void innerNext(List<T> value, int index) {
 			lists[index] = value;
-			if (REMAINING.decrementAndGet(this) == 0) {
+			if (REMAINING_UPDATER.decrementAndGet(this) == 0) {
 				drain();
 			}
 		}
 
 		void innerError(Throwable ex) {
-			if(ERROR.compareAndSet(this, null, ex)){
+			if(ERROR_UPDATER.compareAndSet(this, null, ex)){
 				cancelAll();
 				drain();
 			}
@@ -198,7 +198,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -293,12 +293,12 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
 				int w = wip;
 				if (w == missed) {
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -319,7 +319,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeSortInner, Subscription>
-				S =
+				S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MergeSortInner.class,
 						Subscription.class,
 						"s");
@@ -348,7 +348,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -369,7 +369,7 @@ final class ParallelMergeSort<T> extends Flux<T> implements Scannable {
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

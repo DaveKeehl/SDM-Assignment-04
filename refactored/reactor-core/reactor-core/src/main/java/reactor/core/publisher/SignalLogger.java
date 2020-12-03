@@ -57,7 +57,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 
 	final CorePublisher<IN> source;
 
-	final Logger  log;
+	final Logger  logger;
 	final boolean fuseable;
 	final int     options;
 	final Level   level;
@@ -116,7 +116,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 			category += "." + id;
 		}
 
-		this.log = loggerSupplier.apply(category);
+		this.logger = loggerSupplier.apply(category);
 
 		this.level = level;
 		if (options == null || options.length == 0) {
@@ -177,19 +177,19 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 			line = line + " " + operatorLine;
 		}
 		if (level == Level.FINEST) {
-			log.trace(line, signalType, signalValue);
+			logger.trace(line, signalType, signalValue);
 		}
 		else if (level == Level.FINE) {
-			log.debug(line, signalType, signalValue);
+			logger.debug(line, signalType, signalValue);
 		}
 		else if (level == Level.INFO) {
-			log.info(line, signalType, signalValue);
+			logger.info(line, signalType, signalValue);
 		}
 		else if (level == Level.WARNING) {
-			log.warn(line, signalType, signalValue);
+			logger.warn(line, signalType, signalValue);
 		}
 		else if (level == Level.SEVERE) {
-			log.error(line, signalType, signalValue);
+			logger.error(line, signalType, signalValue);
 		}
 	}
 
@@ -198,13 +198,13 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	 * protection against loggers that detect objects like {@link Fuseable.QueueSubscription}
 	 * as {@link java.util.Collection} and attempt to use their iterator for logging.
 	 *
-	 * @see #log
+	 * @see #logger
 	 */
 	void safeLog(SignalType signalType, Object signalValue) {
 		if (signalValue instanceof Fuseable.QueueSubscription) {
 			signalValue = String.valueOf(signalValue);
-			if (log.isDebugEnabled()) {
-				log.debug("A Fuseable Subscription has been passed to the logging framework, this is generally a sign of a misplaced log(), " +
+			if (logger.isDebugEnabled()) {
+				logger.debug("A Fuseable Subscription has been passed to the logging framework, this is generally a sign of a misplaced log(), " +
 						"eg. 'window(2).log()' instead of 'window(2).flatMap(w -> w.log())'");
 			}
 		}
@@ -213,8 +213,8 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 		}
 		catch (UnsupportedOperationException uoe) {
 			log(signalType, String.valueOf(signalValue));
-			if (log.isDebugEnabled()) {
-				log.debug("UnsupportedOperationException has been raised by the logging framework, does your log() placement make sense? " +
+			if (logger.isDebugEnabled()) {
+				logger.debug("UnsupportedOperationException has been raised by the logging framework, does your log() placement make sense? " +
 						"eg. 'window(2).log()' instead of 'window(2).flatMap(w -> w.log())'", uoe);
 			}
 		}
@@ -248,7 +248,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Consumer<? super Subscription> onSubscribeCall() {
-		if ((options & ON_SUBSCRIBE) == ON_SUBSCRIBE && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & ON_SUBSCRIBE) == ON_SUBSCRIBE && (level != Level.INFO || logger.isInfoEnabled())) {
 			return s -> log(SignalType.ON_SUBSCRIBE, subscriptionAsString(s));
 		}
 		return null;
@@ -258,8 +258,8 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	public Consumer<? super Context> onCurrentContextCall() {
 		if ((options & CONTEXT_PARENT) == CONTEXT_PARENT && (
-				(level == Level.FINE && log.isDebugEnabled())
-						|| (level == Level.FINEST && log.isTraceEnabled()))) {
+				(level == Level.FINE && logger.isDebugEnabled())
+						|| (level == Level.FINEST && logger.isTraceEnabled()))) {
 			return c -> log(SignalType.CURRENT_CONTEXT, c);
 		}
 		return null;
@@ -268,7 +268,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Consumer<? super IN> onNextCall() {
-		if ((options & ON_NEXT) == ON_NEXT && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & ON_NEXT) == ON_NEXT && (level != Level.INFO || logger.isInfoEnabled())) {
 			return d -> safeLog(SignalType.ON_NEXT, d);
 		}
 		return null;
@@ -277,9 +277,9 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Consumer<? super Throwable> onErrorCall() {
-		boolean shouldLogAsDebug = level == Level.FINE && log.isDebugEnabled();
-		boolean shouldLogAsTrace = level == Level.FINEST && log.isTraceEnabled();
-		boolean shouldLogAsError = level != Level.FINE && level != Level.FINEST && log.isErrorEnabled();
+		boolean shouldLogAsDebug = level == Level.FINE && logger.isDebugEnabled();
+		boolean shouldLogAsTrace = level == Level.FINEST && logger.isTraceEnabled();
+		boolean shouldLogAsError = level != Level.FINE && level != Level.FINEST && logger.isErrorEnabled();
 		if ((options & ON_ERROR) == ON_ERROR && (shouldLogAsError || shouldLogAsDebug ||
 				shouldLogAsTrace)) {
 			String line = fuseable ? LOG_TEMPLATE_FUSEABLE : LOG_TEMPLATE;
@@ -289,20 +289,20 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 			String s = line;
 			if (shouldLogAsTrace) {
 				return e -> {
-					log.trace(s, SignalType.ON_ERROR, e, source);
-					log.trace("", e);
+					logger.trace(s, SignalType.ON_ERROR, e, source);
+					logger.trace("", e);
 				};
 			}
 			else if (shouldLogAsDebug) {
 				return e -> {
-					log.debug(s, SignalType.ON_ERROR, e, source);
-					log.debug("", e);
+					logger.debug(s, SignalType.ON_ERROR, e, source);
+					logger.debug("", e);
 				};
 			}
 			else { //shouldLogAsError
 				return e -> {
-					log.error(s, SignalType.ON_ERROR, e, source);
-					log.error("", e);
+					logger.error(s, SignalType.ON_ERROR, e, source);
+					logger.error("", e);
 				};
 			}
 		}
@@ -312,7 +312,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Runnable onCompleteCall() {
-		if ((options & ON_COMPLETE) == ON_COMPLETE && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & ON_COMPLETE) == ON_COMPLETE && (level != Level.INFO || logger.isInfoEnabled())) {
 			return () -> log(SignalType.ON_COMPLETE, "");
 		}
 		return null;
@@ -321,7 +321,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Runnable onAfterTerminateCall() {
-		if ((options & AFTER_TERMINATE) == AFTER_TERMINATE && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & AFTER_TERMINATE) == AFTER_TERMINATE && (level != Level.INFO || logger.isInfoEnabled())) {
 			return () -> log(SignalType.AFTER_TERMINATE, "");
 		}
 		return null;
@@ -330,7 +330,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public LongConsumer onRequestCall() {
-		if ((options & REQUEST) == REQUEST && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & REQUEST) == REQUEST && (level != Level.INFO || logger.isInfoEnabled())) {
 			return n -> log(SignalType.REQUEST,
 					Long.MAX_VALUE == n ? "unbounded" : n);
 		}
@@ -340,7 +340,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 	@Override
 	@Nullable
 	public Runnable onCancelCall() {
-		if ((options & CANCEL) == CANCEL && (level != Level.INFO || log.isInfoEnabled())) {
+		if ((options & CANCEL) == CANCEL && (level != Level.INFO || logger.isInfoEnabled())) {
 			return () -> log(SignalType.CANCEL, "");
 		}
 		return null;
@@ -348,7 +348,7 @@ final class SignalLogger<IN> implements SignalPeek<IN> {
 
 	@Override
 	public String toString() {
-		return "/loggers/" + log.getName() + "/" + id;
+		return "/loggers/" + logger.getName() + "/" + id;
 	}
 
 }

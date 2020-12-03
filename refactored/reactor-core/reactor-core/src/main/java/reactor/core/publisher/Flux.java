@@ -1766,7 +1766,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 * @return a never completing {@link Flux}
 	 */
 	public static <T> Flux<T> never() {
-		return FluxNever.instance();
+		return FluxNever.getInstance();
 	}
 
 	/**
@@ -6271,7 +6271,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 * elements if not enough demand is requested downstream, within a {@code maxSize}
 	 * limit. Over that limit, the overflow strategy is applied (see {@link BufferOverflowStrategy}).
 	 * <p>
-	 * Note that for the {@link BufferOverflowStrategy#ERROR ERROR} strategy, the overflow
+	 * Note that for the {@link BufferOverflowStrategy#ERROR_UPDATER ERROR_UPDATER} strategy, the overflow
 	 * error will be delayed after the current backlog is consumed.
 	 *
 	 * <p>
@@ -6305,7 +6305,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 * {@link BufferOverflowStrategy#DROP_LATEST DROP_LATEST} strategy).
 	 *
 	 * <p>
-	 * Note that for the {@link BufferOverflowStrategy#ERROR ERROR} strategy, the overflow
+	 * Note that for the {@link BufferOverflowStrategy#ERROR_UPDATER ERROR_UPDATER} strategy, the overflow
 	 * error will be delayed after the current backlog is consumed. The consumer is still
 	 * invoked immediately.
 	 *
@@ -9877,7 +9877,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 				return new MonoError<>(Exceptions.unwrap(e));
 			}
 			if (v == null) {
-				return MonoEmpty.instance();
+				return MonoEmpty.getInstance();
 			}
 			return new MonoJust<>(v);
 		}

@@ -43,7 +43,7 @@ final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
 	final Context                        initialContext;
 
 	volatile Subscription subscription;
-	static final AtomicReferenceFieldUpdater<LambdaMonoSubscriber, Subscription> S =
+	static final AtomicReferenceFieldUpdater<LambdaMonoSubscriber, Subscription> S_UPDATER=
 			AtomicReferenceFieldUpdater.newUpdater(LambdaMonoSubscriber.class,
 					Subscription.class,
 					"subscription");
@@ -126,7 +126,7 @@ final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
 
 	@Override
 	public final void onComplete() {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s == Operators.cancelledSubscription()) {
 			return;
 		}
@@ -142,7 +142,7 @@ final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
 
 	@Override
 	public final void onError(Throwable t) {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s == Operators.cancelledSubscription()) {
 			Operators.onErrorDropped(t, this.initialContext);
 			return;
@@ -161,7 +161,7 @@ final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
 
 	@Override
 	public final void onNext(T x) {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s == Operators.cancelledSubscription()) {
 			Operators.onNextDropped(x, this.initialContext);
 			return;
@@ -212,7 +212,7 @@ final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
 
 	@Override
 	public void dispose() {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s != null && s != Operators.cancelledSubscription()) {
 			s.cancel();
 		}

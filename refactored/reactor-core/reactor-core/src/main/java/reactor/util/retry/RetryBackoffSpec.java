@@ -39,13 +39,13 @@ import reactor.util.context.ContextView;
  * <p>
  * Retry delays are randomized with a user-provided {@link #jitter(double)} factor between {@code 0.d} (no jitter)
  * and {@code 1.0} (default is {@code 0.5}).
- * Even with the jitter, the effective backoff delay cannot be less than {@link #minBackoff(Duration)}
- * nor more than {@link #maxBackoff(Duration)}. The delays and subsequent attempts are executed on the
+ * Even with the jitter, the effective backoff delay cannot be less than {@link #setMinBackoff(Duration)}
+ * nor more than {@link #setMaxBackoff(Duration)}. The delays and subsequent attempts are executed on the
  * provided backoff {@link #scheduler(Scheduler)}. Alternatively, {@link Retry#fixedDelay(long, Duration)} provides
  * a strategy where the min and max backoffs are the same and jitters are deactivated.
  * <p>
  * Only errors that match the {@link #filter(Predicate)} are retried (by default all),
- * and the number of attempts can also limited with {@link #maxAttempts(long)}.
+ * and the number of attempts can also limited with {@link #setMaxAttempts(long)}.
  * When the maximum attempt of retries is reached, a runtime exception is propagated downstream which
  * can be pinpointed with {@link reactor.core.Exceptions#isRetryExhausted(Throwable)}. The cause of
  * the last attempt's failure is attached as said {@link reactor.core.Exceptions#retryExhausted(String, Throwable) retryExhausted}
@@ -53,7 +53,7 @@ import reactor.util.context.ContextView;
  * <p>
  * Additionally, to help dealing with bursts of transient errors in a long-lived Flux as if each burst
  * had its own backoff, one can choose to set {@link #transientErrors(boolean)} to {@code true}.
- * The comparison to {@link #maxAttempts(long)} will then be done with the number of subsequent attempts
+ * The comparison to {@link #setMaxAttempts(long)} will then be done with the number of subsequent attempts
  * that failed without an {@link org.reactivestreams.Subscriber#onNext(Object) onNext} in between.
  * <p>
  * The {@link RetryBackoffSpec} is copy-on-write and as such can be stored as a "template" and further configured
@@ -72,13 +72,13 @@ public final class RetryBackoffSpec extends Retry {
 
 	/**
 	 * The configured minimum backoff {@link Duration}.
-	 * @see #minBackoff(Duration)
+	 * @see #setMinBackoff(Duration)
 	 */
 	public final Duration  minBackoff;
 
 	/**
 	 * The configured maximum backoff {@link Duration}.
-	 * @see #maxBackoff(Duration)
+	 * @see #setMaxBackoff(Duration)
 	 */
 	public final Duration  maxBackoff;
 
@@ -97,7 +97,7 @@ public final class RetryBackoffSpec extends Retry {
 	/**
 	 * The configured maximum for retry attempts.
 	 *
-	 * @see #maxAttempts(long)
+	 * @see #setMaxAttempts(long)
 	 */
 	public final long maxAttempts;
 
@@ -182,7 +182,7 @@ public final class RetryBackoffSpec extends Retry {
 	 * @param maxAttempts the new retry attempt limit
 	 * @return a new copy of the {@link RetryBackoffSpec} which can either be further configured or used as {@link Retry}
 	 */
-	public RetryBackoffSpec maxAttempts(long maxAttempts) {
+	public RetryBackoffSpec setMaxAttempts(long maxAttempts) {
 		return new RetryBackoffSpec(
 				this.retryContext,
 				maxAttempts,
@@ -405,7 +405,7 @@ public final class RetryBackoffSpec extends Retry {
 	 * a retry (with one or more onNext signals) before another error occurs.
 	 * <p>
 	 * For a backoff based retry, the backoff is also computed based on the index within
-	 * the burst, meaning the next error after a recovery will be retried with a {@link #minBackoff(Duration)} delay.
+	 * the burst, meaning the next error after a recovery will be retried with a {@link #setMinBackoff(Duration)} delay.
 	 *
 	 * @param isTransientErrors {@code true} to activate transient mode
 	 * @return a new copy of the {@link RetryBackoffSpec} which can either be further configured or used as {@link Retry}
@@ -435,7 +435,7 @@ public final class RetryBackoffSpec extends Retry {
 	 * @param minBackoff the minimum backoff {@link Duration}
 	 * @return a new copy of the {@link RetryBackoffSpec} which can either be further configured or used as {@link Retry}
 	 */
-	public RetryBackoffSpec minBackoff(Duration minBackoff) {
+	public RetryBackoffSpec setMinBackoff(Duration minBackoff) {
 		return new RetryBackoffSpec(
 				this.retryContext,
 				this.maxAttempts,
@@ -460,7 +460,7 @@ public final class RetryBackoffSpec extends Retry {
 	 * @param maxBackoff the maximum backoff {@link Duration}
 	 * @return a new copy of the {@link RetryBackoffSpec} which can either be further configured or used as {@link Retry}
 	 */
-	public RetryBackoffSpec maxBackoff(Duration maxBackoff) {
+	public RetryBackoffSpec setMaxBackoff(Duration maxBackoff) {
 		return new RetryBackoffSpec(
 				this.retryContext,
 				this.maxAttempts,

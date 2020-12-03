@@ -46,7 +46,7 @@ final class ParallelScheduler implements Scheduler, Supplier<ScheduledExecutorSe
     final ThreadFactory factory;
 
     volatile ScheduledExecutorService[] executors;
-    static final AtomicReferenceFieldUpdater<ParallelScheduler, ScheduledExecutorService[]> EXECUTORS =
+    static final AtomicReferenceFieldUpdater<ParallelScheduler, ScheduledExecutorService[]> EXECUTORS_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(ParallelScheduler.class, ScheduledExecutorService[].class, "executors");
 
     static final ScheduledExecutorService[] SHUTDOWN = new ScheduledExecutorService[0];
@@ -105,7 +105,7 @@ final class ParallelScheduler implements Scheduler, Supplier<ScheduledExecutorSe
                 }
             }
             
-            if (EXECUTORS.compareAndSet(this, a, b)) {
+            if (EXECUTORS_UPDATER.compareAndSet(this, a, b)) {
                 return;
             }
         }
@@ -115,7 +115,7 @@ final class ParallelScheduler implements Scheduler, Supplier<ScheduledExecutorSe
     public void dispose() {
         ScheduledExecutorService[] a = executors;
         if (a != SHUTDOWN) {
-            a = EXECUTORS.getAndSet(this, SHUTDOWN);
+            a = EXECUTORS_UPDATER.getAndSet(this, SHUTDOWN);
             if (a != SHUTDOWN && a != null) {
                 for (ScheduledExecutorService exec : a) {
                     exec.shutdownNow();

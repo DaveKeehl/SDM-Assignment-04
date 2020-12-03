@@ -74,7 +74,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ConcatIterableSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<ConcatIterableSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ConcatIterableSubscriber.class,
 						"wip");
 
@@ -95,7 +95,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void onComplete() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				Iterator<? extends Publisher<? extends T>> a = this.it;
 				do {
 					if (isCancelled()) {
@@ -151,7 +151,7 @@ final class FluxConcatIterable<T> extends Flux<T> implements SourceProducer<T> {
 					}
 
 				}
-				while (WIP.decrementAndGet(this) != 0);
+				while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 
 		}

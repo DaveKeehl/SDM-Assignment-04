@@ -137,7 +137,7 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<SkipUntilMainSubscriber, Subscription>
-				MAIN =
+				MAIN_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SkipUntilMainSubscriber.class,
 						Subscription.class,
 						"main");
@@ -145,7 +145,7 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		volatile Subscription other;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<SkipUntilMainSubscriber, Subscription>
-				OTHER =
+				OTHER_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SkipUntilMainSubscriber.class,
 						Subscription.class,
 						"other");
@@ -178,7 +178,7 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void setOther(Subscription s) {
-			if (!OTHER.compareAndSet(this, null, s)) {
+			if (!OTHER_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (other != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -193,13 +193,13 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void cancel() {
-			Operators.terminate(MAIN, this);
-			Operators.terminate(OTHER, this);
+			Operators.terminate(MAIN_UPDATER, this);
+			Operators.terminate(OTHER_UPDATER, this);
 		}
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (!MAIN.compareAndSet(this, null, s)) {
+			if (!MAIN_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (main != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -223,7 +223,7 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onError(Throwable t) {
-			if (MAIN.compareAndSet(this, null, Operators.cancelledSubscription())) {
+			if (MAIN_UPDATER.compareAndSet(this, null, Operators.cancelledSubscription())) {
 					Operators.error(actual, t);
 					return;
 			}
@@ -238,7 +238,7 @@ final class FluxSkipUntilOther<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onComplete() {
-			Operators.terminate(OTHER, this);
+			Operators.terminate(OTHER_UPDATER, this);
 
 			actual.onComplete();
 		}

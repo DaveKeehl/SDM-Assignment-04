@@ -96,7 +96,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
         
         volatile long requested;
         @SuppressWarnings("rawtypes")
-        static final AtomicLongFieldUpdater<FluxMapSignalSubscriber> LONG_REQUESTED =
+        static final AtomicLongFieldUpdater<FluxMapSignalSubscriber> REQUESTED_UPDATER =
                 AtomicLongFieldUpdater.newUpdater(FluxMapSignalSubscriber.class, "requested");
 
         volatile boolean cancelled;
@@ -182,9 +182,9 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 	        value = v;
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(LONG_REQUESTED, this, -p);
+	            Operators.addCap(REQUESTED_UPDATER, this, -p);
             }
-	        DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+	        DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
         }
 
         @Override
@@ -214,9 +214,9 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
             value = v;
             long p = produced;
             if (p != 0L) {
-	            Operators.addCap(LONG_REQUESTED, this, -p);
+	            Operators.addCap(REQUESTED_UPDATER, this, -p);
             }
-            DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+            DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
         }
 
         @Override
@@ -227,7 +227,7 @@ final class FluxMapSignal<T, R> extends InternalFluxOperator<T, R> {
 	    @Override
 	    public void request(long n) {
 	        if (Operators.validate(n)) {
-	            if (!DrainUtils.postCompleteRequest(n, actual, this, LONG_REQUESTED, this, this)) {
+	            if (!DrainUtils.postCompleteRequest(n, actual, this, REQUESTED_UPDATER, this, this)) {
 	                s.request(n);
 	            }
 	        }

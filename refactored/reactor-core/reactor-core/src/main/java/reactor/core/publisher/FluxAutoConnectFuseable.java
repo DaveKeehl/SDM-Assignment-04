@@ -41,7 +41,7 @@ final class FluxAutoConnectFuseable<T> extends Flux<T>
 
 	volatile int remaining;
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<FluxAutoConnectFuseable> REMAINING =
+	static final AtomicIntegerFieldUpdater<FluxAutoConnectFuseable> REMAINING_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(FluxAutoConnectFuseable.class, "remaining");
 
 
@@ -52,13 +52,13 @@ final class FluxAutoConnectFuseable<T> extends Flux<T>
 		}
 		this.source = Objects.requireNonNull(source, "source");
 		this.cancelSupport = Objects.requireNonNull(cancelSupport, "cancelSupport");
-		REMAINING.lazySet(this, n);
+		REMAINING_UPDATER.lazySet(this, n);
 	}
 	
 	@Override
 	public void subscribe(CoreSubscriber<? super T> actual) {
 		source.subscribe(actual);
-		if (remaining > 0 && REMAINING.decrementAndGet(this) == 0) {
+		if (remaining > 0 && REMAINING_UPDATER.decrementAndGet(this) == 0) {
 			source.connect(cancelSupport);
 		}
 	}

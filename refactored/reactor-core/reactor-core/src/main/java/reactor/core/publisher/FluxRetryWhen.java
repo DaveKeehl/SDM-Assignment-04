@@ -107,7 +107,7 @@ final class FluxRetryWhen<T> extends InternalFluxOperator<T, T> {
 		Context context;
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<RetryWhenMainSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<RetryWhenMainSubscriber> WIP_UPDATER =
 		  AtomicIntegerFieldUpdater.newUpdater(RetryWhenMainSubscriber.class, "wip");
 
 		long produced;
@@ -200,7 +200,7 @@ final class FluxRetryWhen<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void resubscribe(Object trigger) {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					if (cancelled) {
 						return;
@@ -214,7 +214,7 @@ final class FluxRetryWhen<T> extends InternalFluxOperator<T, T> {
 
 					source.subscribe(this);
 
-				} while (WIP.decrementAndGet(this) != 0);
+				} while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 		}
 

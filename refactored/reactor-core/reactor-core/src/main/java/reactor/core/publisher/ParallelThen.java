@@ -62,14 +62,14 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 		volatile int remaining;
 		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<ThenMain>
-		             REMAINING = AtomicIntegerFieldUpdater.newUpdater(
+		             REMAINING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
 				ThenMain.class,
 				"remaining");
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<ThenMain, Throwable>
-				ERROR = AtomicReferenceFieldUpdater.newUpdater(
+				ERROR_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				ThenMain.class,
 				Throwable.class,
 				"error");
@@ -81,14 +81,14 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 				a[i] = new ThenInner(this);
 			}
 			this.subscribers = a;
-			REMAINING.lazySet(this, n);
+			REMAINING_UPDATER.lazySet(this, n);
 		}
 
 		@Override
 		@Nullable
 		public Object scanUnsafe(Attr key) {
 			if (key == Attr.ERROR) return error;
-			if (key == Attr.TERMINATED) return REMAINING.get(this) == 0;
+			if (key == Attr.TERMINATED) return REMAINING_UPDATER.get(this) == 0;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 
 			return super.scanUnsafe(key);
@@ -103,7 +103,7 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 		}
 
 		void innerError(Throwable ex) {
-			if(ERROR.compareAndSet(this, null, ex)){
+			if(ERROR_UPDATER.compareAndSet(this, null, ex)){
 				cancel();
 				actual.onError(ex);
 			}
@@ -113,7 +113,7 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 		}
 
 		void innerComplete() {
-			if (REMAINING.decrementAndGet(this) == 0) {
+			if (REMAINING_UPDATER.decrementAndGet(this) == 0) {
 				actual.onComplete();
 			}
 		}
@@ -126,7 +126,7 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<ThenInner, Subscription>
-				S = AtomicReferenceFieldUpdater.newUpdater(
+				S_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				ThenInner.class,
 				Subscription.class,
 				"s");
@@ -154,7 +154,7 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -176,7 +176,7 @@ final class ParallelThen extends Mono<Void> implements Scannable, Fuseable {
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

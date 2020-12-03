@@ -231,7 +231,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FlatMapMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<FlatMapMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(FlatMapMain.class,
 						Throwable.class,
 						"error");
@@ -244,19 +244,19 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlatMapMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<FlatMapMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(FlatMapMain.class, "requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<FlatMapMain> WIP =
+		static final AtomicIntegerFieldUpdater<FlatMapMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(FlatMapMain.class, "wip");
 
 		@SuppressWarnings("rawtypes")
-		static final FlatMapInner[] EMPTY = new FlatMapInner[0];
+		static final FlatMapInner[] EMPTY_UPDATER = new FlatMapInner[0];
 
 		@SuppressWarnings("rawtypes")
-		static final FlatMapInner[] TERMINATED = new FlatMapInner[0];
+		static final FlatMapInner[] TERMINATED_UPDATER = new FlatMapInner[0];
 
 
 		int lastIndex;
@@ -314,13 +314,13 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		@SuppressWarnings("unchecked")
 		@Override
 		FlatMapInner<R>[] empty() {
-			return EMPTY;
+			return EMPTY_UPDATER;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		FlatMapInner<R>[] terminated() {
-			return TERMINATED;
+			return TERMINATED_UPDATER;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -342,7 +342,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain(null);
 			}
 		}
@@ -352,7 +352,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 			if (!cancelled) {
 				cancelled = true;
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					Operators.onDiscardQueueWithClear(scalarQueue, actual.currentContext(), null);
 					scalarQueue = null;
 					s.cancel();
@@ -410,7 +410,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					if (e_ == null) {
 						tryEmitScalar(null);
 					}
-					else if (!delayError || !Exceptions.addThrowable(ERROR, this, e_)) {
+					else if (!delayError || !Exceptions.addThrowable(ERROR_UPDATER, this, e_)) {
 					//now if error mode strategy doesn't apply, let delayError play
 						onError(Operators.onOperatorError(s, e_, t, ctx));
 					}
@@ -445,7 +445,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				Operators.onErrorDropped(t, actual.currentContext());
 				return;
 			}
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain(null);
 			}
@@ -479,7 +479,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				return;
 			}
 
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				long r = requested;
 
 				Queue<R> q = scalarQueue;
@@ -487,7 +487,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					actual.onNext(v);
 
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.decrementAndGet(this);
+						REQUESTED_UPDATER.decrementAndGet(this);
 					}
 
 					if (maxConcurrency != Integer.MAX_VALUE) {
@@ -512,7 +512,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 						return;
 					}
 				}
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					if (cancelled) {
 						Operators.onDiscard(v, actual.currentContext());
 					}
@@ -534,7 +534,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void tryEmit(FlatMapInner<R> inner, R v) {
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				long r = requested;
 
 				Queue<R> q = inner.queue;
@@ -542,7 +542,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					actual.onNext(v);
 
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.decrementAndGet(this);
+						REQUESTED_UPDATER.decrementAndGet(this);
 					}
 
 					inner.request(1);
@@ -558,7 +558,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 						return;
 					}
 				}
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					if (cancelled) {
 						Operators.onDiscard(v, actual.currentContext());
 					}
@@ -578,7 +578,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drain(@Nullable R dataSignal) {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				if (dataSignal != null && cancelled) {
 					Operators.onDiscard(dataSignal, actual.currentContext());
 				}
@@ -639,7 +639,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					if (e != 0L) {
 						replenishMain += e;
 						if (r != Long.MAX_VALUE) {
-							r = LONG_REQUESTED.addAndGet(this, -e);
+							r = REQUESTED_UPDATER.addAndGet(this, -e);
 						}
 						e = 0L;
 						again = true;
@@ -683,7 +683,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 									catch (Throwable ex) {
 										ex = Operators.onOperatorError(inner, ex,
 												actual.currentContext());
-										if (!Exceptions.addThrowable(ERROR, this, ex)) {
+										if (!Exceptions.addThrowable(ERROR_UPDATER, this, ex)) {
 											Operators.onErrorDropped(ex,
 													actual.currentContext());
 										}
@@ -728,7 +728,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 										inner.request(e);
 									}
 									if (r != Long.MAX_VALUE) {
-										r = LONG_REQUESTED.addAndGet(this, -e);
+										r = REQUESTED_UPDATER.addAndGet(this, -e);
 										if (r == 0L) {
 											break; // 0 .. n - 1
 										}
@@ -793,7 +793,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 					continue;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -816,7 +816,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				if (d && empty) {
 					Throwable e = error;
 					if (e != null && e != Exceptions.TERMINATED) {
-						e = Exceptions.terminate(ERROR, this);
+						e = Exceptions.terminate(ERROR_UPDATER, this);
 						a.onError(e);
 					}
 					else {
@@ -830,7 +830,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 				if (d) {
 					Throwable e = error;
 					if (e != null && e != Exceptions.TERMINATED) {
-						e = Exceptions.terminate(ERROR, this);
+						e = Exceptions.terminate(ERROR_UPDATER, this);
 						Context ctx = actual.currentContext();
 						Operators.onDiscard(value, ctx);
 						Operators.onDiscardQueueWithClear(scalarQueue, ctx, null);
@@ -854,7 +854,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		void innerError(FlatMapInner<R> inner, Throwable e) {
 			e = Operators.onNextInnerError(e, currentContext(), s);
 			if(e != null) {
-				if (Exceptions.addThrowable(ERROR, this, e)) {
+				if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 					inner.done = true;
 					if (!delayError) {
 						done = true;
@@ -877,7 +877,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 			Operators.onDiscard(v, actual.currentContext());
 
-			if (!Exceptions.addThrowable(ERROR, this, e)) {
+			if (!Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 				Operators.onErrorDropped(e, actual.currentContext());
 				return false;
 			}
@@ -886,7 +886,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		void innerComplete(FlatMapInner<R> inner) {
 			//FIXME temp. reduce the case to empty regular inners
-//			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+//			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 //				Queue<R> queue = inner.queue;
 //				if (queue == null || queue.isEmpty()) {
 //					remove(inner.index);
@@ -902,14 +902,14 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 //					}
 //
 //					s.request(1);
-//					if (WIP.decrementAndGet(this) != 0) {
+//					if (WIP_UPDATER.decrementAndGet(this) != 0) {
 //						drainLoop();
 //					}
 //					return;
 //				}
 //			}
 //			else {
-				if (WIP.getAndIncrement(this) != 0) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return;
 				}
 //			}
@@ -939,7 +939,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 		volatile Subscription s;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FlatMapInner, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<FlatMapInner, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(FlatMapInner.class,
 						Subscription.class,
 						"s");
@@ -966,7 +966,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				if (s instanceof Fuseable.QueueSubscription) {
 					@SuppressWarnings("unchecked") Fuseable.QueueSubscription<R> f =
 							(Fuseable.QueueSubscription<R>) s;
@@ -1043,7 +1043,7 @@ final class FluxFlatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void cancel() {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 			Operators.onDiscardQueueWithClear(queue, parent.currentContext(), null);
 		}
 
@@ -1075,7 +1075,7 @@ abstract class FlatMapTracker<T> {
 	volatile int size;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<FlatMapTracker> SIZE =
+	static final AtomicIntegerFieldUpdater<FlatMapTracker> SIZE_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(FlatMapTracker.class, "size");
 
 	static final int[] FREE_EMPTY = new int[0];
@@ -1098,7 +1098,7 @@ abstract class FlatMapTracker<T> {
 			if (a == t) {
 				return;
 			}
-			SIZE.lazySet(this, 0);
+			SIZE_UPDATER.lazySet(this, 0);
 			free = null;
 			array = t;
 		}
@@ -1145,9 +1145,9 @@ abstract class FlatMapTracker<T> {
 				idx = n;
 			}
 			setIndex(entry, idx);
-			SIZE.lazySet(this, size); // make sure entry is released
+			SIZE_UPDATER.lazySet(this, size); // make sure entry is released
 			a[idx] = entry;
-			SIZE.lazySet(this, size + 1);
+			SIZE_UPDATER.lazySet(this, size + 1);
 		}
 		return true;
 	}
@@ -1158,7 +1158,7 @@ abstract class FlatMapTracker<T> {
 			if (a != terminated()) {
 				a[index] = null;
 				offerFree(index);
-				SIZE.lazySet(this, size - 1);
+				SIZE_UPDATER.lazySet(this, size - 1);
 			}
 		}
 	}

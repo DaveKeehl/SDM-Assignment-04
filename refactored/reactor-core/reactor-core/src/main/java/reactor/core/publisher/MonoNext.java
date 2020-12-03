@@ -56,7 +56,7 @@ final class MonoNext<T> extends MonoFromFluxOperator<T, T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<NextSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<NextSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(NextSubscriber.class, "wip");
 
 		NextSubscriber(CoreSubscriber<? super T> actual) {
@@ -104,7 +104,7 @@ final class MonoNext<T> extends MonoFromFluxOperator<T, T> {
 
 		@Override
 		public void request(long n) {
-			if (WIP.compareAndSet(this, 0, 1)) {
+			if (WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}

@@ -32,7 +32,7 @@ import reactor.util.context.ContextView;
  * A simple count-based {@link Retry} strategy with configurable features. Use {@link Retry#max(long)},
  * {@link Retry#maxInARow(long)} or {@link Retry#indefinitely()} to obtain a preconfigured instance to start with.
  * <p>
- * Only errors that match the {@link #filter(Predicate)} are retried (by default all), up to {@link #maxAttempts(long)} times.
+ * Only errors that match the {@link #filter(Predicate)} are retried (by default all), up to {@link #setMaxAttempts(long)} times.
  * <p>
  * When the maximum attempt of retries is reached, a runtime exception is propagated downstream which
  * can be pinpointed with {@link reactor.core.Exceptions#isRetryExhausted(Throwable)}. The cause of
@@ -41,7 +41,7 @@ import reactor.util.context.ContextView;
  * <p>
  * Additionally, to help dealing with bursts of transient errors in a long-lived Flux as if each burst
  * had its own attempt counter, one can choose to set {@link #transientErrors(boolean)} to {@code true}.
- * The comparison to {@link #maxAttempts(long)} will then be done with the number of subsequent attempts
+ * The comparison to {@link #setMaxAttempts(long)} will then be done with the number of subsequent attempts
  * that failed without an {@link org.reactivestreams.Subscriber#onNext(Object) onNext} in between.
  * <p>
  * The {@link RetrySpec} is copy-on-write and as such can be stored as a "template" and further configured
@@ -67,7 +67,7 @@ public final class RetrySpec extends Retry {
 	/**
 	 * The configured maximum for retry attempts.
 	 *
-	 * @see #maxAttempts(long)
+	 * @see #setMaxAttempts(long)
 	 */
 	public final long maxAttempts;
 
@@ -141,7 +141,7 @@ public final class RetrySpec extends Retry {
 	 * @param maxAttempts the new retry attempt limit
 	 * @return a new copy of the {@link RetrySpec} which can either be further configured or used as a {@link Retry}
 	 */
-	public RetrySpec maxAttempts(long maxAttempts) {
+	public RetrySpec setMaxAttempts(long maxAttempts) {
 		return new RetrySpec(
 				this.retryContext,
 				maxAttempts,
@@ -328,7 +328,7 @@ public final class RetrySpec extends Retry {
 	 * Transient errors are errors that could occur in bursts but are then recovered from by
 	 * a retry (with one or more onNext signals) before another error occurs.
 	 * <p>
-	 * In the case of a simple count-based retry, this means that the {@link #maxAttempts(long)}
+	 * In the case of a simple count-based retry, this means that the {@link #setMaxAttempts(long)}
 	 * is applied to each burst individually.
 	 *
 	 * @param isTransientErrors {@code true} to activate transient mode

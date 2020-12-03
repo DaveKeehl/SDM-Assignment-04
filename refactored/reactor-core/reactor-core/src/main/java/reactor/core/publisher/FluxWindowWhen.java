@@ -82,7 +82,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 		}
 		WindowWhenOpenSubscriber<T, U> os = new WindowWhenOpenSubscriber<>(main);
 
-		if (WindowWhenMainSubscriber.BOUNDARY.compareAndSet(main,null, os)) {
+		if (WindowWhenMainSubscriber.BOUNDARY_UPDATER.compareAndSet(main,null, os)) {
 			WindowWhenMainSubscriber.OPEN_WINDOW_COUNT.incrementAndGet(main);
 			start.subscribe(os);
 			return main;
@@ -101,15 +101,15 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 	static final class WindowWhenMainSubscriber<T, U, V>
 			extends QueueDrainSubscriber<T, Object, Flux<T>> {
 
-		final Publisher<U> open;
-		final Function<? super U, ? extends Publisher<V>> close;
+		final Publisher<U> openPublisher;
+		final Function<? super U, ? extends Publisher<V>> closeFunction;
 		final Supplier<? extends Queue<T>> processorQueueSupplier;
 		final Disposable.Composite resources;
 
 		Subscription s;
 
 		volatile Disposable boundary;
-		static final AtomicReferenceFieldUpdater<WindowWhenMainSubscriber, Disposable> BOUNDARY =
+		static final AtomicReferenceFieldUpdater<WindowWhenMainSubscriber, Disposable> BOUNDARY_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowWhenMainSubscriber.class, Disposable.class, "boundary");
 
 		final List<Sinks.Many<T>> windows;
@@ -119,11 +119,11 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 				AtomicLongFieldUpdater.newUpdater(WindowWhenMainSubscriber.class, "openWindowCount");
 
 		WindowWhenMainSubscriber(CoreSubscriber<? super Flux<T>> actual,
-				Publisher<U> open, Function<? super U, ? extends Publisher<V>> close,
-				Supplier<? extends Queue<T>> processorQueueSupplier) {
+								 Publisher<U> openPublisher, Function<? super U, ? extends Publisher<V>> closeFunction,
+								 Supplier<? extends Queue<T>> processorQueueSupplier) {
 			super(actual, Queues.unboundedMultiproducer().get());
-			this.open = open;
-			this.close = close;
+			this.openPublisher = openPublisher;
+			this.closeFunction = closeFunction;
 			this.processorQueueSupplier = processorQueueSupplier;
 			this.resources = Disposables.composite();
 			this.windows = new ArrayList<>();
@@ -194,10 +194,10 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 			}
 		}
 
-		void error(Throwable t) {
+		void signalError(Throwable t) {
 			s.cancel();
 			resources.dispose();
-			OperatorDisposables.dispose(BOUNDARY, this);
+			OperatorDisposables.dispose(BOUNDARY_UPDATER, this);
 
 			actual.onError(t);
 		}
@@ -214,7 +214,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 
 		void dispose() {
 			resources.dispose();
-			OperatorDisposables.dispose(BOUNDARY, this);
+			OperatorDisposables.dispose(BOUNDARY_UPDATER, this);
 		}
 
 		void drainLoop() {
@@ -293,7 +293,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 						Publisher<V> p;
 
 						try {
-							p = Objects.requireNonNull(close.apply(wo.open), "The publisher supplied is null");
+							p = Objects.requireNonNull(closeFunction.apply(wo.open), "The publisher supplied is null");
 						} catch (Exception e) {
 							cancelled = true;
 							a.onError(e);
@@ -360,7 +360,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 			implements Disposable, Subscriber<U> {
 
 		volatile Subscription subscription;
-		static final AtomicReferenceFieldUpdater<WindowWhenOpenSubscriber, Subscription> SUBSCRIPTION =
+		static final AtomicReferenceFieldUpdater<WindowWhenOpenSubscriber, Subscription> SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowWhenOpenSubscriber.class, Subscription.class, "subscription");
 
 		final WindowWhenMainSubscriber<T, U, ?> parent;
@@ -373,14 +373,14 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				subscription.request(Long.MAX_VALUE);
 			}
 		}
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -403,7 +403,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 				return;
 			}
 			done = true;
-			parent.error(t);
+			parent.signalError(t);
 		}
 
 		@Override
@@ -420,7 +420,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 			implements Disposable, Subscriber<V> {
 
 		volatile Subscription subscription;
-		static final AtomicReferenceFieldUpdater<WindowWhenCloseSubscriber, Subscription> SUBSCRIPTION =
+		static final AtomicReferenceFieldUpdater<WindowWhenCloseSubscriber, Subscription> SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowWhenCloseSubscriber.class, Subscription.class, "subscription");
 
 		final WindowWhenMainSubscriber<T, ?, V> parent;
@@ -435,14 +435,14 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				subscription.request(Long.MAX_VALUE);
 			}
 		}
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -467,7 +467,7 @@ final class FluxWindowWhen<T, U, V> extends InternalFluxOperator<T, Flux<T>> {
 				return;
 			}
 			done = true;
-			parent.error(t);
+			parent.signalError(t);
 		}
 
 		@Override

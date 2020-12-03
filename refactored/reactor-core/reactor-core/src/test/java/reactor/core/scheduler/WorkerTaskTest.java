@@ -222,7 +222,7 @@ class WorkerTaskTest {
     void withFutureDisposed3() {
 		WorkerTask run = new WorkerTask(() -> {}, null);
 		run.dispose();
-		WorkerTask.THREAD.set(run, Thread.currentThread());
+		WorkerTask.THREAD_UPDATER.set(run, Thread.currentThread());
 		run.setFuture(new FutureTask<Void>(() -> {}, null));
 		run.call();
 	}
@@ -295,23 +295,23 @@ class WorkerTaskTest {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
 
 		run.run();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run)).isEqualTo(WorkerTask.FINISHED);
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run)).isEqualTo(WorkerTask.FINISHED);
 
 		run.dispose();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run)).isEqualTo(WorkerTask.FINISHED);
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run)).isEqualTo(WorkerTask.FINISHED);
 	}
 
 	@Test
     void syncDisposeIdempotent() {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
-		WorkerTask.THREAD.set(run, Thread.currentThread());
+		WorkerTask.THREAD_UPDATER.set(run, Thread.currentThread());
 
 		run.dispose();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
 		run.dispose();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
 		run.run();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run)).isEqualTo(WorkerTask.SYNC_CANCELLED);
 	}
 
 	@Test
@@ -319,15 +319,15 @@ class WorkerTaskTest {
 		final WorkerTask run = new WorkerTask(() -> {}, null);
 
 		run.dispose();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run))
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run))
 				.isEqualTo(WorkerTask.ASYNC_CANCELLED);
 
 		run.dispose();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run))
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run))
 				.isEqualTo(WorkerTask.ASYNC_CANCELLED);
 
 		run.run();
-		assertThat((Future<?>) WorkerTask.FUTURE.get(run))
+		assertThat((Future<?>) WorkerTask.FUTURE_UPDATER.get(run))
 				.isEqualTo(WorkerTask.ASYNC_CANCELLED);
 	}
 

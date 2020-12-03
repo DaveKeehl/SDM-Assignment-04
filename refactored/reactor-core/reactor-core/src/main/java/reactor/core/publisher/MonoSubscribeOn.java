@@ -82,20 +82,20 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						Subscription.class,
 						"s");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						"requested");
 
 		volatile Thread thread;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Thread> THREAD =
+		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Thread> THREAD_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						Thread.class,
 						"thread");
@@ -122,14 +122,14 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 
 		@Override
 		public void run() {
-			THREAD.lazySet(this, Thread.currentThread());
+			THREAD_UPDATER.lazySet(this, Thread.currentThread());
 			parent.subscribe(this);
 		}
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+			if (Operators.setOnce(S_UPDATER, this, s)) {
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0L) {
 					trySchedule(r, s);
 				}
@@ -153,7 +153,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 			}
 			finally {
 				worker.dispose();
-				THREAD.lazySet(this,null);
+				THREAD_UPDATER.lazySet(this,null);
 			}
 		}
 
@@ -161,7 +161,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 		public void onComplete() {
 			actual.onComplete();
 			worker.dispose();
-			THREAD.lazySet(this,null);
+			THREAD_UPDATER.lazySet(this,null);
 		}
 
 		@Override
@@ -172,10 +172,10 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 					trySchedule(n, a);
 				}
 				else {
-					Operators.addCap(LONG_REQUESTED, this, n);
+					Operators.addCap(REQUESTED_UPDATER, this, n);
 					a = s;
 					if (a != null) {
-						long r = LONG_REQUESTED.getAndSet(this, 0L);
+						long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 						if (r != 0L) {
 							trySchedule(n, a);
 						}
@@ -185,7 +185,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 		}
 
 		void trySchedule(long n, Subscription s) {
-			if (Thread.currentThread() == THREAD.get(this)) {
+			if (Thread.currentThread() == THREAD_UPDATER.get(this)) {
 				s.request(n);
 			}
 			else {
@@ -207,7 +207,7 @@ final class MonoSubscribeOn<T> extends InternalMonoOperator<T, T> {
 
 		@Override
 		public void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 			worker.dispose();
 		}
 	}

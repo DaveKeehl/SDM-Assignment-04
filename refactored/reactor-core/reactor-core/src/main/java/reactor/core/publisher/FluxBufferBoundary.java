@@ -100,14 +100,14 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 		volatile Subscription s;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<BufferBoundaryMain, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<BufferBoundaryMain, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BufferBoundaryMain.class,
 						Subscription.class,
 						"s");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferBoundaryMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BufferBoundaryMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BufferBoundaryMain.class, "requested");
 
 		BufferBoundaryMain(CoreSubscriber<? super C> actual,
@@ -144,20 +144,20 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
 		@Override
 		public void cancel() {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 			Operators.onDiscardMultiple(buffer, this.ctx);
 			other.cancel();
 		}
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -177,7 +177,7 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 
 		@Override
 		public void onError(Throwable t) {
-			if(Operators.terminate(ATOMIC_REFERENCE_S, this)) {
+			if(Operators.terminate(S_UPDATER, this)) {
 				C b;
 				synchronized (this) {
 					b = buffer;
@@ -194,7 +194,7 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 
 		@Override
 		public void onComplete() {
-			if(Operators.terminate(ATOMIC_REFERENCE_S, this)) {
+			if(Operators.terminate(S_UPDATER, this)) {
 				C b;
 				synchronized (this) {
 					b = buffer;
@@ -213,7 +213,7 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 			}
 		}
 		void otherComplete() {
-			Subscription s = ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription());
+			Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 			if(s != Operators.cancelledSubscription()) {
 				C b;
 				synchronized (this) {
@@ -237,7 +237,7 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 		}
 
 		void otherError(Throwable t){
-			Subscription s = ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription());
+			Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 			if(s != Operators.cancelledSubscription()) {
 				C b;
 				synchronized (this) {
@@ -286,7 +286,7 @@ final class FluxBufferBoundary<T, U, C extends Collection<? super T>>
 			if (r != 0L) {
 				actual.onNext(b);
 				if (r != Long.MAX_VALUE) {
-					LONG_REQUESTED.decrementAndGet(this);
+					REQUESTED_UPDATER.decrementAndGet(this);
 				}
 				return true;
 			}

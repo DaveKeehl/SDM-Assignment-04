@@ -190,12 +190,12 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 
 		@SuppressWarnings("rawtypes")
 		volatile int winner;
-		static final AtomicIntegerFieldUpdater<RaceValuesCoordinator> WINNER =
+		static final AtomicIntegerFieldUpdater<RaceValuesCoordinator> WINNER_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(RaceValuesCoordinator.class, "winner");
 
 		@SuppressWarnings("rawtypes")
 		volatile int nbErrorsOrCompletedEmpty;
-		static final AtomicIntegerFieldUpdater<RaceValuesCoordinator> ERRORS_OR_COMPLETED_EMPTY =
+		static final AtomicIntegerFieldUpdater<RaceValuesCoordinator> ERROR_UPDATERS_OR_COMPLETED_EMPTY =
 				AtomicIntegerFieldUpdater.newUpdater(RaceValuesCoordinator.class, "nbErrorsOrCompletedEmpty");
 
 		@SuppressWarnings("unchecked")
@@ -274,7 +274,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 
 		boolean tryWin(int index) {
 			if (winner == Integer.MIN_VALUE) {
-				if (WINNER.compareAndSet(this, Integer.MIN_VALUE, index)) {
+				if (WINNER_UPDATER.compareAndSet(this, Integer.MIN_VALUE, index)) {
 					for (int i = 0; i < subscribers.length; i++) {
 						if (i != index) {
 							subscribers[i].cancel();
@@ -356,7 +356,7 @@ final class FluxFirstWithValue<T> extends Flux<T> implements SourceProducer<T> {
 
 		void recordTerminalSignals(Throwable t) {
 			parent.errorsOrCompleteEmpty[index] = t;
-			int nb = RaceValuesCoordinator.ERRORS_OR_COMPLETED_EMPTY.incrementAndGet(parent);
+			int nb = RaceValuesCoordinator.ERROR_UPDATERS_OR_COMPLETED_EMPTY.incrementAndGet(parent);
 
 			if (nb == parent.subscribers.length) {
 				NoSuchElementException e = new NoSuchElementException("All sources completed with error or without values");

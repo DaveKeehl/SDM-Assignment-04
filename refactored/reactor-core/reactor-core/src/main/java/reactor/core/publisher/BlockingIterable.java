@@ -134,7 +134,7 @@ final class BlockingIterable<T> implements Iterable<T>, Scannable {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SubscriberIterator, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<SubscriberIterator, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SubscriberIterator.class,
 						Subscription.class,
 						"s");
@@ -221,7 +221,7 @@ final class BlockingIterable<T> implements Iterable<T>, Scannable {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Operators.unboundedOrPrefetch(batchSize));
 			}
 		}
@@ -229,7 +229,7 @@ final class BlockingIterable<T> implements Iterable<T>, Scannable {
 		@Override
 		public void onNext(T t) {
 			if (!queue.offer(t)) {
-				Operators.terminate(ATOMIC_REFERENCE_S, this);
+				Operators.terminate(S_UPDATER, this);
 
 				onError(Operators.onOperatorError(null,
 						Exceptions.failWithOverflow(Exceptions.BACKPRESSURE_ERROR_QUEUE_FULL),
@@ -265,7 +265,7 @@ final class BlockingIterable<T> implements Iterable<T>, Scannable {
 
 		@Override
 		public void run() {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 			signalConsumer();
 		}
 

@@ -116,7 +116,7 @@ final class ParallelSource<T> extends ParallelFlux<T> implements Scannable {
 		
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ParallelSourceMain> WIP =
+		static final AtomicIntegerFieldUpdater<ParallelSourceMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ParallelSourceMain.class, "wip");
 		
 		/** 
@@ -260,7 +260,7 @@ final class ParallelSource<T> extends ParallelFlux<T> implements Scannable {
 				cancelled = true;
 				this.s.cancel();
 				
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					queue.clear();
 				}
 			}
@@ -360,7 +360,7 @@ final class ParallelSource<T> extends ParallelFlux<T> implements Scannable {
 				if (w == missed) {
 					index = idx;
 					produced = consumed;
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -442,7 +442,7 @@ final class ParallelSource<T> extends ParallelFlux<T> implements Scannable {
 				int w = wip;
 				if (w == missed) {
 					index = idx;
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -453,7 +453,7 @@ final class ParallelSource<T> extends ParallelFlux<T> implements Scannable {
 		}
 		
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 			

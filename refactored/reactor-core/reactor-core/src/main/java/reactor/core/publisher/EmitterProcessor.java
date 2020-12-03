@@ -137,7 +137,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	volatile Subscription s;
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<EmitterProcessor, Subscription> ATOMIC_REFERENCE_S =
+	static final AtomicReferenceFieldUpdater<EmitterProcessor, Subscription> S_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(EmitterProcessor.class,
 					Subscription.class,
 					"s");
@@ -146,7 +146,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	@SuppressWarnings("rawtypes")
 	static final AtomicReferenceFieldUpdater<EmitterProcessor, FluxPublish.PubSubInner[]>
-			SUBSCRIBERS = AtomicReferenceFieldUpdater.newUpdater(EmitterProcessor.class,
+			SUBSCRIBERS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(EmitterProcessor.class,
 			FluxPublish.PubSubInner[].class,
 			"subscribers");
 
@@ -154,7 +154,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 	volatile int wip;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<EmitterProcessor> WIP =
+	static final AtomicIntegerFieldUpdater<EmitterProcessor> WIP_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(EmitterProcessor.class, "wip");
 
 	volatile Queue<T> queue;
@@ -166,7 +166,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 	volatile Throwable error;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<EmitterProcessor, Throwable> ERROR =
+	static final AtomicReferenceFieldUpdater<EmitterProcessor, Throwable> ERROR_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(EmitterProcessor.class,
 					Throwable.class,
 					"error");
@@ -179,7 +179,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 		this.prefetch = prefetch;
 		//doesn't use INIT/CANCELLED distinction, contrary to FluxPublish)
 		//see remove()
-		SUBSCRIBERS.lazySet(this, EMPTY);
+		SUBSCRIBERS_UPDATER.lazySet(this, EMPTY);
 	}
 
 	@Override
@@ -246,7 +246,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 		if (done) {
 			return EmitResult.FAIL_TERMINATED;
 		}
-		if (Exceptions.addThrowable(ERROR, this, t)) {
+		if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 			done = true;
 			drain();
 			return EmitResult.OK;
@@ -276,7 +276,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 		Queue<T> q = queue;
 
 		if (q == null) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, Operators.emptySubscription())) {
+			if (Operators.setOnce(S_UPDATER, this, Operators.emptySubscription())) {
 				q = Queues.<T>get(prefetch).get();
 				queue = q;
 			}
@@ -329,7 +329,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	@Override
 	public void onSubscribe(final Subscription s) {
-		if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+		if (Operators.setOnce(S_UPDATER, this, s)) {
 			if (s instanceof Fuseable.QueueSubscription) {
 				@SuppressWarnings("unchecked") Fuseable.QueueSubscription<T> f =
 						(Fuseable.QueueSubscription<T>) s;
@@ -395,7 +395,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 	}
 
 	final void drain() {
-		if (WIP.getAndIncrement(this) != 0) {
+		if (WIP_UPDATER.getAndIncrement(this) != 0) {
 			return;
 		}
 
@@ -438,7 +438,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 						v = q.poll();
 					}
 					catch (Throwable ex) {
-						Exceptions.addThrowable(ERROR,
+						Exceptions.addThrowable(ERROR_UPDATER,
 								this, Operators.onOperatorError(s, ex, currentContext()));
 						d = true;
 						v = null;
@@ -462,7 +462,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 						v = q.poll();
 					}
 					catch (Throwable ex) {
-						Exceptions.addThrowable(ERROR,
+						Exceptions.addThrowable(ERROR_UPDATER,
 								this, Operators.onOperatorError(s, ex, currentContext()));
 						d = true;
 						v = null;
@@ -487,7 +487,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 					for (FluxPublish.PubSubInner<T> inner : a) {
 						inner.actual.onNext(v);
 						if (Operators.producedCancellable(FluxPublish
-										.PublishInner.LONG_REQUESTED, inner,
+										.PublishInner.REQUESTED_UPDATER, inner,
 								1) == Long.MIN_VALUE) {
 							cancel = Integer.MIN_VALUE;
 						}
@@ -511,7 +511,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 				}
 			}
 
-			missed = WIP.addAndGet(this, -missed);
+			missed = WIP_UPDATER.addAndGet(this, -missed);
 			if (missed == 0) {
 				break;
 			}
@@ -520,7 +520,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 
 	@SuppressWarnings("unchecked")
 	FluxPublish.PubSubInner<T>[] terminate() {
-		return SUBSCRIBERS.getAndSet(this, TERMINATED);
+		return SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 	}
 
 	boolean checkTerminated(boolean d, boolean empty) {
@@ -566,7 +566,7 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 			FluxPublish.PubSubInner<?>[] b = new FluxPublish.PubSubInner[n + 1];
 			System.arraycopy(a, 0, b, 0, n);
 			b[n] = inner;
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				return true;
 			}
 		}
@@ -599,11 +599,11 @@ public final class EmitterProcessor<T> extends FluxProcessor<T, T> implements In
 			System.arraycopy(a, 0, b, 0, j);
 			System.arraycopy(a, j + 1, b, j, n - j - 1);
 		}
-		if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+		if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 			//contrary to FluxPublish, there is a possibility of auto-cancel, which
 			//happens when the removed inner makes the subscribers array EMPTY
-			if (autoCancel && b == EMPTY && Operators.terminate(ATOMIC_REFERENCE_S, this)) {
-				if (WIP.getAndIncrement(this) != 0) {
+			if (autoCancel && b == EMPTY && Operators.terminate(S_UPDATER, this)) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return;
 				}
 				terminate();

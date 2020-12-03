@@ -19,7 +19,6 @@ package reactor.util.retry;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -44,11 +43,11 @@ class RetryBackoffSpecTest {
     void builderMethodsProduceNewInstances() {
 		RetryBackoffSpec init = Retry.backoff(1, Duration.ZERO);
 		assertThat(init)
-				.isNotSameAs(init.minBackoff(Duration.ofSeconds(1)))
-				.isNotSameAs(init.maxBackoff(Duration.ZERO))
+				.isNotSameAs(init.setMinBackoff(Duration.ofSeconds(1)))
+				.isNotSameAs(init.setMaxBackoff(Duration.ZERO))
 				.isNotSameAs(init.jitter(0.5d))
 				.isNotSameAs(init.scheduler(Schedulers.parallel()))
-				.isNotSameAs(init.maxAttempts(10))
+				.isNotSameAs(init.setMaxAttempts(10))
 				.isNotSameAs(init.filter(t -> true))
 				.isNotSameAs(init.modifyErrorFilter(predicate -> predicate.and(t -> true)))
 				.isNotSameAs(init.transientErrors(true))
@@ -63,7 +62,7 @@ class RetryBackoffSpecTest {
 	@Test
     void retryContextIsCorrectlyPropagatedAndSet() {
 		RetryBackoffSpec init = Retry.backoff(1L, Duration.ZERO);
-		assertThat(init.withRetryContext(Context.of("foo", "bar")).maxAttempts(10))
+		assertThat(init.withRetryContext(Context.of("foo", "bar")).setMaxAttempts(10))
 				.satisfies(rs -> rs.retryContext().get("foo").equals("bar"));
 	}
 
@@ -89,7 +88,7 @@ class RetryBackoffSpecTest {
 			});
 		};
 
-		Flux<Integer> modifiedTemplate1 = transientError.get().retryWhen(template.maxAttempts(2));
+		Flux<Integer> modifiedTemplate1 = transientError.get().retryWhen(template.setMaxAttempts(2));
 		Flux<Integer> modifiedTemplate2 = transientError.get().retryWhen(template.transientErrors(true));
 
 		StepVerifier.create(modifiedTemplate1, StepVerifierOptions.create().scenarioName("modified template 1"))
@@ -312,7 +311,7 @@ class RetryBackoffSpecTest {
 
 		RetryBackoffSpec retryBuilder = Retry
 				.backoff(2, Duration.ZERO)
-				.maxBackoff(Duration.ZERO)
+				.setMaxBackoff(Duration.ZERO)
 				.transientErrors(true)
 				.doBeforeRetry(s -> order.add("SyncBefore A: " + s))
 				.doBeforeRetry(s -> order.add("SyncBefore B, tracking " + beforeHookTracker.incrementAndGet()))

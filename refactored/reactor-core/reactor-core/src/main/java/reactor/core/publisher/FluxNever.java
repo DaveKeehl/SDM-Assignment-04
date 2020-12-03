@@ -22,7 +22,7 @@ import reactor.core.CoreSubscriber;
  * Represents a never publisher which only calls onSubscribe.
  * <p>
  * This Publisher is effectively stateless and only a single instance exists.
- * Use the {@link #instance()} method to obtain a properly type-parametrized view of it.
+ * Use the {@link #getInstance()} method to obtain a properly type-parametrized view of it.
  *
  * @see <a href="https://github.com/reactor/reactive-streams-commons">Reactive-Streams-Commons</a>
  */
@@ -52,7 +52,7 @@ final class FluxNever extends Flux<Object> implements SourceProducer<Object> {
 	 * @return a properly parametrized instance of this never Publisher
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> Flux<T> instance() {
+	static <T> Flux<T> getInstance() {
 		return (Flux<T>) INSTANCE;
 	}
 

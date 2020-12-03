@@ -129,25 +129,25 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowPredicateMain> WIP =
+		static final AtomicIntegerFieldUpdater<WindowPredicateMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowPredicateMain.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowPredicateMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<WindowPredicateMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(WindowPredicateMain.class, "requested");
 
 		volatile boolean   done;
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<WindowPredicateMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<WindowPredicateMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowPredicateMain.class,
 						Throwable.class,
 						"error");
 
 		volatile int cancelled;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowPredicateMain> CANCELLED =
+		static final AtomicIntegerFieldUpdater<WindowPredicateMain> CANCELED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowPredicateMain.class,
 						"cancelled");
 
@@ -271,7 +271,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				cleanup();
 				drain();
@@ -331,7 +331,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		}
 
 		void signalAsyncError() {
-			Throwable e = Exceptions.terminate(ERROR, this);
+			Throwable e = Exceptions.terminate(ERROR_UPDATER, this);
 			windowCount = 0;
 			WindowFlux<T> g = window;
 			if (g != null) {
@@ -344,20 +344,20 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELED_UPDATER.compareAndSet(this, 0, 1)) {
 				if (WINDOW_COUNT.decrementAndGet(this) == 0) {
 					s.cancel();
 					cleanup();
 				}
 				else if (!outputFused) {
-					if (WIP.getAndIncrement(this) == 0) {
+					if (WIP_UPDATER.getAndIncrement(this) == 0) {
 						// remove queued up but unobservable groups from the mapping
 						Flux<T> g;
 						WindowFlux<T> w = window;
@@ -368,24 +368,24 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 							w.cancel();
 						}
 
-						if (WIP.decrementAndGet(this) == 0) {
+						if (WIP_UPDATER.decrementAndGet(this) == 0) {
 							if (!done && WINDOW_COUNT.get(this) == 0) {
 								s.cancel();
 								cleanup();
 							}
 							else {
-								CANCELLED.set(this, 2);
+								CANCELED_UPDATER.set(this, 2);
 							}
 							return;
 						}
 
-						CANCELLED.set(this, 2); //in flight windows might get cancelled still
+						CANCELED_UPDATER.set(this, 2); //in flight windows might get cancelled still
 
 						drainLoop();
 					}
 				}
 			}
-			else if (CANCELLED.get(this) == 2) {
+			else if (CANCELED_UPDATER.get(this) == 2) {
 				//no new window should have been created
 				if (WINDOW_COUNT.get(this) == 0) {
 					s.cancel();
@@ -407,7 +407,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -447,7 +447,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -495,11 +495,11 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 					s.request(e);
 
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.addAndGet(this, -e);
+						REQUESTED_UPDATER.addAndGet(this, -e);
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -570,7 +570,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		volatile WindowPredicateMain<T> parent;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<WindowFlux, WindowPredicateMain>
-				PARENT = AtomicReferenceFieldUpdater.newUpdater(WindowFlux.class,
+				PARENT_UPDATER = AtomicReferenceFieldUpdater.newUpdater(WindowFlux.class,
 				WindowPredicateMain.class,
 				"parent");
 
@@ -579,7 +579,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		volatile CoreSubscriber<? super T> actual;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<WindowFlux, CoreSubscriber> ACTUAL =
+		static final AtomicReferenceFieldUpdater<WindowFlux, CoreSubscriber> ACTUAL_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowFlux.class,
 						CoreSubscriber.class,
 						"actual");
@@ -590,17 +590,17 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowFlux> ONCE =
+		static final AtomicIntegerFieldUpdater<WindowFlux> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowFlux.class, "once");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowFlux> WIP =
+		static final AtomicIntegerFieldUpdater<WindowFlux> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowFlux.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowFlux> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<WindowFlux> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(WindowFlux.class, "requested");
 
 		volatile boolean enableOperatorFusion;
@@ -624,7 +624,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		void propagateTerminate() {
 			WindowPredicateMain<T> r = parent;
-			if (r != null && PARENT.compareAndSet(this, r, null)) {
+			if (r != null && PARENT_UPDATER.compareAndSet(this, r, null)) {
 				r.groupTerminated();
 			}
 		}
@@ -670,11 +670,11 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 						main.s.request(e);
 					}
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.addAndGet(this, -e);
+						REQUESTED_UPDATER.addAndGet(this, -e);
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -713,7 +713,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -723,7 +723,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		void drain() {
 			Subscriber<? super T> a = actual;
 			if (a != null) {
-				if (WIP.getAndIncrement(this) != 0) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return;
 				}
 
@@ -802,9 +802,9 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 		@Override
 		public void subscribe(CoreSubscriber<? super T> actual) {
-			if (once == 0 && ONCE.compareAndSet(this, 0, 1)) {
+			if (once == 0 && ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				actual.onSubscribe(this);
-				ACTUAL.lazySet(this, actual);
+				ACTUAL_UPDATER.lazySet(this, actual);
 				ctx = actual.currentContext();
 				drain();
 			}
@@ -817,7 +817,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -831,7 +831,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 
 			WindowPredicateMain<T> r = parent;
 			if (r != null &&
-					PARENT.compareAndSet(this, r, null)) {
+					PARENT_UPDATER.compareAndSet(this, r, null)) {
 
 				if (WindowPredicateMain.WINDOW_COUNT.decrementAndGet(r) == 0) {
 					r.cancel();
@@ -842,7 +842,7 @@ final class FluxWindowPredicate<T> extends InternalFluxOperator<T, Flux<T>>
 			}
 
 			if (!enableOperatorFusion) {
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					Operators.onDiscardQueueWithClear(queue, ctx, null);
 				}
 			}

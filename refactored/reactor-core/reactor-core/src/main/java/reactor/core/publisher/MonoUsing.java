@@ -138,7 +138,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MonoUsingSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<MonoUsingSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MonoUsingSubscriber.class, "wip");
 
 		int mode;
@@ -179,7 +179,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 
 		@Override
 		public void cancel() {
-			if (WIP.compareAndSet(this, 0, 1)) {
+			if (WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				s.cancel();
 
 				cleanup();
@@ -216,7 +216,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 			}
 			this.valued = true;
 
-			if (eager && WIP.compareAndSet(this, 0, 1)) {
+			if (eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					resourceCleanup.accept(resource);
 				}
@@ -231,7 +231,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 			actual.onNext(t);
 			actual.onComplete();
 
-			if (!eager && WIP.compareAndSet(this, 0, 1)) {
+			if (!eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					resourceCleanup.accept(resource);
 				}
@@ -247,7 +247,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				Operators.onErrorDropped(t, actual.currentContext());
 				return;
 			}
-			if (eager && WIP.compareAndSet(this, 0, 1)) {
+			if (eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					resourceCleanup.accept(resource);
 				}
@@ -259,7 +259,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 
 			actual.onError(t);
 
-			if (!eager && WIP.compareAndSet(this, 0, 1)) {
+			if (!eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				cleanup();
 			}
 		}
@@ -270,7 +270,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				return;
 			}
 			//this should only happen in the empty case
-			if (eager && WIP.compareAndSet(this, 0, 1)) {
+			if (eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					resourceCleanup.accept(resource);
 				}
@@ -282,7 +282,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 
 			actual.onComplete();
 
-			if (!eager && WIP.compareAndSet(this, 0, 1)) {
+			if (!eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					resourceCleanup.accept(resource);
 				}
@@ -315,7 +315,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 
 			if (v != null) {
 				valued = true;
-				if (eager && WIP.compareAndSet(this, 0, 1)) {
+				if (eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 					try {
 						resourceCleanup.accept(resource); //throws upwards
 					}
@@ -326,7 +326,7 @@ final class MonoUsing<T, S> extends Mono<T> implements Fuseable, SourceProducer<
 				}
 			}
 			else if (mode == SYNC) {
-				if (!eager && WIP.compareAndSet(this, 0, 1)) {
+				if (!eager && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 					try {
 						resourceCleanup.accept(resource);
 					}

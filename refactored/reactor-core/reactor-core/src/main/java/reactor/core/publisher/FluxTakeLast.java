@@ -138,7 +138,7 @@ final class FluxTakeLast<T> extends InternalFluxOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<TakeLastManySubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<TakeLastManySubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(TakeLastManySubscriber.class,
 						"requested");
 
@@ -155,7 +155,7 @@ final class FluxTakeLast<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				DrainUtils.postCompleteRequest(n, actual, this, LONG_REQUESTED, this, this);
+				DrainUtils.postCompleteRequest(n, actual, this, REQUESTED_UPDATER, this, this);
 			}
 		}
 
@@ -191,7 +191,7 @@ final class FluxTakeLast<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onComplete() {
-			DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+			DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
 		}
 
 		@Override

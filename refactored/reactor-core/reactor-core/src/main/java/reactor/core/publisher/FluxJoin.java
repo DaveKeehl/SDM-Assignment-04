@@ -117,27 +117,27 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<JoinSubscription> WIP =
+		static final AtomicIntegerFieldUpdater<JoinSubscription> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(JoinSubscription.class, "wip");
 
 		volatile int active;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<JoinSubscription> ACTIVE =
+		static final AtomicIntegerFieldUpdater<JoinSubscription> ACTIVE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(JoinSubscription.class,
 						"active");
 
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<JoinSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<JoinSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(JoinSubscription.class,
 						"requested");
 
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<JoinSubscription, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<JoinSubscription, Throwable> ERROR_UPDATER =
 						AtomicReferenceFieldUpdater.newUpdater(JoinSubscription.class,
 								Throwable.class,
 								"error");
@@ -168,7 +168,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 			this.leftEnd = leftEnd;
 			this.rightEnd = rightEnd;
 			this.resultSelector = resultSelector;
-			ACTIVE.lazySet(this, 2);
+			ACTIVE_UPDATER.lazySet(this, 2);
 		}
 
 		@Override
@@ -197,7 +197,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -207,13 +207,13 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 				return;
 			}
 			cancellations.dispose();
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				queue.clear();
 			}
 		}
 
 		void errorAll(Subscriber<?> a) {
-			Throwable ex = Exceptions.terminate(ERROR, this);
+			Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 			lefts.clear();
 			rights.clear();
@@ -222,7 +222,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -279,7 +279,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 							p = Objects.requireNonNull(leftEnd.apply(left),
 									"The leftEnd returned a null Publisher");
 						} catch (Throwable exc) {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this,
 									Operators.onOperatorError(this, exc, left,
 											actual.currentContext()));
@@ -313,7 +313,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 										right),
 										"The resultSelector returned a null value");
 							} catch (Throwable exc) {
-								Exceptions.addThrowable(ERROR,
+								Exceptions.addThrowable(ERROR_UPDATER,
 										this,
 										Operators.onOperatorError(this,
 												exc, right, actual.currentContext()));
@@ -326,7 +326,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 								e++;
 							} else {
-								Exceptions.addThrowable(ERROR,
+								Exceptions.addThrowable(ERROR_UPDATER,
 										this,
 										Exceptions.failWithOverflow("Could not " + "emit value due to lack of requests"));
 								q.clear();
@@ -337,7 +337,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						}
 
 						if (e != 0L) {
-							Operators.produced(LONG_REQUESTED, this, e);
+							Operators.produced(REQUESTED_UPDATER, this, e);
 						}
 					} else if (mode.equals(RIGHT_VALUE)) {
 						@SuppressWarnings("unchecked") TRight right = (TRight) val;
@@ -352,7 +352,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 							p = Objects.requireNonNull(rightEnd.apply(right),
 									"The rightEnd returned a null Publisher");
 						} catch (Throwable exc) {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this,
 									Operators.onOperatorError(this, exc, right,
 											actual.currentContext()));
@@ -386,7 +386,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 										right),
 										"The resultSelector returned a null value");
 							} catch (Throwable exc) {
-								Exceptions.addThrowable(ERROR,
+								Exceptions.addThrowable(ERROR_UPDATER,
 										this,
 										Operators.onOperatorError(this, exc, left,
 												actual.currentContext()));
@@ -399,7 +399,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 								e++;
 							} else {
-								Exceptions.addThrowable(ERROR,
+								Exceptions.addThrowable(ERROR_UPDATER,
 										this,
 										Exceptions.failWithOverflow("Could not emit " + "value due to lack of requests"));
 								q.clear();
@@ -410,7 +410,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 						}
 
 						if (e != 0L) {
-							Operators.produced(LONG_REQUESTED, this, e);
+							Operators.produced(REQUESTED_UPDATER, this, e);
 						}
 					} else if (mode.equals(LEFT_CLOSE)) {
 						LeftRightEndSubscriber end = (LeftRightEndSubscriber) val;
@@ -425,14 +425,14 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 			} while (missed != 0);
 		}
 
 		@Override
 		public void innerError(Throwable ex) {
-			if (Exceptions.addThrowable(ERROR, this, ex)) {
-				ACTIVE.decrementAndGet(this);
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, ex)) {
+				ACTIVE_UPDATER.decrementAndGet(this);
 				drain();
 			}
 			else {
@@ -443,7 +443,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 		@Override
 		public void innerComplete(LeftRightSubscriber sender) {
 			cancellations.remove(sender);
-			ACTIVE.decrementAndGet(this);
+			ACTIVE_UPDATER.decrementAndGet(this);
 			drain();
 		}
 
@@ -461,7 +461,7 @@ final class FluxJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends
 
 		@Override
 		public void innerCloseError(Throwable ex) {
-			if (Exceptions.addThrowable(ERROR, this, ex)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, ex)) {
 				drain();
 			}
 			else {

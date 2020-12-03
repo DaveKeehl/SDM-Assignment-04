@@ -60,7 +60,7 @@ final class SinkManySerialized<T> extends SinksSpecs.AbstractSerializedSink
 		try {
 			return sink.tryEmitComplete();
 		} finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}
@@ -78,7 +78,7 @@ final class SinkManySerialized<T> extends SinksSpecs.AbstractSerializedSink
 		try {
 			return sink.tryEmitError(t);
 		} finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}
@@ -96,7 +96,7 @@ final class SinkManySerialized<T> extends SinksSpecs.AbstractSerializedSink
 		try {
 			return sink.tryEmitNext(t);
 		} finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}

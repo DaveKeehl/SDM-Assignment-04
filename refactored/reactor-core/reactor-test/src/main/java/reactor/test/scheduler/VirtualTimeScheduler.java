@@ -484,7 +484,7 @@ public class VirtualTimeScheduler implements Scheduler {
 			final TimedRunnable timedTask = new TimedRunnable(this,
 					0,
 					run,
-					COUNTER.getAndIncrement(VirtualTimeScheduler.this));
+					COUNTER_UPDATER.getAndIncrement(VirtualTimeScheduler.this));
 			queue.add(timedTask);
 			drain();
 			return () -> {
@@ -501,7 +501,7 @@ public class VirtualTimeScheduler implements Scheduler {
 			final TimedRunnable timedTask = new TimedRunnable(this,
 					nanoTime + unit.toNanos(delayTime),
 					run,
-					COUNTER.getAndIncrement(VirtualTimeScheduler.this));
+					COUNTER_UPDATER.getAndIncrement(VirtualTimeScheduler.this));
 			queue.add(timedTask);
 			drain();
 			return () -> {
@@ -641,7 +641,7 @@ public class VirtualTimeScheduler implements Scheduler {
 
 	static final AtomicReference<VirtualTimeScheduler> CURRENT = new AtomicReference<>();
 
-	static final AtomicLongFieldUpdater<VirtualTimeScheduler> COUNTER =
+	static final AtomicLongFieldUpdater<VirtualTimeScheduler> COUNTER_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(VirtualTimeScheduler.class, "counter");
 	static final long CLOCK_DRIFT_TOLERANCE_NANOSECONDS;
 

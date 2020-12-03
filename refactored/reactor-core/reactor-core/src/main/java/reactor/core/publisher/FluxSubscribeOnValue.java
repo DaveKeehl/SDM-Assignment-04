@@ -88,12 +88,12 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ScheduledScalar> ONCE =
+		static final AtomicIntegerFieldUpdater<ScheduledScalar> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ScheduledScalar.class, "once");
 
 		volatile Disposable future;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ScheduledScalar, Disposable> FUTURE =
+		static final AtomicReferenceFieldUpdater<ScheduledScalar, Disposable> FUTURE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ScheduledScalar.class,
 						Disposable.class,
 						"future");
@@ -138,10 +138,10 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (ONCE.compareAndSet(this, 0, 1)) {
+				if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 					try {
 						Disposable f = scheduler.schedule(this);
-						if (!FUTURE.compareAndSet(this,
+						if (!FUTURE_UPDATER.compareAndSet(this,
 								null,
 								f) && future != FINISHED && future != OperatorDisposables.DISPOSED) {
 							f.dispose();
@@ -161,10 +161,10 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 
 		@Override
 		public void cancel() {
-			ONCE.lazySet(this, 1);
+			ONCE_UPDATER.lazySet(this, 1);
 			Disposable f = future;
 			if (f != OperatorDisposables.DISPOSED && future != FINISHED) {
-				f = FUTURE.getAndSet(this, OperatorDisposables.DISPOSED);
+				f = FUTURE_UPDATER.getAndSet(this, OperatorDisposables.DISPOSED);
 				if (f != null && f != OperatorDisposables.DISPOSED && f != FINISHED) {
 					f.dispose();
 				}
@@ -181,7 +181,7 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 				actual.onComplete();
 			}
 			finally {
-				FUTURE.lazySet(this, FINISHED);
+				FUTURE_UPDATER.lazySet(this, FINISHED);
 			}
 		}
 
@@ -225,7 +225,7 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 		final Subscriber<?> actual;
 
 		volatile Disposable future;
-		static final AtomicReferenceFieldUpdater<ScheduledEmpty, Disposable> FUTURE =
+		static final AtomicReferenceFieldUpdater<ScheduledEmpty, Disposable> FUTURE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ScheduledEmpty.class,
 						Disposable.class,
 						"future");
@@ -245,7 +245,7 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 		public void cancel() {
 			Disposable f = future;
 			if (f != OperatorDisposables.DISPOSED && f != FINISHED) {
-				f = FUTURE.getAndSet(this, OperatorDisposables.DISPOSED);
+				f = FUTURE_UPDATER.getAndSet(this, OperatorDisposables.DISPOSED);
 				if (f != null && f != OperatorDisposables.DISPOSED && f != FINISHED) {
 					f.dispose();
 				}
@@ -258,12 +258,12 @@ final class FluxSubscribeOnValue<T> extends Flux<T> implements Fuseable, Scannab
 				actual.onComplete();
 			}
 			finally {
-				FUTURE.lazySet(this, FINISHED);
+				FUTURE_UPDATER.lazySet(this, FINISHED);
 			}
 		}
 
 		void setFuture(Disposable f) {
-			if (!FUTURE.compareAndSet(this, null, f)) {
+			if (!FUTURE_UPDATER.compareAndSet(this, null, f)) {
 				Disposable a = future;
 				if (a != FINISHED && a != OperatorDisposables.DISPOSED) {
 					f.dispose();

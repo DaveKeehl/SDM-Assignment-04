@@ -37,24 +37,24 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 
 	volatile Subscription s;
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<StrictSubscriber, Subscription> S =
+	static final AtomicReferenceFieldUpdater<StrictSubscriber, Subscription> S_UPDATER=
 			AtomicReferenceFieldUpdater.newUpdater(StrictSubscriber.class,
 					Subscription.class,
 					"s");
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<StrictSubscriber> LONG_REQUESTED =
+	static final AtomicLongFieldUpdater<StrictSubscriber> REQUESTED_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(StrictSubscriber.class, "requested");
 
 	volatile int wip;
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<StrictSubscriber> WIP =
+	static final AtomicIntegerFieldUpdater<StrictSubscriber> WIP_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(StrictSubscriber.class, "wip");
 
 	volatile Throwable error;
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<StrictSubscriber, Throwable> ERROR =
+	static final AtomicReferenceFieldUpdater<StrictSubscriber, Throwable> ERROR_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(StrictSubscriber.class,
 					Throwable.class,
 					"error");
@@ -71,8 +71,8 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 
 			actual.onSubscribe(this);
 
-			if (Operators.setOnce(S, this, s)) {
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+			if (Operators.setOnce(S_UPDATER, this, s)) {
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0L) {
 					s.request(r);
 				}
@@ -85,10 +85,10 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 
 	@Override
 	public void onNext(T t) {
-		if (WIP.get(this) == 0 && WIP.compareAndSet(this, 0, 1)) {
+		if (WIP_UPDATER.get(this) == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 			actual.onNext(t);
-			if (WIP.decrementAndGet(this) != 0) {
-				Throwable ex = Exceptions.terminate(ERROR, this);
+			if (WIP_UPDATER.decrementAndGet(this) != 0) {
+				Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 				if (ex != null) {
 					actual.onError(ex);
 				} else {
@@ -101,9 +101,9 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 	@Override
 	public void onError(Throwable t) {
 		done = true;
-		if (Exceptions.addThrowable(ERROR, this, t)) {
-			if (WIP.getAndIncrement(this) == 0) {
-				actual.onError(Exceptions.terminate(ERROR, this));
+		if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
+				actual.onError(Exceptions.terminate(ERROR_UPDATER, this));
 			}
 		}
 		else {
@@ -114,8 +114,8 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 	@Override
 	public void onComplete() {
 		done = true;
-		if (WIP.getAndIncrement(this) == 0) {
-			Throwable ex = Exceptions.terminate(ERROR, this);
+		if (WIP_UPDATER.getAndIncrement(this) == 0) {
+			Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 			if (ex != null) {
 				actual.onError(ex);
 			}
@@ -138,10 +138,10 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 			a.request(n);
 		}
 		else {
-			Operators.addCap(LONG_REQUESTED, this, n);
+			Operators.addCap(REQUESTED_UPDATER, this, n);
 			a = s;
 			if (a != null) {
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0L) {
 					a.request(n);
 				}
@@ -152,7 +152,7 @@ final class StrictSubscriber<T> implements Scannable, CoreSubscriber<T>, Subscri
 	@Override
 	public void cancel() {
 		if(!done) {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 

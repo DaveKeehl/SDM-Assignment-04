@@ -115,7 +115,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<GenerateSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<GenerateSubscription> REQUESTED_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(GenerateSubscription.class, "requested");
 
 		GenerateSubscription(CoreSubscriber<? super T> actual, S state,
@@ -199,7 +199,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					} else {
@@ -288,7 +288,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 
 				if (n == e) {
 					state = s;
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0L) {
 						return;
 					}
@@ -301,7 +301,7 @@ extends Flux<T> implements Fuseable, SourceProducer<T> {
 			if (!cancelled) {
 				cancelled = true;
 
-				if (LONG_REQUESTED.getAndIncrement(this) == 0) {
+				if (REQUESTED_UPDATER.getAndIncrement(this) == 0) {
 					cleanup(state);
 				}
 			}

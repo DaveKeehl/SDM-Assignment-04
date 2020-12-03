@@ -87,7 +87,7 @@ final class FluxDoFinally<T> extends InternalFluxOperator<T, T> {
 
 		volatile int once;
 
-		static final AtomicIntegerFieldUpdater<DoFinallySubscriber> ONCE =
+		static final AtomicIntegerFieldUpdater<DoFinallySubscriber> ONCE_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(DoFinallySubscriber.class, "once");
 
 		QueueSubscription<T> qs;
@@ -158,7 +158,7 @@ final class FluxDoFinally<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void runFinally(SignalType signalType) {
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					onFinally.accept(signalType);
 				} catch (Throwable ex) {

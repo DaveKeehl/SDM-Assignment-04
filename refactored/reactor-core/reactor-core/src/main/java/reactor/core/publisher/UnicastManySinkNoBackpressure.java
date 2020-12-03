@@ -44,7 +44,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 	volatile State state;
 
 	@SuppressWarnings("rawtypes")
-	private static final AtomicReferenceFieldUpdater<UnicastManySinkNoBackpressure, State> STATE = AtomicReferenceFieldUpdater.newUpdater(
+	private static final AtomicReferenceFieldUpdater<UnicastManySinkNoBackpressure, State> STATE_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 			UnicastManySinkNoBackpressure.class,
 			State.class,
 			"state"
@@ -54,11 +54,11 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<UnicastManySinkNoBackpressure> LONG_REQUESTED =
+	static final AtomicLongFieldUpdater<UnicastManySinkNoBackpressure> REQUESTED_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(UnicastManySinkNoBackpressure.class, "requested");
 
 	UnicastManySinkNoBackpressure() {
-		STATE.lazySet(this, State.INITIAL);
+		STATE_UPDATER.lazySet(this, State.INITIAL);
 	}
 
 	@Override
@@ -75,7 +75,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 	public void subscribe(CoreSubscriber<? super T> actual) {
 		Objects.requireNonNull(actual, "subscribe");
 
-		if (!STATE.compareAndSet(this, State.INITIAL, State.SUBSCRIBED)) {
+		if (!STATE_UPDATER.compareAndSet(this, State.INITIAL, State.SUBSCRIBED)) {
 			Operators.reportThrowInSubscribe(actual, new IllegalStateException("Unicast Sinks.Many allows only a single Subscriber"));
 			return;
 		}
@@ -87,13 +87,13 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 	@Override
 	public void request(long n) {
 		if (Operators.validate(n)) {
-			Operators.addCap(LONG_REQUESTED, this, n);
+			Operators.addCap(REQUESTED_UPDATER, this, n);
 		}
 	}
 
 	@Override
 	public void cancel() {
-		if (STATE.getAndSet(this, State.CANCELLED) == State.SUBSCRIBED) {
+		if (STATE_UPDATER.getAndSet(this, State.CANCELLED) == State.SUBSCRIBED) {
 			actual = null;
 		}
 	}
@@ -117,7 +117,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 				}
 
 				actual.onNext(t);
-				Operators.produced(LONG_REQUESTED, this, 1);
+				Operators.produced(REQUESTED_UPDATER, this, 1);
 				return Sinks.EmitResult.OK;
 			case TERMINATED:
 				return Sinks.EmitResult.FAIL_TERMINATED;
@@ -137,7 +137,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 				case INITIAL:
 					return Sinks.EmitResult.FAIL_ZERO_SUBSCRIBER;
 				case SUBSCRIBED:
-					if (STATE.compareAndSet(this, s, State.TERMINATED)) {
+					if (STATE_UPDATER.compareAndSet(this, s, State.TERMINATED)) {
 						actual.onError(t);
 						actual = null;
 						return Sinks.EmitResult.OK;
@@ -161,7 +161,7 @@ final class UnicastManySinkNoBackpressure<T> extends Flux<T> implements Internal
 				case INITIAL:
 					return Sinks.EmitResult.FAIL_ZERO_SUBSCRIBER;
 				case SUBSCRIBED:
-					if (STATE.compareAndSet(this, s, State.TERMINATED)) {
+					if (STATE_UPDATER.compareAndSet(this, s, State.TERMINATED)) {
 						actual.onComplete();
 						actual = null;
 						return EmitResult.OK;

@@ -35,9 +35,9 @@ public class ShakespearePlaysScrabbleRegular extends ShakespearePlaysScrabble {
 
 		ShakespearePlaysScrabbleRegular s = new ShakespearePlaysScrabbleRegular();
 		s.init();
-		for(;;) {
+		do {
 			System.out.println(s.measureThroughput());
-		}
+		} while (Thread.interrupted());
 	}
 
 	@SuppressWarnings("unused")

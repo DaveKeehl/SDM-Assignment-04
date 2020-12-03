@@ -156,27 +156,27 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<GroupJoinSubscription> WIP =
+		static final AtomicIntegerFieldUpdater<GroupJoinSubscription> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(GroupJoinSubscription.class, "wip");
 
 		volatile int active;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<GroupJoinSubscription> ACTIVE =
+		static final AtomicIntegerFieldUpdater<GroupJoinSubscription> ACTIVE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(GroupJoinSubscription.class,
 						"active");
 
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<GroupJoinSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<GroupJoinSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(GroupJoinSubscription.class,
 						"requested");
 
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<GroupJoinSubscription, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<GroupJoinSubscription, Throwable> ERROR_UPDATER =
 						AtomicReferenceFieldUpdater.newUpdater(GroupJoinSubscription.class,
 								Throwable.class,
 								"error");
@@ -205,7 +205,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 			this.leftEnd = leftEnd;
 			this.rightEnd = rightEnd;
 			this.resultSelector = resultSelector;
-			ACTIVE.lazySet(this, 2);
+			ACTIVE_UPDATER.lazySet(this, 2);
 		}
 
 		@Override
@@ -236,7 +236,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -246,13 +246,13 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 				return;
 			}
 			cancellations.dispose();
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				queue.clear();
 			}
 		}
 
 		void errorAll(Subscriber<?> a) {
-			Throwable ex = Exceptions.terminate(ERROR, this);
+			Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 
 			for (Sinks.Many<TRight> up : lefts.values()) {
 				up.emitError(ex, Sinks.EmitFailureHandler.FAIL_FAST);
@@ -265,7 +265,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -326,7 +326,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 							p = Objects.requireNonNull(leftEnd.apply(left),
 									"The leftEnd returned a null Publisher");
 						} catch (Throwable exc) {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this,
 									Operators.onOperatorError(this, exc, left,
 											actual.currentContext()));
@@ -354,7 +354,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 							w = Objects.requireNonNull(resultSelector.apply(left, up.asFlux()),
 									"The resultSelector returned a null value");
 						} catch (Throwable exc) {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this, Operators.onOperatorError(this, exc, up,
 											actual.currentContext()));
 							errorAll(a);
@@ -365,9 +365,9 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 						long r = requested;
 						if (r != 0L) {
 							a.onNext(w);
-							Operators.produced(LONG_REQUESTED, this, 1);
+							Operators.produced(REQUESTED_UPDATER, this, 1);
 						} else {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this,
 									Exceptions.failWithOverflow());
 							errorAll(a);
@@ -390,7 +390,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 							p = Objects.requireNonNull(rightEnd.apply(right),
 									"The rightEnd returned a null Publisher");
 						} catch (Throwable exc) {
-							Exceptions.addThrowable(ERROR,
+							Exceptions.addThrowable(ERROR_UPDATER,
 									this,
 									Operators.onOperatorError(this, exc, right,
 											actual.currentContext()));
@@ -431,14 +431,14 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 			} while (missed != 0);
 		}
 
 		@Override
 		public void innerError(Throwable ex) {
-			if (Exceptions.addThrowable(ERROR, this, ex)) {
-				ACTIVE.decrementAndGet(this);
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, ex)) {
+				ACTIVE_UPDATER.decrementAndGet(this);
 				drain();
 			}
 			else {
@@ -449,7 +449,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		@Override
 		public void innerComplete(LeftRightSubscriber sender) {
 			cancellations.remove(sender);
-			ACTIVE.decrementAndGet(this);
+			ACTIVE_UPDATER.decrementAndGet(this);
 			drain();
 		}
 
@@ -467,7 +467,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 
 		@Override
 		public void innerCloseError(Throwable ex) {
-			if (Exceptions.addThrowable(ERROR, this, ex)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, ex)) {
 				drain();
 			}
 			else {
@@ -486,7 +486,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		volatile Subscription subscription;
 
 		final static AtomicReferenceFieldUpdater<LeftRightSubscriber, Subscription>
-				SUBSCRIPTION =
+				SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(LeftRightSubscriber.class,
 						Subscription.class,
 						"subscription");
@@ -498,7 +498,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -524,7 +524,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -558,7 +558,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 		volatile Subscription subscription;
 
 		final static AtomicReferenceFieldUpdater<LeftRightEndSubscriber, Subscription>
-				SUBSCRIPTION = AtomicReferenceFieldUpdater.newUpdater(
+				SUBSCRIPTION_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				LeftRightEndSubscriber.class,
 				Subscription.class,
 				"subscription");
@@ -571,7 +571,7 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -591,14 +591,14 @@ final class FluxGroupJoin<TLeft, TRight, TLeftEnd, TRightEnd, R>
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
 
 		@Override
 		public void onNext(Object t) {
-			if (Operators.terminate(SUBSCRIPTION, this)) {
+			if (Operators.terminate(SUBSCRIPTION_UPDATER, this)) {
 				parent.innerClose(isLeft, this);
 			}
 		}

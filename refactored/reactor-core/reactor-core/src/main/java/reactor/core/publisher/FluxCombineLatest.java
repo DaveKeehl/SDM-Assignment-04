@@ -203,13 +203,13 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<CombineLatestCoordinator> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<CombineLatestCoordinator> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(CombineLatestCoordinator.class,
 						"requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<CombineLatestCoordinator> WIP =
+		static final AtomicIntegerFieldUpdater<CombineLatestCoordinator> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(CombineLatestCoordinator.class,
 						"wip");
 
@@ -219,7 +219,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<CombineLatestCoordinator, Throwable>
-				ERROR =
+				ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(CombineLatestCoordinator.class,
 						Throwable.class,
 						"error");
@@ -248,7 +248,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -261,7 +261,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 			cancelled = true;
 			cancelAll();
 
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				clear();
 			}
 		}
@@ -357,7 +357,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 
 		void innerError(Throwable e) {
 
-			if (Exceptions.addThrowable(ERROR, this, e)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 				done = true;
 				drain();
 			}
@@ -400,7 +400,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -442,9 +442,9 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 						Operators.onDiscardMultiple(Stream.of(v.array), ctx);
 
 						ex = Operators.onOperatorError(this, ex,	v.array, ctx);
-						Exceptions.addThrowable(ERROR, this, ex);
+						Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 						//noinspection ConstantConditions
-						ex = Exceptions.terminate(ERROR, this);
+						ex = Exceptions.terminate(ERROR_UPDATER, this);
 						actual.onError(ex);
 						return;
 					}
@@ -463,10 +463,10 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -474,7 +474,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -494,7 +494,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 			}
 
 			if (d) {
-				Throwable e = Exceptions.terminate(ERROR, this);
+				Throwable e = Exceptions.terminate(ERROR_UPDATER, this);
 
 				if (e != null && e != Exceptions.TERMINATED) {
 					cancelAll();
@@ -573,7 +573,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<CombineLatestInner, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<CombineLatestInner, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(CombineLatestInner.class,
 						Subscription.class,
 						"s");
@@ -596,7 +596,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Operators.unboundedOrPrefetch(prefetch));
 			}
 		}
@@ -617,7 +617,7 @@ final class FluxCombineLatest<T, R> extends Flux<R> implements Fuseable, SourceP
 		}
 
 		public void cancel() {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 
 		void requestOne() {

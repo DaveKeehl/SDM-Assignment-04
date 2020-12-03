@@ -164,7 +164,7 @@ public interface Signal<T> extends Supplier<T>, Consumer<Subscriber<? super T>> 
 	}
 
 	/**
-	 * Check if a arbitrary Object represents an ERROR {@link Signal}.
+	 * Check if a arbitrary Object represents an ERROR_UPDATER {@link Signal}.
 	 *
 	 * @param o the object to check
 	 * @return true if object represents the error signal

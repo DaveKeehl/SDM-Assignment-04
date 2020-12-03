@@ -82,31 +82,31 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 		volatile Subscription s;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleFirstMain, Subscription> S =
+		static final AtomicReferenceFieldUpdater<SampleFirstMain, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SampleFirstMain.class,
 						Subscription.class,
 						"s");
 
 		volatile Subscription other;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleFirstMain, Subscription> OTHER =
+		static final AtomicReferenceFieldUpdater<SampleFirstMain, Subscription> OTHER_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SampleFirstMain.class,
 						Subscription.class,
 						"other");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SampleFirstMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<SampleFirstMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(SampleFirstMain.class, "requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SampleFirstMain> WIP =
+		static final AtomicIntegerFieldUpdater<SampleFirstMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SampleFirstMain.class, "wip");
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SampleFirstMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<SampleFirstMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SampleFirstMain.class,
 						Throwable.class,
 						"error");
@@ -143,19 +143,19 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
 		@Override
 		public void cancel() {
-			Operators.terminate(S, this);
-			Operators.terminate(OTHER, this);
+			Operators.terminate(S_UPDATER, this);
+			Operators.terminate(OTHER_UPDATER, this);
 		}
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -165,9 +165,9 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 			if (!gate) {
 				gate = true;
 
-				if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+				if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 					actual.onNext(t);
-					if (WIP.decrementAndGet(this) != 0) {
+					if (WIP_UPDATER.decrementAndGet(this) != 0) {
 						handleTermination();
 						return;
 					}
@@ -183,14 +183,14 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 							"The throttler returned a null publisher");
 				}
 				catch (Exception e) {
-					Operators.terminate(S, this);
-					error(Operators.onOperatorError(null, e, t, ctx));
+					Operators.terminate(S_UPDATER, this);
+					addException(Operators.onOperatorError(null, e, t, ctx));
 					return;
 				}
 
 				SampleFirstOther<U> other = new SampleFirstOther<>(this);
 
-				if (Operators.replace(OTHER, this, other)) {
+				if (Operators.replace(OTHER_UPDATER, this, other)) {
 					p.subscribe(other);
 				}
 			}
@@ -200,7 +200,7 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void handleTermination() {
-			Throwable e = Exceptions.terminate(ERROR, this);
+			Throwable e = Exceptions.terminate(ERROR_UPDATER, this);
 			if (e != null && e != Exceptions.TERMINATED) {
 				actual.onError(e);
 			}
@@ -209,9 +209,9 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 			}
 		}
 
-		void error(Throwable e) {
-			if (Exceptions.addThrowable(ERROR, this, e)) {
-				if (WIP.getAndIncrement(this) == 0) {
+		void addException(Throwable e) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					handleTermination();
 				}
 			}
@@ -222,16 +222,16 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onError(Throwable t) {
-			Operators.terminate(OTHER, this);
+			Operators.terminate(OTHER_UPDATER, this);
 
-			error(t);
+			addException(t);
 		}
 
 		@Override
 		public void onComplete() {
-			Operators.terminate(OTHER, this);
+			Operators.terminate(OTHER_UPDATER, this);
 
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				handleTermination();
 			}
 		}
@@ -241,9 +241,9 @@ final class FluxSampleFirst<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void otherError(Throwable e) {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 
-			error(e);
+			addException(e);
 		}
 	}
 

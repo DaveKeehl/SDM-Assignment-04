@@ -26,7 +26,7 @@ import reactor.util.annotation.Nullable;
  * Represents an empty publisher which only calls onSubscribe and onComplete.
  * <p>
  * This Publisher is effectively stateless and only a single instance exists.
- * Use the {@link #instance()} method to obtain a properly type-parametrized view of it.
+ * Use the {@link #getInstance()} method to obtain a properly type-parametrized view of it.
  *
  * @see <a href="https://github.com/reactor/reactive-streams-commons">Reactive-Streams-Commons</a>
  */
@@ -52,7 +52,7 @@ extends Mono<Object>
 	 * @return a properly parametrized instance of this empty Publisher
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> Mono<T> instance() {
+	static <T> Mono<T> getInstance() {
 		return (Mono<T>) INSTANCE;
 	}
 

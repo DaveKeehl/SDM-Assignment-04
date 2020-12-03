@@ -152,7 +152,7 @@ public interface FluxSink<T> {
 		/**
 		 * Signal an {@link IllegalStateException} when the downstream can't keep up
 		 */
-		ERROR,
+		ERROR_UPDATER,
 		/**
 		 * Drop the incoming signal if the downstream is not ready to receive it.
 		 */

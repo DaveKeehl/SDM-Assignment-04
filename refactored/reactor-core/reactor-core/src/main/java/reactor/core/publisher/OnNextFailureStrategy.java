@@ -78,7 +78,7 @@ interface OnNextFailureStrategy extends BiFunction<Throwable, Object, Throwable>
 	 * A strategy that never let any error resume.
 	 */
 	static OnNextFailureStrategy stop() {
-		return STOP;
+		return STOP_STRATEGY;
 	}
 
 	/**
@@ -143,7 +143,7 @@ interface OnNextFailureStrategy extends BiFunction<Throwable, Object, Throwable>
 	}
 
 	//==== IMPLEMENTATIONS ====
-	OnNextFailureStrategy STOP = new OnNextFailureStrategy() {
+	OnNextFailureStrategy STOP_STRATEGY = new OnNextFailureStrategy() {
 
 		@Override
 		public boolean test(Throwable error, @Nullable Object value) {

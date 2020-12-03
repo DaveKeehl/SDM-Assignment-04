@@ -58,7 +58,7 @@ final class FluxErrorOnRequest<T> extends Flux<T> implements SourceProducer<T> {
 
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ErrorSubscription> ONCE =
+		static final AtomicIntegerFieldUpdater<ErrorSubscription> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ErrorSubscription.class, "once");
 
 		ErrorSubscription(CoreSubscriber<? super O> actual, Throwable error) {
@@ -69,7 +69,7 @@ final class FluxErrorOnRequest<T> extends Flux<T> implements SourceProducer<T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (ONCE.compareAndSet(this, 0, 1)) {
+				if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 					actual.onError(error);
 				}
 			}

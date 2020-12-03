@@ -50,7 +50,7 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 	final Scheduler                             clock;
 
 	volatile Signal<T> state;
-	static final AtomicReferenceFieldUpdater<MonoCacheTime, Signal> STATE =
+	static final AtomicReferenceFieldUpdater<MonoCacheTime, Signal> STATE_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(MonoCacheTime.class, Signal.class, "state");
 
 	static final Signal<?> EMPTY = new ImmutableSignal<>(Context.empty(), SignalType.ON_NEXT, null, null, null);
@@ -113,7 +113,7 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 				CoordinatorSubscriber<T> coordinator;
 				if (state == EMPTY) {
 					coordinator = new CoordinatorSubscriber<>(this);
-					if (!STATE.compareAndSet(this, EMPTY, coordinator)) {
+					if (!STATE_UPDATER.compareAndSet(this, EMPTY, coordinator)) {
 						continue;
 					}
 					subscribe = true;
@@ -164,11 +164,11 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 		final MonoCacheTime<T> main;
 
 		volatile Subscription subscription;
-		static final AtomicReferenceFieldUpdater<CoordinatorSubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<CoordinatorSubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(CoordinatorSubscriber.class, Subscription.class, "subscription");
 
 		volatile Operators.MonoSubscriber<T, T>[] subscribers;
-		static final AtomicReferenceFieldUpdater<CoordinatorSubscriber, Operators.MonoSubscriber[]> SUBSCRIBERS =
+		static final AtomicReferenceFieldUpdater<CoordinatorSubscriber, Operators.MonoSubscriber[]> SUBSCRIBERS_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(CoordinatorSubscriber.class, Operators.MonoSubscriber[].class, "subscribers");
 
 		@SuppressWarnings("unchecked")
@@ -233,7 +233,7 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 				Operators.MonoSubscriber<T, T>[] b = new Operators.MonoSubscriber[n + 1];
 				System.arraycopy(a, 0, b, 0, n);
 				b[n] = toAdd;
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					return true;
 				}
 			}
@@ -267,7 +267,7 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 					System.arraycopy(a, 0, b, 0, j);
 					System.arraycopy(a, j + 1, b, j, n - j - 1);
 				}
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					//no particular cleanup here for the EMPTY case, we don't cancel the
 					// source because a new subscriber could come in before the coordinator
 					// is terminated.
@@ -288,14 +288,14 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 		@SuppressWarnings("unchecked")
 		private void signalCached(Signal<T> signal) {
 			Signal<T> signalToPropagate = signal;
-			if (STATE.compareAndSet(main, this, signal)) {
+			if (STATE_UPDATER.compareAndSet(main, this, signal)) {
 				Duration ttl = null;
 				try {
 					ttl = main.ttlGenerator.apply(signal);
 				}
 				catch (Throwable generatorError) {
 					signalToPropagate = Signal.error(generatorError);
-					STATE.set(main, signalToPropagate);
+					STATE_UPDATER.set(main, signalToPropagate);
 					if (signal.isOnError()) {
 						//noinspection ThrowableNotThrown
 						Exceptions.addSuppressed(generatorError, signal.getThrowable());
@@ -323,7 +323,7 @@ class MonoCacheTime<T> extends InternalMonoOperator<T, T> implements Runnable {
 				}
 			}
 
-			for (Operators.MonoSubscriber<T, T> inner : SUBSCRIBERS.getAndSet(this, TERMINATED)) {
+			for (Operators.MonoSubscriber<T, T> inner : SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED)) {
 				if (signalToPropagate.isOnNext()) {
 					inner.complete(signalToPropagate.get());
 				}

@@ -175,7 +175,7 @@ final class FluxFirstWithSignal<T> extends Flux<T> implements SourceProducer<T> 
 
 		volatile int winner;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<RaceCoordinator> WINNER =
+		static final AtomicIntegerFieldUpdater<RaceCoordinator> WINNER_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(RaceCoordinator.class, "winner");
 
 		@SuppressWarnings("unchecked")
@@ -216,7 +216,7 @@ final class FluxFirstWithSignal<T> extends Flux<T> implements SourceProducer<T> 
 				Publisher<? extends T> p = sources[i];
 
 				if (p == null) {
-					if (WINNER.compareAndSet(this, Integer.MIN_VALUE, -1)) {
+					if (WINNER_UPDATER.compareAndSet(this, Integer.MIN_VALUE, -1)) {
 						actual.onError(new NullPointerException("The " + i + " th Publisher source is null"));
 					}
 					return;
@@ -262,7 +262,7 @@ final class FluxFirstWithSignal<T> extends Flux<T> implements SourceProducer<T> 
 
 		boolean tryWin(int index) {
 			if (winner == Integer.MIN_VALUE) {
-				if (WINNER.compareAndSet(this, Integer.MIN_VALUE, index)) {
+				if (WINNER_UPDATER.compareAndSet(this, Integer.MIN_VALUE, index)) {
 
 					FirstEmittingSubscriber<T>[] a = subscribers;
 					int n = a.length;

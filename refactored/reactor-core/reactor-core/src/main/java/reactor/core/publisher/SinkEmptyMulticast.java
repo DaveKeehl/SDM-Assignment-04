@@ -33,11 +33,11 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 	volatile VoidInner<T>[] subscribers;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<SinkEmptyMulticast, VoidInner[]> SUBSCRIBERS =
+	static final AtomicReferenceFieldUpdater<SinkEmptyMulticast, VoidInner[]> SUBSCRIBERS_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(SinkEmptyMulticast.class, VoidInner[].class, "subscribers");
 
 	@SuppressWarnings("rawtypes")
-	static final VoidInner[] EMPTY = new VoidInner[0];
+	static final VoidInner[] EMPTY_INNER = new VoidInner[0];
 
 	@SuppressWarnings("rawtypes")
 	static final VoidInner[] TERMINATED = new VoidInner[0];
@@ -45,7 +45,7 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 	Throwable error;
 
 	SinkEmptyMulticast() {
-		SUBSCRIBERS.lazySet(this, EMPTY);
+		SUBSCRIBERS_UPDATER.lazySet(this, EMPTY_INNER);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 
 	@Override
 	public EmitResult tryEmitEmpty() {
-		VoidInner<?>[] array = SUBSCRIBERS.getAndSet(this, TERMINATED);
+		VoidInner<?>[] array = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		if (array == TERMINATED) {
 			return Sinks.EmitResult.FAIL_TERMINATED;
@@ -83,7 +83,7 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 		//guarded by a read memory barrier (isTerminated) and a subsequent write with getAndSet
 		error = cause;
 
-		for (VoidInner<?> as : SUBSCRIBERS.getAndSet(this, TERMINATED)) {
+		for (VoidInner<?> as : SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED)) {
 			as.onError(cause);
 		}
 		return Sinks.EmitResult.OK;
@@ -108,7 +108,7 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 			System.arraycopy(a, 0, b, 0, n);
 			b[n] = ps;
 
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				return true;
 			}
 		}
@@ -137,14 +137,14 @@ final class SinkEmptyMulticast<T> extends Mono<T> implements InternalEmptySink<T
 			VoidInner<?>[] b;
 
 			if (n == 1) {
-				b = EMPTY;
+				b = EMPTY_INNER;
 			}
 			else {
 				b = new VoidInner[n - 1];
 				System.arraycopy(a, 0, b, 0, j);
 				System.arraycopy(a, j + 1, b, j, n - j - 1);
 			}
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				return;
 			}
 		}

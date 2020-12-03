@@ -41,7 +41,7 @@ class RetrySpecTest {
     void builderMethodsProduceNewInstances() {
 		RetrySpec init = Retry.max(1);
 		assertThat(init)
-				.isNotSameAs(init.maxAttempts(10))
+				.isNotSameAs(init.setMaxAttempts(10))
 				.isNotSameAs(init.filter(t -> true))
 				.isNotSameAs(init.modifyErrorFilter(predicate -> predicate.and(t -> true)))
 				.isNotSameAs(init.transientErrors(true))
@@ -56,7 +56,7 @@ class RetrySpecTest {
 	@Test
     void retryContextIsCorrectlyPropagatedAndSet() {
 		RetrySpec init = Retry.max(1);
-		assertThat(init.withRetryContext(Context.of("foo", "bar")).maxAttempts(10))
+		assertThat(init.withRetryContext(Context.of("foo", "bar")).setMaxAttempts(10))
 				.satisfies(rs -> rs.retryContext().get("foo").equals("bar"));
 	}
 
@@ -81,7 +81,7 @@ class RetrySpecTest {
 			});
 		};
 
-		Flux<Integer> modifiedTemplate1 = transientError.get().retryWhen(template.maxAttempts(2));
+		Flux<Integer> modifiedTemplate1 = transientError.get().retryWhen(template.setMaxAttempts(2));
 		Flux<Integer> modifiedTemplate2 = transientError.get().retryWhen(template.transientErrors(true));
 
 		StepVerifier.create(modifiedTemplate1, StepVerifierOptions.create().scenarioName("modified template 1"))

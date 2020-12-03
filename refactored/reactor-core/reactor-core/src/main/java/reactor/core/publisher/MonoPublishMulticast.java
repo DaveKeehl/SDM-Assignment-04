@@ -76,22 +76,22 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 			implements InnerConsumer<T>, FluxPublishMulticast.PublishMulticasterParent {
 
 		volatile     Subscription s;
-		static final AtomicReferenceFieldUpdater<MonoPublishMulticaster, Subscription> S =
+		static final AtomicReferenceFieldUpdater<MonoPublishMulticaster, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(MonoPublishMulticaster.class,
 						Subscription.class,
 						"s");
 
 		volatile     int wip;
-		static final AtomicIntegerFieldUpdater<MonoPublishMulticaster> WIP =
+		static final AtomicIntegerFieldUpdater<MonoPublishMulticaster> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MonoPublishMulticaster.class, "wip");
 
 		volatile PublishMulticastInner<T>[] subscribers;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MonoPublishMulticaster, PublishMulticastInner[]> SUBSCRIBERS =
+		static final AtomicReferenceFieldUpdater<MonoPublishMulticaster, PublishMulticastInner[]> SUBSCRIBERS_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MonoPublishMulticaster.class, PublishMulticastInner[].class, "subscribers");
 
 		@SuppressWarnings("rawtypes")
-		static final PublishMulticastInner[] EMPTY = new PublishMulticastInner[0];
+		static final PublishMulticastInner[] EMPTY_INNER = new PublishMulticastInner[0];
 
 		@SuppressWarnings("rawtypes")
 		static final PublishMulticastInner[] TERMINATED = new PublishMulticastInner[0];
@@ -108,7 +108,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 		@SuppressWarnings("unchecked")
 		MonoPublishMulticaster(Context ctx) {
-			SUBSCRIBERS.lazySet(this, EMPTY);
+			SUBSCRIBERS_UPDATER.lazySet(this, EMPTY_INNER);
 			this.context = ctx;
 		}
 
@@ -175,7 +175,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				connected = true;
 				s.request(Long.MAX_VALUE);
 			}
@@ -211,7 +211,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -237,7 +237,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 						if (v == null) {
 							@SuppressWarnings("unchecked")
-							PublishMulticastInner<T>[] castedArray = SUBSCRIBERS.getAndSet(this, TERMINATED);
+							PublishMulticastInner<T>[] castedArray = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 							a = castedArray;
 							n = a.length;
 							for (int i = 0; i < n; i++) {
@@ -247,7 +247,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 						}
 						else {
 							@SuppressWarnings("unchecked")
-							PublishMulticastInner<T>[] castedArray = SUBSCRIBERS.getAndSet(this, TERMINATED);
+							PublishMulticastInner<T>[] castedArray = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 							a = castedArray;
 							n = a.length;
 							for (int i = 0; i < n; i++) {
@@ -260,7 +260,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -281,7 +281,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 				PublishMulticastInner<T>[] b = new PublishMulticastInner[n + 1];
 				System.arraycopy(a, 0, b, 0, n);
 				b[n] = s;
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					return true;
 				}
 			}
@@ -292,7 +292,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 			for (; ; ) {
 				PublishMulticastInner<T>[] a = subscribers;
 
-				if (a == TERMINATED || a == EMPTY) {
+				if (a == TERMINATED || a == EMPTY_INNER) {
 					return;
 				}
 
@@ -312,14 +312,14 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 				PublishMulticastInner<T>[] b;
 				if (n == 1) {
-					b = EMPTY;
+					b = EMPTY_INNER;
 				}
 				else {
 					b = new PublishMulticastInner[n - 1];
 					System.arraycopy(a, 0, b, 0, j);
 					System.arraycopy(a, j + 1, b, j, n - j - 1);
 				}
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					return;
 				}
 			}
@@ -327,8 +327,8 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 		@Override
 		public void terminate() {
-			Operators.terminate(S, this);
-			if (WIP.getAndIncrement(this) == 0) {
+			Operators.terminate(S_UPDATER, this);
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				if (connected) {
 					value = null;
 				}
@@ -343,7 +343,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 		final CoreSubscriber<? super T> actual;
 
 		volatile int cancelled;
-		static final AtomicIntegerFieldUpdater<PublishMulticastInner> CANCELLED = AtomicIntegerFieldUpdater.newUpdater(PublishMulticastInner.class, "cancelled");
+		static final AtomicIntegerFieldUpdater<PublishMulticastInner> CANCELLED_UPDATER = AtomicIntegerFieldUpdater.newUpdater(PublishMulticastInner.class, "cancelled");
 
 		PublishMulticastInner(MonoPublishMulticaster<T> parent,
 				CoreSubscriber<? super T> actual) {
@@ -381,7 +381,7 @@ final class MonoPublishMulticast<T, R> extends InternalMonoOperator<T, R> implem
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELLED_UPDATER.compareAndSet(this, 0, 1)) {
 				parent.remove(this);
 				parent.drain();
 			}

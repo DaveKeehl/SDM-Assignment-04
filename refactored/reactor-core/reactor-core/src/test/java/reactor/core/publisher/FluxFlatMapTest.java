@@ -744,7 +744,7 @@ class FluxFlatMapTest {
 		try {
 			StepVerifier.create(Flux.from(s -> {
 				s.onSubscribe(Operators.emptySubscription());
-				Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR, (FluxFlatMap.FlatMapMain<?, ?>) s);
+				Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR_UPDATER, (FluxFlatMap.FlatMapMain<?, ?>) s);
 				((FluxFlatMap.FlatMapMain<?, ?>) s).done = true;
 				((FluxFlatMap.FlatMapMain<?, ?>) s).drain(null);
 				s.onError(new Exception("test"));
@@ -768,7 +768,7 @@ class FluxFlatMapTest {
 			                        .hide()
 			                        .flatMap(f -> Flux.from(s -> {
 				                        s.onSubscribe(Operators.emptySubscription());
-				                        Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR,
+				                        Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR_UPDATER,
 						                        ((FluxFlatMap.FlatMapInner) s).parent);
 				                        s.onError(new Exception("test"));
 			                        })))
@@ -833,7 +833,7 @@ class FluxFlatMapTest {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext(1);
-			Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR, (FluxFlatMap.FlatMapMain) s);
+			Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR_UPDATER, (FluxFlatMap.FlatMapMain) s);
 			s.onNext(2);
 			((FluxFlatMap.FlatMapMain)s).error = null;
 			s.onError(new Exception("test"));
@@ -866,7 +866,7 @@ class FluxFlatMapTest {
 		StepVerifier.create(Flux.from(s -> {
 			s.onSubscribe(Operators.emptySubscription());
 			s.onNext(1);
-			Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR, (FluxFlatMap.FlatMapMain) s);
+			Exceptions.terminate(FluxFlatMap.FlatMapMain.ERROR_UPDATER, (FluxFlatMap.FlatMapMain) s);
 			((FluxFlatMap.FlatMapMain)s).wip = 1; //simulate concurrent active
 			s.onNext(2);
 			s.onNext(3);
@@ -1095,7 +1095,7 @@ class FluxFlatMapTest {
 
 		ps.emitNext(1, FAIL_FAST);
 
-		Operators.addCap(FluxFlatMap.FlatMapMain.LONG_REQUESTED, fmm, 2L);
+		Operators.addCap(FluxFlatMap.FlatMapMain.REQUESTED_UPDATER, fmm, 2L);
 
 		ps.emitNext(2, FAIL_FAST);
 
@@ -1120,7 +1120,7 @@ class FluxFlatMapTest {
 
 		fmm.onNext(Flux.just(1));
 
-		Operators.addCap(FluxFlatMap.FlatMapMain.LONG_REQUESTED, fmm, 2L);
+		Operators.addCap(FluxFlatMap.FlatMapMain.REQUESTED_UPDATER, fmm, 2L);
 
 		fmm.onNext(Flux.just(2));
 

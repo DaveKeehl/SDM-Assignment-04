@@ -292,7 +292,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 		volatile boolean terminated;
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<ExecutorSchedulerTrampolineWorker> WIP =
+		static final AtomicIntegerFieldUpdater<ExecutorSchedulerTrampolineWorker> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ExecutorSchedulerTrampolineWorker.class,
 						"wip");
 
@@ -316,7 +316,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 				queue.offer(r);
 			}
 
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				try {
 					executor.execute(this);
 				}
@@ -387,7 +387,7 @@ final class ExecutorScheduler implements Scheduler, Scannable {
 					return;
 				}
 
-				if (WIP.addAndGet(this, -e) == 0) {
+				if (WIP_UPDATER.addAndGet(this, -e) == 0) {
 					break;
 				}
 			}

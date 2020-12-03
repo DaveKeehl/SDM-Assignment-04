@@ -132,13 +132,13 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<FlattenIterableSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<FlattenIterableSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(FlattenIterableSubscriber.class,
 						"wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlattenIterableSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<FlattenIterableSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(FlattenIterableSubscriber.class,
 						"requested");
 
@@ -153,7 +153,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<FlattenIterableSubscriber, Throwable>
-				ERROR =
+				ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(FlattenIterableSubscriber.class,
 						Throwable.class,
 						"error");
@@ -252,7 +252,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain(null);
 			}
@@ -270,7 +270,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain(null);
 			}
 		}
@@ -282,7 +282,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 				s.cancel();
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					Context context = actual.currentContext();
 					Operators.onDiscardQueueWithClear(queue, context, null);
 					Operators.onDiscardMultiple(current, currentKnownToBeFinite, context);
@@ -315,7 +315,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 					Throwable ex = error;
 					if (ex != null) {
-						ex = Exceptions.terminate(ERROR, this);
+						ex = Exceptions.terminate(ERROR_UPDATER, this);
 						resetCurrent();
 						Operators.onDiscardQueueWithClear(q, actual.currentContext(), null);
 						a.onError(ex);
@@ -397,7 +397,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 						Throwable ex = error;
 						if (ex != null) {
-							ex = Exceptions.terminate(ERROR, this);
+							ex = Exceptions.terminate(ERROR_UPDATER, this);
 							resetCurrent();
 							final Context context = actual.currentContext();
 							Operators.onDiscardQueueWithClear(q, context, null);
@@ -468,7 +468,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 						Throwable ex = error;
 						if (ex != null) {
-							ex = Exceptions.terminate(ERROR, this);
+							ex = Exceptions.terminate(ERROR_UPDATER, this);
 							resetCurrent();
 							final Context context = actual.currentContext();
 							Operators.onDiscardQueueWithClear(q, context, null);
@@ -489,7 +489,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 					if (e != 0L) {
 						if (r != Long.MAX_VALUE) {
-							LONG_REQUESTED.addAndGet(this, -e);
+							REQUESTED_UPDATER.addAndGet(this, -e);
 						}
 					}
 
@@ -500,7 +500,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 				current = it;
 				currentKnownToBeFinite = itFinite;
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -653,7 +653,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 					if (e != 0L) {
 						if (r != Long.MAX_VALUE) {
-							LONG_REQUESTED.addAndGet(this, -e);
+							REQUESTED_UPDATER.addAndGet(this, -e);
 						}
 					}
 
@@ -664,7 +664,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 
 				current = it;
 				currentKnownToBeFinite = itFinite;
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -672,7 +672,7 @@ final class FluxFlattenIterable<T, R> extends InternalFluxOperator<T, R> impleme
 		}
 
 		void drain(@Nullable T dataSignal) {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				if (dataSignal != null && cancelled) {
 					Operators.onDiscard(dataSignal, actual.currentContext());
 				}

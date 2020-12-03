@@ -193,7 +193,7 @@ final class FluxRefCountGrace<T> extends Flux<T> implements Scannable, Fuseable 
 		QueueSubscription<T> qs;
 
 		volatile int parentDone;
-		static final AtomicIntegerFieldUpdater<RefCountInner> PARENT_DONE =
+		static final AtomicIntegerFieldUpdater<RefCountInner> PARENT_DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(RefCountInner.class, "parentDone");
 
 		RefCountInner(CoreSubscriber<? super T> actual, FluxRefCountGrace<T> parent,
@@ -210,7 +210,7 @@ final class FluxRefCountGrace<T> extends Flux<T> implements Scannable, Fuseable 
 
 		@Override
 		public void onError(Throwable t) {
-			if (PARENT_DONE.compareAndSet(this, 0, 1)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 1)) {
 				parent.terminated(connection);
 			}
 			actual.onError(t);
@@ -218,7 +218,7 @@ final class FluxRefCountGrace<T> extends Flux<T> implements Scannable, Fuseable 
 
 		@Override
 		public void onComplete() {
-			if (PARENT_DONE.compareAndSet(this, 0, 1)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 1)) {
 				parent.terminated(connection);
 			}
 			actual.onComplete();
@@ -232,7 +232,7 @@ final class FluxRefCountGrace<T> extends Flux<T> implements Scannable, Fuseable 
 		@Override
 		public void cancel() {
 			s.cancel();
-			if (PARENT_DONE.compareAndSet(this, 0, 1)) {
+			if (PARENT_DONE_UPDATER.compareAndSet(this, 0, 1)) {
 				parent.cancel(connection);
 			}
 		}

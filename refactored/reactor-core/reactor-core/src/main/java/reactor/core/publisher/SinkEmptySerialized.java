@@ -43,7 +43,7 @@ class SinkEmptySerialized<T> extends SinksSpecs.AbstractSerializedSink
 			return sink.tryEmitEmpty();
 		}
 		finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}
@@ -62,7 +62,7 @@ class SinkEmptySerialized<T> extends SinksSpecs.AbstractSerializedSink
 			return sink.tryEmitError(t);
 		}
 		finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}

@@ -135,19 +135,19 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MergeOrderedMainProducer, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<MergeOrderedMainProducer, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MergeOrderedMainProducer.class, Throwable.class, "error");
 
 		volatile int cancelled;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> CANCELLED =
+		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> CANCELLED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "cancelled");
 
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<MergeOrderedMainProducer> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<MergeOrderedMainProducer> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "requested");
 
 		volatile long emitted;
@@ -155,7 +155,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> WIP =
+		static final AtomicIntegerFieldUpdater<MergeOrderedMainProducer> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeOrderedMainProducer.class, "wip");
 
 		MergeOrderedMainProducer(CoreSubscriber<? super T> actual,
@@ -191,18 +191,18 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void request(long n) {
-			Operators.addCap(LONG_REQUESTED, this, n);
+			Operators.addCap(REQUESTED_UPDATER, this, n);
 			drain();
 		}
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELLED_UPDATER.compareAndSet(this, 0, 1)) {
 				for (MergeOrderedInnerSubscriber<T> subscriber : subscribers) {
 					subscriber.cancel();
 				}
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					Arrays.fill(values, null);
 					for (MergeOrderedInnerSubscriber<T> subscriber : subscribers) {
 						subscriber.queue.clear();
@@ -212,13 +212,13 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		}
 
 		void onInnerError(MergeOrderedInnerSubscriber<T> inner, Throwable ex) {
-			Exceptions.addThrowable(ERROR, this, ex);
+			Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 			inner.done = true;
 			drain();
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -298,9 +298,9 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 								T t = (T) o;
 								smaller = min == null || comparator.compare(min, t) > 0;
 							} catch (Throwable ex) {
-								Exceptions.addThrowable(ERROR, this, ex);
+								Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 								cancel();
-								actual.onError(Exceptions.terminate(ERROR, this));
+								actual.onError(Exceptions.terminate(ERROR_UPDATER, this));
 								return;
 							}
 							if (smaller) {
@@ -322,7 +322,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 				}
 
 				this.emitted = e;
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -356,7 +356,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 		volatile Subscription s;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MergeOrderedInnerSubscriber, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<MergeOrderedInnerSubscriber, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MergeOrderedInnerSubscriber.class, Subscription.class, "s");
 
 		MergeOrderedInnerSubscriber(MergeOrderedMainProducer<T> parent,
@@ -369,7 +369,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(prefetch);
 			}
 		}
@@ -411,7 +411,7 @@ final class FluxMergeOrdered<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public void cancel() {
-			Subscription sub  = ATOMIC_REFERENCE_S.getAndSet(this, this);
+			Subscription sub  = S_UPDATER.getAndSet(this, this);
 			if (sub != null && sub != this) {
 				sub.cancel();
 			}

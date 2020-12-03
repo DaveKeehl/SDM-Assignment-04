@@ -70,7 +70,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 			case IGNORE: {
 				return new IgnoreSink<>(t);
 			}
-			case ERROR: {
+			case ERROR_UPDATER: {
 				return new ErrorAsyncSink<>(t);
 			}
 			case DROP: {
@@ -118,14 +118,14 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SerializedFluxSink, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<SerializedFluxSink, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SerializedFluxSink.class,
 						Throwable.class,
 						"error");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SerializedFluxSink> WIP =
+		static final AtomicIntegerFieldUpdater<SerializedFluxSink> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SerializedFluxSink.class, "wip");
 
 		final Queue<T> mpscQueue;
@@ -149,20 +149,20 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				Operators.onNextDropped(t, sink.currentContext());
 				return this;
 			}
-			if (WIP.get(this) == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (WIP_UPDATER.get(this) == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				try {
 					sink.next(t);
 				}
 				catch (Throwable ex) {
 					Operators.onOperatorError(sink, ex, t, sink.currentContext());
 				}
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return this;
 				}
 			}
 			else {
 				this.mpscQueue.offer(t);
-				if (WIP.getAndIncrement(this) != 0) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return this;
 				}
 			}
@@ -177,7 +177,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				Operators.onOperatorError(t, sink.currentContext());
 				return;
 			}
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain();
 			}
@@ -202,7 +202,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		//complete()/error() methods (which do flip the isTerminated), otherwise it could
 		//bypass the terminate handler (in buffer and latest variants notably).
 		void drain() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				drainLoop();
 			}
 		}
@@ -216,7 +216,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				for (; ; ) {
 					if (e.isCancelled()) {
 						Operators.onDiscardQueueWithClear(q, ctx, null);
-						if (WIP.decrementAndGet(this) == 0) {
+						if (WIP_UPDATER.decrementAndGet(this) == 0) {
 							return;
 						}
 						else {
@@ -224,10 +224,10 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 						}
 					}
 
-					if (ERROR.get(this) != null) {
+					if (ERROR_UPDATER.get(this) != null) {
 						Operators.onDiscardQueueWithClear(q, ctx, null);
 						//noinspection ConstantConditions
-						e.error(Exceptions.terminate(ERROR, this));
+						e.error(Exceptions.terminate(ERROR_UPDATER, this));
 						return;
 					}
 
@@ -253,7 +253,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 					}
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					break;
 				}
 			}
@@ -401,14 +401,14 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile Disposable disposable;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<BaseSink, Disposable> DISPOSABLE =
+		static final AtomicReferenceFieldUpdater<BaseSink, Disposable> DISPOSABLE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BaseSink.class,
 						Disposable.class,
 						"disposable");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BaseSink> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BaseSink> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BaseSink.class, "requested");
 
 		volatile LongConsumer requestConsumer;
@@ -467,7 +467,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 			Disposable disposed = isCancel ? CANCELLED : TERMINATED;
 			Disposable d = disposable;
 			if (d != TERMINATED && d != CANCELLED) {
-				d = DISPOSABLE.getAndSet(this, disposed);
+				d = DISPOSABLE_UPDATER.getAndSet(this, disposed);
 				if (d != null && d != TERMINATED && d != CANCELLED) {
 					if (isCancel && d instanceof SinkDisposable) {
 						((SinkDisposable) d).cancel();
@@ -498,7 +498,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		@Override
 		public final void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 
 				LongConsumer consumer = requestConsumer;
 				if (n > 0 && consumer != null && !isCancelled()) {
@@ -541,7 +541,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		public final FluxSink<T> onCancel(Disposable d) {
 			Objects.requireNonNull(d, "onCancel");
 			SinkDisposable sd = new SinkDisposable(null, d);
-			if (!DISPOSABLE.compareAndSet(this, null, sd)) {
+			if (!DISPOSABLE_UPDATER.compareAndSet(this, null, sd)) {
 				Disposable c = disposable;
 				if (c == CANCELLED) {
 					d.dispose();
@@ -563,7 +563,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		public final FluxSink<T> onDispose(Disposable d) {
 			Objects.requireNonNull(d, "onDispose");
 			SinkDisposable sd = new SinkDisposable(d, null);
-			if (!DISPOSABLE.compareAndSet(this, null, sd)) {
+			if (!DISPOSABLE_UPDATER.compareAndSet(this, null, sd)) {
 				Disposable c = disposable;
 				if (c == TERMINATED || c == CANCELLED) {
 					d.dispose();
@@ -619,7 +619,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 			for (; ; ) {
 				long r = requested;
-				if (r == 0L || LONG_REQUESTED.compareAndSet(this, r, r - 1)) {
+				if (r == 0L || REQUESTED_UPDATER.compareAndSet(this, r, r - 1)) {
 					return this;
 				}
 			}
@@ -646,7 +646,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 			if (requested != 0) {
 				actual.onNext(t);
-				Operators.produced(LONG_REQUESTED, this, 1);
+				Operators.produced(REQUESTED_UPDATER, this, 1);
 			}
 			else {
 				onOverflow();
@@ -690,7 +690,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		@Override
 		public String toString() {
-			return "FluxSink(" + OverflowStrategy.ERROR + ")";
+			return "FluxSink(" + OverflowStrategy.ERROR_UPDATER + ")";
 		}
 
 	}
@@ -704,7 +704,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferAsyncSink> WIP =
+		static final AtomicIntegerFieldUpdater<BufferAsyncSink> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferAsyncSink.class, "wip");
 
 		BufferAsyncSink(CoreSubscriber<? super T> actual, int capacityHint) {
@@ -747,7 +747,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		//otherwise it would either loose the ability to drain or the ability to invoke the
 		//handler at the right time.
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -761,7 +761,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				while (e != r) {
 					if (isCancelled()) {
 						Operators.onDiscardQueueWithClear(q, ctx, null);
-						if (WIP.decrementAndGet(this) != 0) {
+						if (WIP_UPDATER.decrementAndGet(this) != 0) {
 							continue;
 						}
 						else {
@@ -798,7 +798,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				if (e == r) {
 					if (isCancelled()) {
 						Operators.onDiscardQueueWithClear(q, ctx, null);
-						if (WIP.decrementAndGet(this) != 0) {
+						if (WIP_UPDATER.decrementAndGet(this) != 0) {
 							continue;
 						}
 						else {
@@ -823,10 +823,10 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				}
 
 				if (e != 0) {
-					Operators.produced(LONG_REQUESTED, this, e);
+					Operators.produced(REQUESTED_UPDATER, this, e);
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					break;
 				}
 			}
@@ -863,7 +863,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<LatestAsyncSink> WIP =
+		static final AtomicIntegerFieldUpdater<LatestAsyncSink> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(LatestAsyncSink.class, "wip");
 
 		LatestAsyncSink(CoreSubscriber<? super T> actual) {
@@ -907,7 +907,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 		//otherwise it would either loose the ability to drain or the ability to invoke the
 		//handler at the right time.
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -922,7 +922,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 					if (isCancelled()) {
 						T old = q.getAndSet(null);
 						Operators.onDiscard(old, ctx);
-						if (WIP.decrementAndGet(this) != 0) {
+						if (WIP_UPDATER.decrementAndGet(this) != 0) {
 							continue;
 						}
 						else {
@@ -960,7 +960,7 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 					if (isCancelled()) {
 						T old = q.getAndSet(null);
 						Operators.onDiscard(old, ctx);
-						if (WIP.decrementAndGet(this) != 0) {
+						if (WIP_UPDATER.decrementAndGet(this) != 0) {
 							continue;
 						}
 						else {
@@ -985,10 +985,10 @@ final class FluxCreate<T> extends Flux<T> implements SourceProducer<T> {
 				}
 
 				if (e != 0) {
-					Operators.produced(LONG_REQUESTED, this, e);
+					Operators.produced(REQUESTED_UPDATER, this, e);
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					break;
 				}
 			}

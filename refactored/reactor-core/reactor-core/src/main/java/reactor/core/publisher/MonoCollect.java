@@ -176,7 +176,7 @@ final class MonoCollect<T, R> extends MonoFromFluxOperator<T, R>
 			int state;
 			R c;
 			synchronized (this) {
-				state = STATE.getAndSet(this, CANCELLED);
+				state = STATE_UPDATER.getAndSet(this, CANCELLED);
 				if (state <= HAS_REQUEST_NO_VALUE) {
 					c = container;
 					value = null;

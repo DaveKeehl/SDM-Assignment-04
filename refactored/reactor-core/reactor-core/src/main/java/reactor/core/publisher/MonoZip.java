@@ -146,7 +146,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 
 		volatile int done;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ZipCoordinator> DONE =
+		static final AtomicIntegerFieldUpdater<ZipCoordinator> DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ZipCoordinator.class, "done");
 
 		@SuppressWarnings("unchecked")
@@ -191,7 +191,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 		void signal() {
 			ZipInner<R>[] a = subscribers;
 			int n = a.length;
-			if (DONE.incrementAndGet(this) != n) {
+			if (DONE_UPDATER.incrementAndGet(this) != n) {
 				return;
 			}
 
@@ -280,7 +280,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ZipInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<ZipInner, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(ZipInner.class,
 						Subscription.class,
 						"s");
@@ -321,7 +321,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 			else {
@@ -345,7 +345,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 			}
 			else {
 				int n = parent.subscribers.length;
-				if (ZipCoordinator.DONE.getAndSet(parent, n) != n) {
+				if (ZipCoordinator.DONE_UPDATER.getAndSet(parent, n) != n) {
 					parent.cancelExcept(this);
 					parent.actual.onError(t);
 				}
@@ -360,7 +360,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 				}
 				else {
 					int n = parent.subscribers.length;
-					if (ZipCoordinator.DONE.getAndSet(parent, n) != n) {
+					if (ZipCoordinator.DONE_UPDATER.getAndSet(parent, n) != n) {
 						parent.cancelExcept(this);
 						parent.actual.onComplete();
 					}
@@ -369,7 +369,7 @@ final class MonoZip<T, R> extends Mono<R> implements SourceProducer<R>  {
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

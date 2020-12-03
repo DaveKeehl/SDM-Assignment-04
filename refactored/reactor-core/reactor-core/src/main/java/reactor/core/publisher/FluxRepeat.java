@@ -71,7 +71,7 @@ final class FluxRepeat<T> extends InternalFluxOperator<T, T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<RepeatSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<RepeatSubscriber> WIP_UPDATER =
 		  AtomicIntegerFieldUpdater.newUpdater(RepeatSubscriber.class, "wip");
 
 		long produced;
@@ -104,7 +104,7 @@ final class FluxRepeat<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void resubscribe() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					if (isCancelled()) {
 						return;
@@ -118,7 +118,7 @@ final class FluxRepeat<T> extends InternalFluxOperator<T, T> {
 
 					source.subscribe(this);
 
-				} while (WIP.decrementAndGet(this) != 0);
+				} while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 		}
 

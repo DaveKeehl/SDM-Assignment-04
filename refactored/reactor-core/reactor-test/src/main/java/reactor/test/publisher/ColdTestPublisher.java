@@ -160,13 +160,13 @@ final class ColdTestPublisher<T> extends TestPublisher<T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ColdTestPublisherSubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<ColdTestPublisherSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ColdTestPublisherSubscription.class, "requested");
 
 		volatile long wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ColdTestPublisherSubscription> WIP =
+		static final AtomicLongFieldUpdater<ColdTestPublisherSubscription> WIP_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ColdTestPublisherSubscription.class, "wip");
 
 		/** Where in the {@link ColdTestPublisher#values} buffer this subscription is at. */
@@ -188,7 +188,7 @@ final class ColdTestPublisher<T> extends TestPublisher<T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					parent.wasRequested = true;
 				}
 				drain();
@@ -208,7 +208,7 @@ final class ColdTestPublisher<T> extends TestPublisher<T> {
 		}
 
 		private void drain() {
-			if (WIP.getAndIncrement(this) > 0) {
+			if (WIP_UPDATER.getAndIncrement(this) > 0) {
 				return;
 			}
 			for (; ; ) {
@@ -259,7 +259,7 @@ final class ColdTestPublisher<T> extends TestPublisher<T> {
 				}
 				//let's update the REQUESTED unless we're in fastpath
 				if (r != Long.MAX_VALUE) {
-					hasMoreRequest = REQUESTED.addAndGet(this, -emitted) > 0;
+					hasMoreRequest = REQUESTED_UPDATER.addAndGet(this, -emitted) > 0;
 				}
 				else {
 					hasMoreRequest = true;
@@ -280,7 +280,7 @@ final class ColdTestPublisher<T> extends TestPublisher<T> {
 				}
 
 				//in all other cases, let's loop again in case of additional work, exit otherwise
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return;
 				}
 			}

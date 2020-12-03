@@ -74,17 +74,17 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ParallelInnerGroup> ONCE =
+		static final AtomicIntegerFieldUpdater<ParallelInnerGroup> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ParallelInnerGroup.class, "once");
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ParallelInnerGroup, Subscription> S =
+		static final AtomicReferenceFieldUpdater<ParallelInnerGroup, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(ParallelInnerGroup.class, Subscription.class, "s");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ParallelInnerGroup> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ParallelInnerGroup> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ParallelInnerGroup.class, "requested");
 
 		CoreSubscriber<? super T> actual;
@@ -100,7 +100,7 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 
 		@Override
 		public void subscribe(CoreSubscriber<? super T> actual) {
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				this.actual = actual;
 				actual.onSubscribe(this);
 			} else {
@@ -126,8 +126,8 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+			if (Operators.setOnce(S_UPDATER, this, s)) {
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0L) {
 					s.request(r);
 				}
@@ -154,11 +154,11 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 			if (Operators.validate(n)) {
 				Subscription a = s;
 				if (a == null) {
-					Operators.addCap(LONG_REQUESTED, this, n);
+					Operators.addCap(REQUESTED_UPDATER, this, n);
 
 					a = s;
 					if (a != null) {
-						long r = LONG_REQUESTED.getAndSet(this, 0L);
+						long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 						if (r != 0L) {
 							a.request(n);
 						}
@@ -171,7 +171,7 @@ final class ParallelGroup<T> extends Flux<GroupedFlux<Integer, T>> implements
 
 		@Override
 		public void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

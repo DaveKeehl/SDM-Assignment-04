@@ -115,7 +115,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 
 		volatile int done;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WhenCoordinator> DONE =
+		static final AtomicIntegerFieldUpdater<WhenCoordinator> DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WhenCoordinator.class, "done");
 
 		@SuppressWarnings("unchecked")
@@ -167,7 +167,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 			}
 			else {
 				int n = subscribers.length;
-				if (DONE.getAndSet(this, n) != n) {
+				if (DONE_UPDATER.getAndSet(this, n) != n) {
 					cancel();
 					actual.onError(t);
 				}
@@ -178,7 +178,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 		void signal() {
 			WhenInner[] a = subscribers;
 			int n = a.length;
-			if (DONE.incrementAndGet(this) != n) {
+			if (DONE_UPDATER.incrementAndGet(this) != n) {
 				return;
 			}
 
@@ -231,7 +231,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<WhenInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<WhenInner, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(WhenInner.class,
 						Subscription.class,
 						"s");
@@ -270,7 +270,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 			else {
@@ -294,7 +294,7 @@ final class MonoWhen extends Mono<Void> implements SourceProducer<Void>  {
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

@@ -994,7 +994,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 	}
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<FluxReplay, ReplaySubscriber> CONNECTION =
+	static final AtomicReferenceFieldUpdater<FluxReplay, ReplaySubscriber> CONNECTION_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(FluxReplay.class,
 					ReplaySubscriber.class,
 					"connection");
@@ -1054,7 +1054,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			s = connection;
 			if (s == null) {
 				ReplaySubscriber<T> u = newState();
-				if (!CONNECTION.compareAndSet(this, null, u)) {
+				if (!CONNECTION_UPDATER.compareAndSet(this, null, u)) {
 					continue;
 				}
 
@@ -1101,14 +1101,14 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			expired = scheduler != null && c != null && c.buffer.isExpired();
 			if (c == null || expired) {
 				ReplaySubscriber<T> u = newState();
-				if (!CONNECTION.compareAndSet(this, c, u)) {
+				if (!CONNECTION_UPDATER.compareAndSet(this, c, u)) {
 					continue;
 				}
 
 				c = u;
 			}
 
-			ReplayInner<T> inner = new ReplayInner<>(actual, c, ReplaySubscriber.CONNECTED.get(c) == 0);
+			ReplayInner<T> inner = new ReplayInner<>(actual, c, ReplaySubscriber.CONNECTED_UPDATER.get(c) == 0);
 			actual.onSubscribe(inner);
 			c.add(inner);
 
@@ -1157,7 +1157,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ReplaySubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<ReplaySubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(ReplaySubscriber.class,
 						Subscription.class,
 						"s");
@@ -1166,12 +1166,12 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ReplaySubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<ReplaySubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ReplaySubscriber.class, "wip");
 
 		volatile int connected;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ReplaySubscriber> CONNECTED =
+		static final AtomicIntegerFieldUpdater<ReplaySubscriber> CONNECTED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ReplaySubscriber.class, "connected");
 
 		@SuppressWarnings("rawtypes")
@@ -1195,7 +1195,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			if(buffer.isDone()){
 				s.cancel();
 			}
-			else if (Operators.setOnce(S, this, s)) {
+			else if (Operators.setOnce(S_UPDATER, this, s)) {
 				ReplaySubscription<T>[] subs = subscribers;
 				//first check if there are no early subscribers,
 				// in which case we fallback to old UNBOUNDED behavior
@@ -1219,7 +1219,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 		}
 
 		void propagateRequest(long n) {
-			Subscription s = S.get(this);
+			Subscription s = S_UPDATER.get(this);
 			if (!unbounded && s != null) {
 				if (n == Long.MAX_VALUE) {
 					unbounded = true;
@@ -1278,10 +1278,10 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 			if (cancelled) {
 				return;
 			}
-			if (Operators.terminate(S, this)) {
+			if (Operators.terminate(S_UPDATER, this)) {
 				cancelled = true;
 
-				CONNECTION.lazySet(parent, null);
+				CONNECTION_UPDATER.lazySet(parent, null);
 
 				CancellationException ex = new CancellationException("Disconnected");
 				buffer.onError(ex);
@@ -1372,7 +1372,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 		}
 
 		boolean tryConnect() {
-			return connected == 0 && CONNECTED.compareAndSet(this, 0, 1);
+			return connected == 0 && CONNECTED_UPDATER.compareAndSet(this, 0, 1);
 		}
 
 		@Override
@@ -1423,18 +1423,18 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ReplayInner> WIP =
+		static final AtomicIntegerFieldUpdater<ReplayInner> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ReplayInner.class, "wip");
 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ReplayInner> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ReplayInner> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ReplayInner.class, "requested");
 
 		volatile int state;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ReplayInner> STATE = AtomicIntegerFieldUpdater.newUpdater(ReplayInner.class, "state");
+		static final AtomicIntegerFieldUpdater<ReplayInner> STATE_UPDATER = AtomicIntegerFieldUpdater.newUpdater(ReplayInner.class, "state");
 
 
 		ReplayInner(CoreSubscriber<? super T> actual, ReplaySubscriber<T> parent, boolean registeredBeforeConnection) {
@@ -1450,15 +1450,15 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (STATE.get(this) == STATE_EARLY_ACCUMULATE) {
-					Operators.addCapCancellable(LONG_REQUESTED, this, n);
+				if (STATE_UPDATER.get(this) == STATE_EARLY_ACCUMULATE) {
+					Operators.addCapCancellable(REQUESTED_UPDATER, this, n);
 					return;
 				}
-				if (STATE.get(this) == STATE_EARLY_PROPAGATE) {
+				if (STATE_UPDATER.get(this) == STATE_EARLY_PROPAGATE) {
 					parent.propagateRequest(n);
 				}
 				if (fusionMode() == NONE) {
-					Operators.addCapCancellable(LONG_REQUESTED, this, n);
+					Operators.addCapCancellable(REQUESTED_UPDATER, this, n);
 				}
 				parent.buffer.replay(this);
 			}
@@ -1479,7 +1479,7 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public void cancel() {
-			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (REQUESTED_UPDATER.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 				if (enter()) {
 					node = null;
@@ -1489,13 +1489,13 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public long requested() {
-			return LONG_REQUESTED.get(this);
+			return REQUESTED_UPDATER.get(this);
 		}
 
 		@Override
 		public long signalConnectAndGetRequested() {
-			STATE.set(this, STATE_EARLY_PROPAGATE);
-			return LONG_REQUESTED.get(this);
+			STATE_UPDATER.set(this, STATE_EARLY_PROPAGATE);
+			return REQUESTED_UPDATER.get(this);
 		}
 
 		@Override
@@ -1576,17 +1576,17 @@ final class FluxReplay<T> extends ConnectableFlux<T> implements Scannable, Fusea
 
 		@Override
 		public boolean enter() {
-			return WIP.getAndIncrement(this) == 0;
+			return WIP_UPDATER.getAndIncrement(this) == 0;
 		}
 
 		@Override
 		public int leave(int missed) {
-			return WIP.addAndGet(this, -missed);
+			return WIP_UPDATER.addAndGet(this, -missed);
 		}
 
 		@Override
 		public void produced(long n) {
-			LONG_REQUESTED.addAndGet(this, -n);
+			REQUESTED_UPDATER.addAndGet(this, -n);
 		}
 	}
 }

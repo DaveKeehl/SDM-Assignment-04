@@ -77,7 +77,7 @@ final class MonoDelay extends Mono<Long> implements Scannable,  SourceProducer<L
 		final CoreSubscriber<? super Long> actual;
 
 		volatile Disposable cancel;
-		static final AtomicReferenceFieldUpdater<MonoDelayRunnable, Disposable> CANCEL =
+		static final AtomicReferenceFieldUpdater<MonoDelayRunnable, Disposable> CANCEL_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(MonoDelayRunnable.class,
 						Disposable.class,
 						"cancel");
@@ -91,7 +91,7 @@ final class MonoDelay extends Mono<Long> implements Scannable,  SourceProducer<L
 		}
 
 		public void setCancel(Disposable cancel) {
-			if (!CANCEL.compareAndSet(this, null, cancel)) {
+			if (!CANCEL_UPDATER.compareAndSet(this, null, cancel)) {
 				cancel.dispose();
 			}
 		}
@@ -115,7 +115,7 @@ final class MonoDelay extends Mono<Long> implements Scannable,  SourceProducer<L
 		public void run() {
 			if (requested) {
 				try {
-					if (CANCEL.getAndSet(this, FINISHED) != OperatorDisposables.DISPOSED) {
+					if (CANCEL_UPDATER.getAndSet(this, FINISHED) != OperatorDisposables.DISPOSED) {
 						actual.onNext(0L);
 						actual.onComplete();
 					}
@@ -132,7 +132,7 @@ final class MonoDelay extends Mono<Long> implements Scannable,  SourceProducer<L
 		public void cancel() {
 			Disposable c = cancel;
 			if (c != OperatorDisposables.DISPOSED && c != FINISHED) {
-				c =  CANCEL.getAndSet(this, OperatorDisposables.DISPOSED);
+				c =  CANCEL_UPDATER.getAndSet(this, OperatorDisposables.DISPOSED);
 				if (c != null && c != OperatorDisposables.DISPOSED && c != FINISHED) {
 					c.dispose();
 				}

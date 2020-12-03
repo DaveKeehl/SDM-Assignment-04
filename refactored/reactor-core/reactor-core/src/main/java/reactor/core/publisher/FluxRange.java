@@ -86,7 +86,7 @@ final class FluxRange extends Flux<Integer>
 		long index;
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<RangeSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<RangeSubscription> REQUESTED_UPDATER =
 		  AtomicLongFieldUpdater.newUpdater(RangeSubscription.class, "requested");
 
 		RangeSubscription(CoreSubscriber<? super Integer> actual, long start, long end) {
@@ -103,7 +103,7 @@ final class FluxRange extends Flux<Integer>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					} else {
@@ -174,7 +174,7 @@ final class FluxRange extends Flux<Integer>
 				n = requested;
 				if (n == e) {
 					index = i;
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}
@@ -234,7 +234,7 @@ final class FluxRange extends Flux<Integer>
 		long index;
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<RangeSubscriptionConditional> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<RangeSubscriptionConditional> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(RangeSubscriptionConditional.class, "requested");
 
 		RangeSubscriptionConditional(ConditionalSubscriber<? super Integer> actual,
@@ -253,7 +253,7 @@ final class FluxRange extends Flux<Integer>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					} else {
@@ -326,7 +326,7 @@ final class FluxRange extends Flux<Integer>
 				n = requested;
 				if (n == e) {
 					index = i;
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}

@@ -95,7 +95,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
         
         volatile int wip;
         @SuppressWarnings("rawtypes")
-        static final AtomicIntegerFieldUpdater<ThenIgnoreMain> WIP =
+        static final AtomicIntegerFieldUpdater<ThenIgnoreMain> WIP_UPDATER =
                 AtomicIntegerFieldUpdater.newUpdater(ThenIgnoreMain.class, "wip");
         
         ThenIgnoreMain(CoreSubscriber<? super T> subscriber,
@@ -114,7 +114,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
 
 	    @SuppressWarnings("unchecked")
         void drain() {
-            if (WIP.getAndIncrement(this) != 0) {
+            if (WIP_UPDATER.getAndIncrement(this) != 0) {
                 return;
             }
             
@@ -173,7 +173,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
                         m.subscribe(ignore);
                     }
                 }
-                if (WIP.decrementAndGet(this) == 0) {
+                if (WIP_UPDATER.decrementAndGet(this) == 0) {
                     break;
                 }
             }
@@ -202,7 +202,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
         final ThenIgnoreMain<?> parent;
         
         volatile Subscription s;
-        static final AtomicReferenceFieldUpdater<ThenIgnoreInner, Subscription> S =
+        static final AtomicReferenceFieldUpdater<ThenIgnoreInner, Subscription> S_UPDATER=
                 AtomicReferenceFieldUpdater.newUpdater(ThenIgnoreInner.class, Subscription.class, "s");
         
         ThenIgnoreInner(ThenIgnoreMain<?> parent) {
@@ -222,7 +222,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
 
         @Override
         public void onSubscribe(Subscription s) {
-            if (Operators.replace(S, this, s)) {
+            if (Operators.replace(S_UPDATER, this, s)) {
                 s.request(Long.MAX_VALUE);
             }
         }
@@ -249,11 +249,11 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
         }
         
         void cancel() {
-            Operators.terminate(S, this);
+            Operators.terminate(S_UPDATER, this);
         }
         
         void clear() {
-            S.lazySet(this, null);
+            S_UPDATER.lazySet(this, null);
         }
     }
     
@@ -262,7 +262,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
         
         volatile Subscription s;
         @SuppressWarnings("rawtypes")
-        static final AtomicReferenceFieldUpdater<ThenAcceptInner, Subscription> S =
+        static final AtomicReferenceFieldUpdater<ThenAcceptInner, Subscription> S_UPDATER=
                 AtomicReferenceFieldUpdater.newUpdater(ThenAcceptInner.class, Subscription.class, "s");
 
         boolean done;
@@ -290,7 +290,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
 
         @Override
         public void onSubscribe(Subscription s) {
-            if (Operators.setOnce(S, this, s)) {
+            if (Operators.setOnce(S_UPDATER, this, s)) {
                 s.request(Long.MAX_VALUE);
             }
         }
@@ -324,7 +324,7 @@ final class MonoIgnoreThen<T> extends Mono<T> implements Fuseable, Scannable {
         }
         
         void cancel() {
-            Operators.terminate(S, this);
+            Operators.terminate(S_UPDATER, this);
         }
     }
 }

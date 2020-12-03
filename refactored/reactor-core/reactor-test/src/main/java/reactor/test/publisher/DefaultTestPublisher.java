@@ -65,7 +65,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 	volatile TestPublisherSubscription<T>[] subscribers = EMPTY;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<DefaultTestPublisher, TestPublisherSubscription[]> SUBSCRIBERS =
+	static final AtomicReferenceFieldUpdater<DefaultTestPublisher, TestPublisherSubscription[]> SUBSCRIBERS_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(DefaultTestPublisher.class, TestPublisherSubscription[].class, "subscribers");
 
 	DefaultTestPublisher(Violation first, Violation... rest) {
@@ -182,7 +182,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicLongFieldUpdater<TestPublisherSubscription>
-				REQUESTED =
+				REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(TestPublisherSubscription.class, "requested");
 
 		@SuppressWarnings("unchecked")
@@ -200,7 +200,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				parent.wasRequested = true;
 			}
 		}
@@ -232,7 +232,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 					actual.onNext(value);
 				}
 				if (sent && r != Long.MAX_VALUE) {
-					REQUESTED.decrementAndGet(this);
+					REQUESTED_UPDATER.decrementAndGet(this);
 				}
 				return;
 			}
@@ -412,7 +412,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 		if (violations.contains(Violation.CLEANUP_ON_TERMINATE)) {
 			subs = subscribers;
 		} else {
-			subs = SUBSCRIBERS.getAndSet(this, TERMINATED);
+			subs = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 		}
 		for (TestPublisherSubscription<?> s : subs) {
 			s.onError(t);
@@ -426,7 +426,7 @@ class DefaultTestPublisher<T> extends TestPublisher<T> {
 		if (violations.contains(Violation.CLEANUP_ON_TERMINATE)) {
 			subs = subscribers;
 		} else {
-			subs = SUBSCRIBERS.getAndSet(this, TERMINATED);
+			subs = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 		}
 		for (TestPublisherSubscription<?> s : subs) {
 			s.onComplete();

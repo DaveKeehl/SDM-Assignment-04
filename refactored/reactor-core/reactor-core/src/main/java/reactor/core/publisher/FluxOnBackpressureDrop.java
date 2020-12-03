@@ -76,7 +76,7 @@ final class FluxOnBackpressureDrop<T> extends InternalFluxOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<DropSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<DropSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(DropSubscriber.class, "requested");
 
 		boolean done;
@@ -90,7 +90,7 @@ final class FluxOnBackpressureDrop<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -127,7 +127,7 @@ final class FluxOnBackpressureDrop<T> extends InternalFluxOperator<T, T> {
 			if (r != 0L) {
 				actual.onNext(t);
 				if(r != Long.MAX_VALUE) {
-					Operators.produced(LONG_REQUESTED, this, 1);
+					Operators.produced(REQUESTED_UPDATER, this, 1);
 				}
 			}
 			else {

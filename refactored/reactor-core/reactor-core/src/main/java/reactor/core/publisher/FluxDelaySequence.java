@@ -66,7 +66,7 @@ final class FluxDelaySequence<T> extends InternalFluxOperator<T, T> {
 		volatile boolean done;
 
 		volatile long delayed;
-		static final AtomicLongFieldUpdater<DelaySubscriber> DELAYED =
+		static final AtomicLongFieldUpdater<DelaySubscriber> DELAYED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(DelaySubscriber.class, "delayed");
 
 
@@ -100,13 +100,13 @@ final class FluxDelaySequence<T> extends InternalFluxOperator<T, T> {
 			//keep track of the number of delayed onNext so that
 			//we can also delay onError/onComplete when an onNext
 			//is "in flight"
-			DELAYED.incrementAndGet(this);
+			DELAYED_UPDATER.incrementAndGet(this);
 			w.schedule(() -> delayedNext(t), delay, timeUnit);
 		}
 
 		private void delayedNext(T t) {
 			//this onNext has been delayed and now processed
-			DELAYED.decrementAndGet(this);
+			DELAYED_UPDATER.decrementAndGet(this);
 			actual.onNext(t);
 		}
 
@@ -119,7 +119,7 @@ final class FluxDelaySequence<T> extends InternalFluxOperator<T, T> {
 			done = true;
 			//if no currently delayed onNext (eg. empty source),
 			// we can immediately error
-			if (DELAYED.compareAndSet(this, 0, -1)) {
+			if (DELAYED_UPDATER.compareAndSet(this, 0, -1)) {
 				actual.onError(t);
 			}
 			else {
@@ -135,7 +135,7 @@ final class FluxDelaySequence<T> extends InternalFluxOperator<T, T> {
 			done = true;
 			//if no currently delayed onNext (eg. empty source),
 			// we can immediately complete
-			if (DELAYED.compareAndSet(this, 0, -1)) {
+			if (DELAYED_UPDATER.compareAndSet(this, 0, -1)) {
 				actual.onComplete();
 			}
 			else {

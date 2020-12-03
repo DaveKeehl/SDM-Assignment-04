@@ -101,7 +101,7 @@ final class FluxScanSeed<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onComplete() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					if (isCancelled()) {
 						return;
@@ -142,7 +142,7 @@ final class FluxScanSeed<T, R> extends InternalFluxOperator<T, R> {
 						return;
 					}
 				}
-				while (WIP.decrementAndGet(this) != 0);
+				while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 
 		}
@@ -160,7 +160,7 @@ final class FluxScanSeed<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ScanSeedCoordinator> WIP =
+		static final AtomicIntegerFieldUpdater<ScanSeedCoordinator> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ScanSeedCoordinator.class, "wip");
 	}
 

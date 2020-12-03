@@ -733,7 +733,7 @@ class FluxCreateTest {
 			s.next("test2");
 			s.next("test3");
 			s.complete();
-		}, FluxSink.OverflowStrategy.ERROR);
+		}, OverflowStrategy.ERROR_UPDATER);
 
 		assertThat(created.getPrefetch()).isEqualTo(-1);
 
@@ -749,7 +749,7 @@ class FluxCreateTest {
 			s.next("test2");
 			s.next("test3");
 			s.complete();
-		}, FluxSink.OverflowStrategy.ERROR).publishOn(Schedulers.parallel()))
+		}, OverflowStrategy.ERROR_UPDATER).publishOn(Schedulers.parallel()))
 		            .expectNext("test1", "test2", "test3")
 		            .verifyComplete();
 	}
@@ -761,7 +761,7 @@ class FluxCreateTest {
 			s.next("test2");
 			s.next("test3");
 			s.error(new Exception("test"));
-		}, FluxSink.OverflowStrategy.ERROR);
+		}, OverflowStrategy.ERROR_UPDATER);
 
 		StepVerifier.create(created)
 		            .expectNext("test1", "test2", "test3")
@@ -772,7 +772,7 @@ class FluxCreateTest {
 	void fluxCreateErrorError2() {
 		Flux<String> created = Flux.create(s -> {
 			s.error(new Exception("test"));
-		}, FluxSink.OverflowStrategy.ERROR);
+		}, OverflowStrategy.ERROR_UPDATER);
 
 		StepVerifier.create(created)
 		            .verifyErrorMessage("test");
@@ -781,7 +781,7 @@ class FluxCreateTest {
 	@Test
 	void fluxCreateErrorEmpty() {
 		Flux<String> created =
-				Flux.create(FluxSink::complete, FluxSink.OverflowStrategy.ERROR);
+				Flux.create(FluxSink::complete, OverflowStrategy.ERROR_UPDATER);
 
 		StepVerifier.create(created)
 		            .verifyComplete();
@@ -804,7 +804,7 @@ class FluxCreateTest {
 			s.next("test2");
 			s.next("test3");
 			s.complete();
-		}, FluxSink.OverflowStrategy.ERROR);
+		}, OverflowStrategy.ERROR_UPDATER);
 
 		StepVerifier.create(created)
 		            .expectNext("test1", "test2", "test3")
@@ -823,7 +823,7 @@ class FluxCreateTest {
 			s.next("test2");
 			s.next("test3");
 			s.complete();
-		}, FluxSink.OverflowStrategy.ERROR);
+		}, OverflowStrategy.ERROR_UPDATER);
 
 		StepVerifier.create(created, 1)
 		            .expectNext("test1")
@@ -1062,7 +1062,7 @@ class FluxCreateTest {
 	private void testFluxCreateOnRequestMultipleThreads(OverflowStrategy overflowStrategy, boolean slowProducer) {
 		int count = 10_000;
 		TestQueue queue;
-		if (overflowStrategy == OverflowStrategy.ERROR || overflowStrategy == OverflowStrategy.IGNORE)
+		if (overflowStrategy == OverflowStrategy.ERROR_UPDATER || overflowStrategy == OverflowStrategy.IGNORE)
 			queue = new RequestTrackingTestQueue();
 		else {
 			queue = new TestQueue();
@@ -1352,9 +1352,9 @@ class FluxCreateTest {
 			else {
 				sink.error(new IllegalArgumentException("expected SerializedFluxSink"));
 			}
-		}, OverflowStrategy.ERROR))
-		            .expectNext("FluxSink(ERROR)")
-		            .expectNext("FluxSink(ERROR)")
+		}, OverflowStrategy.ERROR_UPDATER))
+		            .expectNext("FluxSink(ERROR_UPDATER)")
+		            .expectNext("FluxSink(ERROR_UPDATER)")
 		            .verifyComplete();
 	}
 

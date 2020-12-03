@@ -68,14 +68,14 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 
 		volatile Subscription inner;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FlatMapManyMain, Subscription> INNER =
+		static final AtomicReferenceFieldUpdater<FlatMapManyMain, Subscription> INNER_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(FlatMapManyMain.class,
 						Subscription.class,
 						"inner");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FlatMapManyMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<FlatMapManyMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(FlatMapManyMain.class, "requested");
 
 		boolean hasValue;
@@ -113,10 +113,10 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 			}
 			else {
 				if (Operators.validate(n)) {
-					Operators.addCap(LONG_REQUESTED, this, n);
+					Operators.addCap(REQUESTED_UPDATER, this, n);
 					a = inner;
 					if (a != null) {
-						n = LONG_REQUESTED.getAndSet(this, 0L);
+						n = REQUESTED_UPDATER.getAndSet(this, 0L);
 						if (n != 0L) {
 							a.request(n);
 						}
@@ -128,7 +128,7 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 		@Override
 		public void cancel() {
 			main.cancel();
-			Operators.terminate(INNER, this);
+			Operators.terminate(INNER_UPDATER, this);
 		}
 
 		@Override
@@ -143,9 +143,9 @@ final class MonoFlatMapMany<T, R> extends FluxFromMonoOperator<T, R> {
 		}
 
 		void onSubscribeInner(Subscription s) {
-			if (Operators.setOnce(INNER, this, s)) {
+			if (Operators.setOnce(INNER_UPDATER, this, s)) {
 
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0) {
 					s.request(r);
 				}

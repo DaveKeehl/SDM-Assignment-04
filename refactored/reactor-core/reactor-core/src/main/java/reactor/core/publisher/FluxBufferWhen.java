@@ -113,26 +113,26 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferWhenMainSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BufferWhenMainSubscriber> REQUESTED_UPDATER =
 		AtomicLongFieldUpdater.newUpdater(BufferWhenMainSubscriber.class, "requested");
 
 		volatile Subscription s;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<BufferWhenMainSubscriber, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<BufferWhenMainSubscriber, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BufferWhenMainSubscriber.class, Subscription.class, "s");
 
 		volatile Throwable errors;
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<BufferWhenMainSubscriber, Throwable>
-				ERRORS =
+				ERROR_UPDATERS =
 				AtomicReferenceFieldUpdater.newUpdater(BufferWhenMainSubscriber.class, Throwable.class, "errors");
 
 		volatile int windows;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferWhenMainSubscriber> WINDOWS =
+		static final AtomicIntegerFieldUpdater<BufferWhenMainSubscriber> WINDOWS_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferWhenMainSubscriber.class, "windows");
 
 		volatile boolean done;
@@ -158,7 +158,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -187,7 +187,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERRORS, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATERS, this, t)) {
 				subscribers.dispose();
 				Map<Long, BUFFER> bufs;
 				synchronized (this) {
@@ -226,13 +226,13 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void request(long n) {
-			Operators.addCap(LONG_REQUESTED, this, n);
+			Operators.addCap(REQUESTED_UPDATER, this, n);
 			drain();
 		}
 
 		@Override
 		public void cancel() {
-			if (Operators.terminate(ATOMIC_REFERENCE_S, this)) {
+			if (Operators.terminate(S_UPDATER, this)) {
 				cancelled = true;
 				subscribers.dispose();
 				Map<Long, BUFFER> bufs;
@@ -241,7 +241,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 					buffers = null;
 				}
 				//first discard buffers that have been queued if they're not being drained...
-				if (WINDOWS.getAndIncrement(this) == 0) {
+				if (WINDOWS_UPDATER.getAndIncrement(this) == 0) {
 					Operators.onDiscardQueueWithClear(queue, this.ctx, BUFFER::stream);
 				}
 				//...then discard unclosed buffers
@@ -254,7 +254,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		}
 
 		void drain() {
-			if (WINDOWS.getAndIncrement(this) != 0) {
+			if (WINDOWS_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -275,7 +275,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 					boolean d = done;
 					if (d && errors != null) {
 						Operators.onDiscardQueueWithClear(q, this.ctx, BUFFER::stream);
-						Throwable ex = Exceptions.terminate(ERRORS, this);
+						Throwable ex = Exceptions.terminate(ERROR_UPDATERS, this);
 						a.onError(ex);
 						return;
 					}
@@ -305,7 +305,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 					if (done) {
 						if (errors != null) {
 							Operators.onDiscardQueueWithClear(q, this.ctx, BUFFER::stream);
-							Throwable ex = Exceptions.terminate(ERRORS, this);
+							Throwable ex = Exceptions.terminate(ERROR_UPDATERS, this);
 							a.onError(ex);
 							return;
 						} else if (q.isEmpty()) {
@@ -316,7 +316,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 				}
 
 				emitted = e;
-				missed = WINDOWS.addAndGet(this, -missed);
+				missed = WINDOWS_UPDATER.addAndGet(this, -missed);
 			} while (missed != 0);
 		}
 
@@ -329,8 +329,8 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 			}
 			catch (Throwable ex) {
 				Exceptions.throwIfFatal(ex);
-				Operators.terminate(ATOMIC_REFERENCE_S, this);
-				if (Exceptions.addThrowable(ERRORS, this, ex)) {
+				Operators.terminate(S_UPDATER, this);
+				if (Exceptions.addThrowable(ERROR_UPDATERS, this, ex)) {
 					subscribers.dispose();
 					Map<Long, BUFFER> bufs;
 					synchronized (this) {
@@ -370,7 +370,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		void openComplete(BufferWhenOpenSubscriber<OPEN> os) {
 			subscribers.remove(os);
 			if (subscribers.size() == 0) {
-				Operators.terminate(ATOMIC_REFERENCE_S, this);
+				Operators.terminate(S_UPDATER, this);
 				done = true;
 				drain();
 			}
@@ -381,7 +381,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 			boolean makeDone = false;
 			if (subscribers.size() == 0) {
 				makeDone = true;
-				Operators.terminate(ATOMIC_REFERENCE_S, this);
+				Operators.terminate(S_UPDATER, this);
 			}
 			synchronized (this) {
 				Map<Long, BUFFER> bufs = buffers;
@@ -397,9 +397,9 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		}
 
 		void boundaryError(Disposable boundary, Throwable ex) {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 			subscribers.remove(boundary);
-			if (Exceptions.addThrowable(ERRORS, this, ex)) {
+			if (Exceptions.addThrowable(ERROR_UPDATERS, this, ex)) {
 				subscribers.dispose();
 				Map<Long, BUFFER> bufs;
 				synchronized (this) {
@@ -445,7 +445,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		volatile Subscription subscription;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<BufferWhenOpenSubscriber, Subscription> SUBSCRIPTION =
+		static final AtomicReferenceFieldUpdater<BufferWhenOpenSubscriber, Subscription> SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BufferWhenOpenSubscriber.class, Subscription.class, "subscription");
 
 		final BufferWhenMainSubscriber<?, OPEN, ?, ?> parent;
@@ -461,14 +461,14 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				subscription.request(Long.MAX_VALUE);
 			}
 		}
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -483,13 +483,13 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void onError(Throwable t) {
-			SUBSCRIPTION.lazySet(this, Operators.cancelledSubscription());
+			SUBSCRIPTION_UPDATER.lazySet(this, Operators.cancelledSubscription());
 			parent.boundaryError(this, t);
 		}
 
 		@Override
 		public void onComplete() {
-			SUBSCRIPTION.lazySet(this, Operators.cancelledSubscription());
+			SUBSCRIPTION_UPDATER.lazySet(this, Operators.cancelledSubscription());
 			parent.openComplete(this);
 		}
 
@@ -512,7 +512,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		volatile Subscription subscription;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<BufferWhenCloseSubscriber, Subscription> SUBSCRIPTION =
+		static final AtomicReferenceFieldUpdater<BufferWhenCloseSubscriber, Subscription> SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BufferWhenCloseSubscriber.class, Subscription.class, "subscription");
 
 		final BufferWhenMainSubscriber<T, ?, ?, BUFFER> parent;
@@ -531,14 +531,14 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				subscription.request(Long.MAX_VALUE);
 			}
 		}
 
 		@Override
 		public void dispose() {
-			Operators.terminate(SUBSCRIPTION, this);
+			Operators.terminate(SUBSCRIPTION_UPDATER, this);
 		}
 
 		@Override
@@ -550,7 +550,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		public void onNext(Object t) {
 			Subscription s = subscription;
 			if (s != Operators.cancelledSubscription()) {
-				SUBSCRIPTION.lazySet(this, Operators.cancelledSubscription());
+				SUBSCRIPTION_UPDATER.lazySet(this, Operators.cancelledSubscription());
 				s.cancel();
 				parent.close(this, index);
 			}
@@ -559,7 +559,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		@Override
 		public void onError(Throwable t) {
 			if (subscription != Operators.cancelledSubscription()) {
-				SUBSCRIPTION.lazySet(this, Operators.cancelledSubscription());
+				SUBSCRIPTION_UPDATER.lazySet(this, Operators.cancelledSubscription());
 				parent.boundaryError(this, t);
 			}
 			else {
@@ -570,7 +570,7 @@ final class FluxBufferWhen<T, OPEN, CLOSE, BUFFER extends Collection<? super T>>
 		@Override
 		public void onComplete() {
 			if (subscription != Operators.cancelledSubscription()) {
-				SUBSCRIPTION.lazySet(this, Operators.cancelledSubscription());
+				SUBSCRIPTION_UPDATER.lazySet(this, Operators.cancelledSubscription());
 				parent.close(this, index);
 			}
 		}

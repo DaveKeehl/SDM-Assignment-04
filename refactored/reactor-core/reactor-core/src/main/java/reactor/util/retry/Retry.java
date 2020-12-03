@@ -146,8 +146,8 @@ public abstract class Retry {
 	 * @param maxAttempts the maximum number of retry attempts to allow
 	 * @param minBackoff the minimum {@link Duration} for the first backoff
 	 * @return the exponential backoff spec for further configuration
-	 * @see RetryBackoffSpec#maxAttempts(long)
-	 * @see RetryBackoffSpec#minBackoff(Duration)
+	 * @see RetryBackoffSpec#setMaxAttempts(long)
+	 * @see RetryBackoffSpec#setMinBackoff(Duration)
 	 */
 	public static RetryBackoffSpec backoff(long maxAttempts, Duration minBackoff) {
 		return new RetryBackoffSpec(Context.empty(), maxAttempts, t -> true, false, minBackoff, MAX_BACKOFF, 0.5d, Schedulers::parallel,
@@ -161,15 +161,15 @@ public abstract class Retry {
 	 * <p>
 	 * <img class="marble" src="doc-files/marbles/retrySpecFixed.svg" alt="">
 	 * <p>
-	 * Note that calling {@link RetryBackoffSpec#minBackoff(Duration)} or {@link RetryBackoffSpec#maxBackoff(Duration)} would switch
+	 * Note that calling {@link RetryBackoffSpec#setMinBackoff(Duration)} or {@link RetryBackoffSpec#setMaxBackoff(Duration)} would switch
 	 * back to an exponential backoff strategy.
 	 *
 	 * @param maxAttempts the maximum number of retry attempts to allow
 	 * @param fixedDelay the {@link Duration} of the fixed delays
 	 * @return the fixed delays spec for further configuration
-	 * @see RetryBackoffSpec#maxAttempts(long)
-	 * @see RetryBackoffSpec#minBackoff(Duration)
-	 * @see RetryBackoffSpec#maxBackoff(Duration)
+	 * @see RetryBackoffSpec#setMaxAttempts(long)
+	 * @see RetryBackoffSpec#setMinBackoff(Duration)
+	 * @see RetryBackoffSpec#setMaxBackoff(Duration)
 	 */
 	public static RetryBackoffSpec fixedDelay(long maxAttempts, Duration fixedDelay) {
 		return new RetryBackoffSpec(Context.empty(), maxAttempts, t -> true, false, fixedDelay, fixedDelay, 0d, Schedulers::parallel,
@@ -184,7 +184,7 @@ public abstract class Retry {
 	 *
 	 * @param max the maximum number of retry attempts to allow
 	 * @return the max attempt spec for further configuration
-	 * @see RetrySpec#maxAttempts(long)
+	 * @see RetrySpec#setMaxAttempts(long)
 	 */
 	public static RetrySpec max(long max) {
 		return new RetrySpec(Context.empty(), max, t -> true, false, NO_OP_CONSUMER, NO_OP_CONSUMER, NO_OP_BIFUNCTION, NO_OP_BIFUNCTION,
@@ -200,7 +200,7 @@ public abstract class Retry {
 	 *
 	 * @param maxInARow the maximum number of retry attempts to allow in a row, reset by successful onNext
 	 * @return the max in a row spec for further configuration
-	 * @see RetrySpec#maxAttempts(long)
+	 * @see RetrySpec#setMaxAttempts(long)
 	 * @see RetrySpec#transientErrors(boolean)
 	 */
 	public static RetrySpec maxInARow(long maxInARow) {

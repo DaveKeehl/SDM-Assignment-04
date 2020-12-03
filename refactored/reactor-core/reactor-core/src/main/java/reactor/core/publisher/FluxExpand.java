@@ -94,7 +94,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		volatile boolean active;
 		volatile int     wip;
 
-		static final AtomicIntegerFieldUpdater<ExpandBreathSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<ExpandBreathSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ExpandBreathSubscriber.class, "wip");
 
 		long produced;
@@ -154,7 +154,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void drainQueue() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					Queue<Publisher<? extends T>> q = queue;
 					if (isCancelled()) {
@@ -181,7 +181,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 						}
 					}
 				}
-				while (WIP.decrementAndGet(this) != 0);
+				while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 		}
 
@@ -201,23 +201,23 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		final Function<? super T, ? extends Publisher<? extends T>> expander;
 
 		volatile Throwable error;
-		static final AtomicReferenceFieldUpdater<ExpandDepthSubscription, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<ExpandDepthSubscription, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ExpandDepthSubscription.class, Throwable.class, "error");
 
 		volatile int       active;
-		static final AtomicIntegerFieldUpdater<ExpandDepthSubscription> ACTIVE =
+		static final AtomicIntegerFieldUpdater<ExpandDepthSubscription> ACTIVE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ExpandDepthSubscription.class, "active");
 
 		volatile long      requested;
-		static final AtomicLongFieldUpdater<ExpandDepthSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ExpandDepthSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ExpandDepthSubscription.class, "requested");
 
 		volatile Object    current;
-		static final AtomicReferenceFieldUpdater<ExpandDepthSubscription, Object> CURRENT =
+		static final AtomicReferenceFieldUpdater<ExpandDepthSubscription, Object> CURRENT_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ExpandDepthSubscription.class, Object.class, "current");
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<ExpandDepthSubscription> WIP =
+		static final AtomicIntegerFieldUpdater<ExpandDepthSubscription> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ExpandDepthSubscription.class, "wip");
 
 		Deque<ExpandDepthSubscriber<T>> subscriptionStack;
@@ -243,7 +243,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drainQueue();
 			}
 		}
@@ -265,7 +265,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 					}
 				}
 
-				Object o = CURRENT.getAndSet(this, this);
+				Object o = CURRENT_UPDATER.getAndSet(this, this);
 				if (o != this && o != null) {
 					((ExpandDepthSubscriber) o).dispose();
 				}
@@ -293,19 +293,19 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 
 		boolean setCurrent(ExpandDepthSubscriber<T> inner) {
 			for (;;) {
-				Object o = CURRENT.get(this);
+				Object o = CURRENT_UPDATER.get(this);
 				if (o == this) {
 					inner.dispose();
 					return false;
 				}
-				if (CURRENT.compareAndSet(this, o, inner)) {
+				if (CURRENT_UPDATER.compareAndSet(this, o, inner)) {
 					return true;
 				}
 			}
 		}
 
 		void drainQueue() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -326,7 +326,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 
 				if (curr == null && p != null) {
 					source = null;
-					ACTIVE.getAndIncrement(this);
+					ACTIVE_UPDATER.getAndIncrement(this);
 
 					ExpandDepthSubscriber<T> eds = new ExpandDepthSubscriber<>(this);
 					if (setCurrent(eds)) {
@@ -360,12 +360,12 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 							curr.done = true;
 							currentDone = true;
 							v = null;
-							Exceptions.addThrowable(ERROR, this, ex);
+							Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 						}
 
 						if (p != null) {
 							if (push(curr)) {
-								ACTIVE.getAndIncrement(this);
+								ACTIVE_UPDATER.getAndIncrement(this);
 								curr = new ExpandDepthSubscriber<>(this);
 								if (setCurrent(curr)) {
 									p.subscribe(curr);
@@ -380,8 +380,8 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 
 					if (!newSource) {
 						if (currentDone && v == null) {
-							if (ACTIVE.decrementAndGet(this) == 0) {
-								Throwable ex = Exceptions.terminate(ERROR, this);
+							if (ACTIVE_UPDATER.decrementAndGet(this) == 0) {
+								Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 								if (ex != null) {
 									a.onError(ex);
 								}
@@ -404,7 +404,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 				int w = wip;
 				if (missed == w) {
 					consumed = e;
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -420,7 +420,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void innerError(ExpandDepthSubscriber inner, Throwable t) {
-			Exceptions.addThrowable(ERROR, this, t);
+			Exceptions.addThrowable(ERROR_UPDATER, this, t);
 			inner.done = true;
 			drainQueue();
 		}
@@ -452,7 +452,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ExpandDepthSubscriber, Subscription> ATOMIC_REFERENCE_S =
+		static final AtomicReferenceFieldUpdater<ExpandDepthSubscriber, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ExpandDepthSubscriber.class, Subscription.class, "s");
 
 		ExpandDepthSubscriber(ExpandDepthSubscription<T> parent) {
@@ -461,7 +461,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(1);
 			}
 		}
@@ -493,7 +493,7 @@ final class FluxExpand<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void dispose() {
-			Operators.terminate(ATOMIC_REFERENCE_S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 
 		@Nullable

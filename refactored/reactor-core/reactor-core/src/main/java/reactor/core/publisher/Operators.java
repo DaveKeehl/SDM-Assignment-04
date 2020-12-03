@@ -620,7 +620,7 @@ public abstract class Operators {
 	 * An unexpected exception is about to be dropped.
 	 * <p>
 	 * If no hook is registered for {@link Hooks#onErrorDropped(Consumer)}, the dropped
-	 * error is logged at ERROR level and thrown (via {@link Exceptions#bubble(Throwable)}.
+	 * error is logged at ERROR_UPDATER level and thrown (via {@link Exceptions#bubble(Throwable)}.
 	 *
 	 * @param e the dropped exception
 	 * @param context a context that might hold a local error consumer
@@ -767,7 +767,7 @@ public abstract class Operators {
 		}
 
 		if (strategy == null) strategy = Hooks.onNextErrorHook;
-		if (strategy == null) strategy = OnNextFailureStrategy.STOP;
+		if (strategy == null) strategy = OnNextFailureStrategy.STOP_STRATEGY;
 		return strategy;
 	}
 
@@ -1597,7 +1597,7 @@ public abstract class Operators {
 
 		@Override
 		public void cancel() {
-			final long state = LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
+			final long state = REQUESTED_UPDATER.getAndSet(this, STATE_CANCELLED);
 			if (state == STATE_CANCELLED) {
 				return;
 			}
@@ -1608,7 +1608,7 @@ public abstract class Operators {
 		}
 
 		protected void terminate() {
-			LONG_REQUESTED.getAndSet(this, STATE_CANCELLED);
+			REQUESTED_UPDATER.getAndSet(this, STATE_CANCELLED);
 		}
 
 		@Override
@@ -1633,7 +1633,7 @@ public abstract class Operators {
 						return;
 					}
 					u = Operators.addCap(r, n);
-					if (LONG_REQUESTED.compareAndSet(this, r, u)) { // Means increment happened before onSubscribe
+					if (REQUESTED_UPDATER.compareAndSet(this, r, u)) { // Means increment happened before onSubscribe
 						return;
 					}
 					else { // Means increment happened after onSubscribe
@@ -1691,13 +1691,13 @@ public abstract class Operators {
 				}
 				accumulated += toRequest;
 
-				if (LONG_REQUESTED.compareAndSet(this, r, STATE_SUBSCRIBED)) {
+				if (REQUESTED_UPDATER.compareAndSet(this, r, STATE_SUBSCRIBED)) {
 					return true;
 				}
 			}
 		}
 
-		static final AtomicLongFieldUpdater<DeferredSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<DeferredSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(DeferredSubscription.class, "requested");
 
 	}
@@ -1728,7 +1728,7 @@ public abstract class Operators {
 		public void cancel() {
 			O v = value;
 			value = null;
-			STATE.set(this, CANCELLED);
+			STATE_UPDATER.set(this, CANCELLED);
 			discard(v);
 		}
 
@@ -1744,7 +1744,7 @@ public abstract class Operators {
 
 		@Override
 		public final void clear() {
-			STATE.lazySet(this, FUSED_CONSUMED);
+			STATE_UPDATER.lazySet(this, FUSED_CONSUMED);
 			this.value = null;
 		}
 
@@ -1761,7 +1761,7 @@ public abstract class Operators {
 				if (state == FUSED_EMPTY) {
 					setValue(v);
 					//sync memory since setValue is non volatile
-					if (STATE.compareAndSet(this, FUSED_EMPTY, FUSED_READY)) {
+					if (STATE_UPDATER.compareAndSet(this, FUSED_EMPTY, FUSED_READY)) {
 						Subscriber<? super O> a = actual;
 						a.onNext(v);
 						a.onComplete();
@@ -1778,7 +1778,7 @@ public abstract class Operators {
 					return;
 				}
 
-				if (state == HAS_REQUEST_NO_VALUE && STATE.compareAndSet(this, HAS_REQUEST_NO_VALUE, HAS_REQUEST_HAS_VALUE)) {
+				if (state == HAS_REQUEST_NO_VALUE && STATE_UPDATER.compareAndSet(this, HAS_REQUEST_NO_VALUE, HAS_REQUEST_HAS_VALUE)) {
 					this.value = null;
 					Subscriber<? super O> a = actual;
 					a.onNext(v);
@@ -1786,7 +1786,7 @@ public abstract class Operators {
 					return;
 				}
 				setValue(v);
-				if (state == NO_REQUEST_NO_VALUE && STATE.compareAndSet(this, NO_REQUEST_NO_VALUE, NO_REQUEST_HAS_VALUE)) {
+				if (state == NO_REQUEST_NO_VALUE && STATE_UPDATER.compareAndSet(this, NO_REQUEST_NO_VALUE, NO_REQUEST_HAS_VALUE)) {
 					return;
 				}
 			}
@@ -1845,7 +1845,7 @@ public abstract class Operators {
 		@Override
 		@Nullable
 		public final O poll() {
-			if (STATE.compareAndSet(this, FUSED_READY, FUSED_CONSUMED)) {
+			if (STATE_UPDATER.compareAndSet(this, FUSED_READY, FUSED_CONSUMED)) {
 				O v = value;
 				value = null;
 				return v;
@@ -1863,7 +1863,7 @@ public abstract class Operators {
 					if ((s & ~NO_REQUEST_HAS_VALUE) != 0) {
 						return;
 					}
-					if (s == NO_REQUEST_HAS_VALUE && STATE.compareAndSet(this, NO_REQUEST_HAS_VALUE, HAS_REQUEST_HAS_VALUE)) {
+					if (s == NO_REQUEST_HAS_VALUE && STATE_UPDATER.compareAndSet(this, NO_REQUEST_HAS_VALUE, HAS_REQUEST_HAS_VALUE)) {
 						O v = value;
 						if (v != null) {
 							value = null;
@@ -1873,7 +1873,7 @@ public abstract class Operators {
 						}
 						return;
 					}
-					if (STATE.compareAndSet(this, NO_REQUEST_NO_VALUE, HAS_REQUEST_NO_VALUE)) {
+					if (STATE_UPDATER.compareAndSet(this, NO_REQUEST_NO_VALUE, HAS_REQUEST_NO_VALUE)) {
 						return;
 					}
 				}
@@ -1883,7 +1883,7 @@ public abstract class Operators {
 		@Override
 		public int requestFusion(int mode) {
 			if ((mode & ASYNC) != 0) {
-				STATE.lazySet(this, FUSED_EMPTY);
+				STATE_UPDATER.lazySet(this, FUSED_EMPTY);
 				return ASYNC;
 			}
 			return NONE;
@@ -1937,7 +1937,7 @@ public abstract class Operators {
 		 */
 		static final int FUSED_CONSUMED = 32;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MonoSubscriber> STATE =
+		static final AtomicIntegerFieldUpdater<MonoSubscriber> STATE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MonoSubscriber.class, "state");
 	}
 
@@ -2032,7 +2032,7 @@ public abstract class Operators {
 			if (unbounded) {
 				return;
 			}
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				long r = requested;
 
 				if (r != Long.MAX_VALUE) {
@@ -2046,7 +2046,7 @@ public abstract class Operators {
 					unbounded = true;
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return;
 				}
 
@@ -2064,7 +2064,7 @@ public abstract class Operators {
 			if (unbounded) {
 				return;
 			}
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				long r = requested;
 
 				if (r != Long.MAX_VALUE) {
@@ -2078,7 +2078,7 @@ public abstract class Operators {
 					unbounded = true;
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return;
 				}
 
@@ -2098,7 +2098,7 @@ public abstract class Operators {
 	            if (unbounded) {
 	                return;
 	            }
-	            if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+	            if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 	                long r = requested;
 
 	                if (r != Long.MAX_VALUE) {
@@ -2110,7 +2110,7 @@ public abstract class Operators {
 	                }
 		            Subscription a = subscription;
 
-	                if (WIP.decrementAndGet(this) != 0) {
+	                if (WIP_UPDATER.decrementAndGet(this) != 0) {
 	                    drainLoop();
 	                }
 
@@ -2121,7 +2121,7 @@ public abstract class Operators {
 	                return;
 	            }
 
-	            addCap(MISSED_LONG_REQUESTED, this, n);
+	            addCap(MISSED_REQUESTED_UPDATER, this, n);
 
 	            drain();
 	        }
@@ -2135,7 +2135,7 @@ public abstract class Operators {
 
 	        Objects.requireNonNull(s);
 
-	        if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+	        if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 		        Subscription a = subscription;
 
 	            if (a != null && shouldCancelCurrent()) {
@@ -2146,7 +2146,7 @@ public abstract class Operators {
 
 	            long r = requested;
 
-	            if (WIP.decrementAndGet(this) != 0) {
+	            if (WIP_UPDATER.decrementAndGet(this) != 0) {
 	                drainLoop();
 	            }
 
@@ -2157,7 +2157,7 @@ public abstract class Operators {
 	            return;
 	        }
 
-	        Subscription a = MISSED_SUBSCRIPTION.getAndSet(this, s);
+	        Subscription a = MISSED_SUBSCRIPTION_UPDATER.getAndSet(this, s);
 	        if (a != null && shouldCancelCurrent()) {
 	            a.cancel();
 	        }
@@ -2174,7 +2174,7 @@ public abstract class Operators {
 		}
 
 		final void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 			drainLoop();
@@ -2191,12 +2191,12 @@ public abstract class Operators {
 	            Subscription ms = missedSubscription;
 
 	            if (ms != null) {
-	                ms = MISSED_SUBSCRIPTION.getAndSet(this, null);
+	                ms = MISSED_SUBSCRIPTION_UPDATER.getAndSet(this, null);
 	            }
 
 	            long mr = missedRequested;
 	            if (mr != 0L) {
-	                mr = MISSED_LONG_REQUESTED.getAndSet(this, 0L);
+	                mr = MISSED_REQUESTED_UPDATER.getAndSet(this, 0L);
 	            }
 
 	            long mp = missedProduced;
@@ -2247,7 +2247,7 @@ public abstract class Operators {
 	                }
 	            }
 
-	            missed = WIP.addAndGet(this, -missed);
+	            missed = WIP_UPDATER.addAndGet(this, -missed);
 	            if (missed == 0) {
 	                if (requestAmount != 0L) {
 	                    requestTarget.request(requestAmount);
@@ -2258,19 +2258,19 @@ public abstract class Operators {
 		}
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MultiSubscriptionSubscriber, Subscription>
-				MISSED_SUBSCRIPTION =
+				MISSED_SUBSCRIPTION_UPDATER =
 		  AtomicReferenceFieldUpdater.newUpdater(MultiSubscriptionSubscriber.class,
 			Subscription.class,
 			"missedSubscription");
 		@SuppressWarnings("rawtypes")
 		static final AtomicLongFieldUpdater<MultiSubscriptionSubscriber>
-				MISSED_LONG_REQUESTED =
+				MISSED_REQUESTED_UPDATER =
 		  AtomicLongFieldUpdater.newUpdater(MultiSubscriptionSubscriber.class, "missedRequested");
 		@SuppressWarnings("rawtypes")
 		static final AtomicLongFieldUpdater<MultiSubscriptionSubscriber> MISSED_PRODUCED =
 		  AtomicLongFieldUpdater.newUpdater(MultiSubscriptionSubscriber.class, "missedProduced");
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MultiSubscriptionSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<MultiSubscriptionSubscriber> WIP_UPDATER =
 		  AtomicIntegerFieldUpdater.newUpdater(MultiSubscriptionSubscriber.class, "wip");
 	}
 
@@ -2298,7 +2298,7 @@ public abstract class Operators {
 			if (once == 0) {
 				Operators.onDiscard(value, actual.currentContext());
 			}
-			ONCE.lazySet(this, 2);
+			ONCE_UPDATER.lazySet(this, 2);
 		}
 
 		@Override
@@ -2306,7 +2306,7 @@ public abstract class Operators {
 			if (once == 0) {
 				Operators.onDiscard(value, actual.currentContext());
 			}
-			ONCE.lazySet(this, 1);
+			ONCE_UPDATER.lazySet(this, 1);
 		}
 
 		@Override
@@ -2323,7 +2323,7 @@ public abstract class Operators {
 		@Nullable
 		public T poll() {
 			if (once == 0) {
-				ONCE.lazySet(this, 1);
+				ONCE_UPDATER.lazySet(this, 1);
 				return value;
 			}
 			return null;
@@ -2341,7 +2341,7 @@ public abstract class Operators {
 		@Override
 		public void request(long n) {
 			if (validate(n)) {
-				if (ONCE.compareAndSet(this, 0, 1)) {
+				if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 					Subscriber<? super T> a = actual;
 					a.onNext(value);
 					if(once != 2) {
@@ -2365,7 +2365,7 @@ public abstract class Operators {
 		}
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ScalarSubscription> ONCE =
+		static final AtomicIntegerFieldUpdater<ScalarSubscription> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ScalarSubscription.class, "once");
 	}
 

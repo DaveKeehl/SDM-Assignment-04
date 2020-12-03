@@ -76,8 +76,8 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 		TestPublisher<String> tp1 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 		TestPublisher<String> tp2 = TestPublisher.createNoncompliant(TestPublisher.Violation.REQUEST_OVERFLOW);
 
-		final Flux<String> test1 = tp1.flux().onBackpressureBuffer(3, ERROR);
-		final Flux<String> test2 = tp2.flux().onBackpressureBuffer(3, s -> { }, ERROR);
+		final Flux<String> test1 = tp1.flux().onBackpressureBuffer(3, ERROR_UPDATER);
+		final Flux<String> test2 = tp2.flux().onBackpressureBuffer(3, s -> { }, ERROR_UPDATER);
 
 		StepVerifier.create(test1, StepVerifierOptions.create()
 		                                              .scenarioName("without consumer")
@@ -163,7 +163,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
-				processor.asFlux(), 2, this, ERROR);
+				processor.asFlux(), 2, this, ERROR_UPDATER);
 
 		StepVerifier.create(flux, 0)
 		            .thenRequest(1)
@@ -193,7 +193,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 
 		StepVerifier.create(Flux.range(1, 100)
 		                        .hide()
-		                        .onBackpressureBuffer(8, last::set, BufferOverflowStrategy.ERROR), 0)
+		                        .onBackpressureBuffer(8, last::set, BufferOverflowStrategy.ERROR_UPDATER), 0)
 
 		            .thenRequest(7)
 		            .expectNext(1, 2, 3, 4, 5, 6, 7)
@@ -246,7 +246,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 
 		StepVerifier.create(testPublisher.flux()
 		                                 .doOnNext(i -> producedCounter.incrementAndGet())
-		                                 .onBackpressureBuffer(3, overflown::add, BufferOverflowStrategy.ERROR),
+		                                 .onBackpressureBuffer(3, overflown::add, BufferOverflowStrategy.ERROR_UPDATER),
 				StepVerifierOptions.create().initialRequest(0).checkUnderRequesting(false))
 		            .thenRequest(5)
 		            .then(() -> testPublisher.next(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15))
@@ -329,7 +329,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
 				processor.asFlux(), 2, v -> { throw new IllegalArgumentException("boom"); },
-				ERROR);
+				ERROR_UPDATER);
 
 		StepVerifier.create(flux, 0)
 		            .thenRequest(1)
@@ -358,7 +358,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 		Sinks.Many<String> processor = Sinks.unsafe().many().multicast().directBestEffort();
 
 		FluxOnBackpressureBufferStrategy<String> flux = new FluxOnBackpressureBufferStrategy<>(
-				processor.asFlux(), 2, null, ERROR);
+				processor.asFlux(), 2, null, ERROR_UPDATER);
 
 		StepVerifier.create(flux, 0)
 		            .thenRequest(1)
@@ -469,7 +469,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 		try {
 			Flux.just("foo").onBackpressureBuffer(1,
 					null,
-					ERROR);
+					ERROR_UPDATER);
 			fail("expected NullPointerException");
 		}
 		catch (NullPointerException e) {
@@ -493,7 +493,7 @@ class FluxOnBackpressureBufferStrategyTest implements Consumer<String>,
 	@Test
     void scanOperator(){
 		Flux<Integer> parent = Flux.just(1);
-		FluxOnBackpressureBufferStrategy<Integer> test = new FluxOnBackpressureBufferStrategy<>(parent, 3, t -> {}, ERROR);
+		FluxOnBackpressureBufferStrategy<Integer> test = new FluxOnBackpressureBufferStrategy<>(parent, 3, t -> {}, ERROR_UPDATER);
 
 		assertThat(test.scan(Scannable.Attr.PARENT)).isSameAs(parent);
 		assertThat(test.scan(Scannable.Attr.RUN_STYLE)).isSameAs(Scannable.Attr.RunStyle.SYNC);

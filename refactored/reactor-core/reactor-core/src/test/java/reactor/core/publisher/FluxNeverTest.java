@@ -32,7 +32,7 @@ class FluxNeverTest {
     void normal() {
 		AssertSubscriber<Integer> ts = AssertSubscriber.create();
 
-		FluxNever.<Integer>instance().subscribe(ts);
+		FluxNever.<Integer>getInstance().subscribe(ts);
 
 		ts
 		  .assertSubscribed()

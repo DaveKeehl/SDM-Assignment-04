@@ -179,22 +179,22 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 
 	volatile int once;
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<UnicastProcessor> ONCE =
+	static final AtomicIntegerFieldUpdater<UnicastProcessor> ONCE_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(UnicastProcessor.class, "once");
 
 	volatile int wip;
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<UnicastProcessor> WIP =
+	static final AtomicIntegerFieldUpdater<UnicastProcessor> WIP_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(UnicastProcessor.class, "wip");
 
 	volatile int discardGuard;
 	@SuppressWarnings("rawtypes")
-	static final AtomicIntegerFieldUpdater<UnicastProcessor> DISCARD_GUARD =
+	static final AtomicIntegerFieldUpdater<UnicastProcessor> DISCARD_GUARD_UPDATER =
 			AtomicIntegerFieldUpdater.newUpdater(UnicastProcessor.class, "discardGuard");
 
 	volatile long requested;
 	@SuppressWarnings("rawtypes")
-	static final AtomicLongFieldUpdater<UnicastProcessor> LONG_REQUESTED =
+	static final AtomicLongFieldUpdater<UnicastProcessor> REQUESTED_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(UnicastProcessor.class, "requested");
 
 	boolean outputFused;
@@ -237,7 +237,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 		if (Attr.PREFETCH == key) return Integer.MAX_VALUE;
 		if (Attr.CANCELLED == key) return cancelled;
 
-		//TERMINATED and ERROR covered in super
+		//TERMINATED and ERROR_UPDATER covered in super
 		return super.scanUnsafe(key);
 	}
 
@@ -396,10 +396,10 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 			}
 
 			if (e != 0 && r != Long.MAX_VALUE) {
-				LONG_REQUESTED.addAndGet(this, -e);
+				REQUESTED_UPDATER.addAndGet(this, -e);
 			}
 
-			missed = WIP.addAndGet(this, -missed);
+			missed = WIP_UPDATER.addAndGet(this, -missed);
 			if (missed == 0) {
 				break;
 			}
@@ -435,7 +435,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 				return;
 			}
 
-			missed = WIP.addAndGet(this, -missed);
+			missed = WIP_UPDATER.addAndGet(this, -missed);
 			if (missed == 0) {
 				break;
 			}
@@ -443,7 +443,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 	}
 
 	void drain(@Nullable T dataSignalOfferedBeforeDrain) {
-		if (WIP.getAndIncrement(this) != 0) {
+		if (WIP_UPDATER.getAndIncrement(this) != 0) {
 			if (dataSignalOfferedBeforeDrain != null) {
 				if (cancelled) {
 					Operators.onDiscard(dataSignalOfferedBeforeDrain,
@@ -471,7 +471,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 				return;
 			}
 
-			missed = WIP.addAndGet(this, -missed);
+			missed = WIP_UPDATER.addAndGet(this, -missed);
 			if (missed == 0) {
 				break;
 			}
@@ -522,7 +522,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 	@Override
 	public void subscribe(CoreSubscriber<? super T> actual) {
 		Objects.requireNonNull(actual, "subscribe");
-		if (once == 0 && ONCE.compareAndSet(this, 0, 1)) {
+		if (once == 0 && ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 
 			this.hasDownstream = true;
 			actual.onSubscribe(this);
@@ -541,7 +541,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 	@Override
 	public void request(long n) {
 		if (Operators.validate(n)) {
-			Operators.addCap(LONG_REQUESTED, this, n);
+			Operators.addCap(REQUESTED_UPDATER, this, n);
 			drain(null);
 		}
 	}
@@ -555,10 +555,10 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 
 		doTerminate();
 
-		if (WIP.getAndIncrement(this) == 0) {
+		if (WIP_UPDATER.getAndIncrement(this) == 0) {
 			if (!outputFused) {
 				// discard MUST be happening only and only if there is no racing on elements consumption
-				// which is guaranteed by the WIP guard here in case non-fused output
+				// which is guaranteed by the WIP_UPDATER guard here in case non-fused output
 				Operators.onDiscardQueueWithClear(queue, currentContext(), null);
 			}
 			hasDownstream = false;
@@ -586,7 +586,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 		// use guard on the queue instance as the best way to ensure there is no racing on draining
 		// the call to this method must be done only during the ASYNC fusion so all the callers will be waiting
 		// this should not be performance costly with the assumption the cancel is rare operation
-		if (DISCARD_GUARD.getAndIncrement(this) != 0) {
+		if (DISCARD_GUARD_UPDATER.getAndIncrement(this) != 0) {
 			return;
 		}
 
@@ -597,7 +597,7 @@ public final class UnicastProcessor<T> extends FluxProcessor<T, T>
 
 			int dg = discardGuard;
 			if (missed == dg) {
-				missed = DISCARD_GUARD.addAndGet(this, -missed);
+				missed = DISCARD_GUARD_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}

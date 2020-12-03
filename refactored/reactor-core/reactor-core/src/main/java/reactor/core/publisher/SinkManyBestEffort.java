@@ -56,12 +56,12 @@ final class SinkManyBestEffort<T> extends Flux<T>
 
 	volatile     DirectInner<T>[]                                              subscribers;
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<SinkManyBestEffort, DirectInner[]>SUBSCRIBERS =
+	static final AtomicReferenceFieldUpdater<SinkManyBestEffort, DirectInner[]>SUBSCRIBERS_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(SinkManyBestEffort.class, DirectInner[].class, "subscribers");
 
 	SinkManyBestEffort(boolean allOrNothing) {
 		this.allOrNothing = allOrNothing;
-		SUBSCRIBERS.lazySet(this, EMPTY);
+		SUBSCRIBERS_UPDATER.lazySet(this, EMPTY);
 	}
 
 	public Context currentContext() {
@@ -148,7 +148,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 	@Override
 	public EmitResult tryEmitComplete() {
 		@SuppressWarnings("unchecked")
-		DirectInner<T>[] subs = SUBSCRIBERS.getAndSet(this, TERMINATED);
+		DirectInner<T>[] subs = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		if (subs == TERMINATED) {
 			return EmitResult.FAIL_TERMINATED;
@@ -164,7 +164,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 	public EmitResult tryEmitError(Throwable error) {
 		Objects.requireNonNull(error, "tryEmitError(null) is forbidden");
 		@SuppressWarnings("unchecked")
-		DirectInner<T>[] subs = SUBSCRIBERS.getAndSet(this, TERMINATED);
+		DirectInner<T>[] subs = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		if (subs == TERMINATED) {
 			return EmitResult.FAIL_TERMINATED;
@@ -286,7 +286,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 
 		volatile     long                                requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<DirectInner> LONG_REQUESTED = AtomicLongFieldUpdater.newUpdater(
+		static final AtomicLongFieldUpdater<DirectInner> REQUESTED_UPDATER = AtomicLongFieldUpdater.newUpdater(
 				DirectInner.class, "requested");
 
 		DirectInner(CoreSubscriber<? super T> actual, DirectInnerContainer<T> parent) {
@@ -297,7 +297,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -338,7 +338,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 				}
 				actual.onNext(value);
 				if (requested != Long.MAX_VALUE) {
-					LONG_REQUESTED.decrementAndGet(this);
+					REQUESTED_UPDATER.decrementAndGet(this);
 				}
 				return true;
 			}
@@ -355,7 +355,7 @@ final class SinkManyBestEffort<T> extends Flux<T>
 			if (requested != 0L) {
 				actual.onNext(value);
 				if (requested != Long.MAX_VALUE) {
-					LONG_REQUESTED.decrementAndGet(this);
+					REQUESTED_UPDATER.decrementAndGet(this);
 				}
 				return;
 			}

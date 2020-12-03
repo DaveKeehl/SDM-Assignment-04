@@ -28,7 +28,7 @@ public enum BufferOverflowStrategy {
 	/**
 	 * Propagate an {@link IllegalStateException} when the buffer is full.
 	 */
-	ERROR,
+	ERROR_UPDATER,
 	/**
 	 * Drop the new element without propagating an error when the buffer is full.
 	 */

@@ -74,14 +74,14 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 
 		volatile Disposable disposable;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<DefaultMonoSink, Disposable> DISPOSABLE =
+		static final AtomicReferenceFieldUpdater<DefaultMonoSink, Disposable> DISPOSABLE_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(DefaultMonoSink.class,
 						Disposable.class,
 						"disposable");
 
 		volatile int state;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<DefaultMonoSink> STATE =
+		static final AtomicIntegerFieldUpdater<DefaultMonoSink> STATE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(DefaultMonoSink.class, "state");
 
 		volatile LongConsumer requestConsumer;
@@ -128,7 +128,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 			if (isDisposed()) {
 				return;
 			}
-			if (STATE.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
+			if (STATE_UPDATER.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
 				try {
 					actual.onComplete();
 				}
@@ -155,7 +155,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 					return;
 				}
 				if (s == HAS_REQUEST_NO_VALUE) {
-					if (STATE.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
+					if (STATE_UPDATER.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
 						try {
 							actual.onNext(value);
 							actual.onComplete();
@@ -172,7 +172,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 					return;
 				}
 				this.value = value;
-				if (STATE.compareAndSet(this, s, NO_REQUEST_HAS_VALUE)) {
+				if (STATE_UPDATER.compareAndSet(this, s, NO_REQUEST_HAS_VALUE)) {
 					return;
 				}
 			}
@@ -184,7 +184,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 				Operators.onOperatorError(e, actual.currentContext());
 				return;
 			}
-			if (STATE.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
+			if (STATE_UPDATER.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
 				try {
 					actual.onError(e);
 				}
@@ -220,7 +220,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 		public MonoSink<T> onCancel(Disposable d) {
 			Objects.requireNonNull(d, "onCancel");
 			SinkDisposable sd = new SinkDisposable(null, d);
-			if (!DISPOSABLE.compareAndSet(this, null, sd)) {
+			if (!DISPOSABLE_UPDATER.compareAndSet(this, null, sd)) {
 				Disposable c = disposable;
 				if (c == CANCELLED) {
 					d.dispose();
@@ -242,7 +242,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 		public MonoSink<T> onDispose(Disposable d) {
 			Objects.requireNonNull(d, "onDispose");
 			SinkDisposable sd = new SinkDisposable(d, null);
-			if (!DISPOSABLE.compareAndSet(this, null, sd)) {
+			if (!DISPOSABLE_UPDATER.compareAndSet(this, null, sd)) {
 				Disposable c = disposable;
 				if (isDisposed()) {
 					d.dispose();
@@ -273,7 +273,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 						return;
 					}
 					if (s == NO_REQUEST_HAS_VALUE) {
-						if (STATE.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
+						if (STATE_UPDATER.compareAndSet(this, s, HAS_REQUEST_HAS_VALUE)) {
 							try {
 								actual.onNext(value);
 								actual.onComplete();
@@ -284,7 +284,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 						}
 						return;
 					}
-					if (STATE.compareAndSet(this, s, HAS_REQUEST_NO_VALUE)) {
+					if (STATE_UPDATER.compareAndSet(this, s, HAS_REQUEST_NO_VALUE)) {
 						return;
 					}
 				}
@@ -293,7 +293,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 
 		@Override
 		public void cancel() {
-			if (STATE.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
+			if (STATE_UPDATER.getAndSet(this, HAS_REQUEST_HAS_VALUE) != HAS_REQUEST_HAS_VALUE) {
 				T old = value;
 				value = null;
 				Operators.onDiscard(old, actual.currentContext());
@@ -305,7 +305,7 @@ final class MonoCreate<T> extends Mono<T> implements SourceProducer<T> {
 			Disposable target = isCancel ? CANCELLED : TERMINATED;
 			Disposable d = disposable;
 			if (d != TERMINATED && d != CANCELLED) {
-				d = DISPOSABLE.getAndSet(this, target);
+				d = DISPOSABLE_UPDATER.getAndSet(this, target);
 				if (d != null && d != TERMINATED && d != CANCELLED) {
 					if (isCancel && d instanceof SinkDisposable) {
 						((SinkDisposable) d).cancel();

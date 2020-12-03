@@ -105,7 +105,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 			AtomicReferenceFieldUpdater.newUpdater(BoundedElasticScheduler.class, BoundedServices.class, "boundedServices");
 
 	volatile ScheduledExecutorService evictor;
-	static final AtomicReferenceFieldUpdater<BoundedElasticScheduler, ScheduledExecutorService> EVICTOR =
+	static final AtomicReferenceFieldUpdater<BoundedElasticScheduler, ScheduledExecutorService> EVICTOR_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(BoundedElasticScheduler.class, ScheduledExecutorService.class, "evictor");
 
 	/**
@@ -156,7 +156,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 	}
 
 	private void startHelper(ScheduledExecutorService e, BoundedServices newServices) {
-		if (EVICTOR.compareAndSet(this, null, e)) {
+		if (EVICTOR_UPDATER.compareAndSet(this, null, e)) {
 			try {
 				e.scheduleAtFixedRate(newServices::eviction, ttlMillis, ttlMillis, TimeUnit.MILLISECONDS);
 			}
@@ -197,7 +197,7 @@ final class BoundedElasticScheduler implements Scheduler, Scannable {
 	public void dispose() {
 		BoundedServices services = BOUNDED_SERVICES.get(this);
 		if (services != SHUTDOWN && BOUNDED_SERVICES.compareAndSet(this, services, SHUTDOWN)) {
-			ScheduledExecutorService e = EVICTOR.getAndSet(this, null);
+			ScheduledExecutorService e = EVICTOR_UPDATER.getAndSet(this, null);
 			if (e != null) {
 				e.shutdownNow();
 			}

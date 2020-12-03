@@ -61,7 +61,7 @@ final class FluxLimitRequest<T> extends InternalFluxOperator<T, T> {
 		long toProduce;
 
 		volatile long requestRemaining;
-		static final AtomicLongFieldUpdater<FluxLimitRequestSubscriber> REQUEST_REMAINING =
+		static final AtomicLongFieldUpdater<FluxLimitRequestSubscriber> REMAINING_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(FluxLimitRequestSubscriber.class, "requestRemaining");
 
 
@@ -123,7 +123,7 @@ final class FluxLimitRequest<T> extends InternalFluxOperator<T, T> {
 					newRequest = l;
 				}
 				long u = r - newRequest;
-				if (REQUEST_REMAINING.compareAndSet(this, r, u)) {
+				if (REMAINING_UPDATER.compareAndSet(this, r, u)) {
 					if (newRequest != 0) {
 						parent.request(newRequest);
 					}

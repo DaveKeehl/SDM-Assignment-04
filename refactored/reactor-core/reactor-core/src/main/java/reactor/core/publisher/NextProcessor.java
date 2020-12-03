@@ -25,7 +25,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 	volatile NextInner<O>[] subscribers;
 
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<NextProcessor, NextInner[]> SUBSCRIBERS =
+	static final AtomicReferenceFieldUpdater<NextProcessor, NextInner[]> SUBSCRIBERS_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(NextProcessor.class, NextInner[].class, "subscribers");
 
 	@SuppressWarnings("rawtypes")
@@ -51,7 +51,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 
 	NextProcessor(@Nullable CorePublisher<? extends O> source) {
 		this.source = source;
-		SUBSCRIBERS.lazySet(this, source != null ? EMPTY_WITH_SOURCE : EMPTY);
+		SUBSCRIBERS_UPDATER.lazySet(this, source != null ? EMPTY_WITH_SOURCE : EMPTY);
 	}
 
 	@Override
@@ -156,7 +156,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 		source = null;
 
 		//no need to double check since UPSTREAM.getAndSet gates the completion already
-		for (NextInner<O> as : SUBSCRIBERS.getAndSet(this, TERMINATED)) {
+		for (NextInner<O> as : SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED)) {
 			as.onError(cause);
 		}
 		return EmitResult.OK;
@@ -178,7 +178,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 		Publisher<? extends O> parent = source;
 		source = null;
 
-		@SuppressWarnings("unchecked") NextInner<O>[] array = SUBSCRIBERS.getAndSet(this, TERMINATED);
+		@SuppressWarnings("unchecked") NextInner<O>[] array = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		if (value == null) {
 			for (NextInner<O> as : array) {
@@ -229,7 +229,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 
 
 		NextInner<O>[] a;
-		if ((a = SUBSCRIBERS.getAndSet(this, TERMINATED)) != TERMINATED) {
+		if ((a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED)) != TERMINATED) {
 			Exception e = new CancellationException("Disposed");
 			error = e;
 			value = null;
@@ -297,7 +297,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 			System.arraycopy(a, 0, b, 0, n);
 			b[n] = ps;
 
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				Publisher<? extends O> parent = source;
 				if (parent != null && a == EMPTY_WITH_SOURCE) {
 					parent.subscribe(this);
@@ -338,7 +338,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 				System.arraycopy(a, 0, b, 0, j);
 				System.arraycopy(a, j + 1, b, j, n - j - 1);
 			}
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				return;
 			}
 		}
@@ -377,7 +377,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 
 	void connect() {
 		Publisher<? extends O> parent = source;
-		if (parent != null && SUBSCRIBERS.compareAndSet(this, EMPTY_WITH_SOURCE, EMPTY)) {
+		if (parent != null && SUBSCRIBERS_UPDATER.compareAndSet(this, EMPTY_WITH_SOURCE, EMPTY)) {
 			parent.subscribe(this);
 		}
 	}
@@ -392,7 +392,7 @@ class NextProcessor<O> extends MonoProcessor<O> implements InternalOneSink<O> {
 
 		@Override
 		public void cancel() {
-			if (STATE.getAndSet(this, CANCELLED) != CANCELLED) {
+			if (STATE_UPDATER.getAndSet(this, CANCELLED) != CANCELLED) {
 				parent.remove(this);
 			}
 		}

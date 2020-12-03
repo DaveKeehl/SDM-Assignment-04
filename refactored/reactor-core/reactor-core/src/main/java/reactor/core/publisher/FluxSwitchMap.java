@@ -109,7 +109,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SwitchMapMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<SwitchMapMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SwitchMapMain.class,
 						Throwable.class,
 						"error");
@@ -118,34 +118,34 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SwitchMapMain> ONCE =
+		static final AtomicIntegerFieldUpdater<SwitchMapMain> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SwitchMapMain.class, "once");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SwitchMapMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<SwitchMapMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(SwitchMapMain.class, "requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SwitchMapMain> WIP =
+		static final AtomicIntegerFieldUpdater<SwitchMapMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SwitchMapMain.class, "wip");
 
 		volatile SwitchMapInner<R> inner;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SwitchMapMain, SwitchMapInner> INNER =
+		static final AtomicReferenceFieldUpdater<SwitchMapMain, SwitchMapInner> INNER_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SwitchMapMain.class,
 						SwitchMapInner.class,
 						"inner");
 
 		volatile long index;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SwitchMapMain> INDEX =
+		static final AtomicLongFieldUpdater<SwitchMapMain> INDEX_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(SwitchMapMain.class, "index");
 
 		volatile int active;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SwitchMapMain> ACTIVE =
+		static final AtomicIntegerFieldUpdater<SwitchMapMain> ACTIVE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SwitchMapMain.class, "active");
 
 		@SuppressWarnings("unchecked")
@@ -209,7 +209,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				return;
 			}
 
-			long idx = INDEX.incrementAndGet(this);
+			long idx = INDEX_UPDATER.incrementAndGet(this);
 
 			SwitchMapInner<R> si = inner;
 			if (si != null) {
@@ -231,8 +231,8 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 			SwitchMapInner<R> innerSubscriber =
 					new SwitchMapInner<>(this, prefetch, idx);
 
-			if (INNER.compareAndSet(this, si, innerSubscriber)) {
-				ACTIVE.getAndIncrement(this);
+			if (INNER_UPDATER.compareAndSet(this, si, innerSubscriber)) {
+				ACTIVE_UPDATER.getAndIncrement(this);
 				p.subscribe(innerSubscriber);
 			}
 		}
@@ -244,9 +244,9 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				return;
 			}
 
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 
-				if (ONCE.compareAndSet(this, 0, 1)) {
+				if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 					deactivate();
 				}
 
@@ -265,7 +265,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				return;
 			}
 
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				deactivate();
 			}
 
@@ -276,7 +276,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -286,18 +286,18 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 			if (!cancelled) {
 				cancelled = true;
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					cancelAndCleanup(queue);
 				}
 			}
 		}
 
 		void deactivate() {
-			ACTIVE.decrementAndGet(this);
+			ACTIVE_UPDATER.decrementAndGet(this);
 		}
 
 		void cancelInner() {
-			SwitchMapInner<?> si = INNER.getAndSet(this, CANCELLED_INNER);
+			SwitchMapInner<?> si = INNER_UPDATER.getAndSet(this, CANCELLED_INNER);
 			if (si != null && si != CANCELLED_INNER) {
 				si.cancel();
 				si.deactivate();
@@ -313,7 +313,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -367,10 +367,10 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				}
 
 				if (e != 0 && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -384,7 +384,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 			}
 
 			if (d) {
-				Throwable e = Exceptions.terminate(ERROR, this);
+				Throwable e = Exceptions.terminate(ERROR_UPDATER, this);
 				if (e != null && e != Exceptions.TERMINATED) {
 					cancelAndCleanup(q);
 
@@ -414,10 +414,10 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void innerError(SwitchMapInner<R> inner, Throwable e) {
-			if (Exceptions.addThrowable(ERROR, this, e)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 				s.cancel();
 
-				if (ONCE.compareAndSet(this, 0, 1)) {
+				if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 					deactivate();
 				}
 				inner.deactivate();
@@ -446,12 +446,12 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<SwitchMapInner> ONCE =
+		static final AtomicIntegerFieldUpdater<SwitchMapInner> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(SwitchMapInner.class, "once");
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SwitchMapInner, Subscription> S =
+		static final AtomicReferenceFieldUpdater<SwitchMapInner, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SwitchMapInner.class,
 						Subscription.class,
 						"s");
@@ -495,7 +495,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 				return;
 			}
 
-			if (S.compareAndSet(this, null, s)) {
+			if (S_UPDATER.compareAndSet(this, null, s)) {
 				s.request(Operators.unboundedOrPrefetch(prefetch));
 				return;
 			}
@@ -523,7 +523,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void deactivate() {
-			if (ONCE.compareAndSet(this, 0, 1)) {
+			if (ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				parent.deactivate();
 			}
 		}
@@ -555,7 +555,7 @@ final class FluxSwitchMap<T, R> extends InternalFluxOperator<T, R> {
 		public void cancel() {
 			Subscription a = s;
 			if (a != Operators.cancelledSubscription()) {
-				a = S.getAndSet(this, Operators.cancelledSubscription());
+				a = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (a != null && a != Operators.cancelledSubscription()) {
 					a.cancel();
 				}

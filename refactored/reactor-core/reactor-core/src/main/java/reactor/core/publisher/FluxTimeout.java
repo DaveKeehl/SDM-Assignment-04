@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.Scannable;
@@ -116,14 +115,14 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		volatile IndexedCancellable timeout;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<TimeoutMainSubscriber, IndexedCancellable>
-				TIMEOUT =
+				TIMEOUT_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(TimeoutMainSubscriber.class,
 						IndexedCancellable.class,
 						"timeout");
 
 		volatile long index;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<TimeoutMainSubscriber> INDEX =
+		static final AtomicLongFieldUpdater<TimeoutMainSubscriber> INDEX_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(TimeoutMainSubscriber.class, "index");
 
 		TimeoutMainSubscriber(
@@ -170,7 +169,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 				Operators.onNextDropped(t, actual.currentContext());
 				return;
 			}
-			if (!INDEX.compareAndSet(this, idx, idx + 1)) {
+			if (!INDEX_UPDATER.compareAndSet(this, idx, idx + 1)) {
 				s.cancel();
 				Operators.onNextDropped(t, actual.currentContext());
 				return;
@@ -208,7 +207,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 				Operators.onErrorDropped(t, actual.currentContext());
 				return;
 			}
-			if (!INDEX.compareAndSet(this, idx, Long.MIN_VALUE)) {
+			if (!INDEX_UPDATER.compareAndSet(this, idx, Long.MIN_VALUE)) {
 				Operators.onErrorDropped(t, actual.currentContext());
 				return;
 			}
@@ -224,7 +223,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 			if (idx == Long.MIN_VALUE) {
 				return;
 			}
-			if (!INDEX.compareAndSet(this, idx, Long.MIN_VALUE)) {
+			if (!INDEX_UPDATER.compareAndSet(this, idx, Long.MIN_VALUE)) {
 				return;
 			}
 
@@ -236,7 +235,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		void cancelTimeout() {
 			IndexedCancellable s = timeout;
 			if (s != CancelledIndexedCancellable.INSTANCE) {
-				s = TIMEOUT.getAndSet(this, CancelledIndexedCancellable.INSTANCE);
+				s = TIMEOUT_UPDATER.getAndSet(this, CancelledIndexedCancellable.INSTANCE);
 				if (s != null && s != CancelledIndexedCancellable.INSTANCE) {
 					s.cancel();
 				}
@@ -265,7 +264,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 					return false;
 				}
 
-				if (TIMEOUT.compareAndSet(this, currentTimeout, newTimeout)) {
+				if (TIMEOUT_UPDATER.compareAndSet(this, currentTimeout, newTimeout)) {
 					if (currentTimeout != null) {
 						currentTimeout.cancel();
 					}
@@ -275,13 +274,13 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		}
 
 		void doTimeout(long i) {
-			if (index == i && INDEX.compareAndSet(this, i, Long.MIN_VALUE)) {
+			if (index == i && INDEX_UPDATER.compareAndSet(this, i, Long.MIN_VALUE)) {
 				handleTimeout();
 			}
 		}
 
 		void doError(long i, Throwable e) {
-			if (index == i && INDEX.compareAndSet(this, i, Long.MIN_VALUE)) {
+			if (index == i && INDEX_UPDATER.compareAndSet(this, i, Long.MIN_VALUE)) {
 				super.cancel();
 
 				actual.onError(e);
@@ -384,7 +383,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		volatile Subscription s;
 
 		static final AtomicReferenceFieldUpdater<TimeoutTimeoutSubscriber, Subscription>
-						S = AtomicReferenceFieldUpdater.newUpdater(TimeoutTimeoutSubscriber.class,
+				S_UPDATER = AtomicReferenceFieldUpdater.newUpdater(TimeoutTimeoutSubscriber.class,
 						Subscription.class,
 						"s");
 
@@ -400,7 +399,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (!S.compareAndSet(this, null, s)) {
+			if (!S_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (this.s != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -432,7 +431,7 @@ final class FluxTimeout<T, U, V> extends InternalFluxOperator<T, T> {
 		public void cancel() {
 			Subscription a = s;
 			if (a != Operators.cancelledSubscription()) {
-				a = S.getAndSet(this, Operators.cancelledSubscription());
+				a = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (a != null && a != Operators.cancelledSubscription()) {
 					a.cancel();
 				}

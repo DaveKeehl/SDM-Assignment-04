@@ -127,12 +127,12 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		volatile Subscription       main;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<TakeUntilMainSubscriber, Subscription> MAIN =
+		static final AtomicReferenceFieldUpdater<TakeUntilMainSubscriber, Subscription> MAIN_UPDATER =
 		  AtomicReferenceFieldUpdater.newUpdater(TakeUntilMainSubscriber.class, Subscription.class, "main");
 
 		volatile Subscription other;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<TakeUntilMainSubscriber, Subscription> OTHER =
+		static final AtomicReferenceFieldUpdater<TakeUntilMainSubscriber, Subscription> OTHER_UPDATER=
 		  AtomicReferenceFieldUpdater.newUpdater(TakeUntilMainSubscriber.class, Subscription.class, "other");
 
 		TakeUntilMainSubscriber(CoreSubscriber<? super T> actual) {
@@ -160,7 +160,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		}
 
 		void setOther(Subscription s) {
-			if (!OTHER.compareAndSet(this, null, s)) {
+			if (!OTHER_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (other != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -176,7 +176,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		void cancelMain() {
 			Subscription s = main;
 			if (s != Operators.cancelledSubscription()) {
-				s = MAIN.getAndSet(this, Operators.cancelledSubscription());
+				s = MAIN_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -186,7 +186,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		void cancelOther() {
 			Subscription s = other;
 			if (s != Operators.cancelledSubscription()) {
-				s = OTHER.getAndSet(this, Operators.cancelledSubscription());
+				s = OTHER_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -201,7 +201,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (!MAIN.compareAndSet(this, null, s)) {
+			if (!MAIN_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (main != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -220,7 +220,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		public void onError(Throwable t) {
 
 			if (main == null) {
-				if (MAIN.compareAndSet(this, null, Operators.cancelledSubscription())) {
+				if (MAIN_UPDATER.compareAndSet(this, null, Operators.cancelledSubscription())) {
 					Operators.error(actual, t);
 					return;
 				}
@@ -233,7 +233,7 @@ final class FluxTakeUntilOther<T, U> extends InternalFluxOperator<T, T> {
 		@Override
 		public void onComplete() {
 			if (main == null) {
-				if (MAIN.compareAndSet(this, null, Operators.cancelledSubscription())) {
+				if (MAIN_UPDATER.compareAndSet(this, null, Operators.cancelledSubscription())) {
 					cancelOther();
 					Operators.complete(actual);
 					return;

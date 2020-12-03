@@ -303,7 +303,7 @@ class OperatorsTest {
 		List<Object> errorDropped = new ArrayList<>();
 		Hooks.onNextDropped(nextDropped::add);
 		Hooks.onErrorDropped(errorDropped::add);
-		Hooks.onNextError(OnNextFailureStrategy.STOP);
+		Hooks.onNextError(OnNextFailureStrategy.STOP_STRATEGY);
 
 		Context c = Context.of(OnNextFailureStrategy.KEY_ON_NEXT_ERROR_STRATEGY, OnNextFailureStrategy.RESUME_DROP);
 		Exception error = new IllegalStateException("boom");

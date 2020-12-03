@@ -139,7 +139,7 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			int state;
 			List<T> l;
 			synchronized (this) {
-				state = STATE.getAndSet(this, CANCELLED);
+				state = STATE_UPDATER.getAndSet(this, CANCELLED);
 				if (state <= HAS_REQUEST_NO_VALUE) {
 					l = list;
 					value = null;

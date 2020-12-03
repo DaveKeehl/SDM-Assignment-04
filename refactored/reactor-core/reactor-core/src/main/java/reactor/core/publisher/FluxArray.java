@@ -81,7 +81,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ArraySubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ArraySubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ArraySubscription.class, "requested");
 
 		ArraySubscription(CoreSubscriber<? super T> actual, T[] array) {
@@ -92,7 +92,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -143,7 +143,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 				if (n == e) {
 					index = i;
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}
@@ -241,7 +241,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ArrayConditionalSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ArrayConditionalSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ArrayConditionalSubscription.class,
 						"requested");
 
@@ -258,7 +258,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -311,7 +311,7 @@ final class FluxArray<T> extends Flux<T> implements Fuseable, SourceProducer<T> 
 
 				if (n == e) {
 					index = i;
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0) {
 						return;
 					}

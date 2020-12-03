@@ -82,7 +82,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<TakeSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<TakeSubscriber> WIP_UPDATER =
 		  AtomicIntegerFieldUpdater.newUpdater(TakeSubscriber.class, "wip");
 
 		public TakeSubscriber(CoreSubscriber<? super T> actual, long n) {
@@ -154,7 +154,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void request(long n) {
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				if (n >= this.n) {
 					s.request(Long.MAX_VALUE);
 				} else {
@@ -202,7 +202,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<TakeConditionalSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<TakeConditionalSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(TakeConditionalSubscriber.class,
 						"wip");
 
@@ -304,7 +304,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void request(long n) {
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				if (n >= this.n) {
 					s.request(Long.MAX_VALUE);
 				}
@@ -353,7 +353,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<TakeFuseableSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<TakeFuseableSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(TakeFuseableSubscriber.class, "wip");
 
 		int inputMode;
@@ -433,7 +433,7 @@ final class FluxTake<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void request(long n) {
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				if (n >= this.n) {
 					qs.request(Long.MAX_VALUE);
 				}

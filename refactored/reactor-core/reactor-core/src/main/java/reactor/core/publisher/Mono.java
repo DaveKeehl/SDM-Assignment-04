@@ -289,7 +289,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 * @return a completed {@link Mono}
 	 */
 	public static <T> Mono<T> empty() {
-		return MonoEmpty.instance();
+		return MonoEmpty.getInstance();
 	}
 
 	/**
@@ -760,7 +760,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 * @return a never completing {@link Mono}
 	 */
 	public static <T> Mono<T> never() {
-		return MonoNever.instance();
+		return MonoNever.getInstance();
 	}
 
 	/**

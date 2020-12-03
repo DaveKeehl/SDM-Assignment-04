@@ -487,7 +487,7 @@ public abstract class Hooks {
 
 	/**
 	 * Reset global onNext error handling strategy to terminating the sequence with
-	 * an onError and cancelling upstream ({@link OnNextFailureStrategy#STOP}).
+	 * an onError and cancelling upstream ({@link OnNextFailureStrategy#STOP_STRATEGY}).
 	 */
 	public static void resetOnNextError() {
 		log.debug("Reset to factory defaults : onNextError");

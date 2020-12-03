@@ -91,7 +91,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<WithLatestFromSubscriber, Subscription>
-				MAIN =
+				MAIN_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WithLatestFromSubscriber.class,
 						Subscription.class,
 						"main");
@@ -99,7 +99,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		volatile Subscription other;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<WithLatestFromSubscriber, Subscription>
-				OTHER =
+				OTHER_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(WithLatestFromSubscriber.class,
 						Subscription.class,
 						"other");
@@ -113,7 +113,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void setOther(Subscription s) {
-			if (!OTHER.compareAndSet(this, null, s)) {
+			if (!OTHER_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (other != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -149,7 +149,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		void cancelMain() {
 			Subscription s = main;
 			if (s != Operators.cancelledSubscription()) {
-				s = MAIN.getAndSet(this, Operators.cancelledSubscription());
+				s = MAIN_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -159,7 +159,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		void cancelOther() {
 			Subscription s = other;
 			if (s != Operators.cancelledSubscription()) {
-				s = OTHER.getAndSet(this, Operators.cancelledSubscription());
+				s = OTHER_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (s != null && s != Operators.cancelledSubscription()) {
 					s.cancel();
 				}
@@ -174,7 +174,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (!MAIN.compareAndSet(this, null, s)) {
+			if (!MAIN_UPDATER.compareAndSet(this, null, s)) {
 				s.cancel();
 				if (main != Operators.cancelledSubscription()) {
 					Operators.reportSubscriptionSet();
@@ -211,7 +211,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void onError(Throwable t) {
 			if (main == null) {
-				if (MAIN.compareAndSet(this, null, Operators.cancelledSubscription())) {
+				if (MAIN_UPDATER.compareAndSet(this, null, Operators.cancelledSubscription())) {
 					cancelOther();
 
 					Operators.error(actual, t);
@@ -234,7 +234,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 
 		void otherError(Throwable t) {
 			if (main == null) {
-				if (MAIN.compareAndSet(this, null, Operators.cancelledSubscription())) {
+				if (MAIN_UPDATER.compareAndSet(this, null, Operators.cancelledSubscription())) {
 					cancelMain();
 
 					Operators.error(actual, t);
@@ -250,7 +250,7 @@ final class FluxWithLatestFrom<T, U, R> extends InternalFluxOperator<T, R> {
 		void otherComplete() {
 			if (otherValue == null) {
 				if (main == null) {
-					if (MAIN.compareAndSet(this,
+					if (MAIN_UPDATER.compareAndSet(this,
 							null,
 							Operators.cancelledSubscription())) {
 						cancelMain();

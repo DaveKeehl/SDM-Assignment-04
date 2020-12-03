@@ -112,25 +112,25 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		volatile int wip;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<GroupByMain> WIP =
+		static final AtomicIntegerFieldUpdater<GroupByMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(GroupByMain.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<GroupByMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<GroupByMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(GroupByMain.class, "requested");
 
 		volatile boolean   done;
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<GroupByMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<GroupByMain, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(GroupByMain.class,
 						Throwable.class,
 						"error");
 
 		volatile int cancelled;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<GroupByMain> CANCELLED =
+		static final AtomicIntegerFieldUpdater<GroupByMain> CANCELED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(GroupByMain.class, "cancelled");
 
 		volatile int groupCount;
@@ -214,7 +214,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain();
 			}
@@ -257,7 +257,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		}
 
 		void signalAsyncError() {
-			Throwable e = Exceptions.terminate(ERROR, this); //TODO investigate if e == null
+			Throwable e = Exceptions.terminate(ERROR_UPDATER, this); //TODO investigate if e == null
 			if (e == null) {
 				e = new IllegalStateException("FluxGroupBy.signalAsyncError called without error set");
 			}
@@ -272,26 +272,26 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
 
 		@Override
 		public void cancel() {
-			if (CANCELLED.compareAndSet(this, 0, 1)) {
+			if (CANCELED_UPDATER.compareAndSet(this, 0, 1)) {
 				if (GROUP_COUNT.decrementAndGet(this) == 0) {
 					s.cancel();
 				}
 				else if (!enableAsyncFusion) {
-						if (WIP.getAndIncrement(this) == 0) {
+						if (WIP_UPDATER.getAndIncrement(this) == 0) {
 							// remove queued up but unobservable groups from the mapping
 							GroupedFlux<K, V> g;
 							while ((g = queue.poll()) != null) {
 								((UnicastGroupedFlux<K, V>) g).cancel();
 							}
 
-							if (WIP.decrementAndGet(this) == 0) {
+							if (WIP_UPDATER.decrementAndGet(this) == 0) {
 								return;
 							}
 
@@ -312,7 +312,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -352,7 +352,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -400,11 +400,11 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 					s.request(e);
 
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.addAndGet(this, -e);
+						REQUESTED_UPDATER.addAndGet(this, -e);
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -480,7 +480,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		volatile GroupByMain<?, K, V> parent;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<UnicastGroupedFlux, GroupByMain> PARENT =
+		static final AtomicReferenceFieldUpdater<UnicastGroupedFlux, GroupByMain> PARENT_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(UnicastGroupedFlux.class,
 						GroupByMain.class,
 						"parent");
@@ -490,7 +490,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		volatile CoreSubscriber<? super V> actual;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<UnicastGroupedFlux, CoreSubscriber> ACTUAL =
+		static final AtomicReferenceFieldUpdater<UnicastGroupedFlux, CoreSubscriber> ACTUAL_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(UnicastGroupedFlux.class,
 						CoreSubscriber.class,
 						"actual");
@@ -499,17 +499,17 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<UnicastGroupedFlux> ONCE =
+		static final AtomicIntegerFieldUpdater<UnicastGroupedFlux> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(UnicastGroupedFlux.class, "once");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<UnicastGroupedFlux> WIP =
+		static final AtomicIntegerFieldUpdater<UnicastGroupedFlux> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(UnicastGroupedFlux.class, "wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<UnicastGroupedFlux> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<UnicastGroupedFlux> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(UnicastGroupedFlux.class, "requested");
 
 		volatile boolean outputFused;
@@ -529,7 +529,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		void doTerminate() {
 			GroupByMain<?, K, V> r = parent;
-			if (r != null && PARENT.compareAndSet(this, r, null)) {
+			if (r != null && PARENT_UPDATER.compareAndSet(this, r, null)) {
 				r.groupTerminated(key);
 			}
 		}
@@ -575,11 +575,11 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 						main.s.request(e);
 					}
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.addAndGet(this, -e);
+						REQUESTED_UPDATER.addAndGet(this, -e);
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -616,7 +616,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -626,7 +626,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		void drain() {
 			Subscriber<? super V> a = actual;
 			if (a != null) {
-				if (WIP.getAndIncrement(this) != 0) {
+				if (WIP_UPDATER.getAndIncrement(this) != 0) {
 					return;
 				}
 
@@ -697,9 +697,9 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 
 		@Override
 		public void subscribe(CoreSubscriber<? super V> actual) {
-			if (once == 0 && ONCE.compareAndSet(this, 0, 1)) {
+			if (once == 0 && ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				actual.onSubscribe(this);
-				ACTUAL.lazySet(this, actual);
+				ACTUAL_UPDATER.lazySet(this, actual);
 				drain();
 			}
 			else {
@@ -711,7 +711,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -726,7 +726,7 @@ final class FluxGroupBy<T, K, V> extends InternalFluxOperator<T, GroupedFlux<K, 
 			doTerminate();
 
 			if (!outputFused) {
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					queue.clear();
 				}
 			}

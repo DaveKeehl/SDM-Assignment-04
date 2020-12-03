@@ -55,26 +55,26 @@ final class WorkerTask extends Task {
 	static final Future<Void> ASYNC_CANCELLED = new FutureTask<>(() -> null);
 
 	volatile Future<?> future;
-	static final AtomicReferenceFieldUpdater<WorkerTask, Future> FUTURE =
+	static final AtomicReferenceFieldUpdater<WorkerTask, Future> FUTURE_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(WorkerTask.class, Future.class, "future");
 
 	volatile Composite parent;
-	static final AtomicReferenceFieldUpdater<WorkerTask, Composite> PARENT =
+	static final AtomicReferenceFieldUpdater<WorkerTask, Composite> PARENT_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(WorkerTask.class, Composite.class, "parent");
 
 	volatile Thread thread;
-	static final AtomicReferenceFieldUpdater<WorkerTask, Thread> THREAD =
+	static final AtomicReferenceFieldUpdater<WorkerTask, Thread> THREAD_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(WorkerTask.class, Thread.class, "thread");
 
 	WorkerTask(Runnable task, Composite parent) {
 		super(task);
-		PARENT.lazySet(this, parent);
+		PARENT_UPDATER.lazySet(this, parent);
 	}
 
 	@Override
 	@Nullable
 	public Void call() {
-		THREAD.lazySet(this, Thread.currentThread());
+		THREAD_UPDATER.lazySet(this, Thread.currentThread());
 		try {
 			try {
 				runnableTask.run();
@@ -84,17 +84,17 @@ final class WorkerTask extends Task {
 			}
 		}
 		finally {
-			THREAD.lazySet(this, null);
+			THREAD_UPDATER.lazySet(this, null);
 			Composite o = parent;
 			//note: the o != null check must happen after the compareAndSet for it to always mark task as DONE
-			if (o != DISPOSED && PARENT.compareAndSet(this, o, DONE) && o != null) {
+			if (o != DISPOSED && PARENT_UPDATER.compareAndSet(this, o, DONE) && o != null) {
 				o.remove(this);
 			}
 
 			Future<?> f;
 			do {
 				f = future;
-			} while (f != SYNC_CANCELLED && f != ASYNC_CANCELLED && !FUTURE.compareAndSet(this, f, FINISHED));
+			} while (f != SYNC_CANCELLED && f != ASYNC_CANCELLED && !FUTURE_UPDATER.compareAndSet(this, f, FINISHED));
 		}
 		return null;
 	}
@@ -118,7 +118,7 @@ final class WorkerTask extends Task {
 				f.cancel(true);
 				return;
 			}
-			if (FUTURE.compareAndSet(this, o, f)) {
+			if (FUTURE_UPDATER.compareAndSet(this, o, f)) {
 				return;
 			}
 		}
@@ -126,7 +126,7 @@ final class WorkerTask extends Task {
 
 	@Override
 	public boolean isDisposed() {
-		Composite o = PARENT.get(this);
+		Composite o = PARENT_UPDATER.get(this);
 		return o == DISPOSED || o == DONE;
 	}
 
@@ -135,7 +135,7 @@ final class WorkerTask extends Task {
 			Future<?> f = future;
 			boolean async = thread != Thread.currentThread();
 			if (f == FINISHED || f == SYNC_CANCELLED || f == ASYNC_CANCELLED
-					|| FUTURE.compareAndSet(this, f, async ? ASYNC_CANCELLED : SYNC_CANCELLED)) {
+					|| FUTURE_UPDATER.compareAndSet(this, f, async ? ASYNC_CANCELLED : SYNC_CANCELLED)) {
 				if (f != null) {
 					f.cancel(async);
 				}
@@ -150,7 +150,7 @@ final class WorkerTask extends Task {
 			if (o == DONE || o == DISPOSED || o == null) {
 				return;
 			}
-			if (PARENT.compareAndSet(this, o, DISPOSED)) {
+			if (PARENT_UPDATER.compareAndSet(this, o, DISPOSED)) {
 				o.remove(this);
 				return;
 			}

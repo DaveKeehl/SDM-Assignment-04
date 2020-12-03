@@ -313,13 +313,13 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 	volatile FluxReplay.ReplaySubscription<T>[] subscribers;
 	@SuppressWarnings("rawtypes")
 	static final AtomicReferenceFieldUpdater<ReplayProcessor, FluxReplay.ReplaySubscription[]>
-			SUBSCRIBERS = AtomicReferenceFieldUpdater.newUpdater(ReplayProcessor.class,
+			SUBSCRIBERS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(ReplayProcessor.class,
 			FluxReplay.ReplaySubscription[].class,
 			"subscribers");
 
 	ReplayProcessor(FluxReplay.ReplayBuffer<T> buffer) {
 		this.buffer = buffer;
-		SUBSCRIBERS.lazySet(this, EMPTY);
+		SUBSCRIBERS_UPDATER.lazySet(this, EMPTY);
 	}
 
 	@Override
@@ -381,7 +381,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 					new ReplayInner[n + 1];
 			System.arraycopy(a, 0, b, 0, n);
 			b[n] = rs;
-			if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+			if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 				return true;
 			}
 		}
@@ -410,7 +410,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 						System.arraycopy(a, i + 1, b, i, n - i - 1);
 					}
 
-					if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+					if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 						return;
 					}
 
@@ -459,7 +459,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 		b.onComplete();
 
 		@SuppressWarnings("unchecked") FluxReplay.ReplaySubscription<T>[] a =
-				SUBSCRIBERS.getAndSet(this, TERMINATED);
+				SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		for (FluxReplay.ReplaySubscription<T> rs : a) {
 			b.replay(rs);
@@ -482,7 +482,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 		b.onError(t);
 
 		@SuppressWarnings("unchecked") FluxReplay.ReplaySubscription<T>[] a =
-					SUBSCRIBERS.getAndSet(this, TERMINATED);
+					SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 
 		for (FluxReplay.ReplaySubscription<T> rs : a) {
 			b.replay(rs);
@@ -542,13 +542,13 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ReplayInner> WIP =
+		static final AtomicIntegerFieldUpdater<ReplayInner> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ReplayInner.class,
 						"wip");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<ReplayInner> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<ReplayInner> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(ReplayInner.class,
 						"requested");
 
@@ -615,7 +615,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 		public void request(long n) {
 			if (Operators.validate(n)) {
 				if (fusionMode() == NONE) {
-					Operators.addCapCancellable(LONG_REQUESTED, this, n);
+					Operators.addCapCancellable(REQUESTED_UPDATER, this, n);
 				}
 				buffer.replay(this);
 			}
@@ -623,7 +623,7 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		@Override
 		public void cancel() {
-			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (REQUESTED_UPDATER.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 
 				if (enter()) {
@@ -670,17 +670,17 @@ public final class ReplayProcessor<T> extends FluxProcessor<T, T>
 
 		@Override
 		public boolean enter() {
-			return WIP.getAndIncrement(this) == 0;
+			return WIP_UPDATER.getAndIncrement(this) == 0;
 		}
 
 		@Override
 		public int leave(int missed) {
-			return WIP.addAndGet(this, -missed);
+			return WIP_UPDATER.addAndGet(this, -missed);
 		}
 
 		@Override
 		public void produced(long n) {
-			LONG_REQUESTED.addAndGet(this, -n);
+			REQUESTED_UPDATER.addAndGet(this, -n);
 		}
 	}
 }

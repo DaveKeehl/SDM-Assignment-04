@@ -51,7 +51,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 		this.bufferSize = bufferSize;
 		this.onBufferOverflow = onBufferOverflow;
 		this.bufferOverflowStrategy = bufferOverflowStrategy;
-		this.delayError = onBufferOverflow != null || bufferOverflowStrategy == BufferOverflowStrategy.ERROR;
+		this.delayError = onBufferOverflow != null || bufferOverflowStrategy == BufferOverflowStrategy.ERROR_UPDATER;
 	}
 
 	@Override
@@ -91,12 +91,12 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 		Throwable error;
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<BackpressureBufferDropOldestSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<BackpressureBufferDropOldestSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BackpressureBufferDropOldestSubscriber.class,
 						"wip");
 
 		volatile long requested;
-		static final AtomicLongFieldUpdater<BackpressureBufferDropOldestSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BackpressureBufferDropOldestSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BackpressureBufferDropOldestSubscriber.class,
 						"requested");
 
@@ -160,7 +160,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 						case DROP_LATEST:
 							//do nothing
 							break;
-						case ERROR:
+						case ERROR_UPDATER:
 						default:
 							callOnError = true;
 							break;
@@ -221,7 +221,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -235,7 +235,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 					return;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -283,10 +283,10 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					Operators.produced(LONG_REQUESTED, this, e);
+					Operators.produced(REQUESTED_UPDATER, this, e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -296,7 +296,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -308,7 +308,7 @@ final class FluxOnBackpressureBufferStrategy<O> extends InternalFluxOperator<O, 
 
 				s.cancel();
 
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					synchronized (this) {
 						clear();
 					}

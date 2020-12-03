@@ -32,7 +32,7 @@ abstract class DrainUtils {
 	 * for one signal bit. This also means the standard request accounting helper method doesn't work.
 	 */
 	static final long COMPLETED_MASK = 0x8000_0000_0000_0000L;
-	static final long LONG_REQUESTED_MASK = 0x7FFF_FFFF_FFFF_FFFFL;
+	static final long REQUESTED_UPDATER_MASK = 0x7FFF_FFFF_FFFF_FFFFL;
 
 	/**
 	 * Perform a potential post-completion request accounting.
@@ -58,7 +58,7 @@ abstract class DrainUtils {
 			long r = field.get(instance);
 
 			// extract the current request amount
-			long r0 = r & LONG_REQUESTED_MASK;
+			long r0 = r & REQUESTED_UPDATER_MASK;
 
 			// preserve COMPLETED_MASK and calculate new requested amount
 			long u = (r & COMPLETED_MASK) | Operators.addCap(r0, n);
@@ -149,9 +149,9 @@ abstract class DrainUtils {
 
 			if (n == e) {
 
-				n = field.addAndGet(instance, -(e & LONG_REQUESTED_MASK));
+				n = field.addAndGet(instance, -(e & REQUESTED_UPDATER_MASK));
 
-				if ((n & LONG_REQUESTED_MASK) == 0L) {
+				if ((n & REQUESTED_UPDATER_MASK) == 0L) {
 					return false;
 				}
 
@@ -269,9 +269,9 @@ abstract class DrainUtils {
 
             if (n == e) {
 
-                n = field.addAndGet(instance, -(e & LONG_REQUESTED_MASK));
+                n = field.addAndGet(instance, -(e & REQUESTED_UPDATER_MASK));
 
-                if ((n & LONG_REQUESTED_MASK) == 0L) {
+                if ((n & REQUESTED_UPDATER_MASK) == 0L) {
                     return false;
                 }
 

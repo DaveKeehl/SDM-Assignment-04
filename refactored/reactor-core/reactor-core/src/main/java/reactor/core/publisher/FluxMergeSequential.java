@@ -134,7 +134,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		volatile Throwable error;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<MergeSequentialMain, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<MergeSequentialMain, Throwable> ERROR_UPDATER =
 						AtomicReferenceFieldUpdater.newUpdater(MergeSequentialMain.class, Throwable.class, "error");
 
 		MergeSequentialInner<R> current;
@@ -146,13 +146,13 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<MergeSequentialMain> WIP =
+		static final AtomicIntegerFieldUpdater<MergeSequentialMain> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(MergeSequentialMain.class, "wip");
 
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<MergeSequentialMain> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<MergeSequentialMain> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(MergeSequentialMain.class, "requested");
 
 		MergeSequentialMain(CoreSubscriber<? super R> actual,
@@ -248,7 +248,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain();
 			}
@@ -275,11 +275,11 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drainAndCancel() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					cancelAll();
 				}
-				while (WIP.decrementAndGet(this) != 0);
+				while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 		}
 
@@ -298,7 +298,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -315,7 +315,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void innerError(MergeSequentialInner<R> inner, Throwable e) {
-			if (Exceptions.addThrowable(ERROR, this, e)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 				inner.setDone();
 				if (errorMode != ErrorMode.END) {
 					s.cancel();
@@ -333,7 +333,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -473,14 +473,14 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					LONG_REQUESTED.addAndGet(this, -e);
+					REQUESTED_UPDATER.addAndGet(this, -e);
 				}
 
 				if (continueNextSource) {
 					continue;
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -508,7 +508,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeSequentialInner, Subscription>
-						SUBSCRIPTION = AtomicReferenceFieldUpdater.newUpdater(
+						SUBSCRIPTION_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 								MergeSequentialInner.class, Subscription.class, "subscription");
 
 		volatile boolean done;
@@ -544,7 +544,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUBSCRIPTION, this, s)) {
+			if (Operators.setOnce(SUBSCRIPTION_UPDATER, this, s)) {
 				if (s instanceof QueueSubscription) {
 					@SuppressWarnings("unchecked")
 					QueueSubscription<R> qs = (QueueSubscription<R>) s;
@@ -603,7 +603,7 @@ final class FluxMergeSequential<T, R> extends InternalFluxOperator<T, R> {
 
 
 		void cancel() {
-			Operators.set(SUBSCRIPTION, this, Operators.cancelledSubscription());
+			Operators.set(SUBSCRIPTION_UPDATER, this, Operators.cancelledSubscription());
 		}
 
 		boolean isDone() {

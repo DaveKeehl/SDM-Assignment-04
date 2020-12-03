@@ -98,16 +98,16 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		volatile int             state;
 		volatile int             wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, Throwable>      ERROR     =
+		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, Throwable>      ERROR_UPDATER     =
 						AtomicReferenceFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, Throwable.class, "error");
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<FluxFilterWhenSubscriber>                      LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<FluxFilterWhenSubscriber>                      REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, "requested");
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<FluxFilterWhenSubscriber>                   WIP       =
+		static final AtomicIntegerFieldUpdater<FluxFilterWhenSubscriber>                   WIP_UPDATER       =
 				AtomicIntegerFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, "wip");
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, FilterWhenInner>CURRENT   =
+		static final AtomicReferenceFieldUpdater<FluxFilterWhenSubscriber, FilterWhenInner>CURRENT_UPDATER   =
 				AtomicReferenceFieldUpdater.newUpdater(FluxFilterWhenSubscriber.class, FilterWhenInner.class, "current");
 
 		@SuppressWarnings("ConstantConditions")
@@ -145,7 +145,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onError(Throwable t) {
-			ERROR.set(this, t);
+			ERROR_UPDATER.set(this, t);
 			done = true;
 			drain();
 		}
@@ -159,7 +159,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				drain();
 			}
 		}
@@ -170,16 +170,16 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 				cancelled = true;
 				upstream.cancel();
 				cancelInner();
-				if (WIP.getAndIncrement(this) == 0) {
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
 					clear();
 				}
 			}
 		}
 
 		void cancelInner() {
-			FilterWhenInner a = CURRENT.get(this);
+			FilterWhenInner a = CURRENT_UPDATER.get(this);
 			if (a != INNER_CANCELLED) {
-				a = CURRENT.getAndSet(this, INNER_CANCELLED);
+				a = CURRENT_UPDATER.getAndSet(this, INNER_CANCELLED);
 				if (a != null && a != INNER_CANCELLED) {
 					a.cancel();
 				}
@@ -206,7 +206,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		@SuppressWarnings("unchecked")
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -234,7 +234,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 					boolean empty = t == null;
 
 					if (d && empty) {
-						Throwable ex = Exceptions.terminate(ERROR, this);
+						Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 						if (ex == null) {
 							a.onComplete();
 						} else {
@@ -255,7 +255,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 							p = Objects.requireNonNull(asyncPredicate.apply(t), "The asyncPredicate returned a null value");
 						} catch (Throwable ex) {
 							Exceptions.throwIfFatal(ex);
-							Exceptions.addThrowable(ERROR, this, ex);
+							Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 							p = null; //discarded as "old" below
 						}
 
@@ -267,7 +267,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 									u = ((Callable<Boolean>)p).call();
 								} catch (Throwable ex) {
 									Exceptions.throwIfFatal(ex);
-									Exceptions.addThrowable(ERROR, this, ex);
+									Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 									u = null; //triggers discard below
 								}
 
@@ -280,7 +280,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 								}
 							} else {
 								FilterWhenInner inner = new FilterWhenInner(this, !(p instanceof Mono));
-								if (CURRENT.compareAndSet(this,null, inner)) {
+								if (CURRENT_UPDATER.compareAndSet(this,null, inner)) {
 									state = STATE_RUNNING;
 									p.subscribe(inner);
 									break;
@@ -333,7 +333,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 					boolean empty = t == null;
 
 					if (d && empty) {
-						Throwable ex = Exceptions.terminate(ERROR, this);
+						Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 						if (ex == null) {
 							a.onComplete();
 						} else {
@@ -348,7 +348,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 					consumed = f;
 					consumerIndex = ci;
 					emitted = e;
-					missed = WIP.addAndGet(this, -missed);
+					missed = WIP_UPDATER.addAndGet(this, -missed);
 					if (missed == 0) {
 						break;
 					}
@@ -361,11 +361,11 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		void clearCurrent() {
 			FilterWhenInner c = current;
 			if (c != INNER_CANCELLED) {
-				CURRENT.compareAndSet(this, c, null);
+				CURRENT_UPDATER.compareAndSet(this, c, null);
 			}
 		}
 
-		void innerResult(Boolean item) {
+		void setInnerResult(Boolean item) {
 			innerResult = item;
 			state = STATE_RESULT;
 			clearCurrent();
@@ -373,7 +373,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void innerError(Throwable ex) {
-			Exceptions.addThrowable(ERROR, this, ex);
+			Exceptions.addThrowable(ERROR_UPDATER, this, ex);
 			state = STATE_RESULT;
 			clearCurrent();
 			drain();
@@ -391,7 +391,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 			if (key == Attr.PARENT) return upstream;
 			if (key == Attr.TERMINATED) return done;
 			if (key == Attr.CANCELLED) return cancelled;
-			if (key == Attr.ERROR) //FIXME ERROR is often reset by Exceptions.terminate :(
+			if (key == Attr.ERROR) //FIXME ERROR_UPDATER is often reset by Exceptions.terminate :(
 				return error;
 			if (key == Attr.REQUESTED_FROM_DOWNSTREAM) return requested;
 			if (key == Attr.CAPACITY) return toFilter.length();
@@ -423,7 +423,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		volatile Subscription sub;
 
-		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB =
+		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB_UPDATER =
 						AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
 
 		FilterWhenInner(FluxFilterWhenSubscriber<?> parent, boolean cancelOnNext) {
@@ -438,7 +438,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUB, this, s)) {
+			if (Operators.setOnce(SUB_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -450,7 +450,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 					sub.cancel();
 				}
 				done = true;
-				parent.innerResult(t);
+				parent.setInnerResult(t);
 			}
 		}
 
@@ -473,7 +473,7 @@ class FluxFilterWhen<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void cancel() {
-			Operators.terminate(SUB, this);
+			Operators.terminate(SUB_UPDATER, this);
 		}
 
 		@Override

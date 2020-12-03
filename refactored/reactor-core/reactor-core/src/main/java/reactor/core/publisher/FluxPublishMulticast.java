@@ -110,20 +110,20 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<FluxPublishMulticaster, Subscription> S =
+		static final AtomicReferenceFieldUpdater<FluxPublishMulticaster, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(FluxPublishMulticaster.class,
 						Subscription.class,
 						"s");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<FluxPublishMulticaster> WIP =
+		static final AtomicIntegerFieldUpdater<FluxPublishMulticaster> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(FluxPublishMulticaster.class, "wip");
 
 		volatile PublishMulticastInner<T>[] subscribers;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<FluxPublishMulticaster, PublishMulticastInner[]>
-				SUBSCRIBERS = AtomicReferenceFieldUpdater.newUpdater(
+				SUBSCRIBERS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				FluxPublishMulticaster.class,
 				PublishMulticastInner[].class,
 				"subscribers");
@@ -153,7 +153,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 			this.prefetch = prefetch;
 			this.limit = Operators.unboundedOrLimit(prefetch);
 			this.queueSupplier = queueSupplier;
-			SUBSCRIBERS.lazySet(this, EMPTY);
+			SUBSCRIBERS_UPDATER.lazySet(this, EMPTY);
 			this.context = ctx;
 		}
 
@@ -220,7 +220,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 
 				if (s instanceof QueueSubscription) {
 					@SuppressWarnings("unchecked") QueueSubscription<T> qs =
@@ -294,7 +294,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 
@@ -352,7 +352,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 							catch (Throwable ex) {
 								error = Operators.onOperatorError(s, ex, context);
 								queue.clear();
-								a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+								a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 								n = a.length;
 								for (int i = 0; i < n; i++) {
 									a[i].actual.onError(ex);
@@ -361,7 +361,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 							}
 
 							if (v == null) {
-								a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+								a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 								n = a.length;
 								for (int i = 0; i < n; i++) {
 									a[i].actual.onComplete();
@@ -381,7 +381,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 							return;
 						}
 						if (queue.isEmpty()) {
-							a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+							a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 							n = a.length;
 							for (int i = 0; i < n; i++) {
 								a[i].actual.onComplete();
@@ -397,7 +397,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -452,7 +452,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 							catch (Throwable ex) {
 								queue.clear();
 								error = Operators.onOperatorError(s, ex, context);
-								a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+								a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 								n = a.length;
 								for (int i = 0; i < n; i++) {
 									a[i].actual.onError(ex);
@@ -466,7 +466,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 								Throwable ex = error;
 								if (ex != null) {
 									queue.clear();
-									a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+									a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 									n = a.length;
 									for (int i = 0; i < n; i++) {
 										a[i].actual.onError(ex);
@@ -475,7 +475,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 								}
 
 								if (empty) {
-									a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+									a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 									n = a.length;
 									for (int i = 0; i < n; i++) {
 										a[i].actual.onComplete();
@@ -512,7 +512,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 								Throwable ex = error;
 								if (ex != null) {
 									queue.clear();
-									a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+									a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 									n = a.length;
 									for (int i = 0; i < n; i++) {
 										a[i].actual.onError(ex);
@@ -521,7 +521,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 								}
 
 								if (queue.isEmpty()) {
-									a = SUBSCRIBERS.getAndSet(this, TERMINATED);
+									a = SUBSCRIBERS_UPDATER.getAndSet(this, TERMINATED);
 									n = a.length;
 									for (int i = 0; i < n; i++) {
 										a[i].actual.onComplete();
@@ -543,7 +543,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 
 				produced = p;
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -564,7 +564,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 						new PublishMulticastInner[n + 1];
 				System.arraycopy(a, 0, b, 0, n);
 				b[n] = s;
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					return true;
 				}
 			}
@@ -602,7 +602,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 					System.arraycopy(a, 0, b, 0, j);
 					System.arraycopy(a, j + 1, b, j, n - j - 1);
 				}
-				if (SUBSCRIBERS.compareAndSet(this, a, b)) {
+				if (SUBSCRIBERS_UPDATER.compareAndSet(this, a, b)) {
 					return;
 				}
 			}
@@ -611,8 +611,8 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 		@Override
 		@SuppressWarnings("unchecked")
 		public void terminate() {
-			Operators.terminate(S, this);
-			if (WIP.getAndIncrement(this) == 0) {
+			Operators.terminate(S_UPDATER, this);
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				if (connected) {
 					queue.clear();
 				}
@@ -628,7 +628,7 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<PublishMulticastInner> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<PublishMulticastInner> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(PublishMulticastInner.class,
 						"requested");
 
@@ -663,21 +663,21 @@ final class FluxPublishMulticast<T, R> extends InternalFluxOperator<T, R> implem
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCapCancellable(LONG_REQUESTED, this, n);
+				Operators.addCapCancellable(REQUESTED_UPDATER, this, n);
 				parent.drain();
 			}
 		}
 
 		@Override
 		public void cancel() {
-			if (LONG_REQUESTED.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
+			if (REQUESTED_UPDATER.getAndSet(this, Long.MIN_VALUE) != Long.MIN_VALUE) {
 				parent.remove(this);
 				parent.drain();
 			}
 		}
 
 		void produced(long n) {
-			Operators.producedCancellable(LONG_REQUESTED, this, n);
+			Operators.producedCancellable(REQUESTED_UPDATER, this, n);
 		}
 	}
 

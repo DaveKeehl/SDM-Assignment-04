@@ -274,7 +274,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 		final CoreSubscriber<? super T>                                            actual;
 
 		volatile Subscription                                                      s;
-		static final AtomicReferenceFieldUpdater<UsingWhenSubscriber, Subscription>SUBSCRIPTION =
+		static final AtomicReferenceFieldUpdater<UsingWhenSubscriber, Subscription>SUBSCRIPTION_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(UsingWhenSubscriber.class,
 						Subscription.class, "s");
 
@@ -335,7 +335,7 @@ final class FluxUsingWhen<T, S> extends Flux<T> implements SourceProducer<T> {
 		@Override
 		public void cancel() {
 			if (CALLBACK_APPLIED.compareAndSet(this, 0, 1)) {
-				if (Operators.terminate(SUBSCRIPTION, this)) {
+				if (Operators.terminate(SUBSCRIPTION_UPDATER, this)) {
 					try {
 						if (asyncCancel != null) {
 							Flux.from(asyncCancel.apply(resource))

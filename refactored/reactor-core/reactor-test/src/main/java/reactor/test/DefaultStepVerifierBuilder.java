@@ -885,7 +885,7 @@ final class DefaultStepVerifierBuilder<T>
 		 * However if a {@link VirtualTimeScheduler} supplier was passed in originally
 		 * it will be invoked and the resulting scheduler will be affected by time
 		 * manipulation methods. That scheduler can be retrieved from the subscriber's
-		 * {@link DefaultVerifySubscriber#virtualTimeScheduler() virtualTimeScheduler()}
+		 * {@link DefaultVerifySubscriber#getVirtualTimeScheduler() virtualTimeScheduler()}
 		 * method.
 		 */
 		DefaultVerifySubscriber<T> toSubscriber() {
@@ -933,7 +933,7 @@ final class DefaultStepVerifierBuilder<T>
 		Iterator<? extends T>         currentNextAs;
 		Collection<T>                 currentCollector;
 
-		static final AtomicLongFieldUpdater<DefaultVerifySubscriber> REQUESTED =
+		static final AtomicLongFieldUpdater<DefaultVerifySubscriber> REQUESTED_UPDATER =
 			AtomicLongFieldUpdater.newUpdater(DefaultVerifySubscriber.class, "requested");
 
 		@SuppressWarnings("unused")
@@ -1061,7 +1061,7 @@ final class DefaultStepVerifierBuilder<T>
 		 * @return the {@link VirtualTimeScheduler} this verifier will manipulate when
 		 * using {@link #thenAwait(Duration)} methods, or null if real time is used
 		 */
-		VirtualTimeScheduler virtualTimeScheduler() {
+		VirtualTimeScheduler getVirtualTimeScheduler() {
 			return this.virtualTimeScheduler;
 		}
 
@@ -1200,7 +1200,7 @@ final class DefaultStepVerifierBuilder<T>
 				}
 
 				if (p != 0) {
-					r = REQUESTED.addAndGet(this, -p);
+					r = REQUESTED_UPDATER.addAndGet(this, -p);
 				}
 
 				if(r == 0L || qs.isEmpty()){
@@ -1700,11 +1700,11 @@ final class DefaultStepVerifierBuilder<T>
 				return;
 			}
 			else if (requestEvent.isBounded()) {
-				Operators.addCap(REQUESTED, this, requestEvent.getRequestAmount());
+				Operators.addCap(REQUESTED_UPDATER, this, requestEvent.getRequestAmount());
 
 			}
 			else {
-				REQUESTED.set(this, Long.MAX_VALUE);
+				REQUESTED_UPDATER.set(this, Long.MAX_VALUE);
 			}
 		}
 

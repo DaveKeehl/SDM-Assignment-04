@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.function.Supplier;
 
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.Disposable;
@@ -91,7 +90,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		final static int NOT_TERMINATED          = 0;
 		final static int TERMINATED_WITH_SUCCESS = 1;
-		final static int TERMINATED_WITH_ERROR   = 2;
+		final static int TERMINATED_WITH_ERROR_UPDATER   = 2;
 		final static int TERMINATED_WITH_CANCEL  = 3;
 
 		final int                        batchSize;
@@ -105,26 +104,26 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		volatile     int                                                  terminated =
 				NOT_TERMINATED;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferTimeoutSubscriber> TERMINATED =
+		static final AtomicIntegerFieldUpdater<BufferTimeoutSubscriber> TERMINATED_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "terminated");
 
 
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "requested");
 
 		volatile long outstanding;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> OUTSTANDING =
+		static final AtomicLongFieldUpdater<BufferTimeoutSubscriber> OUTSTANDING_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "outstanding");
 
 		volatile int index = 0;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferTimeoutSubscriber> INDEX =
+		static final AtomicIntegerFieldUpdater<BufferTimeoutSubscriber> INDEX_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferTimeoutSubscriber.class, "index");
 
 
@@ -152,7 +151,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 						if (index == 0) {
 							return;
 						}
-					} while (!INDEX.compareAndSet(this, index, 0));
+					} while (!INDEX_UPDATER.compareAndSet(this, index, 0));
 					flushCallback();
 				}
 			};
@@ -167,7 +166,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		void nextCallback(T value) {
 			synchronized (this) {
-				if (OUTSTANDING.decrementAndGet(this) < 0)
+				if (OUTSTANDING_UPDATER.decrementAndGet(this) < 0)
 				{
 					actual.onError(Exceptions.failWithOverflow("Unrequested element received"));
 					Context ctx = actual.currentContext();
@@ -204,7 +203,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 						long next;
 						do {
 							next = r - 1;
-							if (LONG_REQUESTED.compareAndSet(this, r, next)) {
+							if (REQUESTED_UPDATER.compareAndSet(this, r, next)) {
 								actual.onNext(v);
 								return;
 							}
@@ -230,7 +229,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		public Object scanUnsafe(Attr<?> key) {
 			if (key == Attr.PARENT) return subscription;
 			if (key == Attr.CANCELLED) return terminated == TERMINATED_WITH_CANCEL;
-			if (key == Attr.TERMINATED) return terminated == TERMINATED_WITH_ERROR || terminated == TERMINATED_WITH_SUCCESS;
+			if (key == Attr.TERMINATED) return terminated == TERMINATED_WITH_ERROR_UPDATER || terminated == TERMINATED_WITH_SUCCESS;
 			if (key == Attr.REQUESTED_FROM_DOWNSTREAM) return requested;
 			if (key == Attr.CAPACITY) return batchSize;
 			if (key == Attr.BUFFERED) return batchSize - index;
@@ -245,7 +244,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 			int index;
 			do {
 				index = this.index + 1;
-			} while (!INDEX.compareAndSet(this, index - 1, index));
+			} while (!INDEX_UPDATER.compareAndSet(this, index - 1, index));
 
 			if (index == 1) {
 				try {
@@ -283,7 +282,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 				if (terminated != NOT_TERMINATED) {
 					return;
 				}
@@ -300,7 +299,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 		final void requestMore(long n) {
 			Subscription s = this.subscription;
 			if (s != null) {
-				Operators.addCap(OUTSTANDING, this, n);
+				Operators.addCap(OUTSTANDING_UPDATER, this, n);
 				s.request(n);
 			}
 		}
@@ -312,7 +311,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		@Override
 		public void onComplete() {
-			if (TERMINATED.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_SUCCESS)) {
+			if (TERMINATED_UPDATER.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_SUCCESS)) {
 				timer.dispose();
 				checkedComplete();
 			}
@@ -320,7 +319,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		@Override
 		public void onError(Throwable throwable) {
-			if (TERMINATED.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_ERROR)) {
+			if (TERMINATED_UPDATER.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_ERROR_UPDATER)) {
 				timer.dispose();
 				Context ctx = actual.currentContext();
 				synchronized (this) {
@@ -346,7 +345,7 @@ final class FluxBufferTimeout<T, C extends Collection<? super T>> extends Intern
 
 		@Override
 		public void cancel() {
-			if (TERMINATED.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_CANCEL)) {
+			if (TERMINATED_UPDATER.compareAndSet(this, NOT_TERMINATED, TERMINATED_WITH_CANCEL)) {
 				timer.dispose();
 				Subscription s = this.subscription;
 				if (s != null) {

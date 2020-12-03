@@ -135,12 +135,12 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 		final Function<? super T, ? extends Publisher<?>>[] otherGenerators;
 
 		volatile int done;
-		static final AtomicIntegerFieldUpdater<DelayUntilCoordinator> DONE =
+		static final AtomicIntegerFieldUpdater<DelayUntilCoordinator> DONE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(DelayUntilCoordinator.class, "done");
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<DelayUntilCoordinator, Subscription> S =
+		static final AtomicReferenceFieldUpdater<DelayUntilCoordinator, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(DelayUntilCoordinator.class, Subscription.class, "s");
 
 		DelayUntilTrigger[] triggerSubscribers;
@@ -156,7 +156,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			} else {
 				s.cancel();
@@ -224,7 +224,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 		}
 
 		void signal() {
-			int nextIndex = DONE.incrementAndGet(this);
+			int nextIndex = DONE_UPDATER.incrementAndGet(this);
 			if (nextIndex != n) {
 				subscribeNextTrigger(this.value, nextIndex);
 				return;
@@ -267,7 +267,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 			if (!isCancelled()) {
 				super.cancel();
 				//source is always cancellable...
-				Operators.terminate(S, this);
+				Operators.terminate(S_UPDATER, this);
 				//...but triggerSubscribers could be partially initialized
 				for (int i = 0; i < triggerSubscribers.length; i++) {
 					DelayUntilTrigger ts = triggerSubscribers[i];
@@ -283,7 +283,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<DelayUntilTrigger, Subscription> S =
+		static final AtomicReferenceFieldUpdater<DelayUntilTrigger, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(DelayUntilTrigger.class, Subscription.class, "s");
 
 		boolean done;
@@ -313,7 +313,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			} else {
 				s.cancel();
@@ -328,7 +328,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 		@Override
 		public void onError(Throwable t) {
 			error = t;
-			if (DelayUntilCoordinator.DONE.getAndSet(parent, parent.n) != parent.n) {
+			if (DelayUntilCoordinator.DONE_UPDATER.getAndSet(parent, parent.n) != parent.n) {
 				parent.cancel();
 				parent.actual.onError(t);
 			}
@@ -343,7 +343,7 @@ final class MonoDelayUntil<T> extends Mono<T> implements Scannable,
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 }

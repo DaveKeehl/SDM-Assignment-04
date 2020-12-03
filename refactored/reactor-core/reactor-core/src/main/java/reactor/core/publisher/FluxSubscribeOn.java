@@ -86,7 +86,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		final boolean requestOnSeparateThread;
 
 		volatile Subscription s;
-		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Subscription> S =
+		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Subscription> S_UPDATER=
 				AtomicReferenceFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						Subscription.class,
 						"s");
@@ -95,14 +95,14 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		volatile long requested;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<SubscribeOnSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						"requested");
 
 		volatile Thread thread;
 
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Thread> THREAD =
+		static final AtomicReferenceFieldUpdater<SubscribeOnSubscriber, Thread> THREAD_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(SubscribeOnSubscriber.class,
 						Thread.class,
 						"thread");
@@ -117,8 +117,8 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
-				long r = LONG_REQUESTED.getAndSet(this, 0L);
+			if (Operators.setOnce(S_UPDATER, this, s)) {
+				long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 				if (r != 0L) {
 					requestUpstream(r, s);
 				}
@@ -126,7 +126,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void requestUpstream(final long n, final Subscription s) {
-			if (!requestOnSeparateThread || Thread.currentThread() == THREAD.get(this)) {
+			if (!requestOnSeparateThread || Thread.currentThread() == THREAD_UPDATER.get(this)) {
 				s.request(n);
 			}
 			else {
@@ -169,15 +169,15 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Subscription s = S.get(this);
+				Subscription s = S_UPDATER.get(this);
 				if (s != null) {
 					requestUpstream(n, s);
 				}
 				else {
-					Operators.addCap(LONG_REQUESTED, this, n);
-					s = S.get(this);
+					Operators.addCap(REQUESTED_UPDATER, this, n);
+					s = S_UPDATER.get(this);
 					if (s != null) {
-						long r = LONG_REQUESTED.getAndSet(this, 0L);
+						long r = REQUESTED_UPDATER.getAndSet(this, 0L);
 						if (r != 0L) {
 							requestUpstream(r, s);
 						}
@@ -189,7 +189,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void run() {
-			THREAD.lazySet(this, Thread.currentThread());
+			THREAD_UPDATER.lazySet(this, Thread.currentThread());
 			source.subscribe(this);
 		}
 
@@ -197,7 +197,7 @@ final class FluxSubscribeOn<T> extends InternalFluxOperator<T, T> {
 		public void cancel() {
 			Subscription a = s;
 			if (a != Operators.cancelledSubscription()) {
-				a = S.getAndSet(this, Operators.cancelledSubscription());
+				a = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 				if (a != null && a != Operators.cancelledSubscription()) {
 					a.cancel();
 				}

@@ -231,7 +231,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferSkipSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<BufferSkipSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferSkipSubscriber.class, "wip");
 
 		BufferSkipSubscriber(CoreSubscriber<? super C> actual,
@@ -251,7 +251,7 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 				return;
 			}
 
-			if (wip == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (wip == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				// n full buffers
 				long u = Operators.multiplyCap(n, size);
 				// + (n - 1) gaps
@@ -398,13 +398,13 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 
 		volatile int once;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<BufferOverlappingSubscriber> ONCE =
+		static final AtomicIntegerFieldUpdater<BufferOverlappingSubscriber> ONCE_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(BufferOverlappingSubscriber.class,
 						"once");
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<BufferOverlappingSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<BufferOverlappingSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(BufferOverlappingSubscriber.class,
 						"requested");
 
@@ -433,13 +433,13 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 			if (DrainUtils.postCompleteRequest(n,
 					actual,
 					this,
-					LONG_REQUESTED,
+					REQUESTED_UPDATER,
 					this,
 					this)) {
 				return;
 			}
 
-			if (once == 0 && ONCE.compareAndSet(this, 0, 1)) {
+			if (once == 0 && ONCE_UPDATER.compareAndSet(this, 0, 1)) {
 				// (n - 1) skips
 				long u = Operators.multiplyCap(skip, n - 1);
 
@@ -546,9 +546,9 @@ final class FluxBuffer<T, C extends Collection<? super T>> extends InternalFluxO
 			done = true;
 			long p = produced;
 			if (p != 0L) {
-				Operators.produced(LONG_REQUESTED,this, p);
+				Operators.produced(REQUESTED_UPDATER,this, p);
 			}
-			DrainUtils.postComplete(actual, this, LONG_REQUESTED, this, this);
+			DrainUtils.postComplete(actual, this, REQUESTED_UPDATER, this, this);
 		}
 
 		@Override

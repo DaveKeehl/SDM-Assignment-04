@@ -105,7 +105,7 @@ public final class DirectProcessor<T> extends FluxProcessor<T, T>
 	@SuppressWarnings("unchecked")
 	private volatile     DirectInner<T>[]                                           subscribers = SinkManyBestEffort.EMPTY;
 	@SuppressWarnings("rawtypes")
-	private static final AtomicReferenceFieldUpdater<DirectProcessor, DirectInner[]>SUBSCRIBERS =
+	private static final AtomicReferenceFieldUpdater<DirectProcessor, DirectInner[]>SUBSCRIBERS_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(DirectProcessor.class, DirectInner[].class, "subscribers");
 
 	Throwable error;
@@ -142,7 +142,7 @@ public final class DirectProcessor<T> extends FluxProcessor<T, T>
 
 	private EmitResult tryEmitComplete() {
 		@SuppressWarnings("unchecked")
-		DirectInner<T>[] inners = SUBSCRIBERS.getAndSet(this, SinkManyBestEffort.TERMINATED);
+		DirectInner<T>[] inners = SUBSCRIBERS_UPDATER.getAndSet(this, SinkManyBestEffort.TERMINATED);
 
 		if (inners == SinkManyBestEffort.TERMINATED) {
 			return EmitResult.FAIL_TERMINATED;
@@ -170,7 +170,7 @@ public final class DirectProcessor<T> extends FluxProcessor<T, T>
 		Objects.requireNonNull(t, "t");
 
 		@SuppressWarnings("unchecked")
-		DirectInner<T>[] inners = SUBSCRIBERS.getAndSet(this, SinkManyBestEffort.TERMINATED);
+		DirectInner<T>[] inners = SUBSCRIBERS_UPDATER.getAndSet(this, SinkManyBestEffort.TERMINATED);
 
 		if (inners == SinkManyBestEffort.TERMINATED) {
 			return EmitResult.FAIL_TERMINATED;

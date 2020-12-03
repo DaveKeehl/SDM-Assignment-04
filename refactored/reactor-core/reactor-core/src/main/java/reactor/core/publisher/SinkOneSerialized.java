@@ -35,7 +35,7 @@ public class SinkOneSerialized<T> extends SinkEmptySerialized<T> implements Inte
 			return sinkOne.tryEmitValue(t);
 		}
 		finally {
-			if (WIP.decrementAndGet(this) == 0) {
+			if (WIP_UPDATER.decrementAndGet(this) == 0) {
 				LOCKED_AT.compareAndSet(this, currentThread, null);
 			}
 		}

@@ -52,7 +52,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 	volatile Subscription subscription;
 	
 	@SuppressWarnings("rawtypes")
-	static final AtomicReferenceFieldUpdater<BaseSubscriber, Subscription> ATOMIC_REFERENCE_S =
+	static final AtomicReferenceFieldUpdater<BaseSubscriber, Subscription> S_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(BaseSubscriber.class, Subscription.class, "subscription");
 
 	/**
@@ -144,7 +144,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void onSubscribe(Subscription s) {
-		if (Operators.setOnce(ATOMIC_REFERENCE_S, this, s)) {
+		if (Operators.setOnce(S_UPDATER, this, s)) {
 			try {
 				hookOnSubscribe(s);
 			}
@@ -169,7 +169,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 	public final void onError(Throwable t) {
 		Objects.requireNonNull(t, "onError");
 
-		if (ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription()) == Operators
+		if (S_UPDATER.getAndSet(this, Operators.cancelledSubscription()) == Operators
 				.cancelledSubscription()) {
 			//already cancelled concurrently
 			Operators.onErrorDropped(t, currentContext());
@@ -191,7 +191,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void onComplete() {
-		if (ATOMIC_REFERENCE_S.getAndSet(this, Operators.cancelledSubscription()) != Operators
+		if (S_UPDATER.getAndSet(this, Operators.cancelledSubscription()) != Operators
 				.cancelledSubscription()) {
 			//we're sure it has not been concurrently cancelled
 			try {
@@ -226,7 +226,7 @@ public abstract class BaseSubscriber<T> implements CoreSubscriber<T>, Subscripti
 
 	@Override
 	public final void cancel() {
-		if (Operators.terminate(ATOMIC_REFERENCE_S, this)) {
+		if (Operators.terminate(S_UPDATER, this)) {
 			try {
 				hookOnCancel();
 			}

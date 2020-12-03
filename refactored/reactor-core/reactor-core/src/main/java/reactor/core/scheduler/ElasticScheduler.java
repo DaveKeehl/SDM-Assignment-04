@@ -62,7 +62,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 		return t;
 	};
 
-	static final CachedService SHUTDOWN = new CachedService(null);
+	static final CachedService SHUTDOWN_SERVICE = new CachedService(null);
 
 	static final int DEFAULT_TTL_SECONDS = 60;
 
@@ -141,7 +141,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 
 	CachedService pick() {
 		if (shutdown) {
-			return SHUTDOWN;
+			return SHUTDOWN_SERVICE;
 		}
 		CachedService result;
 		ScheduledExecutorServiceExpiry e = cache.pollLast();
@@ -153,7 +153,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 		all.offer(result);
 		if (shutdown) {
 			all.remove(result);
-			return SHUTDOWN;
+			return SHUTDOWN_SERVICE;
 		}
 		return result;
 	}
@@ -253,7 +253,7 @@ final class ElasticScheduler implements Scheduler, Scannable {
 
 		@Override
 		public void dispose() {
-			if (exec != null && this != SHUTDOWN && !parent.shutdown) {
+			if (exec != null && this != SHUTDOWN_SERVICE && !parent.shutdown) {
 				ScheduledExecutorServiceExpiry e = new
 						ScheduledExecutorServiceExpiry(this,
 						System.currentTimeMillis() + parent.ttlSeconds * 1000L);

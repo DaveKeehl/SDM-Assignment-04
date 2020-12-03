@@ -72,13 +72,13 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 		 * expressed through the signal methods rather than an explicit state variable,
 		 * as they are simple enough (states suffixed with a * correspond to a terminal
 		 * signal downstream):
-		 *  - SUBSCRIPTION -> EMPTY | VALUED | EARLY ERROR
+		 *  - SUBSCRIPTION_UPDATER -> EMPTY | VALUED | EARLY ERROR_UPDATER
 		 *  - EMPTY -> COMPLETE
-		 *  - VALUED -> FILTERING | EARLY ERROR
-		 *  - EARLY ERROR*
-		 *  - FILTERING -> FEMPTY | FERROR | FVALUED
+		 *  - VALUED -> FILTERING | EARLY ERROR_UPDATER
+		 *  - EARLY ERROR_UPDATER*
+		 *  - FILTERING -> FEMPTY | FERROR_UPDATER | FVALUED
 		 *  - FEMPTY -> COMPLETE
-		 *  - FERROR*
+		 *  - FERROR_UPDATER*
 		 *  - FVALUED -> ON NEXT + COMPLETE | COMPLETE
 		 *  - COMPLETE*
 		 */
@@ -246,7 +246,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 
 		volatile Subscription sub;
 
-		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB =
+		static final AtomicReferenceFieldUpdater<FilterWhenInner, Subscription> SUB_UPDATER =
 						AtomicReferenceFieldUpdater.newUpdater(FilterWhenInner.class, Subscription.class, "sub");
 
 		FilterWhenInner(MonoFilterWhenMain<?> main, boolean cancelOnNext) {
@@ -256,7 +256,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(SUB, this, s)) {
+			if (Operators.setOnce(SUB_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -297,7 +297,7 @@ class MonoFilterWhen<T> extends InternalMonoOperator<T, T> {
 		}
 
 		void cancel() {
-			Operators.terminate(SUB, this);
+			Operators.terminate(SUB_UPDATER, this);
 		}
 
 		@Override

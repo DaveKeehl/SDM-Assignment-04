@@ -90,13 +90,13 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<WindowTimeoutSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<WindowTimeoutSubscriber> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(WindowTimeoutSubscriber.class,
 						"requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<WindowTimeoutSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<WindowTimeoutSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(WindowTimeoutSubscriber.class,
 						"wip");
 
@@ -111,7 +111,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 
 		volatile     Disposable                                           timer;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<WindowTimeoutSubscriber, Disposable> TIMER =
+		static final AtomicReferenceFieldUpdater<WindowTimeoutSubscriber, Disposable> TIMER_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(WindowTimeoutSubscriber.class, Disposable.class, "timer");
 
 		WindowTimeoutSubscriber(CoreSubscriber<? super Flux<T>> actual,
@@ -172,7 +172,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 				if (r != 0L) {
 					a.onNext(w.asFlux());
 					if (r != Long.MAX_VALUE) {
-						LONG_REQUESTED.decrementAndGet(this);
+						REQUESTED_UPDATER.decrementAndGet(this);
 					}
 				}
 				else {
@@ -181,7 +181,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 					return;
 				}
 
-				if (OperatorDisposables.replace(TIMER, this, newPeriod())) {
+				if (OperatorDisposables.replace(TIMER_UPDATER, this, newPeriod())) {
 					s.request(Long.MAX_VALUE);
 				}
 			}
@@ -204,7 +204,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 				return;
 			}
 
-			if (WIP.get(this) == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (WIP_UPDATER.get(this) == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				Sinks.Many<T> w = window;
 				w.emitNext(t, Sinks.EmitFailureHandler.FAIL_FAST);
 
@@ -223,7 +223,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 						window = w;
 						actual.onNext(w.asFlux());
 						if (r != Long.MAX_VALUE) {
-							LONG_REQUESTED.decrementAndGet(this);
+							REQUESTED_UPDATER.decrementAndGet(this);
 						}
 
 						Disposable tm = timer;
@@ -231,7 +231,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 
 						Disposable task = newPeriod();
 
-						if (!TIMER.compareAndSet(this, tm, task)) {
+						if (!TIMER_UPDATER.compareAndSet(this, tm, task)) {
 							task.dispose();
 						}
 					}
@@ -249,7 +249,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 					count = c;
 				}
 
-				if (WIP.decrementAndGet(this) == 0) {
+				if (WIP_UPDATER.decrementAndGet(this) == 0) {
 					return;
 				}
 			}
@@ -290,7 +290,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 		@Override
 		public void request(long n) {
 			if(Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 			}
 		}
 
@@ -353,7 +353,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 						if (r != 0L) {
 							a.onNext(w.asFlux());
 							if (r != Long.MAX_VALUE) {
-								LONG_REQUESTED.decrementAndGet(this);
+								REQUESTED_UPDATER.decrementAndGet(this);
 							}
 						}
 						else {
@@ -384,7 +384,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 							window = w;
 							actual.onNext(w.asFlux());
 							if (r != Long.MAX_VALUE) {
-								LONG_REQUESTED.decrementAndGet(this);
+								REQUESTED_UPDATER.decrementAndGet(this);
 							}
 
 							Disposable tm = timer;
@@ -392,7 +392,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 
 							Disposable task = newPeriod();
 
-							if (!TIMER.compareAndSet(this, tm, task)) {
+							if (!TIMER_UPDATER.compareAndSet(this, tm, task)) {
 								task.dispose();
 							}
 						}
@@ -411,7 +411,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 					}
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -419,7 +419,7 @@ final class FluxWindowTimeout<T> extends InternalFluxOperator<T, Flux<T>> {
 		}
 
 		boolean enter() {
-			return WIP.getAndIncrement(this) == 0;
+			return WIP_UPDATER.getAndIncrement(this) == 0;
 		}
 
 		static final class ConsumerIndexHolder implements Runnable {

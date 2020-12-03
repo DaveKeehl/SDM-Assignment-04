@@ -74,7 +74,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 		volatile SlotPair<T> current;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeReduceMain, SlotPair>
-				CURRENT = AtomicReferenceFieldUpdater.newUpdater(
+				CURRENT_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				MergeReduceMain.class,
 				SlotPair.class,
 				"current");
@@ -82,14 +82,14 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 		volatile int remaining;
 		@SuppressWarnings("rawtypes")
 		static final AtomicIntegerFieldUpdater<MergeReduceMain>
-				REMAINING = AtomicIntegerFieldUpdater.newUpdater(
+				REMAINING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
 				MergeReduceMain.class,
 				"remaining");
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeReduceMain, Throwable>
-				ERROR = AtomicReferenceFieldUpdater.newUpdater(
+				ERROR_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				MergeReduceMain.class,
 				Throwable.class,
 				"error");
@@ -105,14 +105,14 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 			}
 			this.subscribers = a;
 			this.reducer = reducer;
-			REMAINING.lazySet(this, n);
+			REMAINING_UPDATER.lazySet(this, n);
 		}
 
 		@Override
 		@Nullable
 		public Object scanUnsafe(Attr key) {
 			if (key == Attr.ERROR) return error;
-			if (key == Attr.TERMINATED) return REMAINING.get(this) == 0;
+			if (key == Attr.TERMINATED) return REMAINING_UPDATER.get(this) == 0;
 			if (key == Attr.RUN_STYLE) return Attr.RunStyle.SYNC;
 
 			return super.scanUnsafe(key);
@@ -125,14 +125,14 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 
 				if (curr == null) {
 					curr = new SlotPair<>();
-					if (!CURRENT.compareAndSet(this, null, curr)) {
+					if (!CURRENT_UPDATER.compareAndSet(this, null, curr)) {
 						continue;
 					}
 				}
 
 				int c = curr.tryAcquireSlot();
 				if (c < 0) {
-					CURRENT.compareAndSet(this, curr, null);
+					CURRENT_UPDATER.compareAndSet(this, curr, null);
 					continue;
 				}
 				if (c == 0) {
@@ -143,7 +143,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 				}
 
 				if (curr.releaseSlot()) {
-					CURRENT.compareAndSet(this, curr, null);
+					CURRENT_UPDATER.compareAndSet(this, curr, null);
 					return curr;
 				}
 				return null;
@@ -159,7 +159,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 		}
 
 		void innerError(Throwable ex) {
-			if(ERROR.compareAndSet(this, null, ex)){
+			if(ERROR_UPDATER.compareAndSet(this, null, ex)){
 				cancel();
 				actual.onError(ex);
 			}
@@ -191,9 +191,9 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 				}
 			}
 
-			if (REMAINING.decrementAndGet(this) == 0) {
+			if (REMAINING_UPDATER.decrementAndGet(this) == 0) {
 				SlotPair<T> sp = current;
-				CURRENT.lazySet(this, null);
+				CURRENT_UPDATER.lazySet(this, null);
 
 				if (sp != null) {
 					complete(sp.first);
@@ -214,7 +214,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 		volatile Subscription s;
 		@SuppressWarnings("rawtypes")
 		static final AtomicReferenceFieldUpdater<MergeReduceInner, Subscription>
-				S = AtomicReferenceFieldUpdater.newUpdater(
+				S_UPDATER = AtomicReferenceFieldUpdater.newUpdater(
 				MergeReduceInner.class,
 				Subscription.class,
 				"s");
@@ -250,7 +250,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 
 		@Override
 		public void onSubscribe(Subscription s) {
-			if (Operators.setOnce(S, this, s)) {
+			if (Operators.setOnce(S_UPDATER, this, s)) {
 				s.request(Long.MAX_VALUE);
 			}
 		}
@@ -300,7 +300,7 @@ final class ParallelMergeReduce<T> extends Mono<T> implements Scannable, Fuseabl
 		}
 
 		void cancel() {
-			Operators.terminate(S, this);
+			Operators.terminate(S_UPDATER, this);
 		}
 	}
 

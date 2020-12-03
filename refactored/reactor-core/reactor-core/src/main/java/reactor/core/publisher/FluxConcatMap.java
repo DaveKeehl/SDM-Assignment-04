@@ -154,7 +154,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ConcatMapImmediate, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<ConcatMapImmediate, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ConcatMapImmediate.class,
 						Throwable.class,
 						"error");
@@ -163,12 +163,12 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ConcatMapImmediate> WIP =
+		static final AtomicIntegerFieldUpdater<ConcatMapImmediate> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ConcatMapImmediate.class, "wip");
 
 		volatile int guard;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ConcatMapImmediate> GUARD =
+		static final AtomicIntegerFieldUpdater<ConcatMapImmediate> GUARD_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ConcatMapImmediate.class, "guard");
 
 		int sourceMode;
@@ -253,11 +253,11 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				inner.cancel();
 
-				if (GUARD.getAndIncrement(this) == 0) {
-					t = Exceptions.terminate(ERROR, this);
+				if (GUARD_UPDATER.getAndIncrement(this) == 0) {
+					t = Exceptions.terminate(ERROR_UPDATER, this);
 					if (t != TERMINATED) {
 						actual.onError(t);
 						Operators.onDiscardQueueWithClear(queue, this.ctx, null);
@@ -277,12 +277,12 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void innerNext(R value) {
-			if (guard == 0 && GUARD.compareAndSet(this, 0, 1)) {
+			if (guard == 0 && GUARD_UPDATER.compareAndSet(this, 0, 1)) {
 				actual.onNext(value);
-				if (GUARD.compareAndSet(this, 1, 0)) {
+				if (GUARD_UPDATER.compareAndSet(this, 1, 0)) {
 					return;
 				}
-				Throwable e = Exceptions.terminate(ERROR, this);
+				Throwable e = Exceptions.terminate(ERROR_UPDATER, this);
 				if (e != TERMINATED) {
 					actual.onError(e);
 				}
@@ -299,11 +299,11 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 		public void innerError(Throwable e) {
 			e = Operators.onNextInnerError(e, currentContext(), s);
 			if(e != null) {
-				if (Exceptions.addThrowable(ERROR, this, e)) {
+				if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 					s.cancel();
 
-					if (GUARD.getAndIncrement(this) == 0) {
-						e = Exceptions.terminate(ERROR, this);
+					if (GUARD_UPDATER.getAndIncrement(this) == 0) {
+						e = Exceptions.terminate(ERROR_UPDATER, this);
 						if (e != TERMINATED) {
 							actual.onError(e);
 						}
@@ -341,7 +341,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				for (; ; ) {
 					if (cancelled) {
 						return;
@@ -424,11 +424,11 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 								}
 
 								if (inner.isUnbounded()) {
-									if (guard == 0 && GUARD.compareAndSet(this, 0, 1)) {
+									if (guard == 0 && GUARD_UPDATER.compareAndSet(this, 0, 1)) {
 										actual.onNext(vr);
-										if (!GUARD.compareAndSet(this, 1, 0)) {
+										if (!GUARD_UPDATER.compareAndSet(this, 1, 0)) {
 											Throwable e =
-													Exceptions.terminate(ERROR, this);
+													Exceptions.terminate(ERROR_UPDATER, this);
 											if (e != TERMINATED) {
 												actual.onError(e);
 											}
@@ -449,7 +449,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 							}
 						}
 					}
-					if (WIP.decrementAndGet(this) == 0) {
+					if (WIP_UPDATER.decrementAndGet(this) == 0) {
 						break;
 					}
 				}
@@ -513,7 +513,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile Throwable error;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<ConcatMapDelayed, Throwable> ERROR =
+		static final AtomicReferenceFieldUpdater<ConcatMapDelayed, Throwable> ERROR_UPDATER =
 				AtomicReferenceFieldUpdater.newUpdater(ConcatMapDelayed.class,
 						Throwable.class,
 						"error");
@@ -522,7 +522,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<ConcatMapDelayed> WIP =
+		static final AtomicIntegerFieldUpdater<ConcatMapDelayed> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(ConcatMapDelayed.class, "wip");
 
 		int sourceMode;
@@ -617,7 +617,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 
 		@Override
 		public void onError(Throwable t) {
-			if (Exceptions.addThrowable(ERROR, this, t)) {
+			if (Exceptions.addThrowable(ERROR_UPDATER, this, t)) {
 				done = true;
 				drain();
 			}
@@ -647,7 +647,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 		public void innerError(Throwable e) {
 			e = Operators.onNextInnerError(e, currentContext(), s);
 			if(e != null) {
-				if (Exceptions.addThrowable(ERROR, this, e)) {
+				if (Exceptions.addThrowable(ERROR_UPDATER, this, e)) {
 					if (!veryEnd) {
 						s.cancel();
 						done = true;
@@ -681,7 +681,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				Context ctx = null;
 				for (; ; ) {
 					if (cancelled) {
@@ -695,7 +695,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 						if (d && !veryEnd) {
 							Throwable ex = error;
 							if (ex != null) {
-								ex = Exceptions.terminate(ERROR, this);
+								ex = Exceptions.terminate(ERROR_UPDATER, this);
 								if (ex != TERMINATED) {
 									actual.onError(ex);
 								}
@@ -716,7 +716,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 						boolean empty = v == null;
 
 						if (d && empty) {
-							Throwable ex = Exceptions.terminate(ERROR, this);
+							Throwable ex = Exceptions.terminate(ERROR_UPDATER, this);
 							if (ex != null && ex != TERMINATED) {
 								actual.onError(ex);
 							}
@@ -778,7 +778,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 										continue;
 									}
 									//now if error mode strategy doesn't apply, let delayError play
-									if (veryEnd && Exceptions.addThrowable(ERROR, this, e_)) {
+									if (veryEnd && Exceptions.addThrowable(ERROR_UPDATER, this, e_)) {
 										continue;
 									}
 									else {
@@ -806,7 +806,7 @@ final class FluxConcatMap<T, R> extends InternalFluxOperator<T, R> {
 							}
 						}
 					}
-					if (WIP.decrementAndGet(this) == 0) {
+					if (WIP_UPDATER.decrementAndGet(this) == 0) {
 						break;
 					}
 				}

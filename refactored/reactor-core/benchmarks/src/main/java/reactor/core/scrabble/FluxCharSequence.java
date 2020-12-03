@@ -70,7 +70,7 @@ final class FluxCharSequence extends Flux<Integer> implements Fuseable {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -139,14 +139,14 @@ final class FluxCharSequence extends Flux<Integer> implements Fuseable {
 				r = requested;
 				if (e == r) {
 					index = i;
-					r = REQUESTED.addAndGet(this, -e);
+					r = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (r == 0L) {
 						break;
 					}
 				}
 			}
 		}
-		static final AtomicLongFieldUpdater<CharSequenceSubscription> REQUESTED =
+		static final AtomicLongFieldUpdater<CharSequenceSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(CharSequenceSubscription.class, "requested");
 	}
 

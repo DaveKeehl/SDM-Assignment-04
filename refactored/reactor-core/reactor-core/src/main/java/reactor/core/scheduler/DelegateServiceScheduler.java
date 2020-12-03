@@ -51,7 +51,7 @@ final class DelegateServiceScheduler implements Scheduler, Scannable {
 
 	@Nullable
 	volatile ScheduledExecutorService executor;
-	static final AtomicReferenceFieldUpdater<DelegateServiceScheduler, ScheduledExecutorService> EXECUTOR =
+	static final AtomicReferenceFieldUpdater<DelegateServiceScheduler, ScheduledExecutorService> EXECUTOR_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(DelegateServiceScheduler.class, ScheduledExecutorService.class, "executor");
 
 	DelegateServiceScheduler(String executorName, ExecutorService executorService) {
@@ -101,7 +101,7 @@ final class DelegateServiceScheduler implements Scheduler, Scannable {
 
 	@Override
 	public void start() {
-		EXECUTOR.compareAndSet(this, null, Schedulers.decorateExecutorService(this, original));
+		EXECUTOR_UPDATER.compareAndSet(this, null, Schedulers.decorateExecutorService(this, original));
 	}
 
 	@Override

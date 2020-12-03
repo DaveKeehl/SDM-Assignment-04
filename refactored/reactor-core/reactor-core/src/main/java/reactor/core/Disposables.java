@@ -309,17 +309,17 @@ static final class SwapDisposable implements Disposable.Swap {
 
 	volatile Disposable inner;
 	static final AtomicReferenceFieldUpdater<SwapDisposable, Disposable>
-	                    INNER =
+			INNER_UPDATER =
 			AtomicReferenceFieldUpdater.newUpdater(SwapDisposable.class, Disposable.class, "inner");
 
 	@Override
 	public boolean update(@Nullable Disposable next) {
-		return Disposables.set(INNER, this, next);
+		return Disposables.set(INNER_UPDATER, this, next);
 	}
 
 	@Override
 	public boolean replace(@Nullable Disposable next) {
-		return Disposables.replace(INNER, this, next);
+		return Disposables.replace(INNER_UPDATER, this, next);
 	}
 
 	@Override
@@ -330,12 +330,12 @@ static final class SwapDisposable implements Disposable.Swap {
 
 	@Override
 	public void dispose() {
-		Disposables.dispose(INNER, this);
+		Disposables.dispose(INNER_UPDATER, this);
 	}
 
 	@Override
 	public boolean isDisposed() {
-		return Disposables.isDisposed(INNER.get(this));
+		return Disposables.isDisposed(INNER_UPDATER.get(this));
 	}
 }
 

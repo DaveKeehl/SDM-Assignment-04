@@ -178,7 +178,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<IterableSubscription> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<IterableSubscription> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(IterableSubscription.class,
 						"requested");
 
@@ -220,7 +220,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -300,7 +300,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 				n = requested;
 
 				if (n == e) {
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0L) {
 						return;
 					}
@@ -455,7 +455,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<IterableSubscriptionConditional> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<IterableSubscriptionConditional> REQUESTED_UPDATER =
 				AtomicLongFieldUpdater.newUpdater(IterableSubscriptionConditional.class,
 						"requested");
 
@@ -497,7 +497,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				if (Operators.addCap(LONG_REQUESTED, this, n) == 0) {
+				if (Operators.addCap(REQUESTED_UPDATER, this, n) == 0) {
 					if (n == Long.MAX_VALUE) {
 						fastPath();
 					}
@@ -579,7 +579,7 @@ final class FluxIterable<T> extends Flux<T> implements Fuseable, SourceProducer<
 				n = requested;
 
 				if (n == e) {
-					n = LONG_REQUESTED.addAndGet(this, -e);
+					n = REQUESTED_UPDATER.addAndGet(this, -e);
 					if (n == 0L) {
 						return;
 					}

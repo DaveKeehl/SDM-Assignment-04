@@ -42,7 +42,7 @@ final class LambdaSubscriber<T>
 	final Context                        initialContext;
 
 	volatile Subscription subscription;
-	static final AtomicReferenceFieldUpdater<LambdaSubscriber, Subscription> S =
+	static final AtomicReferenceFieldUpdater<LambdaSubscriber, Subscription> S_UPDATER=
 			AtomicReferenceFieldUpdater.newUpdater(LambdaSubscriber.class,
 					Subscription.class,
 					"subscription");
@@ -123,7 +123,7 @@ final class LambdaSubscriber<T>
 
 	@Override
 	public final void onComplete() {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s == Operators.cancelledSubscription()) {
 			return;
 		}
@@ -140,7 +140,7 @@ final class LambdaSubscriber<T>
 
 	@Override
 	public final void onError(Throwable t) {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s == Operators.cancelledSubscription()) {
 			Operators.onErrorDropped(t, this.initialContext);
 			return;
@@ -186,7 +186,7 @@ final class LambdaSubscriber<T>
 
 	@Override
 	public void dispose() {
-		Subscription s = S.getAndSet(this, Operators.cancelledSubscription());
+		Subscription s = S_UPDATER.getAndSet(this, Operators.cancelledSubscription());
 		if (s != null && s != Operators.cancelledSubscription()) {
 			s.cancel();
 		}

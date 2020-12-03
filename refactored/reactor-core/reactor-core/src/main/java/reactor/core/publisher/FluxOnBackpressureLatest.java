@@ -62,12 +62,12 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 		volatile long requested;
 		@SuppressWarnings("rawtypes")
-		static final AtomicLongFieldUpdater<LatestSubscriber> LONG_REQUESTED =
+		static final AtomicLongFieldUpdater<LatestSubscriber> REQUESTED_UPDATER =
 		  AtomicLongFieldUpdater.newUpdater(LatestSubscriber.class, "requested");
 
 		volatile int wip;
 		@SuppressWarnings("rawtypes")
-		static final AtomicIntegerFieldUpdater<LatestSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<LatestSubscriber> WIP_UPDATER =
 		  AtomicIntegerFieldUpdater.newUpdater(LatestSubscriber.class, "wip");
 
 		Subscription s;
@@ -79,7 +79,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 		volatile T value;
 		@SuppressWarnings("rawtypes")
-		static final AtomicReferenceFieldUpdater<LatestSubscriber, Object> VALUE =
+		static final AtomicReferenceFieldUpdater<LatestSubscriber, Object> VALUE_UPDATER =
 		  AtomicReferenceFieldUpdater.newUpdater(LatestSubscriber.class, Object.class, "value");
 
 		LatestSubscriber(CoreSubscriber<? super T> actual) {
@@ -90,7 +90,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 		@Override
 		public void request(long n) {
 			if (Operators.validate(n)) {
-				Operators.addCap(LONG_REQUESTED, this, n);
+				Operators.addCap(REQUESTED_UPDATER, this, n);
 
 				drain();
 			}
@@ -104,8 +104,8 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 				s.cancel();
 
-				if (WIP.getAndIncrement(this) == 0) {
-					Object toDiscard = VALUE.getAndSet(this, null);
+				if (WIP_UPDATER.getAndIncrement(this) == 0) {
+					Object toDiscard = VALUE_UPDATER.getAndSet(this, null);
 					if (toDiscard != null) {
 						Operators.onDiscard(toDiscard, ctx);
 					}
@@ -126,7 +126,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 		@Override
 		public void onNext(T t) {
-			Object toDiscard = VALUE.getAndSet(this, t);
+			Object toDiscard = VALUE_UPDATER.getAndSet(this, t);
 			if (toDiscard != null) {
 				Operators.onDiscard(toDiscard, ctx);
 			}
@@ -147,7 +147,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void drain() {
-			if (WIP.getAndIncrement(this) != 0) {
+			if (WIP_UPDATER.getAndIncrement(this) != 0) {
 				return;
 			}
 			final Subscriber<? super T> a = actual;
@@ -167,7 +167,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 					boolean d = done;
 
 					@SuppressWarnings("unchecked")
-					T v = (T) VALUE.getAndSet(this, null);
+					T v = (T) VALUE_UPDATER.getAndSet(this, null);
 
 					boolean empty = v == null;
 
@@ -189,10 +189,10 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 				}
 
 				if (e != 0L && r != Long.MAX_VALUE) {
-					Operators.produced(LONG_REQUESTED, this, e);
+					Operators.produced(REQUESTED_UPDATER, this, e);
 				}
 
-				missed = WIP.addAndGet(this, -missed);
+				missed = WIP_UPDATER.addAndGet(this, -missed);
 				if (missed == 0) {
 					break;
 				}
@@ -201,7 +201,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 
 		boolean checkTerminated(boolean d, boolean empty, Subscriber<? super T> a) {
 			if (cancelled) {
-				Object toDiscard = VALUE.getAndSet(this, null);
+				Object toDiscard = VALUE_UPDATER.getAndSet(this, null);
 				if (toDiscard != null) {
 					Operators.onDiscard(toDiscard, ctx);
 				}return true;
@@ -210,7 +210,7 @@ final class FluxOnBackpressureLatest<T> extends InternalFluxOperator<T, T> {
 			if (d) {
 				Throwable e = error;
 				if (e != null) {
-					Object toDiscard = VALUE.getAndSet(this, null);
+					Object toDiscard = VALUE_UPDATER.getAndSet(this, null);
 					if (toDiscard != null) {
 						Operators.onDiscard(toDiscard, ctx);
 					}

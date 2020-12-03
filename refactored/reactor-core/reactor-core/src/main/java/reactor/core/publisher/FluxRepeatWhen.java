@@ -102,7 +102,7 @@ final class FluxRepeatWhen<T> extends InternalFluxOperator<T, T> {
 		final CorePublisher<? extends T> source;
 
 		volatile int wip;
-		static final AtomicIntegerFieldUpdater<RepeatWhenMainSubscriber> WIP =
+		static final AtomicIntegerFieldUpdater<RepeatWhenMainSubscriber> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(RepeatWhenMainSubscriber.class,
 						"wip");
 
@@ -168,7 +168,7 @@ final class FluxRepeatWhen<T> extends InternalFluxOperator<T, T> {
 		}
 
 		void resubscribe(Object trigger) {
-			if (WIP.getAndIncrement(this) == 0) {
+			if (WIP_UPDATER.getAndIncrement(this) == 0) {
 				do {
 					if (cancelled) {
 						return;
@@ -183,7 +183,7 @@ final class FluxRepeatWhen<T> extends InternalFluxOperator<T, T> {
 					source.subscribe(this);
 
 				}
-				while (WIP.decrementAndGet(this) != 0);
+				while (WIP_UPDATER.decrementAndGet(this) != 0);
 			}
 		}
 

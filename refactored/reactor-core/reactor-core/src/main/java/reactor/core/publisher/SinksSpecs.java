@@ -19,7 +19,7 @@ final class SinksSpecs {
 	abstract static class AbstractSerializedSink {
 
 		volatile int                                                   wip;
-		static final AtomicIntegerFieldUpdater<AbstractSerializedSink> WIP =
+		static final AtomicIntegerFieldUpdater<AbstractSerializedSink> WIP_UPDATER =
 				AtomicIntegerFieldUpdater.newUpdater(AbstractSerializedSink.class, "wip");
 
 		volatile Thread                                                          lockedAt;
@@ -27,7 +27,7 @@ final class SinksSpecs {
 				AtomicReferenceFieldUpdater.newUpdater(AbstractSerializedSink.class, Thread.class, "lockedAt");
 
 		boolean tryAcquire(Thread currentThread) {
-			if (WIP.get(this) == 0 && WIP.compareAndSet(this, 0, 1)) {
+			if (WIP_UPDATER.get(this) == 0 && WIP_UPDATER.compareAndSet(this, 0, 1)) {
 				// lazySet in thread A here is ok because:
 				// 1. initial state is `null`
 				// 2. `LOCKED_AT.get(this) != currentThread` from a different thread B could see outdated null or an outdated old thread
@@ -39,7 +39,7 @@ final class SinksSpecs {
 				if (LOCKED_AT.get(this) != currentThread) {
 					return false;
 				}
-				WIP.incrementAndGet(this);
+				WIP_UPDATER.incrementAndGet(this);
 			}
 			return true;
 		}
