@@ -1264,7 +1264,7 @@ public abstract class ParallelFlux<T> implements CorePublisher<T> {
 		if(hook != null) {
 			source = (ParallelFlux<T>) hook.apply(source);
 		}
-		if (Hooks.GLOBAL_TRACE) {
+		if (Hooks.globalTrace) {
 			AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 			source = (ParallelFlux<T>) Hooks.addAssemblyInfo(source, stacktrace);
 		}

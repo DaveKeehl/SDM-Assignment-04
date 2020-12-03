@@ -4573,7 +4573,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public final <V> Mono<V> transform(Function<? super Mono<T>, ? extends Publisher<V>> transformer) {
-		if (Hooks.DETECT_CONTEXT_LOSS) {
+		if (Hooks.detectContextLoss) {
 			transformer = new ContextTrackingFunctionWrapper(transformer);
 		}
 		return onAssembly(from(transformer.apply(this)));
@@ -4601,7 +4601,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 */
 	public final <V> Mono<V> transformDeferred(Function<? super Mono<T>, ? extends Publisher<V>> transformer) {
 		return defer(() -> {
-			if (Hooks.DETECT_CONTEXT_LOSS) {
+			if (Hooks.detectContextLoss) {
 				@SuppressWarnings({"unchecked", "rawtypes"})
 				Mono<V> result = from(new ContextTrackingFunctionWrapper<T, V>((Function) transformer).apply(this));
 				return result;
@@ -4635,7 +4635,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 	 */
 	public final <V> Mono<V> transformDeferredContextual(BiFunction<? super Mono<T>, ? super ContextView, ? extends Publisher<V>> transformer) {
 		return deferContextual(ctxView -> {
-			if (Hooks.DETECT_CONTEXT_LOSS) {
+			if (Hooks.detectContextLoss) {
 				ContextTrackingFunctionWrapper<T, V> wrapper = new ContextTrackingFunctionWrapper<>(
 						publisher -> transformer.apply(wrap(publisher, false), ctxView),
 						transformer.toString()
@@ -4750,7 +4750,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 		if(hook != null) {
 			source = (Mono<T>) hook.apply(source);
 		}
-		if (Hooks.GLOBAL_TRACE) {
+		if (Hooks.globalTrace) {
 			AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 			source = (Mono<T>) Hooks.addAssemblyInfo(source, stacktrace);
 		}

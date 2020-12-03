@@ -73,10 +73,10 @@ class HooksTest {
     void staticActivationOfOperatorDebug() {
 		String oldProp = System.setProperty("reactor.trace.operatorStacktrace", "true");
 		//this will be reset by the ReactorTestExecutionListener
-		Hooks.GLOBAL_TRACE = Hooks.initStaticGlobalTrace();
+		Hooks.globalTrace = Hooks.initStaticGlobalTrace();
 
 		try {
-			assertThat(Hooks.GLOBAL_TRACE).isTrue();
+			assertThat(Hooks.globalTrace).isTrue();
 			//would throw NPE due to https://github.com/reactor/reactor-core/issues/985
 			Mono.just("hello").subscribe();
 		}

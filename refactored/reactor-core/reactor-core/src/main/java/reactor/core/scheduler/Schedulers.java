@@ -207,7 +207,7 @@ public abstract class Schedulers {
 	 */
 	@Deprecated
 	public static Scheduler elastic() {
-		return cache(CACHED_ELASTIC, ELASTIC, ELASTIC_SUPPLIER);
+		return cache(cachedElastic, ELASTIC, ELASTIC_SUPPLIER);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public abstract class Schedulers {
 	 * that reuses threads and evict idle ones
 	 */
 	public static Scheduler boundedElastic() {
-		return cache(CACHED_BOUNDED_ELASTIC, BOUNDED_ELASTIC, BOUNDED_ELASTIC_SUPPLIER);
+		return cache(cachedBoundedElastic, BOUNDED_ELASTIC, BOUNDED_ELASTIC_SUPPLIER);
 	}
 
 	/**
@@ -248,7 +248,7 @@ public abstract class Schedulers {
 	 * ExecutorService-based workers and is suited for parallel work
 	 */
 	public static Scheduler parallel() {
-		return cache(CACHED_PARALLEL, PARALLEL, PARALLEL_SUPPLIER);
+		return cache(cachedParallel, PARALLEL, PARALLEL_SUPPLIER);
 	}
 
 	/**
@@ -711,10 +711,10 @@ public abstract class Schedulers {
 		//nulling out CACHED references ensures that the schedulers won't be disposed
 		//when setting the newFactory via setFactory
 		Snapshot snapshot = new Snapshot(
-				CACHED_ELASTIC.getAndSet(null),
-				CACHED_BOUNDED_ELASTIC.getAndSet(null),
-				CACHED_PARALLEL.getAndSet(null),
-				CACHED_SINGLE.getAndSet(null),
+				cachedElastic.getAndSet(null),
+				cachedBoundedElastic.getAndSet(null),
+				cachedParallel.getAndSet(null),
+				cachedSingle.getAndSet(null),
 				factory);
 		setFactory(newFactory);
 		return snapshot;
@@ -733,10 +733,10 @@ public abstract class Schedulers {
 		}
 		//Restore the atomic references first, so that concurrent calls to Schedulers either
 		//get a soon-to-be-shutdown instance or the restored instance
-		CachedScheduler oldElastic = CACHED_ELASTIC.getAndSet(snapshot.oldElasticScheduler);
-		CachedScheduler oldBoundedElastic = CACHED_BOUNDED_ELASTIC.getAndSet(snapshot.oldBoundedElasticScheduler);
-		CachedScheduler oldParallel = CACHED_PARALLEL.getAndSet(snapshot.oldParallelScheduler);
-		CachedScheduler oldSingle = CACHED_SINGLE.getAndSet(snapshot.oldSingleScheduler);
+		CachedScheduler oldElastic = cachedElastic.getAndSet(snapshot.oldElasticScheduler);
+		CachedScheduler oldBoundedElastic = cachedBoundedElastic.getAndSet(snapshot.oldBoundedElasticScheduler);
+		CachedScheduler oldParallel = cachedParallel.getAndSet(snapshot.oldParallelScheduler);
+		CachedScheduler oldSingle = cachedSingle.getAndSet(snapshot.oldSingleScheduler);
 
 		//From there on, we've restored all the snapshoted instances, the factory can be
 		//restored too and will start backing Schedulers.newXxx().
@@ -955,10 +955,10 @@ public abstract class Schedulers {
 	 * Clear any cached {@link Scheduler} and call dispose on them.
 	 */
 	public static void shutdownNow() {
-		CachedScheduler oldElastic = CACHED_ELASTIC.getAndSet(null);
-		CachedScheduler oldBoundedElastic = CACHED_BOUNDED_ELASTIC.getAndSet(null);
-		CachedScheduler oldParallel = CACHED_PARALLEL.getAndSet(null);
-		CachedScheduler oldSingle = CACHED_SINGLE.getAndSet(null);
+		CachedScheduler oldElastic = cachedElastic.getAndSet(null);
+		CachedScheduler oldBoundedElastic = cachedBoundedElastic.getAndSet(null);
+		CachedScheduler oldParallel = cachedParallel.getAndSet(null);
+		CachedScheduler oldSingle = cachedSingle.getAndSet(null);
 
 		if (oldElastic != null) oldElastic._dispose();
 		if (oldBoundedElastic != null) oldBoundedElastic._dispose();
@@ -974,7 +974,7 @@ public abstract class Schedulers {
 	 * ExecutorService-based worker
 	 */
 	public static Scheduler single() {
-		return cache(CACHED_SINGLE, SINGLE, SINGLE_SUPPLIER);
+		return cache(cachedSingle, SINGLE, SINGLE_SUPPLIER);
 	}
 
 	/**
@@ -1127,10 +1127,10 @@ public abstract class Schedulers {
 
 
 	// Cached schedulers in atomic references:
-	static AtomicReference<CachedScheduler> CACHED_ELASTIC         = new AtomicReference<>();
-	static AtomicReference<CachedScheduler> CACHED_BOUNDED_ELASTIC = new AtomicReference<>();
-	static AtomicReference<CachedScheduler> CACHED_PARALLEL        = new AtomicReference<>();
-	static AtomicReference<CachedScheduler> CACHED_SINGLE          = new AtomicReference<>();
+	static AtomicReference<CachedScheduler> cachedElastic = new AtomicReference<>();
+	static AtomicReference<CachedScheduler> cachedBoundedElastic = new AtomicReference<>();
+	static AtomicReference<CachedScheduler> cachedParallel = new AtomicReference<>();
+	static AtomicReference<CachedScheduler> cachedSingle = new AtomicReference<>();
 
 	static final Supplier<Scheduler> ELASTIC_SUPPLIER =
 			() -> newElastic(ELASTIC, ElasticScheduler.DEFAULT_TTL_SECONDS, true);

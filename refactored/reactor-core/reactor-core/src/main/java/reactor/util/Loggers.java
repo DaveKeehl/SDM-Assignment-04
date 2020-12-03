@@ -15,7 +15,6 @@
  */
 package reactor.util;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -47,7 +46,7 @@ public abstract class Loggers {
 	 */
 	public static final String FALLBACK_PROPERTY = "reactor.logging.fallback";
 
-	private static LoggerFactory LOGGER_FACTORY;
+	private static LoggerFactory loggerFactory;
 
 	static {
 		resetLoggerFactory();
@@ -103,7 +102,7 @@ public abstract class Loggers {
 		String name = LoggerFactory.class.getName();
 		LoggerFactory loggerFactory = new ConsoleLoggerFactory(false);
 		loggerFactory.getLogger(name).debug("Using Console logging");
-		LOGGER_FACTORY = loggerFactory;
+		Loggers.loggerFactory = loggerFactory;
 	}
 
 	/**
@@ -119,7 +118,7 @@ public abstract class Loggers {
 		String name = LoggerFactory.class.getName();
 		LoggerFactory loggerFactory = new ConsoleLoggerFactory(true);
 		loggerFactory.getLogger(name).debug("Using Verbose Console logging");
-		LOGGER_FACTORY = loggerFactory;
+		Loggers.loggerFactory = loggerFactory;
 	}
 
 	/**
@@ -135,7 +134,7 @@ public abstract class Loggers {
 	public static void useCustomLoggers(final Function<String, ? extends Logger> loggerFactory) {
 		String name = LoggerFactory.class.getName();
 		loggerFactory.apply(name).debug("Using custom logging");
-		LOGGER_FACTORY = loggerFactory::apply;
+		Loggers.loggerFactory = loggerFactory::apply;
 	}
 
 	/**
@@ -149,7 +148,7 @@ public abstract class Loggers {
 		String name = LoggerFactory.class.getName();
 		LoggerFactory loggerFactory = new JdkLoggerFactory();
 		loggerFactory.getLogger(name).debug("Using JDK logging framework");
-		LOGGER_FACTORY = loggerFactory;
+		Loggers.loggerFactory = loggerFactory;
 	}
 
 	/**
@@ -164,7 +163,7 @@ public abstract class Loggers {
 		String name = LoggerFactory.class.getName();
 		LoggerFactory loggerFactory = new Slf4JLoggerFactory();
 		loggerFactory.getLogger(name).debug("Using Slf4j logging framework");
-		LOGGER_FACTORY = loggerFactory;
+		Loggers.loggerFactory = loggerFactory;
 	}
 
 	/**
@@ -179,7 +178,7 @@ public abstract class Loggers {
 	 * @return a new {@link Logger} instance
 	 */
 	public static Logger getLogger(String name) {
-		return LOGGER_FACTORY.getLogger(name);
+		return loggerFactory.getLogger(name);
 	}
 
 	/**
@@ -191,7 +190,7 @@ public abstract class Loggers {
 	 * @return a new {@link Logger} instance
 	 */
 	public static Logger getLogger(Class<?> cls) {
-		return LOGGER_FACTORY.getLogger(cls.getName());
+		return loggerFactory.getLogger(cls.getName());
 	}
 
 	private interface LoggerFactory {

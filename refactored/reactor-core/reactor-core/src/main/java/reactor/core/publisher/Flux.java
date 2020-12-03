@@ -9052,7 +9052,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public final <V> Flux<V> transform(Function<? super Flux<T>, ? extends Publisher<V>> transformer) {
-		if (Hooks.DETECT_CONTEXT_LOSS) {
+		if (Hooks.detectContextLoss) {
 			transformer = new ContextTrackingFunctionWrapper(transformer);
 		}
 		return onAssembly(from(transformer.apply(this)));
@@ -9078,7 +9078,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 */
 	public final <V> Flux<V> transformDeferred(Function<? super Flux<T>, ? extends Publisher<V>> transformer) {
 		return defer(() -> {
-			if (Hooks.DETECT_CONTEXT_LOSS) {
+			if (Hooks.detectContextLoss) {
 				@SuppressWarnings({"rawtypes", "unchecked"})
 				ContextTrackingFunctionWrapper<T, V> wrapper = new ContextTrackingFunctionWrapper<T, V>((Function) transformer);
 				return wrapper.apply(this);
@@ -9112,7 +9112,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 	 */
 	public final <V> Flux<V> transformDeferredContextual(BiFunction<? super Flux<T>, ? super ContextView, ? extends Publisher<V>> transformer) {
 		return deferContextual(ctxView -> {
-			if (Hooks.DETECT_CONTEXT_LOSS) {
+			if (Hooks.detectContextLoss) {
 				ContextTrackingFunctionWrapper<T, V> wrapper = new ContextTrackingFunctionWrapper<>(
 						publisher -> transformer.apply(wrap(publisher), ctxView),
 						transformer.toString()
@@ -9771,7 +9771,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 		if(hook != null) {
 			source = (Flux<T>) hook.apply(source);
 		}
-		if (Hooks.GLOBAL_TRACE) {
+		if (Hooks.globalTrace) {
 			AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 			source = (Flux<T>) Hooks.addAssemblyInfo(source, stacktrace);
 		}
@@ -9795,7 +9795,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 		if(hook != null) {
 			source = (ConnectableFlux<T>) hook.apply(source);
 		}
-		if (Hooks.GLOBAL_TRACE) {
+		if (Hooks.globalTrace) {
 			AssemblySnapshot stacktrace = new AssemblySnapshot(null, Traces.callSiteSupplierFactory.get());
 			source = (ConnectableFlux<T>) Hooks.addAssemblyInfo(source, stacktrace);
 		}

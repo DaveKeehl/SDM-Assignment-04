@@ -337,14 +337,14 @@ public abstract class Hooks {
 	 */
 	public static void onOperatorDebug() {
 		log.debug("Enabling stacktrace debugging via onOperatorDebug");
-		GLOBAL_TRACE = true;
+		globalTrace = true;
 	}
 
 	/**
 	 * Reset global operator debug.
 	 */
 	public static void resetOnOperatorDebug() {
-		GLOBAL_TRACE = false;
+		globalTrace = false;
 	}
 
 	/**
@@ -504,7 +504,7 @@ public abstract class Hooks {
 	 * (ie. it has been replaced by a totally different {@link Context}, or no {@link Context} at all)
 	 */
 	public static void enableContextLossTracking() {
-		DETECT_CONTEXT_LOSS = true;
+		detectContextLoss = true;
 	}
 
 	/**
@@ -513,7 +513,7 @@ public abstract class Hooks {
 	 *
 	 */
 	public static void disableContextLossTracking() {
-		DETECT_CONTEXT_LOSS = false;
+		detectContextLoss = false;
 	}
 
 	@Nullable
@@ -608,10 +608,10 @@ public abstract class Hooks {
 	 */
 	static final String KEY_ON_REJECTED_EXECUTION = "reactor.onRejectedExecution.local";
 
-	static boolean GLOBAL_TRACE = initStaticGlobalTrace();
+	static boolean globalTrace = initStaticGlobalTrace();
 
 
-	static boolean DETECT_CONTEXT_LOSS = false;
+	static boolean detectContextLoss = false;
 
 	static {
 		onEachOperatorHooks = new LinkedHashMap<>(1);
