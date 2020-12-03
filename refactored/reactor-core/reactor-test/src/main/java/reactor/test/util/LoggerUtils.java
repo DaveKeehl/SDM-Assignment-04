@@ -70,7 +70,7 @@ public final class LoggerUtils {
 		private final Object orginalFactory;
 
 		private CapturingFactory() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
-			Field lfField = Loggers.class.getDeclaredField("LOGGER_FACTORY");
+			Field lfField = Loggers.class.getDeclaredField("loggerFactory");
 			lfField.setAccessible(true);
 			orginalFactory = lfField.get(Loggers.class);
 			originalFactoryMethod = orginalFactory.getClass().getMethod("getLogger", String.class);
@@ -91,7 +91,7 @@ public final class LoggerUtils {
 		@Override
 		public void dispose() {
 			try {
-				Field lfField = Loggers.class.getDeclaredField("LOGGER_FACTORY");
+				Field lfField = Loggers.class.getDeclaredField("loggerFactory");
 				lfField.setAccessible(true);
 				Object o = lfField.get(Loggers.class);
 
